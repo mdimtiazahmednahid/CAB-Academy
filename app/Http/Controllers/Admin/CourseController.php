@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Section;
 use App\Models\Lesson;
+use App\Models\User;
+use App\Notifications\NewCourseNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class CourseController extends Controller
 {
@@ -46,7 +49,18 @@ class CourseController extends Controller
             $data['cover_image'] = $request->file('cover_image')->store('course_covers', 'public');
         }
 
-        Course::create($data);
+        $course = Course::create($data);
+
+        if ($course->is_published) {
+            $users = User::where(function($q) {
+                $q->whereNull('notification_preferences')
+                  ->orWhereJsonContains('notification_preferences->new_courses', true);
+            })->get();
+            if ($users->isNotEmpty()) {
+                Notification::send($users, new NewCourseNotification($course));
+            }
+        }
+
         return back()->with('success', 'Course created successfully');
     }
 
@@ -130,7 +144,20 @@ class CourseController extends Controller
             $data['cover_image'] = $request->file('cover_image')->store('course_covers', 'public');
         }
 
+        $wasPublished = $course->is_published;
+        
         $course->update($data);
+
+        if (!$wasPublished && $course->is_published) {
+            $users = User::where(function($q) {
+                $q->whereNull('notification_preferences')
+                  ->orWhereJsonContains('notification_preferences->new_courses', true);
+            })->get();
+            if ($users->isNotEmpty()) {
+                Notification::send($users, new NewCourseNotification($course));
+            }
+        }
+
         return back()->with('success', 'Course updated successfully');
     }
 

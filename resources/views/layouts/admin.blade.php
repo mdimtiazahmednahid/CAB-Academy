@@ -124,7 +124,8 @@
             <a href="{{ route('admin.payment-methods.index') }}" class="block text-gray-300 hover:text-white py-2">Payment Methods</a>
             <a href="{{ route('admin.payments.index') }}" class="block text-gray-300 hover:text-white py-2">Pending Payments</a>
             <a href="{{ route('admin.frontend.index') }}" class="block text-gray-300 hover:text-white py-2">Frontend</a>
-            <a href="{{ route('admin.settings') }}" class="block text-gray-300 hover:text-white py-2">Settings</a>
+            <a href="{{ route('admin.settings') }}" class="block text-gray-300 hover:text-white py-2 {{ request()->routeIs('admin.settings') ? 'font-bold text-white' : '' }}">Settings</a>
+            <a href="{{ route('admin.announcements.create') }}" class="block text-gray-300 hover:text-white py-2 {{ request()->routeIs('admin.announcements.*') ? 'font-bold text-white' : '' }}">Announcements</a>
             <a href="{{ route('admin.trash.index') }}" class="block text-gray-300 hover:text-white py-2 text-red-400">Trash Bin</a>
             @endif
             <div class="mt-auto border-t border-gray-800 pt-2">

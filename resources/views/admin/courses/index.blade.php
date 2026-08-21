@@ -18,7 +18,8 @@
 @endif
 
 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-    <table class="w-full text-left text-sm">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
         <thead class="bg-gray-50 border-b border-gray-100 text-gray-500 uppercase text-xs">
             <tr>
                 <th class="px-6 py-4 font-medium">Title</th>
@@ -61,7 +62,8 @@
             </tr>
             @endforelse
         </tbody>
-    </table>
+        </table>
+    </div>
 </div>
 
 <!-- Create Modal -->

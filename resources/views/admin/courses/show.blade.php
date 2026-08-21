@@ -245,7 +245,7 @@
                                 <div class="text-xs text-gray-500">{{ $payment->user->email }}</div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="font-bold text-gray-900">${{ $payment->amount }}</div>
+                                <div class="font-bold text-gray-900">৳{{ $payment->amount }}</div>
                                 <div class="text-xs text-gray-500 mt-1">
                                     <span class="font-semibold">{{ $payment->paymentMethod->provider_name ?? 'Unknown' }}</span> • 
                                     Trx: <span class="font-mono text-gray-700">{{ $payment->transaction_id }}</span>

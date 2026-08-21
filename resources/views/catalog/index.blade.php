@@ -37,7 +37,7 @@
                 
                 @if($course->price > 0)
                     <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-900 font-bold px-3 py-1 rounded-full text-sm shadow-sm">
-                        ${{ number_format($course->price, 2) }}
+                        ৳{{ number_format($course->price, 2) }}
                     </div>
                 @else
                     <div class="absolute top-3 right-3 bg-green-500/90 backdrop-blur-sm text-white font-bold px-3 py-1 rounded-full text-sm shadow-sm">

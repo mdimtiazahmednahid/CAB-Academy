@@ -16,7 +16,8 @@ Route::get('/reset-db', function () {
 
 Route::get('/', function () {
     $courses = \App\Models\Course::where('is_published', true)->latest()->take(3)->get();
-    return view('welcome', compact('courses'));
+    $jobs = \App\Models\JobPost::where('is_active', true)->latest()->take(3)->get();
+    return view('welcome', compact('courses', 'jobs'));
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -33,7 +34,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $enrolledCourses = $user->enrolledCourses()->latest()->get();
         $jobApplications = $user->jobApplications()->with('jobPost')->latest()->get();
         
-        return view('dashboard', compact('payments', 'enrolledCourses', 'jobApplications'));
+        $feedCourses = \App\Models\Course::where('is_published', true)->latest()->take(3)->get();
+        $feedJobs = \App\Models\JobPost::where('is_active', true)->latest()->take(3)->get();
+        
+        return view('dashboard', compact('payments', 'enrolledCourses', 'jobApplications', 'feedCourses', 'feedJobs'));
     })->name('dashboard');
 
     Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
@@ -93,6 +97,9 @@ Route::prefix('admin')->middleware(['auth', 'verified', \App\Http\Middleware\IsA
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');
         Route::post('/settings', [SettingsController::class, 'store'])->name('admin.settings.store');
         
+        Route::get('/announcements', [\App\Http\Controllers\Admin\AnnouncementController::class, 'create'])->name('admin.announcements.create');
+        Route::post('/announcements', [\App\Http\Controllers\Admin\AnnouncementController::class, 'store'])->name('admin.announcements.store');
+        
         Route::get('/frontend', [App\Http\Controllers\Admin\FrontendController::class, 'index'])->name('admin.frontend.index');
         Route::post('/frontend', [App\Http\Controllers\Admin\FrontendController::class, 'store'])->name('admin.frontend.store');
         
@@ -120,7 +127,12 @@ Route::prefix('admin')->middleware(['auth', 'verified', \App\Http\Middleware\IsA
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/notifications', [ProfileController::class, 'updateNotifications'])->name('profile.notifications.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::post('/notifications/{id}/mark-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 });
 
 require __DIR__.'/auth.php';

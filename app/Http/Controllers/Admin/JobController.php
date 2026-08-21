@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobPost;
+use App\Models\User;
+use App\Notifications\NewJobNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class JobController extends Controller
 {
@@ -33,7 +36,18 @@ class JobController extends Controller
             $data['company_logo'] = $request->file('company_logo')->store('company_logos', 'public');
         }
 
-        JobPost::create($data);
+        $job = JobPost::create($data);
+
+        if ($job->is_active) {
+            $users = User::where(function($q) {
+                $q->whereNull('notification_preferences')
+                  ->orWhereJsonContains('notification_preferences->new_jobs', true);
+            })->get();
+            if ($users->isNotEmpty()) {
+                Notification::send($users, new NewJobNotification($job));
+            }
+        }
+
         return back()->with('success', 'Job posted successfully!');
     }
 
@@ -56,7 +70,20 @@ class JobController extends Controller
             $data['company_logo'] = $request->file('company_logo')->store('company_logos', 'public');
         }
 
+        $wasActive = $job->is_active;
+
         $job->update($data);
+
+        if (!$wasActive && $job->is_active) {
+            $users = User::where(function($q) {
+                $q->whereNull('notification_preferences')
+                  ->orWhereJsonContains('notification_preferences->new_jobs', true);
+            })->get();
+            if ($users->isNotEmpty()) {
+                Notification::send($users, new NewJobNotification($job));
+            }
+        }
+
         return back()->with('success', 'Job updated successfully!');
     }
 

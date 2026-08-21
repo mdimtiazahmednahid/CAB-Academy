@@ -96,12 +96,12 @@ class DemoDataSeeder extends Seeder
                     'time_limit' => 15, // minutes
                 ]);
 
-                $q1 = Question::create(['quiz_id' => $quiz->id, 'question_text' => 'Which of the following is correct?', 'points' => 10]);
+                $q1 = Question::create(['quiz_id' => $quiz->id, 'question_text' => 'Which of the following is correct?']);
                 Option::create(['question_id' => $q1->id, 'option_text' => 'Option A', 'is_correct' => false]);
                 Option::create(['question_id' => $q1->id, 'option_text' => 'Option B (Correct)', 'is_correct' => true]);
                 Option::create(['question_id' => $q1->id, 'option_text' => 'Option C', 'is_correct' => false]);
 
-                $q2 = Question::create(['quiz_id' => $quiz->id, 'question_text' => 'Is coding fun?', 'points' => 10]);
+                $q2 = Question::create(['quiz_id' => $quiz->id, 'question_text' => 'Is coding fun?']);
                 Option::create(['question_id' => $q2->id, 'option_text' => 'Yes', 'is_correct' => true]);
                 Option::create(['question_id' => $q2->id, 'option_text' => 'No', 'is_correct' => false]);
             }

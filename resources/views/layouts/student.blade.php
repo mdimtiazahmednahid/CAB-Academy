@@ -72,14 +72,24 @@
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 <span class="hidden lg:block">Performance</span>
             </a>
-            <a href="{{ route('jobs.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('jobs.index') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
+            <a href="{{ route('jobs.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('jobs.*') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                 <span class="hidden lg:block">Careers</span>
             </a>
-            <a href="#" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
-                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                <span class="hidden lg:block">AI Tutor</span>
+            
+            <a href="{{ route('notifications.index') }}" class="flex items-center justify-between p-3 rounded-xl {{ request()->routeIs('notifications.*') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="hidden lg:block">Alerts</span>
+                </div>
+                @if(auth()->user()->unreadNotifications->count() > 0)
+                    <span class="hidden lg:flex items-center justify-center w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full">
+                        {{ auth()->user()->unreadNotifications->count() }}
+                    </span>
+                    <span class="lg:hidden w-2 h-2 bg-red-500 rounded-full"></span>
+                @endif
             </a>
+
             <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('profile.edit') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 <span class="hidden lg:block">Profile</span>
@@ -161,11 +171,9 @@
             <span class="text-[10px] font-semibold tracking-wide">Stats</span>
         </a>
 
-        <a href="#" class="flex flex-col items-center justify-center p-2 w-16 text-gray-400 hover:text-gray-600 transition-colors relative">
-            <!-- Sparkles badge to indicate AI -->
-            <div class="absolute top-1 right-2 w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            <span class="text-[10px] font-semibold tracking-wide">AI</span>
+        <a href="{{ route('jobs.index') }}" class="flex flex-col items-center justify-center p-2 w-16 {{ request()->routeIs('jobs.index') ? 'tab-active' : 'text-gray-400 hover:text-gray-600' }} transition-colors">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <span class="text-[10px] font-semibold tracking-wide">Careers</span>
         </a>
         
         <a href="{{ route('profile.edit') }}" class="flex flex-col items-center justify-center p-2 w-16 {{ request()->routeIs('profile.edit') ? 'tab-active' : 'text-gray-400 hover:text-gray-600' }} transition-colors">

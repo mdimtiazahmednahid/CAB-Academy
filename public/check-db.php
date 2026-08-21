@@ -41,7 +41,16 @@ foreach ($users as $user) {
 }
 echo "</table>";
 
+echo "<h3>Settings Table:</h3>";
+$logoSetting = \App\Models\Setting::where('key', 'site_logo')->first();
+$logoValue = $logoSetting ? $logoSetting->value : 'NULL';
+echo "<b>site_logo DB value:</b> " . htmlspecialchars($logoValue) . "<br>";
+$cachedLogo = \App\Models\Setting::getVal('site_logo', 'NULL');
+echo "<b>site_logo Cached value:</b> " . htmlspecialchars($cachedLogo) . "<br>";
+
 echo "<h3>Config Debug:</h3>";
-echo "FILESYSTEM_DISK: " . config('filesystems.default') . "<br>";
+echo "FILESYSTEM_DISK (env): " . env('FILESYSTEM_DISK') . "<br>";
+echo "FILESYSTEM_DISK (config): " . config('filesystems.default') . "<br>";
 echo "Public Disk Root: " . config('filesystems.disks.public.root') . "<br>";
 echo "Public Disk URL: " . config('filesystems.disks.public.url') . "<br>";
+

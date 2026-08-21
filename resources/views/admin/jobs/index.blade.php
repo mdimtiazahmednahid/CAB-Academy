@@ -20,8 +20,9 @@
 @endif
 
 <div class="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden">
-    <table class="w-full text-left border-collapse">
-        <thead>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
             <tr class="bg-gray-50 border-b border-gray-100">
                 <th class="p-4 font-semibold text-gray-900">Job Title</th>
                 <th class="p-4 font-semibold text-gray-900">Company</th>
@@ -69,8 +70,9 @@
                     <td colspan="5" class="p-8 text-center text-gray-500">No jobs posted yet.</td>
                 </tr>
             @endforelse
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- Create Modal -->
@@ -102,7 +104,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Salary Range</label>
-                        <input type="text" name="salary_range" placeholder="e.g. $50k - $70k" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <input type="text" name="salary_range" placeholder="e.g. ৳50k - ৳70k" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                 </div>
                 <div>
@@ -153,7 +155,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Salary Range</label>
-                        <input type="text" name="salary_range" id="edit_salary" placeholder="e.g. $50k - $70k" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <input type="text" name="salary_range" id="edit_salary" placeholder="e.g. ৳50k - ৳70k" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                 </div>
                 <div>

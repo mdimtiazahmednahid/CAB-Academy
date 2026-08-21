@@ -51,6 +51,22 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
+    public function updateNotifications(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        
+        $preferences = [
+            'new_courses' => $request->has('notify_new_courses'),
+            'new_jobs' => $request->has('notify_new_jobs'),
+            'announcements' => $request->has('notify_announcements'),
+        ];
+        
+        $user->notification_preferences = $preferences;
+        $user->save();
+        
+        return Redirect::route('profile.edit')->with('status', 'notifications-updated');
+    }
+
     /**
      * Delete the user's account.
      */

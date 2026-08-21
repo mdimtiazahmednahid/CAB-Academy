@@ -39,7 +39,7 @@
                             <div class="space-y-3">
                                 @foreach($methods as $index => $method)
                                     <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none">
-                                        <input type="radio" name="payment_method_id" value="{{ $method->id }}" class="peer sr-only" {{ $index === 0 ? 'checked' : '' }} onchange="updateInstructions('instructions-{{ $method->id }}')">
+                                        <input type="radio" name="payment_method_id" value="{{ $method->id }}" data-is-bank="{{ stripos($method->provider_name, 'bank') !== false ? 'true' : 'false' }}" class="peer sr-only" {{ $index === 0 ? 'checked' : '' }} onchange="updateInstructions('instructions-{{ $method->id }}', this)">
                                         <span class="peer-checked:border-primary peer-checked:ring-1 peer-checked:ring-primary absolute inset-0 rounded-lg border-2 border-transparent pointer-events-none"></span>
                                         <div class="flex flex-1 items-center justify-between">
                                             <div class="flex flex-col">
@@ -58,8 +58,8 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Sender Number</label>
-                                <input type="text" name="sender_number" maxlength="11" minlength="11" pattern="01[3-9][0-9]{8}" title="Must be exactly 11 digits starting with 01" required placeholder="e.g. 01712345678" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Sender Number / Account Number</label>
+                                <input type="text" id="sender_number" name="sender_number" required class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Transaction ID (TrxID)</label>
@@ -79,9 +79,31 @@
 </div>
 
 <script>
-    function updateInstructions(id) {
+    function updateInstructions(id, radio) {
         document.querySelectorAll('.payment-instructions').forEach(el => el.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
+        
+        let senderInput = document.getElementById('sender_number');
+        if (radio && radio.getAttribute('data-is-bank') === 'true') {
+            senderInput.removeAttribute('maxlength');
+            senderInput.removeAttribute('minlength');
+            senderInput.removeAttribute('pattern');
+            senderInput.setAttribute('title', 'Enter your bank account number');
+            senderInput.setAttribute('placeholder', 'e.g. 12345678901234');
+        } else {
+            senderInput.setAttribute('maxlength', '11');
+            senderInput.setAttribute('minlength', '11');
+            senderInput.setAttribute('pattern', '01[3-9][0-9]{8}');
+            senderInput.setAttribute('title', 'Must be exactly 11 digits starting with 01');
+            senderInput.setAttribute('placeholder', 'e.g. 01712345678');
+        }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        let checked = document.querySelector('input[name="payment_method_id"]:checked');
+        if (checked) {
+            updateInstructions('instructions-' + checked.value, checked);
+        }
+    });
 </script>
 @endsection

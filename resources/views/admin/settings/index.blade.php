@@ -79,6 +79,70 @@
         </div>
     </div>
 
+    <!-- Landing Page Customization Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+        <h3 class="text-lg font-semibold mb-4 border-b border-gray-50 pb-2">Landing Page Customization</h3>
+        
+        <div class="space-y-5">
+            <!-- Under Construction Mode -->
+            <div class="flex items-center gap-3 p-4 bg-yellow-50 rounded-lg border border-yellow-100">
+                <input type="hidden" name="under_construction_mode" value="0">
+                <input type="checkbox" id="under_construction_mode" name="under_construction_mode" value="1" 
+                       {{ (isset($settings['under_construction_mode']) && $settings['under_construction_mode']->value == '1') ? 'checked' : '' }}
+                       class="w-5 h-5 text-yellow-600 border-yellow-300 rounded focus:ring-yellow-500">
+                <label for="under_construction_mode" class="text-sm font-medium text-yellow-900">
+                    Enable "Under Construction" Banner Mode
+                </label>
+            </div>
+
+            <!-- Hero Section Texts -->
+            <h4 class="font-medium text-gray-800 pt-2">Hero Section</h4>
+            
+            <div class="focus-ring-primary rounded-lg">
+                <label for="landing_hero_title" class="block text-sm font-medium text-gray-700 mb-1">Hero Title</label>
+                <input type="text" id="landing_hero_title" name="landing_hero_title" 
+                       value="{{ $settings['landing_hero_title']->value ?? 'Master Your Future with CAB Academy' }}"
+                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+            </div>
+
+            <div class="focus-ring-primary rounded-lg">
+                <label for="landing_hero_subtitle" class="block text-sm font-medium text-gray-700 mb-1">Hero Subtitle</label>
+                <textarea id="landing_hero_subtitle" name="landing_hero_subtitle" rows="2"
+                          class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base resize-none">{{ $settings['landing_hero_subtitle']->value ?? 'Join thousands of students learning in-demand skills from industry experts. Start your journey today and transform your career.' }}</textarea>
+            </div>
+            
+            <div class="focus-ring-primary rounded-lg">
+                <label for="landing_hero_cta" class="block text-sm font-medium text-gray-700 mb-1">Hero Button Text</label>
+                <input type="text" id="landing_hero_cta" name="landing_hero_cta" 
+                       value="{{ $settings['landing_hero_cta']->value ?? 'Explore Courses' }}"
+                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+            </div>
+
+            <!-- CTA Section Texts -->
+            <h4 class="font-medium text-gray-800 pt-4 border-t border-gray-50">Bottom CTA Section</h4>
+            
+            <div class="focus-ring-primary rounded-lg">
+                <label for="landing_cta_title" class="block text-sm font-medium text-gray-700 mb-1">CTA Title</label>
+                <input type="text" id="landing_cta_title" name="landing_cta_title" 
+                       value="{{ $settings['landing_cta_title']->value ?? 'Ready to start learning?' }}"
+                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+            </div>
+
+            <div class="focus-ring-primary rounded-lg">
+                <label for="landing_cta_subtitle" class="block text-sm font-medium text-gray-700 mb-1">CTA Subtitle</label>
+                <textarea id="landing_cta_subtitle" name="landing_cta_subtitle" rows="2"
+                          class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base resize-none">{{ $settings['landing_cta_subtitle']->value ?? 'Join our community today and get access to all premium features.' }}</textarea>
+            </div>
+            
+            <div class="focus-ring-primary rounded-lg">
+                <label for="landing_cta_button" class="block text-sm font-medium text-gray-700 mb-1">CTA Button Text</label>
+                <input type="text" id="landing_cta_button" name="landing_cta_button" 
+                       value="{{ $settings['landing_cta_button']->value ?? 'Get Started for Free' }}"
+                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+            </div>
+        </div>
+    </div>
+
     <!-- Registration Journey Section -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6" x-data="registrationFields()">
         <h3 class="text-lg font-semibold mb-1 border-b border-gray-50 pb-2 flex justify-between items-center">

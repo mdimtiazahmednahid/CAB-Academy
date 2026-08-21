@@ -97,6 +97,118 @@
         </div>
     </div>
 
+    <!-- Recommended Courses Feed -->
+    @if(isset($feedCourses) && $feedCourses->isNotEmpty())
+    <div class="mt-8">
+        <div class="flex justify-between items-end mb-4">
+            <div>
+                <h3 class="font-bold text-xl text-gray-900">Recommended Courses</h3>
+                <p class="text-sm text-gray-500 mt-1">Explore our latest additions to expand your skills.</p>
+            </div>
+            <a href="{{ route('catalog.index') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold">View all &rarr;</a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($feedCourses as $course)
+                <a href="{{ route('courses.show', $course) }}" class="group bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden hover:shadow-[0_4px_25px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col active:scale-[0.98]">
+                    <!-- Thumbnail -->
+                    <div class="w-full h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
+                        @if($course->cover_image)
+                            <img src="{{ Storage::url($course->cover_image) }}" alt="{{ $course->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        @elseif($course->thumbnail)
+                            <img src="{{ $course->thumbnail }}" alt="{{ $course->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        @else
+                            <div class="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600"></div>
+                            <span class="relative text-white font-bold text-3xl opacity-80">{{ substr($course->title, 0, 1) }}</span>
+                        @endif
+                        
+                        @if($course->price > 0)
+                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-900 font-bold px-3 py-1 rounded-full text-sm shadow-sm">
+                                ৳{{ number_format($course->price, 2) }}
+                            </div>
+                        @else
+                            <div class="absolute top-3 right-3 bg-green-500/90 backdrop-blur-sm text-white font-bold px-3 py-1 rounded-full text-sm shadow-sm">
+                                Free
+                            </div>
+                        @endif
+                    </div>
+                    <!-- Content -->
+                    <div class="p-5 flex-1 flex flex-col">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">{{ $course->title }}</h3>
+                        <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-1">{{ $course->description }}</p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                            <span class="text-sm font-bold text-indigo-600 flex items-center gap-1 w-full justify-center bg-indigo-50 py-2 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                View Details <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
+    <!-- Career Opportunities Feed -->
+    @if(isset($feedJobs) && $feedJobs->isNotEmpty())
+    <div class="mt-8">
+        <div class="flex justify-between items-end mb-4">
+            <div>
+                <h3 class="font-bold text-xl text-gray-900">Career Opportunities</h3>
+                <p class="text-sm text-gray-500 mt-1">Exclusive job openings for our students.</p>
+            </div>
+            <a href="{{ route('jobs.index') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold">View all &rarr;</a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($feedJobs as $job)
+                <a href="{{ route('jobs.index') }}" class="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden flex flex-col p-6 hover:shadow-[0_4px_25px_rgba(0,0,0,0.06)] transition-all duration-300 active:scale-[0.98] group">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-4">
+                            @if($job->company_logo)
+                                <img src="{{ Storage::url($job->company_logo) }}" alt="{{ $job->company }}" class="w-12 h-12 rounded-xl object-cover border border-gray-100 shadow-sm shrink-0">
+                            @else
+                                <div class="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 shadow-sm">
+                                    <span class="text-lg font-bold text-gray-400">{{ substr($job->company, 0, 1) }}</span>
+                                </div>
+                            @endif
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-xl leading-tight group-hover:text-indigo-600 transition-colors">{{ $job->title }}</h3>
+                                <p class="text-indigo-600 font-medium mt-0.5">{{ $job->company }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 mb-4">
+                        @if($job->location)
+                            <div class="flex items-center text-sm text-gray-600 gap-1 bg-gray-50 px-2 py-1 rounded-lg">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                {{ $job->location }}
+                            </div>
+                        @endif
+                        @if($job->salary_range)
+                            <div class="flex items-center text-sm text-gray-600 gap-1 bg-gray-50 px-2 py-1 rounded-lg">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                {{ $job->salary_range }}
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="text-sm text-gray-600 mb-6 flex-1 line-clamp-3">
+                        {{ $job->description }}
+                    </div>
+
+                    <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                        <span class="text-sm font-bold text-indigo-600 flex items-center gap-1 w-full justify-center bg-indigo-50 py-2 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            Apply Now <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </span>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
+    <!-- Spacer before payments -->
+    <div class="pt-4 border-t border-gray-100"></div>
+
     <!-- My Payment Requests -->
     @if($payments->isNotEmpty())
     <div>
