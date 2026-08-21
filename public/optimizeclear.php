@@ -7,8 +7,8 @@ $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
 try {
-    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-    echo "<h1>Migration completed successfully!</h1>";
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    echo "<h1>Optimization Cleared successfully!</h1>";
     echo "<pre>" . \Illuminate\Support\Facades\Artisan::output() . "</pre>";
 } catch (\Exception $e) {
     echo "<h1>Error:</h1>";

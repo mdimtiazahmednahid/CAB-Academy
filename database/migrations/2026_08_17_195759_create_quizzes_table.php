@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
+            $table->integer('passing_score')->default(80);
+            $table->integer('time_limit')->nullable()->comment('in minutes');
             $table->boolean('is_published')->default(false);
             $table->timestamps();
         });

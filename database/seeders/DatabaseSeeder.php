@@ -13,13 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Super Admin',
-            'email' => 'admin@cab-academy.com',
-            'password' => bcrypt('password'),
-            'role' => 'admin',
+        $this->call([
+            DemoDataSeeder::class,
         ]);
     }
 }

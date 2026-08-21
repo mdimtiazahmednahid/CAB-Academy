@@ -133,9 +133,10 @@ class DemoDataSeeder extends Seeder
         // 8. Create Payment Methods
         if (PaymentMethod::count() == 0) {
             PaymentMethod::create([
-                'name' => 'Bank Transfer',
-                'description' => 'Transfer directly to our corporate bank account.',
-                'instructions' => "Bank: World Bank\nAccount: 123456789\nRouting: 987654321\nPlease include your order ID in the reference.",
+                'provider_name' => 'Bank Transfer',
+                'account_number' => '123456789',
+                'account_type' => 'Corporate',
+                'instructions' => "Transfer directly to our corporate bank account.\nBank: World Bank\nRouting: 987654321\nPlease include your order ID in the reference.",
                 'is_active' => true,
             ]);
         }

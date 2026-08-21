@@ -35,15 +35,18 @@ class UserController extends Controller
 
         $data['password'] = bcrypt($data['password']);
 
+        $user = new User();
+        $user->fill($data);
+
         if ($request->hasFile('profile_picture')) {
-            $data['profile_picture'] = $request->file('profile_picture')->store('profiles', 'public');
+            $user->profile_picture = $request->file('profile_picture')->store('profiles', 'public');
         }
 
         if ($request->hasFile('cover_photo')) {
-            $data['cover_photo'] = $request->file('cover_photo')->store('covers', 'public');
+            $user->cover_photo = $request->file('cover_photo')->store('covers', 'public');
         }
 
-        User::create($data);
+        $user->save();
 
         return redirect()->route('admin.users')->with('success', 'User created successfully.');
     }
@@ -82,14 +85,17 @@ class UserController extends Controller
         }
 
         if ($request->hasFile('profile_picture')) {
-            $data['profile_picture'] = $request->file('profile_picture')->store('profiles', 'public');
+            $user->profile_picture = $request->file('profile_picture')->store('profiles', 'public');
+            unset($data['profile_picture']);
         }
 
         if ($request->hasFile('cover_photo')) {
-            $data['cover_photo'] = $request->file('cover_photo')->store('covers', 'public');
+            $user->cover_photo = $request->file('cover_photo')->store('covers', 'public');
+            unset($data['cover_photo']);
         }
 
-        $user->update($data);
+        $user->fill($data);
+        $user->save();
 
         return back()->with('success', 'User updated successfully.');
     }

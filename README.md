@@ -1,58 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CAB Academy
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+CAB Academy is a modern Learning Management System (LMS) and student portal built with Laravel. It provides a comprehensive platform for managing courses, student enrollments, quizzes, performance tracking, and a job portal.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **User Roles:** Distinct dashboards and permissions for Admins and Students.
+- **Course Management:** Create, update, and manage courses, sections, lessons, and course materials.
+- **Quizzes & Assessments:** Interactive quizzes tied to courses to test student knowledge.
+- **Performance Tracking:** Monitor student progress and performance across courses.
+- **Job Portal:** Integrated job board allowing students to browse and apply for jobs directly.
+- **Payments & Checkout:** Integrated payment processing, payment methods, and enrollment management.
+- **Admin Dashboard:** Full administrative control over users, content, site settings, and site frontend.
+- **Recycle Bin (Trash):** Safe soft-delete system with restore functionality for courses, jobs, and other entities.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Framework:** Laravel
+- **Language:** PHP 8.2+
+- **Database:** MySQL / MariaDB
+- **Frontend:** Blade Templating
 
-## Learning Laravel
+## Installation & Setup (Local)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd CAB-Academy
+   ```
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. **Install dependencies**
+   ```bash
+   composer install
+   npm install
+   npm run build
+   ```
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+3. **Environment Setup**
+   Copy the `.env.example` file and configure your environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+   Update the database credentials in your `.env` file.
 
-## Agentic Development
+4. **Generate Application Key**
+   ```bash
+   php artisan key:generate
+   ```
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+5. **Run Migrations & Seeders**
+   This will create the database structure and populate it with default data (like an initial admin account).
+   ```bash
+   php artisan migrate --seed
+   ```
 
-```bash
-composer require laravel/boost --dev
+6. **Storage Link**
+   Make sure to link your storage directory so uploaded files (like course thumbnails) are accessible:
+   ```bash
+   php artisan storage:link
+   ```
 
-php artisan boost:install
-```
+7. **Run the Development Server**
+   ```bash
+   php artisan serve
+   ```
+   Access the application at `http://localhost:8000`.
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Shared Hosting Deployment (e.g. InfinityFree)
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you are deploying to a shared host without terminal access (like InfinityFree):
+1. Upload your files to the server.
+2. Update your `.env` file with the server's database credentials.
+3. If you encounter the `1071 Specified key was too long` error, it has already been patched in `AppServiceProvider.php` and the `jobs` migration.
+4. Use the temporary utility scripts placed in the `public/` directory (e.g., `https://cabacademy.bd/migrate-fresh.php`) to setup and seed the database.
+5. **Warning:** Delete those utility scripts from your server immediately after your database is set up to protect it from being reset by others!
 
 ## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proprietary / Closed Source.

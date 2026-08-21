@@ -7,6 +7,13 @@ use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\QuizController as AdminQuizController;
+Route::get('/reset-db', function () {
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
+    \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+    return 'Database optimized, cleared, and migrated successfully!';
+});
+
 Route::get('/', function () {
     $courses = \App\Models\Course::where('is_published', true)->latest()->take(3)->get();
     return view('welcome', compact('courses'));
