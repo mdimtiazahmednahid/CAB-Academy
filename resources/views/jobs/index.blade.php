@@ -9,6 +9,26 @@
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8">
+    @if(session('success'))
+        <div class="mb-6 p-4 bg-green-50 text-green-800 rounded-lg border border-green-200">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="mb-6 p-4 bg-red-50 text-red-800 rounded-lg border border-red-200">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if($errors->any())
+        <div class="mb-6 p-4 bg-red-50 text-red-800 rounded-lg border border-red-200">
+            <ul class="list-disc pl-5 text-sm space-y-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     @forelse($jobs as $job)
         <div class="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden flex flex-col p-6">
             <div class="flex justify-between items-start mb-4">
@@ -49,9 +69,15 @@
                 {{ $job->description }}
             </div>
 
-            <a href="{{ $job->apply_link }}" target="_blank" class="w-full block text-center px-4 py-2.5 bg-primary text-white rounded-xl font-medium hover:opacity-90 transition-opacity">
-                Apply Now
-            </a>
+            @if($job->apply_link)
+                <a href="{{ $job->apply_link }}" target="_blank" class="w-full block text-center px-4 py-2.5 bg-primary text-white rounded-xl font-medium hover:opacity-90 transition-opacity">
+                    Apply Externally
+                </a>
+            @else
+                <button onclick='openApplyModal({{ $job->id }}, @json($job->title))' class="w-full block text-center px-4 py-2.5 bg-primary text-white rounded-xl font-medium hover:opacity-90 transition-opacity">
+                    Apply Now
+                </button>
+            @endif
         </div>
     @empty
         <div class="col-span-full p-12 text-center bg-gray-50 rounded-3xl border border-gray-100">
@@ -61,4 +87,36 @@
         </div>
     @endforelse
 </div>
+
+<!-- Apply Modal -->
+<div id="applyModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">Apply for: <span id="applyJobTitle" class="text-primary"></span></h3>
+            <button onclick="document.getElementById('applyModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
+        </div>
+        <form method="POST" id="applyForm" enctype="multipart/form-data">
+            @csrf
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Resume (PDF/DOC, max 5MB) <span class="text-red-500">*</span></label>
+                    <input type="file" name="resume" accept=".pdf,.doc,.docx" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Cover Letter (Optional)</label>
+                    <textarea name="cover_letter" rows="4" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary" placeholder="Why are you a good fit?"></textarea>
+                </div>
+                <button type="submit" class="w-full px-4 py-2 bg-primary text-white rounded-lg font-medium hover:opacity-90">Submit Application</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openApplyModal(jobId, jobTitle) {
+        document.getElementById('applyJobTitle').innerText = jobTitle;
+        document.getElementById('applyForm').action = `/jobs/${jobId}/apply`;
+        document.getElementById('applyModal').classList.remove('hidden');
+    }
+</script>
 @endsection

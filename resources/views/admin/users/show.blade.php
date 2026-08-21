@@ -49,8 +49,55 @@
         </div>
     </div>
 
-    <!-- Right Column: Activity -->
+    <!-- Right Column: Activity & Preferences -->
     <div class="lg:col-span-2 space-y-6">
+        <!-- User Preferences (Recommendations) -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="font-bold text-lg text-gray-900">Personalized Recommendations (Preferences)</h3>
+            </div>
+            <div class="p-6">
+                <form action="{{ route('admin.users.preferences.update', $user) }}" method="POST" class="space-y-4">
+                    @csrf
+                    @method('PUT')
+                    
+                    @php
+                        $prefs = $user->preferences ?? [];
+                        $level = $prefs['level'] ?? '';
+                        $subjects = $prefs['subjects'] ?? [];
+                        $goals = $prefs['goals'] ?? [];
+                    @endphp
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Education Level</label>
+                        <select name="level" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                            <option value="">-- Select Level --</option>
+                            <option value="school" {{ $level === 'school' ? 'selected' : '' }}>School (Class 1-10)</option>
+                            <option value="college" {{ $level === 'college' ? 'selected' : '' }}>College (HSC)</option>
+                            <option value="university" {{ $level === 'university' ? 'selected' : '' }}>University / Admission</option>
+                            <option value="professional" {{ $level === 'professional' ? 'selected' : '' }}>Professional / Skill Development</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Subjects (Comma-separated)</label>
+                        <input type="text" name="subjects" value="{{ implode(', ', $subjects) }}" placeholder="e.g., Science, Math, Programming" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Goals (Comma-separated)</label>
+                        <input type="text" name="goals" value="{{ implode(', ', $goals) }}" placeholder="e.g., Get A+, Job Prep" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:opacity-90">
+                            Update Preferences
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Quiz Attempts -->
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-gray-100">

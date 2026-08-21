@@ -8,6 +8,10 @@ class OnboardingController extends Controller
 {
     public function index()
     {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
         if (auth()->user()->preferences !== null) {
             return redirect()->route('dashboard');
         }

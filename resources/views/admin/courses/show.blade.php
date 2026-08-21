@@ -41,7 +41,7 @@
                     {{ $section->title }}
                 </h3>
                 <div class="flex items-center gap-3">
-                    <button onclick="openEditSectionModal({{ $section->id }}, '{{ addslashes($section->title) }}', {{ $section->order }})" class="text-sm font-medium text-gray-500 hover:text-gray-900">Edit</button>
+                    <button onclick='openEditSectionModal({{ $section->id }}, @json($section->title), {{ $section->order }})' class="text-sm font-medium text-gray-500 hover:text-gray-900">Edit</button>
                     <form method="POST" action="{{ route('admin.courses.sections.destroy', [$course, $section]) }}" class="inline">
                         @csrf
                         @method('DELETE')
@@ -60,7 +60,7 @@
                         </div>
                         <div class="text-sm text-gray-500 truncate max-w-xs flex items-center gap-3">
                             {{ $lesson->video_url ? 'Video attached' : 'Text lesson' }}
-                            <button onclick="openEditLessonModal({{ $section->id }}, {{ $lesson->id }}, '{{ addslashes($lesson->title) }}', '{{ addslashes($lesson->video_url ?? '') }}', `{{ addslashes($lesson->content ?? '') }}`, {{ $lesson->order }})" class="text-xs font-medium text-gray-500 hover:text-gray-900 ml-2">Edit</button>
+                            <button onclick='openEditLessonModal({{ $section->id }}, {{ $lesson->id }}, @json($lesson->title), @json($lesson->video_url ?? ""), @json($lesson->content ?? ""), {{ $lesson->order }})' class="text-xs font-medium text-gray-500 hover:text-gray-900 ml-2">Edit</button>
                             <form method="POST" action="{{ route('admin.courses.lessons.destroy', [$course, $section, $lesson]) }}" class="inline">
                                 @csrf
                                 @method('DELETE')
@@ -220,6 +220,64 @@
     </div>
 </div>
 
+<!-- Course Payments & Verifications -->
+<div class="mb-8">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-900">Payments & Verifications</h2>
+        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">{{ $course->payments->count() }} Payments</span>
+    </div>
+    
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wide border-b border-gray-100">
+                    <tr>
+                        <th class="px-6 py-4 font-medium">Student</th>
+                        <th class="px-6 py-4 font-medium">Transaction Details</th>
+                        <th class="px-6 py-4 font-medium">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse($course->payments as $payment)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">{{ $payment->user->name }}</div>
+                                <div class="text-xs text-gray-500">{{ $payment->user->email }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-gray-900">${{ $payment->amount }}</div>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    <span class="font-semibold">{{ $payment->paymentMethod->provider_name ?? 'Unknown' }}</span> • 
+                                    Trx: <span class="font-mono text-gray-700">{{ $payment->transaction_id }}</span>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-0.5">Sender: {{ $payment->sender_number }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <form action="{{ route('admin.payments.updateStatus', $payment) }}" method="POST" class="flex items-center gap-2">
+                                    @csrf
+                                    <select name="status" class="text-sm rounded border-gray-300 py-1 pl-2 pr-8 focus:ring-primary focus:border-primary">
+                                        <option value="pending" {{ $payment->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="processing" {{ $payment->status == 'processing' ? 'selected' : '' }}>Processing</option>
+                                        <option value="verified" {{ $payment->status == 'verified' ? 'selected' : '' }}>Verified (Enrolled)</option>
+                                        <option value="rejected" {{ $payment->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                    </select>
+                                    <button type="submit" class="px-2 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 text-xs font-medium">Update</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-8 text-center text-gray-500">
+                                No payments recorded for this course.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <!-- Section Modal -->
 <div id="sectionModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
@@ -354,7 +412,7 @@
                     <textarea name="description" rows="3" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary"></textarea>
                 </div>
                 <div class="flex items-center">
-                    <input type="checkbox" name="is_published" id="quiz_is_published" class="rounded text-primary focus:ring-primary mr-2">
+                    <input type="checkbox" name="is_published" id="quiz_is_published" value="1" class="rounded text-primary focus:ring-primary mr-2">
                     <label for="quiz_is_published" class="text-sm font-medium text-gray-700">Publish immediately</label>
                 </div>
                 <button type="submit" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:opacity-90">Create Quiz</button>
@@ -465,6 +523,16 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
                         <input type="number" step="0.01" name="price" value="{{ $course->price }}" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Level (Optional)</label>
+                        <input type="text" name="level" value="{{ $course->level }}" placeholder="e.g. HSC" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category (Optional)</label>
+                        <input type="text" name="category" value="{{ $course->category }}" placeholder="e.g. Science" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                 </div>
                 <div>

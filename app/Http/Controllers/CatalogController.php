@@ -25,7 +25,23 @@ class CatalogController extends Controller
                 break;
             case 'recommended':
             default:
-                // For now, recommended is just newest, but we'll prioritize courses with cover images
+                if (auth()->check() && auth()->user()->preferences) {
+                    $prefs = auth()->user()->preferences;
+                    $level = $prefs['level'] ?? '';
+                    $subjects = $prefs['subjects'] ?? [];
+                    
+                    if (!empty($subjects) || !empty($level)) {
+                        // Order by level match first, then by subject match, then newest
+                        $subjectsList = implode("','", array_map('addslashes', $subjects));
+                        
+                        $levelQuery = $level ? "level = '{$level}' DESC," : "";
+                        $subjectQuery = !empty($subjectsList) ? "category IN ('{$subjectsList}') DESC," : "";
+                        
+                        $query->orderByRaw("{$levelQuery} {$subjectQuery} cover_image IS NULL ASC, created_at DESC");
+                        break;
+                    }
+                }
+                
                 $query->orderByRaw('cover_image IS NULL ASC, created_at DESC');
                 break;
         }

@@ -30,6 +30,8 @@ class CourseController extends Controller
             'duration' => 'nullable|string|max:100',
             'price' => 'nullable|numeric|min:0',
             'cover_image' => 'nullable|image|max:2048',
+            'level' => 'nullable|string|max:100',
+            'category' => 'nullable|string|max:100',
             'instructor_id' => 'nullable|exists:users,id'
         ]);
         
@@ -54,7 +56,7 @@ class CourseController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $course->load(['sections.lessons', 'students']);
+        $course->load(['sections.lessons', 'students', 'payments.user', 'payments.paymentMethod']);
         return view('admin.courses.show', compact('course'));
     }
 
@@ -112,6 +114,8 @@ class CourseController extends Controller
             'duration' => 'nullable|string|max:100',
             'price' => 'nullable|numeric|min:0',
             'cover_image' => 'nullable|image|max:2048',
+            'level' => 'nullable|string|max:100',
+            'category' => 'nullable|string|max:100',
             'instructor_id' => 'nullable|exists:users,id'
         ]);
 

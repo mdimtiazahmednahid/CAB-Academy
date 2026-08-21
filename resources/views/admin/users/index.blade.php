@@ -69,7 +69,7 @@
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-3">
                                     <a href="{{ route('admin.users.show', $user) }}" class="text-primary hover:text-primary-dark font-medium text-sm transition-colors">View Progress</a>
-                                    <button onclick="openEditUserModal({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}', '{{ $user->role }}')" class="text-gray-500 hover:text-gray-900 font-medium text-sm transition-colors">Edit</button>
+                                    <button onclick='openEditUserModal({{ $user->id }}, @json($user->name), @json($user->email), @json($user->role))' class="text-gray-500 hover:text-gray-900 font-medium text-sm transition-colors">Edit</button>
                                     @if($user->id !== auth()->id())
                                         <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Are you sure you want to delete this user? This cannot be undone.');" class="inline">
                                             @csrf

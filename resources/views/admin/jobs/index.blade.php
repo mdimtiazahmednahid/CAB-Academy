@@ -54,8 +54,9 @@
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Inactive</span>
                         @endif
                     </td>
-                    <td class="p-4 text-right">
-                        <button onclick="openEditJobModal({{ $job->id }}, '{{ addslashes($job->title) }}', '{{ addslashes($job->company) }}', '{{ addslashes($job->location ?? '') }}', '{{ addslashes($job->salary_range ?? '') }}', '{{ addslashes($job->apply_link) }}', `{{ addslashes($job->description) }}`, {{ $job->is_active ? 'true' : 'false' }})" class="text-gray-500 hover:text-gray-900 font-medium text-sm mr-3">Edit</button>
+                    <td class="p-4 text-right whitespace-nowrap">
+                        <a href="{{ route('admin.jobs.show', $job) }}" class="text-primary hover:text-green-700 font-medium text-sm mr-3">View Applicants</a>
+                        <button onclick='openEditJobModal({{ $job->id }}, @json($job->title), @json($job->company), @json($job->location ?? ""), @json($job->salary_range ?? ""), @json($job->apply_link ?? ""), @json($job->description), {{ $job->is_active ? "true" : "false" }})' class="text-gray-500 hover:text-gray-900 font-medium text-sm mr-3">Edit</button>
                         <form method="POST" action="{{ route('admin.jobs.destroy', $job) }}" class="inline">
                             @csrf
                             @method('DELETE')
@@ -105,15 +106,15 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Application Link (URL) <span class="text-red-500">*</span></label>
-                    <input type="url" name="apply_link" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Application Link (URL) (Optional)</label>
+                    <input type="url" name="apply_link" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Job Description <span class="text-red-500">*</span></label>
                     <textarea name="description" rows="4" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary"></textarea>
                 </div>
                 <div class="flex items-center">
-                    <input type="checkbox" name="is_active" id="is_active" checked class="rounded text-primary focus:ring-primary mr-2">
+                    <input type="checkbox" name="is_active" id="is_active" value="1" checked class="rounded text-primary focus:ring-primary mr-2">
                     <label for="is_active" class="text-sm font-medium text-gray-700">Publish immediately</label>
                 </div>
                 <button type="submit" class="w-full px-4 py-2 bg-primary text-white rounded-lg font-medium hover:opacity-90">Post Job</button>
@@ -156,15 +157,15 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Application Link (URL) <span class="text-red-500">*</span></label>
-                    <input type="url" name="apply_link" id="edit_apply_link" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Application Link (URL) (Optional)</label>
+                    <input type="url" name="apply_link" id="edit_apply_link" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Job Description <span class="text-red-500">*</span></label>
                     <textarea name="description" id="edit_description" rows="4" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary"></textarea>
                 </div>
                 <div class="flex items-center">
-                    <input type="checkbox" name="is_active" id="edit_is_active" class="rounded text-primary focus:ring-primary mr-2">
+                    <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded text-primary focus:ring-primary mr-2">
                     <label for="edit_is_active" class="text-sm font-medium text-gray-700">Publish immediately</label>
                 </div>
                 <button type="submit" class="w-full px-4 py-2 bg-primary text-white rounded-lg font-medium hover:opacity-90">Save Changes</button>

@@ -104,4 +104,25 @@ class UserController extends Controller
         
         return redirect()->route('admin.users')->with('success', 'User deleted successfully.');
     }
+
+    public function updatePreferences(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'level' => 'nullable|string',
+            'subjects' => 'nullable|string',
+            'goals' => 'nullable|string',
+        ]);
+
+        $subjects = array_filter(array_map('trim', explode(',', $validated['subjects'] ?? '')));
+        $goals = array_filter(array_map('trim', explode(',', $validated['goals'] ?? '')));
+
+        $user->preferences = [
+            'level' => $validated['level'] ?? '',
+            'subjects' => $subjects,
+            'goals' => $goals,
+        ];
+        $user->save();
+
+        return back()->with('success', 'User preferences updated successfully.');
+    }
 }

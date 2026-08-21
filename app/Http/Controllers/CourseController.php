@@ -32,6 +32,11 @@ class CourseController extends Controller
         abort_if(!$course->is_published, 404);
         
         $user = $request->user();
+
+        if ($course->price > 0) {
+            return redirect()->route('courses.checkout', $course);
+        }
+
         if (!$user->enrolledCourses()->where('course_id', $course->id)->exists()) {
             $user->enrolledCourses()->attach($course->id);
         }
@@ -69,15 +74,24 @@ class CourseController extends Controller
 
     public function completeLesson(Request $request, Course $course, Lesson $lesson)
     {
+        $wasCompleted = DB::table('lesson_user')
+            ->where('user_id', auth()->id())
+            ->where('lesson_id', $lesson->id)
+            ->exists();
+
         DB::table('lesson_user')->updateOrInsert(
             ['user_id' => auth()->id(), 'lesson_id' => $lesson->id],
             ['completed_at' => now()]
         );
 
+        if (!$wasCompleted) {
+            $request->user()->awardXp(10);
+        }
+
         if ($request->next_lesson_url) {
             return redirect($request->next_lesson_url);
         }
 
-        return back()->with('success', 'Lesson completed');
+        return back()->with('success', 'Lesson completed' . (!$wasCompleted ? ' and you earned 10 XP!' : ''));
     }
 }

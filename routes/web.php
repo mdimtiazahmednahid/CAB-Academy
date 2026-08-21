@@ -13,10 +13,16 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
         if (auth()->user()->preferences === null) {
             return redirect()->route('onboarding');
         }
-        return view('dashboard');
+        
+        $payments = auth()->user()->payments()->with(['course'])->latest()->get();
+        return view('dashboard', compact('payments'));
     })->name('dashboard');
 
     Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
@@ -26,12 +32,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/catalog', [App\Http\Controllers\CatalogController::class, 'index'])->name('catalog.index');
     Route::get('/performance', [App\Http\Controllers\PerformanceController::class, 'index'])->name('performance.index');
     Route::get('/jobs', [App\Http\Controllers\JobController::class, 'index'])->name('jobs.index');
+    Route::post('/jobs/{job}/apply', [App\Http\Controllers\JobApplicationController::class, 'store'])->name('jobs.apply');
 
     // Courses
     Route::get('/courses/{course}', [App\Http\Controllers\CourseController::class, 'show'])->name('courses.show');
     Route::post('/courses/{course}/enroll', [App\Http\Controllers\CourseController::class, 'enroll'])->name('courses.enroll');
     Route::get('/courses/{course}/lessons/{lesson}', [App\Http\Controllers\CourseController::class, 'showLesson'])->name('lessons.show');
     Route::post('/courses/{course}/lessons/{lesson}/complete', [App\Http\Controllers\CourseController::class, 'completeLesson'])->name('lessons.complete');
+    Route::get('/courses/{course}/checkout', [App\Http\Controllers\PaymentController::class, 'checkout'])->name('courses.checkout');
+    Route::post('/courses/{course}/checkout', [App\Http\Controllers\PaymentController::class, 'store'])->name('courses.checkout.store');
     Route::get('/courses/{course}/quizzes/{quiz}', [App\Http\Controllers\QuizController::class, 'show'])->name('quizzes.show');
     Route::post('/courses/{course}/quizzes/{quiz}', [App\Http\Controllers\QuizController::class, 'store'])->name('quizzes.store');
 });
@@ -64,9 +73,17 @@ Route::prefix('admin')->middleware(['auth', 'verified', \App\Http\Middleware\IsA
     Route::post('/courses/{course}/quizzes/{quiz}/questions', [AdminQuizController::class, 'storeQuestion'])->name('admin.quizzes.questions.store');
     Route::delete('/courses/{course}/quizzes/{quiz}/questions/{question}', [AdminQuizController::class, 'destroyQuestion'])->name('admin.quizzes.questions.destroy');
 
+    // Payments
+    Route::resource('payment-methods', App\Http\Controllers\Admin\PaymentMethodController::class)->except(['create', 'show', 'edit'])->names('admin.payment-methods');
+    Route::get('/payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('admin.payments.index');
+    Route::post('/payments/{payment}/status', [App\Http\Controllers\Admin\PaymentController::class, 'updateStatus'])->name('admin.payments.updateStatus');
+
     Route::middleware([\App\Http\Middleware\IsStrictAdmin::class])->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');
-        Route::post('/settings', [SettingsController::class, 'store']);
+        Route::post('/settings', [SettingsController::class, 'store'])->name('admin.settings.store');
+        
+        Route::get('/frontend', [App\Http\Controllers\Admin\FrontendController::class, 'index'])->name('admin.frontend.index');
+        Route::post('/frontend', [App\Http\Controllers\Admin\FrontendController::class, 'store'])->name('admin.frontend.store');
         
         // Users
         Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users');
@@ -74,10 +91,12 @@ Route::prefix('admin')->middleware(['auth', 'verified', \App\Http\Middleware\IsA
         Route::put('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
         Route::get('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'show'])->name('admin.users.show');
         Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::put('/users/{user}/preferences', [App\Http\Controllers\Admin\UserController::class, 'updatePreferences'])->name('admin.users.preferences.update');
         
         // Jobs
         Route::get('/jobs', [App\Http\Controllers\Admin\JobController::class, 'index'])->name('admin.jobs');
         Route::post('/jobs', [App\Http\Controllers\Admin\JobController::class, 'store'])->name('admin.jobs.store');
+        Route::get('/jobs/{job}', [App\Http\Controllers\Admin\JobController::class, 'show'])->name('admin.jobs.show');
         Route::put('/jobs/{job}', [App\Http\Controllers\Admin\JobController::class, 'update'])->name('admin.jobs.update');
         Route::delete('/jobs/{job}', [App\Http\Controllers\Admin\JobController::class, 'destroy'])->name('admin.jobs.destroy');
     });

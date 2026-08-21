@@ -20,4 +20,9 @@ class JobPost extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class);
+    }
 }

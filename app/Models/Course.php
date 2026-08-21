@@ -9,10 +9,13 @@ class Course extends Model
     protected $fillable = [
         'title',
         'description',
+        'thumbnail',
         'is_published',
         'cover_image',
         'duration',
         'price',
+        'level',
+        'category',
         'instructor_id',
         'views'
     ];
@@ -35,5 +38,15 @@ class Course extends Model
     public function students()
     {
         return $this->belongsToMany(User::class, 'course_user')->withTimestamps();
+    }
+
+    public function materials()
+    {
+        return $this->hasMany(Material::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

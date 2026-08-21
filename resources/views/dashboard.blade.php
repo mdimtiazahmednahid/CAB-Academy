@@ -36,35 +36,97 @@
         </div>
     </div>
 
-    <!-- Performance Snapshot -->
+    <!-- Gamification Snapshot -->
     <div>
         <div class="flex justify-between items-end mb-4">
-            <h3 class="font-bold text-lg text-gray-900">Your Performance</h3>
-            <a href="#" class="text-sm font-semibold text-primary">View details</a>
+            <h3 class="font-bold text-lg text-gray-900">Your Progress</h3>
         </div>
         
-        <div class="grid grid-cols-2 gap-4">
-            <!-- Overall Score -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Level -->
             <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                <div class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">Overall Score</div>
+                <div class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">Current Level</div>
                 <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-bold text-gray-900">78%</span>
-                    <span class="text-sm font-medium text-green-600 flex items-center">
-                        <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-                        6.4%
-                    </span>
+                    <span class="text-3xl font-bold text-indigo-600">Level {{ Auth::user()->level }}</span>
                 </div>
-                <div class="text-sm text-gray-400 font-medium mt-1">Good standing</div>
+                <div class="text-sm text-gray-400 font-medium mt-1">Keep it up!</div>
             </div>
 
-            <!-- Focus Area -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                <div class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">Focus Area</div>
-                <div class="text-lg font-bold text-gray-900 leading-tight">Transformers</div>
-                <div class="text-sm text-red-500 font-medium mt-1">39% mastery</div>
+            <!-- XP Progress -->
+            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] md:col-span-2 flex flex-col justify-center">
+                <div class="flex justify-between items-end mb-2">
+                    <div class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Experience Points (XP)</div>
+                    <div class="text-sm font-bold text-gray-900">{{ Auth::user()->xp }} / {{ Auth::user()->next_level_xp }} XP</div>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="bg-indigo-600 h-2.5 rounded-full" style="width: {{ min(100, (Auth::user()->xp / max(1, Auth::user()->next_level_xp)) * 100) }}%"></div>
+                </div>
+                <div class="text-xs text-gray-400 font-medium mt-2">{{ Auth::user()->next_level_xp - Auth::user()->xp }} XP to next level</div>
+            </div>
+            
+            <!-- Streak -->
+            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] md:col-span-3 flex items-center justify-between">
+                <div>
+                    <div class="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">Learning Streak</div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl font-bold text-orange-500">{{ Auth::user()->current_streak }} Days</span>
+                    </div>
+                </div>
+                <div class="text-orange-500">
+                    <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"></path></svg>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- My Payment Requests -->
+    @if($payments->isNotEmpty())
+    <div>
+        <h3 class="font-bold text-lg text-gray-900 mb-4">My Payment Requests</h3>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 font-semibold">Course</th>
+                            <th scope="col" class="px-6 py-4 font-semibold">Amount</th>
+                            <th scope="col" class="px-6 py-4 font-semibold">Date</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @foreach($payments as $payment)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 font-bold text-gray-900">{{ $payment->course->title }}</td>
+                            <td class="px-6 py-4 text-green-600 font-medium">৳{{ number_format($payment->amount, 2) }}</td>
+                            <td class="px-6 py-4">{{ $payment->created_at->format('M d, Y') }}</td>
+                            <td class="px-6 py-4 text-right">
+                                @if($payment->status === 'pending')
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Pending
+                                    </span>
+                                @elseif($payment->status === 'processing')
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Processing
+                                    </span>
+                                @elseif($payment->status === 'verified')
+                                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Verified
+                                    </span>
+                                @else
+                                    <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Rejected
+                                    </span>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @endif
 
     <!-- Upcoming -->
     <div>

@@ -22,7 +22,7 @@ class JobController extends Controller
             'location' => 'nullable|string|max:255',
             'salary_range' => 'nullable|string|max:255',
             'description' => 'required|string',
-            'apply_link' => 'required|url',
+            'apply_link' => 'nullable|url',
             'is_active' => 'boolean',
             'company_logo' => 'nullable|image|max:2048'
         ]);
@@ -45,7 +45,7 @@ class JobController extends Controller
             'location' => 'nullable|string|max:255',
             'salary_range' => 'nullable|string|max:255',
             'description' => 'required|string',
-            'apply_link' => 'required|url',
+            'apply_link' => 'nullable|url',
             'is_active' => 'boolean',
             'company_logo' => 'nullable|image|max:2048'
         ]);
@@ -58,6 +58,12 @@ class JobController extends Controller
 
         $job->update($data);
         return back()->with('success', 'Job updated successfully!');
+    }
+
+    public function show(JobPost $job)
+    {
+        $job->load(['applications.user']);
+        return view('admin.jobs.show', compact('job'));
     }
 
     public function destroy(JobPost $job)
