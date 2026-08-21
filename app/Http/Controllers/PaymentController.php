@@ -29,8 +29,10 @@ class PaymentController extends Controller
 
         $request->validate([
             'payment_method_id' => 'required|exists:payment_methods,id',
-            'sender_number' => 'required|string|max:20',
+            'sender_number' => ['required', 'string', 'max:11', 'regex:/^01[3-9]\d{8}$/'],
             'transaction_id' => 'required|string|max:255',
+        ], [
+            'sender_number.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01712345678).'
         ]);
 
         Payment::create([

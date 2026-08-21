@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ \App\Models\Setting::getVal('site_name', 'EdTech Platform') }} - Admin</title>
+    <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
 
     <!-- Tailwind CSS & Alpine.js -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -87,7 +88,20 @@
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span class="hidden lg:block">Settings</span>
             </a>
+
+            <a href="{{ route('admin.trash.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.trash*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                <span class="hidden lg:block">Trash Bin</span>
+            </a>
             @endif
+
+            <form method="POST" action="{{ route('logout') }}" class="mt-4 pt-4 border-t border-gray-800">
+                @csrf
+                <button type="submit" class="w-full flex items-center gap-3 p-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span class="hidden lg:block">Log Out</span>
+                </button>
+            </form>
         </nav>
     </aside>
 
@@ -111,7 +125,14 @@
             <a href="{{ route('admin.payments.index') }}" class="block text-gray-300 hover:text-white py-2">Pending Payments</a>
             <a href="{{ route('admin.frontend.index') }}" class="block text-gray-300 hover:text-white py-2">Frontend</a>
             <a href="{{ route('admin.settings') }}" class="block text-gray-300 hover:text-white py-2">Settings</a>
+            <a href="{{ route('admin.trash.index') }}" class="block text-gray-300 hover:text-white py-2 text-red-400">Trash Bin</a>
             @endif
+            <div class="mt-auto border-t border-gray-800 pt-2">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full text-left block text-red-400 hover:text-red-300 py-2">Log Out</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -132,6 +153,10 @@
         @endif
         
         @yield('content')
+        
+        <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-gray-500 pb-8">
+            Developed by <a href="http://www.neurasoft.top" target="_blank" class="text-primary hover:underline font-medium transition-colors">@NeuraSoft</a>
+        </footer>
     </main>
 
 </body>

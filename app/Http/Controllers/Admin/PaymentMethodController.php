@@ -18,9 +18,11 @@ class PaymentMethodController extends Controller
     {
         $validated = $request->validate([
             'provider_name' => 'required|string|max:255',
-            'account_number' => 'required|string|max:255',
+            'account_number' => ['required', 'string', 'max:11', 'regex:/^01[3-9]\d{8}$/'],
             'account_type' => 'required|string|max:255',
             'instructions' => 'nullable|string',
+        ], [
+            'account_number.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01712345678).'
         ]);
 
         PaymentMethod::create($validated);
@@ -32,10 +34,12 @@ class PaymentMethodController extends Controller
     {
         $validated = $request->validate([
             'provider_name' => 'required|string|max:255',
-            'account_number' => 'required|string|max:255',
+            'account_number' => ['required', 'string', 'max:11', 'regex:/^01[3-9]\d{8}$/'],
             'account_type' => 'required|string|max:255',
             'instructions' => 'nullable|string',
             'is_active' => 'boolean',
+        ], [
+            'account_number.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01712345678).'
         ]);
 
         $validated['is_active'] = $request->has('is_active');

@@ -8,7 +8,8 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\QuizController as AdminQuizController;
 Route::get('/', function () {
-    return view('welcome');
+    $courses = \App\Models\Course::where('is_published', true)->latest()->take(3)->get();
+    return view('welcome', compact('courses'));
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -20,9 +21,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         if (auth()->user()->preferences === null) {
             return redirect()->route('onboarding');
         }
+        $user = auth()->user();
+        $payments = $user->payments()->with(['course'])->latest()->get();
+        $enrolledCourses = $user->enrolledCourses()->latest()->get();
+        $jobApplications = $user->jobApplications()->with('jobPost')->latest()->get();
         
-        $payments = auth()->user()->payments()->with(['course'])->latest()->get();
-        return view('dashboard', compact('payments'));
+        return view('dashboard', compact('payments', 'enrolledCourses', 'jobApplications'));
     })->name('dashboard');
 
     Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
@@ -99,6 +103,10 @@ Route::prefix('admin')->middleware(['auth', 'verified', \App\Http\Middleware\IsA
         Route::get('/jobs/{job}', [App\Http\Controllers\Admin\JobController::class, 'show'])->name('admin.jobs.show');
         Route::put('/jobs/{job}', [App\Http\Controllers\Admin\JobController::class, 'update'])->name('admin.jobs.update');
         Route::delete('/jobs/{job}', [App\Http\Controllers\Admin\JobController::class, 'destroy'])->name('admin.jobs.destroy');
+        // Trash / Recycle Bin
+        Route::get('/trash', [App\Http\Controllers\Admin\TrashController::class, 'index'])->name('admin.trash.index');
+        Route::post('/trash/{type}/{id}/restore', [App\Http\Controllers\Admin\TrashController::class, 'restore'])->name('admin.trash.restore');
+        Route::delete('/trash/{type}/{id}/force', [App\Http\Controllers\Admin\TrashController::class, 'forceDelete'])->name('admin.trash.forceDelete');
     });
 });
 

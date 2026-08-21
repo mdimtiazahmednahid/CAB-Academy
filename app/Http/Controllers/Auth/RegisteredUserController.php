@@ -30,16 +30,35 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $validationRules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        ];
+
+        $defaultRegistrationFields = [
+            ['name' => 'job_role', 'type' => 'select', 'is_mandatory' => true],
+            ['name' => 'industry', 'type' => 'select', 'is_mandatory' => false],
+            ['name' => 'primary_goal', 'type' => 'select', 'is_mandatory' => true]
+        ];
+        
+        $savedRegistrationFields = \App\Models\Setting::getVal('registration_fields');
+        $registrationFields = $savedRegistrationFields ? json_decode($savedRegistrationFields, true) : $defaultRegistrationFields;
+
+        if (!empty($registrationFields)) {
+            foreach ($registrationFields as $field) {
+                $rule = $field['is_mandatory'] ? 'required' : 'nullable';
+                $validationRules['preferences.' . $field['name']] = [$rule, 'string', 'max:255'];
+            }
+        }
+
+        $request->validate($validationRules);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'preferences' => $request->has('preferences') ? json_encode($request->input('preferences')) : null,
         ]);
 
         event(new Registered($user));

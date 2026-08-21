@@ -59,7 +59,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Sender Number</label>
-                                <input type="text" name="sender_number" required placeholder="e.g. 017XXXXXXX" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
+                                <input type="text" name="sender_number" maxlength="11" minlength="11" pattern="01[3-9][0-9]{8}" title="Must be exactly 11 digits starting with 01" required placeholder="e.g. 01712345678" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Transaction ID (TrxID)</label>

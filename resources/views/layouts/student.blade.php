@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'EdTech Platform') }}</title>
+    <title>{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
+    <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
 
     <!-- Tailwind CSS & Alpine.js -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -137,6 +138,10 @@
         @endauth
 
         @yield('content')
+        
+        <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-gray-500 pb-16 md:pb-4">
+            Developed by <a href="http://www.neurasoft.top" target="_blank" class="text-primary hover:underline font-medium transition-colors">@NeuraSoft</a>
+        </footer>
     </main>
 
     <!-- Mobile Bottom Navigation (Principle #4) -->

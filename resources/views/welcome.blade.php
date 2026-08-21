@@ -4,9 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
+    <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#1F6F54') }};
+        }
+        .bg-primary { background-color: var(--primary-color); }
+        .text-primary { color: var(--primary-color); }
+        .border-primary { border-color: var(--primary-color); }
+        .focus-ring-primary:focus-within { outline: 2px solid var(--primary-color); outline-offset: 2px; }
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
@@ -64,7 +73,7 @@
     @endphp
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-card transition-all duration-300">
+    <nav x-data="{ open: false }" class="fixed w-full z-50 glass-card transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
@@ -82,9 +91,9 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#" class="text-gray-600 hover:text-primary font-medium transition-colors">Courses</a>
-                    <a href="#" class="text-gray-600 hover:text-primary font-medium transition-colors">Pricing</a>
-                    <a href="#" class="text-gray-600 hover:text-primary font-medium transition-colors">About</a>
+                    <a href="{{ route('catalog.index') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Courses</a>
+                    <a href="{{ route('register') }}" class="text-gray-600 hover:text-primary font-medium transition-colors">Pricing</a>
+                    <a href="#features" class="text-gray-600 hover:text-primary font-medium transition-colors">About</a>
                     
                     <div class="flex items-center space-x-4 pl-4 border-l border-gray-200">
                         @auth
@@ -101,11 +110,32 @@
 
                 <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center">
-                    <button class="text-gray-600 hover:text-gray-900 focus:outline-none p-2">
+                    <button @click="open = !open" class="text-gray-600 hover:text-gray-900 focus:outline-none p-2">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div x-show="open" @click.away="open = false" x-transition class="md:hidden bg-white shadow-lg absolute w-full left-0 border-t border-gray-100 z-50" style="display: none;">
+            <div class="px-4 pt-2 pb-3 space-y-1">
+                <a href="{{ route('catalog.index') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">Courses</a>
+                <a href="{{ route('register') }}" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">Pricing</a>
+                <a href="#features" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">About</a>
+            </div>
+            <div class="pt-4 pb-4 border-t border-gray-200">
+                <div class="px-5 space-y-3">
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="block w-full text-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="block w-full text-center px-4 py-2 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Log in</a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="block w-full text-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90">Get Started</a>
+                        @endif
+                    @endauth
                 </div>
             </div>
         </div>
@@ -194,6 +224,79 @@
         </div>
     </div>
 
+    <!-- Latest Courses Section -->
+    @if(isset($courses) && $courses->count() > 0)
+    <div id="courses" class="py-24 bg-gray-50 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-base text-primary font-semibold tracking-wide uppercase">Latest Courses</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    Expand Your Knowledge
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8">
+                @foreach($courses as $course)
+                    <a href="{{ route('courses.show', $course) }}" class="group bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden hover:shadow-[0_4px_25px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col active:scale-[0.98]">
+                        <!-- Thumbnail Placeholder -->
+                        <div class="w-full h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
+                            @if($course->cover_image)
+                                <img src="{{ Storage::url($course->cover_image) }}" alt="{{ $course->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            @elseif($course->thumbnail)
+                                <img src="{{ $course->thumbnail }}" alt="{{ $course->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            @else
+                                <div class="absolute inset-0 bg-gradient-to-br from-primary/80 to-primary"></div>
+                                <span class="relative text-white font-bold text-3xl opacity-80">{{ substr($course->title, 0, 1) }}</span>
+                            @endif
+                            
+                            @if($course->price > 0)
+                                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-900 font-bold px-3 py-1 rounded-full text-sm shadow-sm">
+                                    ${{ number_format($course->price, 2) }}
+                                </div>
+                            @else
+                                <div class="absolute top-3 right-3 bg-green-500/90 backdrop-blur-sm text-white font-bold px-3 py-1 rounded-full text-sm shadow-sm">
+                                    Free
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-5 flex-1 flex flex-col">
+                            <h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">{{ $course->title }}</h3>
+                            <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-1">{{ $course->description ?? 'No description available for this course.' }}</p>
+                            
+                            <div class="flex flex-wrap items-center gap-3 text-xs font-medium text-gray-500 mb-4">
+                                <div class="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg">
+                                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477-4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                    {{ $course->sections->flatMap->lessons->count() }} Lessons
+                                </div>
+                                @if($course->duration)
+                                <div class="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg">
+                                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    {{ $course->duration }}
+                                </div>
+                                @endif
+                            </div>
+                            
+                            <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                                <span class="text-sm font-bold text-primary flex items-center gap-1 w-full justify-center bg-primary/5 py-2 rounded-xl group-hover:bg-primary group-hover:text-white transition-colors">
+                                    View Course <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ route('catalog.index') }}" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                    View All Courses
+                </a>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- CTA Section -->
     <div class="bg-primary relative overflow-hidden">
         <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -221,15 +324,15 @@
                 <div>
                     <h4 class="text-white font-semibold mb-4">Platform</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white transition-colors">Browse Courses</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Pricing</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Success Stories</a></li>
+                        <li><a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Browse Courses</a></li>
+                        <li><a href="{{ route('register') }}" class="hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="#features" class="hover:text-white transition-colors">Success Stories</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="text-white font-semibold mb-4">Support</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="mailto:{{ \App\Models\Setting::getVal('contact_email', 'support@example.com') }}" class="hover:text-white transition-colors">Help Center</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
                     </ul>
@@ -243,7 +346,11 @@
                 </div>
             </div>
             <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
-                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}. All rights reserved.</p>
+                <div class="flex flex-col md:flex-row items-center gap-2 mb-4 md:mb-0">
+                    <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}. All rights reserved.</p>
+                    <span class="hidden md:inline text-gray-600">|</span>
+                    <p>Developed by <a href="http://www.neurasoft.top" target="_blank" class="text-primary hover:text-white font-medium transition-colors">@NeuraSoft</a></p>
+                </div>
                 <div class="flex space-x-6 mt-4 md:mt-0">
                     <a href="#" class="hover:text-white transition-colors">
                         <span class="sr-only">Twitter</span>

@@ -18,12 +18,36 @@ class SettingsController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->except(['_token', 'logo']);
+        $data = $request->except(['_token', 'logo', 'has_registration_fields']);
+
+        if ($request->has('has_registration_fields')) {
+            $registrationFields = $request->input('registration_fields', []);
+            $processedFields = [];
+            
+            foreach ($registrationFields as $field) {
+                if (!empty($field['name']) && !empty($field['label'])) {
+                    $processedFields[] = [
+                        'name' => \Illuminate\Support\Str::slug($field['name'], '_'),
+                        'label' => $field['label'],
+                        'type' => $field['type'] ?? 'text',
+                        'options' => $field['options'] ?? '',
+                        'is_mandatory' => isset($field['is_mandatory']) && $field['is_mandatory'] === '1'
+                    ];
+                }
+            }
+            
+            Setting::updateOrCreate(
+                ['key' => 'registration_fields'],
+                ['value' => json_encode($processedFields), 'type' => 'json']
+            );
+            
+            unset($data['registration_fields']);
+        }
 
         foreach ($data as $key => $value) {
             Setting::updateOrCreate(
                 ['key' => $key],
-                ['value' => $value]
+                ['value' => is_array($value) ? json_encode($value) : $value]
             );
         }
 

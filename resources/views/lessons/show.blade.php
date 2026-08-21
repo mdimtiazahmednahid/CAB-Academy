@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $lesson->title }} - {{ config('app.name') }}</title>
+    <title>{{ $lesson->title }} - {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
+    <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {

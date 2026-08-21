@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ \App\Models\Setting::getVal('site_name', config('app.name', 'Laravel')) }}</title>
+        <title>{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
+        <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,6 +15,14 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
         <style>
+            :root {
+                --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#1F6F54') }};
+            }
+            .bg-primary { background-color: var(--primary-color); }
+            .text-primary { color: var(--primary-color); }
+            .border-primary { border-color: var(--primary-color); }
+            .focus-ring-primary:focus-within { outline: 2px solid var(--primary-color); outline-offset: 2px; }
+
             body { font-family: 'Inter', sans-serif; }
             .bg-glass {
                 background: rgba(255, 255, 255, 0.1);
@@ -71,26 +80,30 @@
             </div>
 
             <!-- Right Side - Auth Form -->
-            <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-gray-50/50 relative">
+            <div class="w-full lg:w-1/2 flex flex-col items-center justify-between p-8 sm:p-12 lg:p-24 bg-gray-50/50 relative overflow-y-auto">
                 
-                <!-- Mobile Logo -->
-                <div class="absolute top-8 left-8 lg:hidden">
-                    <a href="/" class="flex items-center gap-2">
-                        @php $logo = \App\Models\Setting::getVal('site_logo'); @endphp
-                        @if($logo)
-                            <img class="h-8 w-auto" src="{{ $logo }}" alt="Logo">
-                        @else
-                            <div class="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center font-bold text-lg shadow-sm">
-                                {{ substr(\App\Models\Setting::getVal('site_name', 'CAB'), 0, 1) }}
-                            </div>
-                            <span class="font-bold text-lg tracking-tight text-gray-900">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
-                        @endif
-                    </a>
-                </div>
-
-                <div class="w-full max-w-md">
+                <div class="w-full flex-1 flex flex-col justify-center max-w-md my-8">
+                    <!-- Mobile Logo -->
+                    <div class="mb-8 lg:hidden">
+                        <a href="/" class="flex items-center gap-2">
+                            @php $logo = \App\Models\Setting::getVal('site_logo'); @endphp
+                            @if($logo)
+                                <img class="h-8 w-auto" src="{{ $logo }}" alt="Logo">
+                            @else
+                                <div class="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center font-bold text-lg shadow-sm">
+                                    {{ substr(\App\Models\Setting::getVal('site_name', 'CAB'), 0, 1) }}
+                                </div>
+                                <span class="font-bold text-lg tracking-tight text-gray-900">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
+                            @endif
+                        </a>
+                    </div>
+                    
                     {{ $slot }}
                 </div>
+
+                <footer class="w-full text-center text-sm text-gray-500 mt-8">
+                    Developed by <a href="http://www.neurasoft.top" target="_blank" class="text-primary hover:underline font-medium transition-colors">@NeuraSoft</a>
+                </footer>
             </div>
 
         </div>

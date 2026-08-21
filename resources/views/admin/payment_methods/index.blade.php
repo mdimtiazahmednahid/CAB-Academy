@@ -20,7 +20,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
-                    <input type="text" name="account_number" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary" required>
+                    <input type="text" name="account_number" maxlength="11" minlength="11" pattern="01[3-9][0-9]{8}" title="Must be exactly 11 digits starting with 01" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary" required>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
@@ -108,7 +108,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Account Number <span class="text-red-500">*</span></label>
-                        <input type="text" name="account_number" id="edit_account_number" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <input type="text" name="account_number" id="edit_account_number" maxlength="11" minlength="11" pattern="01[3-9][0-9]{8}" title="Must be exactly 11 digits starting with 01" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                 </div>
                 <div>

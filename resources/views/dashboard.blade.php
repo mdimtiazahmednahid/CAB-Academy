@@ -10,31 +10,49 @@
         <p class="text-gray-500 text-lg mt-1">Ready to continue your {{ Auth::user()->preferences['level'] ?? 'studies' }}?</p>
     </div>
 
-    <!-- Continue Learning Card (Primary Action) -->
-    <div class="bg-gradient-to-br from-green-700 to-green-900 rounded-3xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden group cursor-pointer transition-transform active:scale-[0.98]">
-        <!-- Decorative SVG -->
-        <svg class="absolute right-0 bottom-0 opacity-10 transform translate-x-4 translate-y-4 group-hover:scale-110 transition-transform duration-500" width="160" height="160" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-        
-        <div class="relative z-10">
-            <span class="text-green-100 font-medium text-sm tracking-wide uppercase mb-1 block">Continue learning</span>
-            <h3 class="text-2xl font-bold mb-6 max-w-[200px] leading-tight">Electromagnetic Induction</h3>
-            
-            <div class="flex items-center justify-between mt-auto">
-                <div class="flex-1 mr-4">
-                    <div class="flex justify-between text-sm mb-1 text-green-50 font-medium">
-                        <span>Progress</span>
-                        <span>72%</span>
+    <!-- Enrolled Courses -->
+    @if($enrolledCourses->isNotEmpty())
+        <div>
+            <div class="flex justify-between items-end mb-4">
+                <h3 class="font-bold text-xl text-gray-900">My Courses</h3>
+                <a href="{{ route('catalog.index') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-semibold">Browse more &rarr;</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($enrolledCourses as $course)
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden group hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col">
+                        @if($course->thumbnail)
+                            <img src="{{ Storage::url($course->thumbnail) }}" alt="{{ $course->title }}" class="w-full h-48 object-cover">
+                        @else
+                            <div class="w-full h-48 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-4xl shadow-inner">
+                                {{ substr($course->title, 0, 1) }}
+                            </div>
+                        @endif
+                        <div class="p-5 flex-1 flex flex-col">
+                            <h4 class="font-bold text-lg text-gray-900 mb-2 line-clamp-1">{{ $course->title }}</h4>
+                            <p class="text-sm text-gray-500 mb-4 line-clamp-2">{{ Str::limit($course->description, 80) }}</p>
+                            <div class="mt-auto pt-4 border-t border-gray-50">
+                                <a href="{{ route('courses.show', $course) }}" class="block w-full py-2.5 px-4 bg-indigo-50 text-indigo-700 font-semibold rounded-xl text-center hover:bg-indigo-100 transition-colors shadow-sm">
+                                    Continue Learning
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="w-full bg-green-900/50 rounded-full h-1.5">
-                        <div class="bg-white h-1.5 rounded-full" style="width: 72%"></div>
-                    </div>
-                </div>
-                <div class="bg-white/20 hover:bg-white/30 backdrop-blur-md p-3 rounded-xl transition-colors">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </div>
+                @endforeach
             </div>
         </div>
-    </div>
+    @else
+        <div class="bg-gradient-to-br from-indigo-700 to-purple-900 rounded-3xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden group">
+            <svg class="absolute right-0 bottom-0 opacity-10 transform translate-x-4 translate-y-4 group-hover:scale-110 transition-transform duration-500" width="160" height="160" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            <div class="relative z-10">
+                <span class="text-indigo-100 font-medium text-sm tracking-wide uppercase mb-1 block">Welcome</span>
+                <h3 class="text-2xl font-bold mb-4 max-w-md leading-tight">You are not enrolled in any courses yet.</h3>
+                <p class="text-indigo-100 mb-6 max-w-md">Discover our catalog and start your learning journey today.</p>
+                <a href="{{ route('catalog.index') }}" class="inline-block bg-white text-indigo-900 font-bold px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors shadow-sm">
+                    Browse Catalog
+                </a>
+            </div>
+        </div>
+    @endif
 
     <!-- Gamification Snapshot -->
     <div>
@@ -128,20 +146,51 @@
     </div>
     @endif
 
-    <!-- Upcoming -->
+    <!-- Job Applications Widget -->
+    @if($jobApplications->isNotEmpty())
     <div>
-        <h3 class="font-bold text-lg text-gray-900 mb-4">Upcoming Schedule</h3>
-        <div class="space-y-3">
-            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex items-center gap-4">
-                <div class="bg-orange-50 text-orange-600 p-3 rounded-xl">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-900">Physics Quiz 4</h4>
-                    <p class="text-sm text-gray-500 mt-0.5">Tomorrow, 10:00 AM</p>
-                </div>
+        <h3 class="font-bold text-lg text-gray-900 mb-4">My Job Applications</h3>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 font-semibold">Job Title</th>
+                            <th scope="col" class="px-6 py-4 font-semibold">Applied On</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @foreach($jobApplications as $application)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 font-bold text-gray-900">{{ $application->jobPost->title }}</td>
+                            <td class="px-6 py-4">{{ $application->created_at->format('M d, Y') }}</td>
+                            <td class="px-6 py-4 text-right">
+                                @if($application->status === 'pending')
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Pending
+                                    </span>
+                                @elseif($application->status === 'reviewed')
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Reviewed
+                                    </span>
+                                @elseif($application->status === 'accepted')
+                                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Accepted
+                                    </span>
+                                @else
+                                    <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Rejected
+                                    </span>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+    @endif
 </div>
 @endsection
