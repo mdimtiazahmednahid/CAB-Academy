@@ -154,7 +154,7 @@
                     ['name' => 'Export – Import', 'slug' => 'export-import', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Import-Export-879.png'],
                     ['name' => 'Accounting', 'slug' => 'accounting', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Accounting.jpg'],
                     ['name' => 'Human Resource', 'slug' => 'human-resource', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Human-Recourse.png'],
-                    ['name' => 'Civil Construction Project', 'slug' => 'civil-construction-project', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Civil-Construction-Project.jpg'],
+                    ['name' => 'Civil Construction Project', 'slug' => 'civil-construction-project', 'img' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80'],
                     ['name' => 'Fire Safety', 'slug' => 'fire-safety', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Fire-Safety.jpg'],
                     ['name' => 'Law & Compliance', 'slug' => 'law', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Law.jpg'],
                     ['name' => 'Leadership', 'slug' => 'leadership', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Leadership.jpg'],
@@ -173,6 +173,7 @@
                                 alt="{{ $cat['name'] }}" 
                                 class="w-full h-full object-cover object-center"
                                 loading="lazy"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80';"
                             >
                         </div>
                         <h3 class="text-xs sm:text-sm font-bold text-[#051c45] group-hover:text-[#c30102] transition-colors leading-snug line-clamp-2">

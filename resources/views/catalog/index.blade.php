@@ -139,6 +139,7 @@
                                 alt="{{ $catItem['name'] }}" 
                                 class="w-full h-full object-cover object-top"
                                 loading="lazy"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80';"
                             >
                         </div>
 

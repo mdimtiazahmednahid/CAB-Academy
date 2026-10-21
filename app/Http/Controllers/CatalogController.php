@@ -40,7 +40,7 @@ class CatalogController extends Controller
         ],
         'civil-construction-project' => [
             'name' => 'Civil Construction Project',
-            'image' => 'https://images.unsplash.com/photo-1541888946425-d0fbb18615f8?auto=format&fit=crop&w=600&q=80',
+            'image' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80',
             'desc' => 'Project Planning, Site Supervision, Quality Control, and Estimating'
         ],
         'fire-safety' => [

@@ -126,7 +126,7 @@ class DemoDataSeeder extends Seeder
                 'start_date' => now()->addDays(35),
                 'venue' => 'Classroom Mirpur-Pallabi Campus',
                 'target_audience' => 'Civil engineers, site supervisors, project directors, real estate developers.',
-                'thumbnail' => 'https://images.unsplash.com/photo-1541888946425-d0fbb18615f8?auto=format&fit=crop&w=800&q=80',
+                'thumbnail' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
             ]
         ];
 
