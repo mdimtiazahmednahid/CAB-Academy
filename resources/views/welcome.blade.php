@@ -114,14 +114,42 @@
         </div>
     </section>
 
-    <!-- 3. Course Categories Section (Clean, Authoritative, Minimalist) -->
-    <section id="home-category" class="py-10 sm:py-16 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#f8fafc] border-b border-slate-200/80">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-            <div class="text-center mb-8 sm:mb-12">
-                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-[#041536] tracking-tight">
-                    Course Categories
-                </h2>
-                <div class="w-16 h-1 bg-gradient-to-r from-[#c30102] via-[#e11d48] to-[#041536] mx-auto mt-3 rounded-full"></div>
+    <!-- 3. Course Categories Slider (Sleek, Compact Single-Row Luxury Carousel) -->
+    <section id="home-category" class="py-6 sm:py-8 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#f8fafc] border-b border-slate-200/80" x-data="{
+        scrollLeft() { $refs.catSlider.scrollBy({ left: -320, behavior: 'smooth' }) },
+        scrollRight() { $refs.catSlider.scrollBy({ left: 320, behavior: 'smooth' }) }
+    }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header with Title and Navigation Slider Arrows -->
+            <div class="flex items-center justify-between mb-4 sm:mb-5">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-[#041536] tracking-tight">
+                        Course Categories
+                    </h2>
+                </div>
+
+                <!-- Sleek Slider Controls & View All -->
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('catalog.index') }}" class="text-xs font-bold text-[#c30102] hover:text-[#041536] transition-colors hidden sm:inline-block mr-2">
+                        View All
+                    </a>
+                    <button 
+                        type="button" 
+                        @click="scrollLeft()" 
+                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white border border-slate-200/90 shadow-sm hover:shadow-md text-[#041536] hover:text-[#c30102] hover:border-[#c30102]/40 flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
+                        aria-label="Previous Category"
+                    >
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                    <button 
+                        type="button" 
+                        @click="scrollRight()" 
+                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white border border-slate-200/90 shadow-sm hover:shadow-md text-[#041536] hover:text-[#c30102] hover:border-[#c30102]/40 flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
+                        aria-label="Next Category"
+                    >
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
             </div>
 
             @php
@@ -141,11 +169,18 @@
                 ];
             @endphp
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-6 text-center">
+            <!-- Compact Sliding Category Track -->
+            <div 
+                x-ref="catSlider" 
+                class="flex items-center gap-3 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1 -mx-1 snap-x snap-mandatory"
+            >
                 @foreach($runningCategories as $cat)
-                    <a href="{{ route('catalog.category', $cat['slug']) }}" class="group bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 shadow-[0_2px_12px_rgba(4,21,54,0.05)] hover:shadow-[0_16px_36px_-6px_rgba(4,21,54,0.15)] border border-slate-200/90 hover:border-[#c30102]/40 transition-all duration-300 flex flex-col items-center justify-center hover:-translate-y-1.5">
-                        <!-- 80x80 Circular Image with double ring glow on hover (Cypress selector #home-category .w-20.h-20.rounded-full) -->
-                        <div class="w-20 h-20 mx-auto rounded-full overflow-hidden mb-3 ring-2 ring-slate-100 group-hover:ring-[#c30102] group-hover:scale-105 transition-all duration-300 shadow-md bg-slate-100 flex items-center justify-center">
+                    <a 
+                        href="{{ route('catalog.category', $cat['slug']) }}" 
+                        class="group shrink-0 w-36 sm:w-44 bg-white rounded-xl sm:rounded-2xl p-3 sm:p-3.5 border border-slate-200/90 hover:border-[#c30102]/40 shadow-[0_2px_8px_rgba(4,21,54,0.04)] hover:shadow-[0_10px_24px_-4px_rgba(4,21,54,0.12)] transition-all duration-300 flex flex-col items-center justify-center text-center snap-start hover:-translate-y-1"
+                    >
+                        <!-- 80x80 Circular Thumbnail (Preserves Cypress #home-category .w-20.h-20.rounded-full selector) -->
+                        <div class="w-20 h-20 rounded-full overflow-hidden mb-2 ring-2 ring-slate-100 group-hover:ring-[#c30102] group-hover:scale-105 transition-all duration-300 shadow-sm bg-slate-100 flex items-center justify-center shrink-0">
                             <img 
                                 src="{{ $cat['img'] }}" 
                                 alt="{{ $cat['name'] }}" 
@@ -154,7 +189,7 @@
                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80';"
                             >
                         </div>
-                        <h3 class="text-xs sm:text-sm font-bold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug line-clamp-2">
+                        <h3 class="text-xs font-bold text-[#041536] group-hover:text-[#c30102] transition-colors leading-tight line-clamp-1 w-full">
                             {{ $cat['name'] }}
                         </h3>
                     </a>

@@ -113,3 +113,13 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
+
+/* Hide scrollbar for clean carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
