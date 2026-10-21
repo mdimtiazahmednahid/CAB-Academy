@@ -56,4 +56,48 @@ class AdminFeaturesTest extends TestCase
             'is_published' => true,
         ]);
     }
+
+    public function test_admin_can_access_landing_page_customizer()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $response = $this->actingAs($admin)->get('/admin/frontend');
+        $response->assertStatus(200);
+        $response->assertSee('Landing Page Customizer');
+        $response->assertSee('1. Executive Hero');
+        $response->assertSee('2. Valuable Clients');
+        $response->assertSee('3. Sticky Categories');
+        $response->assertSee('4. Course Showcase');
+    }
+
+    public function test_admin_can_update_landing_page_sections()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $postData = [
+            'landing_page_mode' => 'default',
+            'landing_hero_enabled' => '1',
+            'landing_hero_title' => 'CAB Executive Institute',
+            'landing_hero_tagline' => 'Empowering Leaders',
+            'landing_hero_subtitle' => 'Exclusive custom masterclass subtitle',
+            'landing_hero_cta1_text' => 'Join Masterclasses',
+            'landing_hero_cta1_url' => '#courses',
+            'landing_clients_enabled' => '0', // disabled section
+            'landing_counseling_title' => 'Direct Executive Advisory',
+        ];
+
+        $response = $this->actingAs($admin)->post('/admin/frontend', $postData);
+        $response->assertSessionHas('success');
+
+        // Check homepage reflects updated settings
+        $homeResponse = $this->get('/');
+        $homeResponse->assertStatus(200);
+        $homeResponse->assertSee('CAB Executive Institute');
+        $homeResponse->assertSee('Empowering Leaders');
+        $homeResponse->assertSee('Exclusive custom masterclass subtitle');
+        $homeResponse->assertSee('Join Masterclasses');
+        $homeResponse->assertSee('Direct Executive Advisory');
+        // Since clients section was disabled:
+        $homeResponse->assertDontSee('Our Valuable Clients');
+    }
 }
+

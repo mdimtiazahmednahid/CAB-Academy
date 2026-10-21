@@ -17,6 +17,13 @@ Route::get('/reset-db', function () {
 Route::get('/', function () {
     $courses = \App\Models\Course::where('is_published', true)->latest()->get();
     
+    $certCount = (int) \App\Models\Setting::getVal('landing_cert_count', 4);
+    if ($certCount < 1) $certCount = 4;
+    $dayLongCount = (int) \App\Models\Setting::getVal('landing_daylong_count', 4);
+    if ($dayLongCount < 1) $dayLongCount = 4;
+    $blogCount = (int) \App\Models\Setting::getVal('landing_blog_count', 3);
+    if ($blogCount < 1) $blogCount = 3;
+
     // Certificate Courses Section
     $certificateCourses = \App\Models\Course::where('is_published', true)
         ->where(function($q) {
@@ -26,10 +33,10 @@ Route::get('/', function () {
               ->orWhere('title', 'like', '%VAT%')
               ->orWhere('title', 'like', '%Financial%')
               ->orWhere('level', 'like', '%Certificate%');
-        })->take(4)->get();
+        })->take($certCount)->get();
 
     if ($certificateCourses->count() < 2) {
-        $certificateCourses = $courses->take(4);
+        $certificateCourses = $courses->take($certCount);
     }
 
     // Day Long Courses Section
@@ -40,14 +47,14 @@ Route::get('/', function () {
               ->orWhere('title', 'like', '%Civil%')
               ->orWhere('title', 'like', '%Time%')
               ->orWhere('duration', 'like', '%Day%');
-        })->take(4)->get();
+        })->take($dayLongCount)->get();
 
     if ($dayLongCourses->count() < 2) {
-        $dayLongCourses = $courses->skip(2)->take(4);
+        $dayLongCourses = $courses->skip(2)->take($dayLongCount);
     }
 
     $jobs = \App\Models\JobPost::where('is_active', true)->latest()->take(3)->get();
-    $recentBlogs = \App\Models\BlogPost::published()->latest('published_at')->take(3)->get();
+    $recentBlogs = \App\Models\BlogPost::published()->latest('published_at')->take($blogCount)->get();
     return view('welcome', compact('courses', 'certificateCourses', 'dayLongCourses', 'jobs', 'recentBlogs'));
 });
 

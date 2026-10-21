@@ -1,147 +1,789 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="mb-6 md:mb-8">
-    <h2 class="text-2xl md:text-3xl font-bold">Landing Page Customizer</h2>
-    <p class="text-gray-500 mt-1 text-sm md:text-base">Customize the text and features on the public home page.</p>
+<div class="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+        <div class="flex items-center gap-2 mb-1">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#041536] text-white">
+                Landing Page CMS
+            </span>
+            <span class="text-xs text-gray-500 font-medium">8 Dynamic Sections</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Landing Page Customizer</h2>
+        <p class="text-gray-500 text-sm mt-1">Manage, rebrand, re-order content, and toggle visibility for every homepage section in real-time.</p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+        <a href="{{ url('/') }}" target="_blank" class="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-sm font-semibold shadow-sm inline-flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            <span>View Live Site</span>
+        </a>
+    </div>
 </div>
 
 @if(session('success'))
-    <div class="mb-6 p-4 bg-green-50 text-green-800 rounded-lg border border-green-200 text-sm font-medium">
-        {{ session('success') }}
+    <div class="mb-6 p-4 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200 text-sm font-semibold flex items-center gap-3 shadow-sm">
+        <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span>{{ session('success') }}</span>
     </div>
 @endif
 
-<form action="{{ route('admin.frontend.store') }}" method="POST" class="space-y-8 max-w-4xl relative pb-24 md:pb-0">
+<form action="{{ route('admin.frontend.store') }}" method="POST" enctype="multipart/form-data" 
+      x-data="{ 
+          activeTab: 'hero',
+          mode: '{{ $settings['landing_page_mode'] ?? 'default' }}',
+          heroEnabled: {{ ($settings['landing_hero_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          clientsEnabled: {{ ($settings['landing_clients_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          categoriesEnabled: {{ ($settings['landing_categories_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          coursesEnabled: {{ ($settings['landing_courses_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          blogEnabled: {{ ($settings['landing_blog_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          counselingEnabled: {{ ($settings['landing_counseling_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          featuresEnabled: {{ ($settings['landing_features_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          jobsEnabled: {{ ($settings['landing_jobs_enabled'] ?? '1') == '1' ? 'true' : 'false' }}
+      }" 
+      class="relative pb-24 md:pb-12">
     @csrf
+    <input type="hidden" name="landing_cms_form_submitted" value="1">
 
-    <!-- Landing Page Mode -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-        <label for="landing_page_mode" class="block text-sm font-medium text-gray-700 mb-2">Landing Page Mode</label>
-        <select id="landing_page_mode" name="landing_page_mode" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary" onchange="toggleMode()">
-            <option value="default" {{ ($settings['landing_page_mode'] ?? 'default') === 'default' ? 'selected' : '' }}>Default Template</option>
-            <option value="custom" {{ ($settings['landing_page_mode'] ?? 'default') === 'custom' ? 'selected' : '' }}>Custom HTML</option>
-        </select>
-        <p class="mt-2 text-xs text-gray-500">Choose "Custom HTML" to write your own raw HTML code instead of using the default block design.</p>
-    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Sidebar Navigation Tabs -->
+        <div class="lg:col-span-3 space-y-2 sticky top-20 bg-white p-3 rounded-2xl border border-gray-200/80 shadow-sm">
+            <div class="px-3 py-2 text-xs font-bold uppercase tracking-wider text-gray-400">Sections Directory</div>
 
-    <!-- Custom HTML Section -->
-    <div id="custom_html_section" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6 {{ ($settings['landing_page_mode'] ?? 'default') === 'default' ? 'hidden' : '' }}">
-        <div class="flex justify-between items-center mb-4 border-b border-gray-50 pb-2">
-            <h3 class="text-lg font-semibold">Custom HTML Code</h3>
-        </div>
-        <div>
-            <textarea name="landing_custom_html" rows="20" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-sm font-mono bg-gray-50" placeholder="<!DOCTYPE html>&#10;<html>&#10;  <head>&#10;    ...&#10;  </head>&#10;  <body>&#10;    ...&#10;  </body>&#10;</html>">{{ $settings['landing_custom_html'] ?? '' }}</textarea>
-        </div>
-    </div>
+            <button type="button" @click="activeTab = 'hero'" 
+                    :class="activeTab === 'hero' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-compass text-sm"></i>
+                    <span>1. Executive Hero</span>
+                </span>
+                <span class="w-2 h-2 rounded-full" :class="heroEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
 
-    <!-- Default Template Sections -->
-    <div id="default_template_sections" class="space-y-8 {{ ($settings['landing_page_mode'] ?? 'default') === 'custom' ? 'hidden' : '' }}">
-        <!-- Hero Section -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-            <h3 class="text-lg font-semibold mb-4 border-b border-gray-50 pb-2">Hero Section</h3>
+            <button type="button" @click="activeTab = 'clients'" 
+                    :class="activeTab === 'clients' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-handshake text-sm"></i>
+                    <span>2. Valuable Clients</span>
+                </span>
+                <span class="w-2 h-2 rounded-full" :class="clientsEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
+
+            <button type="button" @click="activeTab = 'categories'" 
+                    :class="activeTab === 'categories' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-layer-group text-sm"></i>
+                    <span>3. Sticky Categories</span>
+                </span>
+                <span class="w-2 h-2 rounded-full" :class="categoriesEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
+
+            <button type="button" @click="activeTab = 'courses'" 
+                    :class="activeTab === 'courses' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-graduation-cap text-sm"></i>
+                    <span>4. Course Showcase</span>
+                </span>
+                <span class="w-2 h-2 rounded-full" :class="coursesEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
+
+            <button type="button" @click="activeTab = 'blog'" 
+                    :class="activeTab === 'blog' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-newspaper text-sm"></i>
+                    <span>5. Knowledge Hub</span>
+                </span>
+                <span class="w-2 h-2 rounded-full" :class="blogEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
+
+            <button type="button" @click="activeTab = 'counseling'" 
+                    :class="activeTab === 'counseling' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-phone-volume text-sm"></i>
+                    <span>6. Counseling Hotline</span>
+                </span>
+                <span class="w-2 h-2 rounded-full" :class="counselingEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
+
+            <button type="button" @click="activeTab = 'features'" 
+                    :class="activeTab === 'features' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-star text-sm"></i>
+                    <span>7. Features (6 Cards)</span>
+                </span>
+                <span class="w-2 h-2 rounded-full" :class="featuresEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
+
+            <button type="button" @click="activeTab = 'jobs'" 
+                    :class="activeTab === 'jobs' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-briefcase text-sm"></i>
+                    <span>8. Career & Jobs</span>
+                </span>
+                <span class="w-2 h-2 rounded-full" :class="jobsEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
+
+            <div class="pt-2 border-t border-gray-100">
+                <button type="button" @click="activeTab = 'mode'" 
+                        :class="activeTab === 'mode' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                        class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    <span class="flex items-center gap-2.5">
+                        <i class="fas fa-code text-sm"></i>
+                        <span>Template Mode & Code</span>
+                    </span>
+                    <span class="text-[10px] uppercase font-bold text-gray-400" x-text="mode"></span>
+                </button>
+            </div>
             
-            <div class="space-y-5">
-                <div>
-                    <label for="landing_hero_title" class="block text-sm font-medium text-gray-700 mb-1">Hero Title</label>
-                    <input type="text" id="landing_hero_title" name="landing_hero_title" 
-                           value="{{ $settings['landing_hero_title'] ?? 'Unlock Your Full Potential' }}"
-                           class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
-                </div>
-
-                <div>
-                    <label for="landing_hero_subtitle" class="block text-sm font-medium text-gray-700 mb-1">Hero Subtitle</label>
-                    <textarea id="landing_hero_subtitle" name="landing_hero_subtitle" rows="2"
-                              class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base resize-none">{{ $settings['landing_hero_subtitle'] ?? 'Learn from industry experts and take your career to the next level with our premium courses.' }}</textarea>
-                </div>
-
-                <div>
-                    <label for="landing_cta_text" class="block text-sm font-medium text-gray-700 mb-1">CTA Button Text</label>
-                    <input type="text" id="landing_cta_text" name="landing_cta_text" 
-                           value="{{ $settings['landing_cta_text'] ?? 'Get Started Today' }}"
-                           class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
-                </div>
+            <div class="pt-4">
+                <button type="submit" class="w-full py-3 px-4 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-xl shadow-lg shadow-red-900/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fas fa-save"></i>
+                    <span>Save All Sections</span>
+                </button>
             </div>
         </div>
 
-        <!-- Features Section -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-            <h3 class="text-lg font-semibold mb-4 border-b border-gray-50 pb-2">Features Highlight</h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Feature 1 -->
-                <div class="p-4 bg-gray-50 rounded-lg border border-gray-100 space-y-4">
-                    <h4 class="font-medium text-gray-900 border-b border-gray-200 pb-2">Feature 1</h4>
+        <!-- Tab Content Panels -->
+        <div class="lg:col-span-9 space-y-6">
+
+            <!-- ========================================== -->
+            <!-- 1. EXECUTIVE HERO SECTION -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'hero'" class="space-y-6">
+                
+                <!-- Visibility Toggle Card -->
+                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm flex items-center justify-between">
                     <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Title</label>
-                        <input type="text" name="landing_feature_1_title" 
-                               value="{{ $settings['landing_feature_1_title'] ?? 'Expert Instructors' }}"
-                               class="w-full px-3 py-2 rounded border border-gray-200 text-sm">
+                        <h3 class="font-bold text-gray-900 text-base">Hero Section Visibility</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Toggle whether the top flagship hero canvas is rendered on the home page.</p>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Description</label>
-                        <textarea name="landing_feature_1_desc" rows="3"
-                                  class="w-full px-3 py-2 rounded border border-gray-200 text-sm resize-none">{{ $settings['landing_feature_1_desc'] ?? 'Learn from the best in the industry.' }}</textarea>
-                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="landing_hero_enabled" value="0">
+                        <input type="checkbox" name="landing_hero_enabled" value="1" x-model="heroEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-3 text-xs font-extrabold uppercase" :class="heroEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="heroEnabled ? 'Active' : 'Hidden'"></span>
+                    </label>
                 </div>
 
-                <!-- Feature 2 -->
-                <div class="p-4 bg-gray-50 rounded-lg border border-gray-100 space-y-4">
-                    <h4 class="font-medium text-gray-900 border-b border-gray-200 pb-2">Feature 2</h4>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Title</label>
-                        <input type="text" name="landing_feature_2_title" 
-                               value="{{ $settings['landing_feature_2_title'] ?? 'Flexible Learning' }}"
-                               class="w-full px-3 py-2 rounded border border-gray-200 text-sm">
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div class="border-b border-gray-100 pb-3">
+                        <h4 class="font-black text-gray-900 text-lg">Hero Copy & Brand Messaging</h4>
+                        <p class="text-xs text-gray-500">Fine-tune the headline, high-impact pill tagline, and value proposition.</p>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Description</label>
-                        <textarea name="landing_feature_2_desc" rows="3"
-                                  class="w-full px-3 py-2 rounded border border-gray-200 text-sm resize-none">{{ $settings['landing_feature_2_desc'] ?? 'Study at your own pace, anywhere, anytime.' }}</textarea>
-                    </div>
-                </div>
 
-                <!-- Feature 3 -->
-                <div class="p-4 bg-gray-50 rounded-lg border border-gray-100 space-y-4">
-                    <h4 class="font-medium text-gray-900 border-b border-gray-200 pb-2">Feature 3</h4>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Title</label>
-                        <input type="text" name="landing_feature_3_title" 
-                               value="{{ $settings['landing_feature_3_title'] ?? 'Career Support' }}"
-                               class="w-full px-3 py-2 rounded border border-gray-200 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Title (H1)</label>
+                            <input type="text" name="landing_hero_title" value="{{ $settings['landing_hero_title'] ?? 'CAB Academy' }}" 
+                                   placeholder="CAB Academy" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Tagline (Crimson Pill)</label>
+                            <input type="text" name="landing_hero_tagline" value="{{ $settings['landing_hero_tagline'] ?? 'Learn, Grow, Lead.' }}" 
+                                   placeholder="Learn, Grow, Lead." 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
                     </div>
+
                     <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">Description</label>
-                        <textarea name="landing_feature_3_desc" rows="3"
-                                  class="w-full px-3 py-2 rounded border border-gray-200 text-sm resize-none">{{ $settings['landing_feature_3_desc'] ?? 'Get guidance to land your dream job.' }}</textarea>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Subtitle / Description</label>
+                        <textarea name="landing_hero_subtitle" rows="2" 
+                                  placeholder="Online Professional Certification Masterclasses & Corporate Programs." 
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_hero_subtitle'] ?? 'Online Professional Certification Masterclasses & Corporate Programs.' }}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="p-4 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
+                            <h5 class="text-xs font-black uppercase text-gray-800">Primary CTA Button (Crimson)</h5>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Button Text</label>
+                                <input type="text" name="landing_hero_cta1_text" value="{{ $settings['landing_hero_cta1_text'] ?? ($settings['landing_cta_text'] ?? 'Explore Courses') }}" 
+                                       placeholder="Explore Courses" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Button URL / Anchor</label>
+                                <input type="text" name="landing_hero_cta1_url" value="{{ $settings['landing_hero_cta1_url'] ?? '#home-category' }}" 
+                                       placeholder="#home-category" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
+                            <h5 class="text-xs font-black uppercase text-gray-800">Secondary CTA Button (Glass)</h5>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Button Text</label>
+                                <input type="text" name="landing_hero_cta2_text" value="{{ $settings['landing_hero_cta2_text'] ?? 'Export – Import' }}" 
+                                       placeholder="Export – Import" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Button URL / Route</label>
+                                <input type="text" name="landing_hero_cta2_url" value="{{ $settings['landing_hero_cta2_url'] ?? '/category/export-import' }}" 
+                                       placeholder="/category/export-import" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Social Proof / Alumni Counter Line</label>
+                        <input type="text" name="landing_hero_alumni_text" value="{{ $settings['landing_hero_alumni_text'] ?? '10,000+ Corporate Alumni' }}" 
+                               placeholder="10,000+ Corporate Alumni" 
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    </div>
+
+                    <div class="pt-2 border-t border-gray-100 space-y-4">
+                        <h4 class="font-black text-gray-900 text-base">Right Visual Showcase Bezel</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Poster Image URL</label>
+                                <input type="text" name="landing_hero_media_image" value="{{ $settings['landing_hero_media_image'] ?? 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80' }}" 
+                                       placeholder="https://..." 
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Or Upload New Poster Image</label>
+                                <input type="file" name="landing_hero_media_image_file" accept="image/*" 
+                                       class="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs text-gray-600 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#041536] file:text-white hover:file:opacity-90">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Play Button Click Action / Link</label>
+                            <input type="text" name="landing_hero_media_link" value="{{ $settings['landing_hero_media_link'] ?? '/courses' }}" 
+                                   placeholder="/courses" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Submit Action -->
-    <div class="fixed bottom-[72px] md:bottom-0 md:static left-0 w-full md:w-auto p-4 md:p-0 bg-white md:bg-transparent border-t border-gray-200 md:border-t-0 z-40 md:mt-6">
-        <button type="submit" class="w-full md:w-auto px-6 py-3.5 bg-primary text-white font-semibold rounded-xl shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            Save Landing Page
-        </button>
+            <!-- ========================================== -->
+            <!-- 2. VALUABLE CLIENTS -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'clients'" class="space-y-6">
+                
+                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-base">Clients Section Visibility</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Toggle the corporate client logo ribbon below the hero.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="landing_clients_enabled" value="0">
+                        <input type="checkbox" name="landing_clients_enabled" value="1" x-model="clientsEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-3 text-xs font-extrabold uppercase" :class="clientsEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="clientsEnabled ? 'Active' : 'Hidden'"></span>
+                    </label>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Heading</label>
+                        <input type="text" name="landing_clients_title" value="{{ $settings['landing_clients_title'] ?? 'Our Valuable Clients' }}" 
+                               placeholder="Our Valuable Clients" 
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Client List (One per line: Name | Logo URL)</label>
+                            <span class="text-xs text-gray-400 font-medium">Leave blank for authentic defaults</span>
+                        </div>
+                        <textarea name="landing_clients_data" rows="9" 
+                                  placeholder="SSG | /images/clients/ssg.jpg&#10;United Hospital | /images/clients/united-hospital.jpg&#10;Square | /images/clients/square.jpg&#10;Robi | /images/clients/robi.jpg&#10;Grameenphone | /images/clients/grameenphone.jpg&#10;Incepta | /images/clients/incepta.jpg&#10;IPDC | /images/clients/ipdc.jpg&#10;Runner | /images/clients/runner.jpg" 
+                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ $settings['landing_clients_data'] ?? '' }}</textarea>
+                        <p class="text-[11px] text-gray-500 mt-1">Format: <code>Company Name | Logo URL</code> (if logo URL is omitted or image not found, the clean company name is rendered automatically).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 3. STICKY CATEGORIES -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'categories'" class="space-y-6">
+                
+                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-base">Sticky Smart Categories Bar Visibility</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Toggle the compact, icon-driven sticky navigation bar across the course section.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="landing_categories_enabled" value="0">
+                        <input type="checkbox" name="landing_categories_enabled" value="1" x-model="categoriesEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-3 text-xs font-extrabold uppercase" :class="categoriesEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="categoriesEnabled ? 'Active' : 'Hidden'"></span>
+                    </label>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="md:col-span-1">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Label</label>
+                            <input type="text" name="landing_categories_title" value="{{ $settings['landing_categories_title'] ?? 'Course Categories' }}" 
+                                   placeholder="Course Categories" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">"View All" Button Text</label>
+                            <input type="text" name="landing_categories_all_text" value="{{ $settings['landing_categories_all_text'] ?? 'All' }}" 
+                                   placeholder="All" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">"View All" URL</label>
+                            <input type="text" name="landing_categories_all_url" value="{{ $settings['landing_categories_all_url'] ?? '/courses' }}" 
+                                   placeholder="/courses" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Category Pills (One per line: Name | slug | fontawesome-icon)</label>
+                            <span class="text-xs text-gray-400 font-medium">Leave blank for authentic 12 defaults</span>
+                        </div>
+                        <textarea name="landing_categories_data" rows="12" 
+                                  placeholder="Soft Skills | soft-skills | fa-comments&#10;Supply Chain Management | supply-chain-management | fa-truck-fast&#10;Value Added Tax | value-added-tax | fa-file-invoice-dollar&#10;Export – Import | export-import | fa-ship&#10;Accounting | accounting | fa-calculator&#10;Human Resource | human-resource | fa-people-group&#10;Civil Construction Project | civil-construction-project | fa-helmet-safety&#10;Fire Safety | fire-safety | fa-fire-extinguisher&#10;Law & Compliance | law | fa-scale-balanced&#10;Leadership | leadership | fa-award&#10;Production & Ops | production | fa-industry&#10;Project Management | project-management | fa-diagram-project" 
+                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ $settings['landing_categories_data'] ?? '' }}</textarea>
+                        <p class="text-[11px] text-gray-500 mt-1">Format: <code>Category Name | slug | icon</code>. Example: <code>Export – Import | export-import | fa-ship</code>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 4. DUAL COURSE SHOWCASE -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'courses'" class="space-y-6">
+                
+                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-base">Course Showcase Visibility</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Toggle the Certificate Course & Day Long Course dual-column section.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="landing_courses_enabled" value="0">
+                        <input type="checkbox" name="landing_courses_enabled" value="1" x-model="coursesEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-3 text-xs font-extrabold uppercase" :class="coursesEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="coursesEnabled ? 'Active' : 'Hidden'"></span>
+                    </label>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-6">
+                    <!-- Central Bracket Header -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                        <h4 class="font-black text-gray-900 text-sm uppercase">Central Connecting Bracket Header</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Bracket Button Text</label>
+                                <input type="text" name="landing_courses_bracket_text" value="{{ $settings['landing_courses_bracket_text'] ?? 'View All Courses' }}" 
+                                       placeholder="View All Courses" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Bracket Button URL</label>
+                                <input type="text" name="landing_courses_bracket_url" value="{{ $settings['landing_courses_bracket_url'] ?? '/courses' }}" 
+                                       placeholder="/courses" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Left Track: Certificate Course -->
+                    <div class="p-5 bg-emerald-50/50 rounded-xl border border-emerald-200/80 space-y-4">
+                        <div class="flex items-center justify-between border-b border-emerald-200/60 pb-2">
+                            <h4 class="font-black text-emerald-950 text-base flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                <span>Left Container: Certificate Course Track</span>
+                            </h4>
+                            <span class="text-xs text-emerald-800 font-bold bg-emerald-100 px-2.5 py-0.5 rounded-full">Light Green Container (.bg-[#f0f8ec])</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Track Badge</label>
+                                <input type="text" name="landing_cert_badge" value="{{ $settings['landing_cert_badge'] ?? 'Executive Master Track' }}" 
+                                       placeholder="Executive Master Track" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Container Heading</label>
+                                <input type="text" name="landing_cert_title" value="{{ $settings['landing_cert_title'] ?? 'Certificate Course' }}" 
+                                       placeholder="Certificate Course" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Courses To Display</label>
+                                <input type="number" min="2" max="12" name="landing_cert_count" value="{{ $settings['landing_cert_count'] ?? '4' }}" 
+                                       placeholder="4" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Bottom Action Button Text</label>
+                                <input type="text" name="landing_cert_btn_text" value="{{ $settings['landing_cert_btn_text'] ?? 'View All Certificate Courses' }}" 
+                                       placeholder="View All Certificate Courses" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Bottom Action Button URL</label>
+                                <input type="text" name="landing_cert_btn_url" value="{{ $settings['landing_cert_btn_url'] ?? '/courses/certificate' }}" 
+                                       placeholder="/courses/certificate" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Track: Day Long Course -->
+                    <div class="p-5 bg-red-50/40 rounded-xl border border-red-200/80 space-y-4">
+                        <div class="flex items-center justify-between border-b border-red-200/60 pb-2">
+                            <h4 class="font-black text-red-950 text-base flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-[#c30102]"></span>
+                                <span>Right Container: Day Long Course Track</span>
+                            </h4>
+                            <span class="text-xs text-red-800 font-bold bg-red-100 px-2.5 py-0.5 rounded-full">Light Peach Container (.bg-[#fef4f0])</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Track Badge</label>
+                                <input type="text" name="landing_daylong_badge" value="{{ $settings['landing_daylong_badge'] ?? '1-Day Accelerator' }}" 
+                                       placeholder="1-Day Accelerator" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Container Heading</label>
+                                <input type="text" name="landing_daylong_title" value="{{ $settings['landing_daylong_title'] ?? 'Day Long Course' }}" 
+                                       placeholder="Day Long Course" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Courses To Display</label>
+                                <input type="number" min="2" max="12" name="landing_daylong_count" value="{{ $settings['landing_daylong_count'] ?? '4' }}" 
+                                       placeholder="4" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Bottom Action Button Text</label>
+                                <input type="text" name="landing_daylong_btn_text" value="{{ $settings['landing_daylong_btn_text'] ?? 'View All Day Long Courses' }}" 
+                                       placeholder="View All Day Long Courses" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Bottom Action Button URL</label>
+                                <input type="text" name="landing_daylong_btn_url" value="{{ $settings['landing_daylong_btn_url'] ?? '/courses/day-long' }}" 
+                                       placeholder="/courses/day-long" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 5. KNOWLEDGE HUB / BLOG -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'blog'" class="space-y-6">
+                
+                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-base">Knowledge Hub / Blog Visibility</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Toggle the insights, publications, and thought leadership articles section.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="landing_blog_enabled" value="0">
+                        <input type="checkbox" name="landing_blog_enabled" value="1" x-model="blogEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-3 text-xs font-extrabold uppercase" :class="blogEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="blogEnabled ? 'Active' : 'Hidden'"></span>
+                    </label>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Heading</label>
+                            <input type="text" name="landing_blog_title" value="{{ $settings['landing_blog_title'] ?? 'Knowledge Hub & Publications' }}" 
+                                   placeholder="Knowledge Hub & Publications" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Articles To Display</label>
+                            <input type="number" min="1" max="12" name="landing_blog_count" value="{{ $settings['landing_blog_count'] ?? '3' }}" 
+                                   placeholder="3" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Subtitle / Faculty Insights Blurb</label>
+                        <textarea name="landing_blog_subtitle" rows="2" 
+                                  placeholder="Thought leadership, customs directives, tax reforms, and supply chain insights by CAB Academy Distinguished Faculty." 
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_blog_subtitle'] ?? 'Thought leadership, customs directives, tax reforms, and supply chain insights by CAB Academy Distinguished Faculty.' }}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">"View All" Button Text</label>
+                            <input type="text" name="landing_blog_btn_text" value="{{ $settings['landing_blog_btn_text'] ?? 'View All Publications' }}" 
+                                   placeholder="View All Publications" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">"View All" Button URL</label>
+                            <input type="text" name="landing_blog_btn_url" value="{{ $settings['landing_blog_btn_url'] ?? '/blog' }}" 
+                                   placeholder="/blog" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 6. COUNSELING & ADMISSIONS HOTLINE -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'counseling'" class="space-y-6">
+                
+                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-base">Admissions & Counseling Section Visibility</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Toggle the high-conversion emerald admissions hotline and instant WhatsApp counseling banner.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="landing_counseling_enabled" value="0">
+                        <input type="checkbox" name="landing_counseling_enabled" value="1" x-model="counselingEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-3 text-xs font-extrabold uppercase" :class="counselingEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="counselingEnabled ? 'Active' : 'Hidden'"></span>
+                    </label>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Title</label>
+                        <input type="text" name="landing_counseling_title" value="{{ $settings['landing_counseling_title'] ?? 'Need To Learn More ?' }}" 
+                               placeholder="Need To Learn More ?" 
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Subtitle / Guidance Text</label>
+                        <textarea name="landing_counseling_subtitle" rows="2" 
+                                  placeholder="Connect with our academic counselors for corporate training customized for your organization, batch reservations, or curriculum guidance." 
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_counseling_subtitle'] ?? 'Connect with our academic counselors for corporate training customized for your organization, batch reservations, or curriculum guidance.' }}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-gray-100">
+                        <div class="p-4 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
+                            <h5 class="text-xs font-black uppercase text-gray-800 flex items-center gap-1.5">
+                                <i class="fas fa-phone-alt text-[#c30102]"></i>
+                                <span>Phone Hotline</span>
+                            </h5>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Display Label</label>
+                                <input type="text" name="landing_counseling_phone_label" value="{{ $settings['landing_counseling_phone_label'] ?? 'Call: 01917-054664' }}" 
+                                       placeholder="Call: 01917-054664" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Dialable Number (tel:)</label>
+                                <input type="text" name="landing_counseling_phone_tel" value="{{ $settings['landing_counseling_phone_tel'] ?? '01917054664' }}" 
+                                       placeholder="01917054664" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
+                            <h5 class="text-xs font-black uppercase text-gray-800 flex items-center gap-1.5">
+                                <i class="fab fa-whatsapp text-emerald-600"></i>
+                                <span>Instant WhatsApp</span>
+                            </h5>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Button Text</label>
+                                <input type="text" name="landing_counseling_wa_label" value="{{ $settings['landing_counseling_wa_label'] ?? 'Instant WhatsApp' }}" 
+                                       placeholder="Instant WhatsApp" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">WhatsApp International Number</label>
+                                <input type="text" name="landing_counseling_wa_number" value="{{ $settings['landing_counseling_wa_number'] ?? '8801917054664' }}" 
+                                       placeholder="8801917054664" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
+                        <h5 class="text-xs font-black uppercase text-gray-800">Third Button (Category / Track Link)</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Button Text</label>
+                                <input type="text" name="landing_counseling_btn3_text" value="{{ $settings['landing_counseling_btn3_text'] ?? 'Explore Export – Import' }}" 
+                                       placeholder="Explore Export – Import" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Button URL</label>
+                                <input type="text" name="landing_counseling_btn3_url" value="{{ $settings['landing_counseling_btn3_url'] ?? '/category/export-import' }}" 
+                                       placeholder="/category/export-import" class="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 7. OUR FEATURES (6 CARDS) -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'features'" class="space-y-6">
+                
+                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-base">Features Section Visibility</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Toggle the 6 institutional capability cards and distinguished mentorship section.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="landing_features_enabled" value="0">
+                        <input type="checkbox" name="landing_features_enabled" value="1" x-model="featuresEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-3 text-xs font-extrabold uppercase" :class="featuresEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="featuresEnabled ? 'Active' : 'Hidden'"></span>
+                    </label>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Title</label>
+                        <input type="text" name="landing_features_title" value="{{ $settings['landing_features_title'] ?? 'Our Features' }}" 
+                               placeholder="Our Features" 
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    </div>
+
+                    @php
+                        $featureDefaults = [
+                            1 => ['icon' => 'fa-graduation-cap', 'title' => 'Industry Level Curriculum', 'desc' => 'Designed alongside top corporate practitioners and customs specialists to fulfill active corporate requirements.'],
+                            2 => ['icon' => 'fa-chalkboard-teacher', 'title' => 'Distinguished Faculty & Fellows', 'desc' => 'Direct executive mentorship guided by high-profile corporate leaders, senior chartered accountants, NBR tax advocates, and logistics directors.'],
+                            3 => ['icon' => 'fa-laptop-house', 'title' => '100% Live Interactive Online', 'desc' => 'Live Zoom masterclasses with real-time Q&A, session recordings, and cloud course materials accessible from anywhere.'],
+                            4 => ['icon' => 'fa-certificate', 'title' => 'Recognized Certifications', 'desc' => 'Credential verified certifications recognized by leading industrial groups across Bangladesh.'],
+                            5 => ['icon' => 'fa-headset', 'title' => 'Support Services', 'desc' => 'Post-training support, consultation, documentation guidance, and active peer professional networking.'],
+                            6 => ['icon' => 'fa-layer-group', 'title' => 'Wide Range of Courses', 'desc' => 'Over 14 professional sectors covering Import-Export, SCM, VAT, HR, Civil Engineering, and Corporate Tax.'],
+                        ];
+                    @endphp
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        @for($i = 1; $i <= 6; $i++)
+                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
+                                <div class="flex items-center justify-between border-b border-gray-200 pb-2">
+                                    <h5 class="text-xs font-black uppercase text-gray-800">Feature Card {{ $i }}</h5>
+                                    <span class="text-[10px] text-gray-500 font-mono">landing_feature_{{ $i }}</span>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="col-span-1">
+                                        <label class="block text-[11px] font-bold text-gray-700 mb-1">FontAwesome Icon</label>
+                                        <input type="text" name="landing_feature_{{ $i }}_icon" 
+                                               value="{{ $settings["landing_feature_{$i}_icon"] ?? $featureDefaults[$i]['icon'] }}" 
+                                               placeholder="{{ $featureDefaults[$i]['icon'] }}" 
+                                               class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-mono">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label class="block text-[11px] font-bold text-gray-700 mb-1">Card Title</label>
+                                        <input type="text" name="landing_feature_{{ $i }}_title" 
+                                               value="{{ $settings["landing_feature_{$i}_title"] ?? $featureDefaults[$i]['title'] }}" 
+                                               placeholder="{{ $featureDefaults[$i]['title'] }}" 
+                                               class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-semibold">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-bold text-gray-700 mb-1">Description</label>
+                                    <textarea name="landing_feature_{{ $i }}_desc" rows="2" 
+                                              placeholder="{{ $featureDefaults[$i]['desc'] }}" 
+                                              class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs resize-none">{{ $settings["landing_feature_{$i}_desc"] ?? $featureDefaults[$i]['desc'] }}</textarea>
+                                </div>
+                            </div>
+                        @endfor
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 8. CAREER & JOBS -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'jobs'" class="space-y-6">
+                
+                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-base">Career Opportunities Section Visibility</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Toggle the exclusive job and placement openings section.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="landing_jobs_enabled" value="0">
+                        <input type="checkbox" name="landing_jobs_enabled" value="1" x-model="jobsEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        <span class="ml-3 text-xs font-extrabold uppercase" :class="jobsEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="jobsEnabled ? 'Active' : 'Hidden'"></span>
+                    </label>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Title</label>
+                        <input type="text" name="landing_jobs_title" value="{{ $settings['landing_jobs_title'] ?? 'Career & Placement Opportunities' }}" 
+                               placeholder="Career & Placement Opportunities" 
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Subtitle / Explainer</label>
+                        <textarea name="landing_jobs_subtitle" rows="2" 
+                                  placeholder="Explore openings posted exclusively for CAB Academy certified professionals" 
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_jobs_subtitle'] ?? 'Explore openings posted exclusively for CAB Academy certified professionals' }}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Action Button Text</label>
+                            <input type="text" name="landing_jobs_btn_text" value="{{ $settings['landing_jobs_btn_text'] ?? 'Browse All Openings' }}" 
+                                   placeholder="Browse All Openings" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Action Button URL</label>
+                            <input type="text" name="landing_jobs_btn_url" value="{{ $settings['landing_jobs_btn_url'] ?? '/jobs' }}" 
+                                   placeholder="/jobs" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 9. TEMPLATE MODE & CUSTOM CODE -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'mode'" class="space-y-6">
+                
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-4">
+                    <div>
+                        <h4 class="font-black text-gray-900 text-base">Rendering Engine Mode</h4>
+                        <p class="text-xs text-gray-500 mt-0.5">Switch between the standard section-by-section dynamic layout or inject custom landing page HTML.</p>
+                    </div>
+
+                    <div>
+                        <label for="landing_page_mode" class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Mode</label>
+                        <select id="landing_page_mode" name="landing_page_mode" x-model="mode" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                            <option value="default">Default Section-by-Section Template (Recommended)</option>
+                            <option value="custom">Custom Raw HTML Code</option>
+                        </select>
+                    </div>
+
+                    <div x-show="mode === 'custom'" class="pt-4 border-t border-gray-100 space-y-3">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Raw HTML / Blade Content</label>
+                        <textarea name="landing_custom_html" rows="18" 
+                                  placeholder="<div class='custom-landing-page'>...</div>" 
+                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 font-mono text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ $settings['landing_custom_html'] ?? '' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </form>
-
-<script>
-    function toggleMode() {
-        const mode = document.getElementById('landing_page_mode').value;
-        const customHtmlSection = document.getElementById('custom_html_section');
-        const defaultTemplateSections = document.getElementById('default_template_sections');
-        
-        if (mode === 'custom') {
-            customHtmlSection.classList.remove('hidden');
-            defaultTemplateSections.classList.add('hidden');
-        } else {
-            customHtmlSection.classList.add('hidden');
-            defaultTemplateSections.classList.remove('hidden');
-        }
-    }
-</script>
 @endsection
