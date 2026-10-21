@@ -242,11 +242,23 @@
 
                 <!-- Mobile Hamburger Toggle -->
                 <div class="lg:hidden flex items-center" x-data="{ open: false }">
-                    <button @click="open = !open" class="p-2 text-slate-700 hover:text-[#c30102] focus:outline-none">
+                    <button @click="open = !open" class="p-2 text-slate-700 hover:text-[#c30102] focus:outline-none" aria-label="Toggle navigation">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <!-- Mobile Drawer -->
-                    <div x-show="open" @click.away="open = false" x-transition class="absolute top-20 left-0 w-full bg-white/98 backdrop-blur-xl border-b border-slate-200 shadow-2xl p-5 space-y-3 z-50 text-sm font-semibold" style="display: none;">
+                    <div x-show="open" @click.away="open = false" x-transition class="absolute top-20 left-0 w-full bg-white border-b border-slate-200 shadow-[0_25px_50px_-12px_rgba(4,21,54,0.25)] p-5 space-y-3 z-50 text-sm font-semibold max-h-[85vh] overflow-y-auto" style="display: none;">
+                        <!-- Quick Search in Mobile Drawer -->
+                        <form action="{{ route('catalog.index') }}" method="GET" class="relative pb-2">
+                            <input 
+                                type="text" 
+                                name="search" 
+                                placeholder="Search courses & masterclasses..." 
+                                class="w-full bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl text-xs py-2.5 pl-3.5 pr-9 text-slate-800 focus:ring-2 focus:ring-[#c30102]/20 focus:border-[#c30102] outline-none transition-all"
+                            >
+                            <button type="submit" class="absolute right-3 top-2.5 text-slate-400 hover:text-[#c30102]">
+                                <i class="fas fa-search text-xs"></i>
+                            </button>
+                        </form>
                         <a href="{{ url('/') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Home</a>
                         <a href="{{ route('catalog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Course Catalog</a>
                         <a href="{{ route('faculty.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Distinguished Faculty</a>
@@ -370,21 +382,21 @@
         href="https://wa.me/8801917054664" 
         target="_blank" 
         rel="noopener noreferrer" 
-        class="fixed bottom-5 right-5 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300"
+        class="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300"
         aria-label="Chat on WhatsApp"
         title="Chat on WhatsApp"
     >
-        <i class="fab fa-whatsapp text-2xl sm:text-3xl"></i>
+        <i class="fab fa-whatsapp text-xl sm:text-3xl"></i>
     </a>
 
     <!-- Floating Scroll-To-Top Button (Matches Reference Screenshot) -->
     <button 
         onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
-        class="fixed bottom-5 left-5 z-40 w-10 h-10 rounded-xl bg-slate-900/80 hover:bg-[#c30102] text-white flex items-center justify-center shadow-lg transition-all duration-300"
+        class="fixed bottom-4 left-4 sm:bottom-5 sm:left-5 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900/80 hover:bg-[#c30102] text-white flex items-center justify-center shadow-lg transition-all duration-300"
         aria-label="Scroll to Top"
         title="Scroll to Top"
     >
-        <i class="fas fa-chevron-up text-sm"></i>
+        <i class="fas fa-chevron-up text-xs sm:text-sm"></i>
     </button>
 
     <!-- Global Helpers for Express Drawer & Wishlist -->

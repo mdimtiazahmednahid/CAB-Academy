@@ -5,8 +5,8 @@
     <!-- Top Accent Line (Smooth tri-color glow on hover) -->
     <div class="h-0.5 w-full bg-slate-100 group-hover:bg-gradient-to-r group-hover:from-[#041536] group-hover:via-[#c30102] group-hover:to-[#10b981] transition-all duration-300"></div>
 
-    <!-- 1. Thumbnail Container (1:1 Aspect Ratio with exact IPDP overlay hooks) -->
-    <div class="relative aspect-square w-full bg-slate-900/5 overflow-visible">
+    <!-- 1. Thumbnail Container (1:1 Aspect Ratio with exact IPDP overlay hooks, mobile-optimized max-height) -->
+    <div class="relative aspect-square max-h-48 sm:max-h-none w-full bg-slate-900/5 overflow-visible">
         <a href="{{ route('courses.show', $course) }}" class="block w-full h-full overflow-hidden relative">
             @php
                 $imgSrc = $course->cover_image ? asset($course->cover_image) : ($course->thumbnail ?: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80');
@@ -44,7 +44,7 @@
         </div>
 
         <!-- Exact IPDP Price Placement: Bottom-Left on Image with compact glass shield -->
-        <div class="absolute left-0 bottom-0 z-10 bg-gradient-to-r from-[#020b18]/95 via-[#041536]/90 to-[#072152]/85 backdrop-blur-md text-white border-t border-r border-white/20 px-3 py-1 rounded-tr-xl shadow-lg flex items-center gap-1.5 pointer-events-none">
+        <div class="absolute left-0 bottom-0 z-10 bg-gradient-to-r from-[#020b18]/95 via-[#041536]/90 to-[#072152]/85 backdrop-blur-md text-white border-t border-r border-white/20 px-2.5 sm:px-3 py-1 rounded-tr-xl shadow-lg flex items-center gap-1.5 pointer-events-none">
             @if($course->price > 0)
                 <span class="text-[9px] text-slate-300 font-bold uppercase hidden sm:inline">Fee:</span>
                 <span class="font-black text-xs sm:text-sm text-white tracking-tight">{{ number_format($course->price, 2) }} ৳</span>
@@ -83,41 +83,41 @@
         @endif
     </div>
 
-    <!-- 2. Course Body Content (Streamlined & Compact) -->
-    <div class="p-4 sm:p-4.5 pt-3.5 flex-1 flex flex-col bg-white justify-between">
+    <!-- 2. Course Body Content (Streamlined, Compact & Collision-Free) -->
+    <div class="p-3.5 sm:p-4.5 pt-3 sm:pt-3.5 flex-1 flex flex-col bg-white justify-between">
         <div>
-            <!-- Category Tag & Live Online Indicator -->
-            <div class="flex items-center justify-between gap-2 mb-1.5 pr-12">
+            <!-- Category Tag & Live Online Indicator: Grouped on Left with pr-16 clearing the avatar -->
+            <div class="flex items-center gap-1.5 mb-2 pr-16 flex-wrap">
                 <a 
                     href="{{ route('catalog.category', \Illuminate\Support\Str::slug($course->category ?? 'export-import')) }}" 
-                    class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-[#041536] hover:bg-[#c30102]/10 hover:text-[#c30102] transition-colors truncate"
+                    class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-[#041536] hover:bg-[#c30102]/10 hover:text-[#c30102] transition-colors shrink-0"
                 >
-                    <span class="w-1 h-1 rounded-full bg-[#c30102]"></span>
-                    <span class="truncate">{{ $course->category ?? 'Export – Import' }}</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#c30102]"></span>
+                    <span>{{ $course->category ?? 'Export – Import' }}</span>
                 </a>
-                <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span>Live Zoom</span>
                 </span>
             </div>
 
             <!-- Course Title -->
-            <h3 class="font-black text-[#041536] text-sm sm:text-[15px] leading-snug line-clamp-2 mb-1.5 group-hover:text-[#c30102] transition-colors tracking-tight">
+            <h3 class="font-black text-[#041536] text-[13px] sm:text-[15px] leading-snug line-clamp-2 mb-1.5 group-hover:text-[#c30102] transition-colors tracking-tight">
                 <a href="{{ route('courses.show', $course) }}">
                     {{ $course->title }}
                 </a>
             </h3>
 
             <!-- Short Description Excerpt (Clean 2-line clamp) -->
-            <p class="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-3 font-normal">
+            <p class="text-slate-500 text-[11px] sm:text-xs leading-relaxed line-clamp-2 mb-3 font-normal">
                 {{ $course->short_description ?? ($course->description ?? 'Live interactive professional certification masterclass with authentic practical case simulations.') }}
             </p>
         </div>
 
         <!-- 3. Bottom Meta Bar (Clock + Start Date + Enroll Now Button) -->
-        <div class="border-t border-slate-100 pt-3 mt-auto flex items-center justify-between gap-2">
+        <div class="border-t border-slate-100 pt-2.5 sm:pt-3 mt-auto flex items-center justify-between gap-2">
             <!-- Starting Date with Clock Icon -->
-            <div class="flex items-center text-xs text-slate-500 font-semibold gap-1.5 truncate">
+            <div class="flex items-center text-[11px] sm:text-xs text-slate-500 font-semibold gap-1.5 truncate">
                 <i class="far fa-clock text-[11px] text-[#041536]"></i>
                 <span class="truncate">
                     @if($course->start_date)
@@ -141,7 +141,7 @@
                     batch: '{{ $course->batch ?? '105th BATCH' }}', 
                     venue: 'Interactive Live Zoom Masterclass' 
                 })"
-                class="btn-ipdp-primary text-xs font-black px-3.5 py-1.5 rounded-lg shadow-sm hover:shadow-md inline-flex items-center gap-1 shrink-0 cursor-pointer group/btn transition-all"
+                class="btn-ipdp-primary text-[11px] sm:text-xs font-black px-3 sm:px-3.5 py-1.5 rounded-lg shadow-sm hover:shadow-md inline-flex items-center gap-1 shrink-0 cursor-pointer group/btn transition-all"
             >
                 <span>Enroll Now</span>
                 <i class="fas fa-arrow-right text-[9px] group-hover/btn:translate-x-0.5 transition-transform"></i>
