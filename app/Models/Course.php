@@ -12,16 +12,36 @@ class Course extends Model
     protected $fillable = [
         'title',
         'description',
+        'short_description',
         'thumbnail',
         'is_published',
         'cover_image',
         'duration',
+        'start_date',
+        'venue',
+        'target_audience',
         'price',
         'level',
         'category',
         'instructor_id',
         'views'
     ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'price' => 'decimal:2',
+        'is_published' => 'boolean',
+    ];
+
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
+    }
+
+    public function scopeByCategory($query, $category)
+    {
+        return $query->where('category', $category);
+    }
 
     public function instructor()
     {

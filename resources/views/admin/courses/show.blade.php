@@ -515,25 +515,43 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
                     <textarea name="description" rows="3" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">{{ $course->description }}</textarea>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Short Excerpt / Card Snippet (Optional)</label>
+                    <input type="text" name="short_description" value="{{ $course->short_description }}" placeholder="Brief 1-2 sentence overview for course card" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                        <input type="text" name="duration" value="{{ $course->duration }}" placeholder="e.g. 10 Hours" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Starting Date</label>
+                        <input type="date" name="start_date" value="{{ $course->start_date ? $course->start_date->format('Y-m-d') : '' }}" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Price (৳ BDT)</label>
                         <input type="number" step="0.01" name="price" value="{{ $course->price }}" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Level (Optional)</label>
-                        <input type="text" name="level" value="{{ $course->level }}" placeholder="e.g. HSC" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                        <input type="text" name="duration" value="{{ $course->duration }}" placeholder="e.g. 8 Days / 10 Hours" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Category (Optional)</label>
-                        <input type="text" name="category" value="{{ $course->category }}" placeholder="e.g. Science" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Venue / Format</label>
+                        <input type="text" name="venue" value="{{ $course->venue }}" placeholder="e.g. Online (Zoom) / Banani" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Level (Optional)</label>
+                        <input type="text" name="level" value="{{ $course->level }}" placeholder="e.g. Executive / Certificate" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <input type="text" name="category" value="{{ $course->category }}" placeholder="e.g. Export - Import" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Who Should Attend / Target Audience (Optional)</label>
+                    <textarea name="target_audience" rows="2" placeholder="e.g. Commercial Executives, Importers, Exporters, Entrepreneurs..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm">{{ $course->target_audience }}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Cover Image (Optional)</label>

@@ -30,9 +30,13 @@
                         <div class="p-5 flex-1 flex flex-col">
                             <h4 class="font-bold text-lg text-gray-900 mb-2 line-clamp-1">{{ $course->title }}</h4>
                             <p class="text-sm text-gray-500 mb-4 line-clamp-2">{{ Str::limit($course->description, 80) }}</p>
-                            <div class="mt-auto pt-4 border-t border-gray-50">
-                                <a href="{{ route('courses.show', $course) }}" class="block w-full py-2.5 px-4 bg-indigo-50 text-indigo-700 font-semibold rounded-xl text-center hover:bg-indigo-100 transition-colors shadow-sm">
+                            <div class="mt-auto pt-4 border-t border-gray-50 space-y-2">
+                                <a href="{{ route('courses.show', $course) }}" class="block w-full py-2.5 px-4 bg-indigo-50 text-indigo-700 font-semibold rounded-xl text-center hover:bg-indigo-100 transition-colors shadow-sm text-sm">
                                     Continue Learning
+                                </a>
+                                <a href="{{ route('courses.certificate', $course) }}" target="_blank" class="block w-full py-2 px-4 bg-emerald-50 text-emerald-700 font-semibold rounded-xl text-center hover:bg-emerald-100 transition-colors shadow-sm text-xs flex items-center justify-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                                    Digital Certificate
                                 </a>
                             </div>
                         </div>
@@ -221,7 +225,8 @@
                             <th scope="col" class="px-6 py-4 font-semibold">Course</th>
                             <th scope="col" class="px-6 py-4 font-semibold">Amount</th>
                             <th scope="col" class="px-6 py-4 font-semibold">Date</th>
-                            <th scope="col" class="px-6 py-4 font-semibold text-right">Status</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-center">Status</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-right">Receipt</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -230,7 +235,7 @@
                             <td class="px-6 py-4 font-bold text-gray-900">{{ $payment->course->title }}</td>
                             <td class="px-6 py-4 text-green-600 font-medium">৳{{ number_format($payment->amount, 2) }}</td>
                             <td class="px-6 py-4">{{ $payment->created_at->format('M d, Y') }}</td>
-                            <td class="px-6 py-4 text-right">
+                            <td class="px-6 py-4 text-center">
                                 @if($payment->status === 'pending')
                                     <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Pending
@@ -248,6 +253,12 @@
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Rejected
                                     </span>
                                 @endif
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="{{ route('payments.invoice', $payment) }}" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 hover:text-indigo-800 transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Invoice
+                                </a>
                             </td>
                         </tr>
                         @endforeach

@@ -15,10 +15,111 @@ Route::get('/reset-db', function () {
 });
 
 Route::get('/', function () {
-    $courses = \App\Models\Course::where('is_published', true)->latest()->take(3)->get();
+    $courses = \App\Models\Course::where('is_published', true)->latest()->get();
+    
+    // Certificate Courses (IPDP Certificate Section)
+    $certificateCourses = \App\Models\Course::where('is_published', true)
+        ->where(function($q) {
+            $q->where('title', 'like', '%Certificate%')
+              ->orWhere('title', 'like', '%L/C%')
+              ->orWhere('title', 'like', '%Supply Chain%')
+              ->orWhere('title', 'like', '%VAT%')
+              ->orWhere('title', 'like', '%Financial%')
+              ->orWhere('level', 'like', '%Certificate%');
+        })->take(4)->get();
+
+    if ($certificateCourses->count() < 2) {
+        $certificateCourses = $courses->take(4);
+    }
+
+    // Day Long Courses (IPDP Day Long Section)
+    $dayLongCourses = \App\Models\Course::where('is_published', true)
+        ->where(function($q) {
+            $q->where('title', 'like', '%Commercial%')
+              ->orWhere('title', 'like', '%Labor%')
+              ->orWhere('title', 'like', '%Civil%')
+              ->orWhere('title', 'like', '%Time%')
+              ->orWhere('duration', 'like', '%Day%');
+        })->take(4)->get();
+
+    if ($dayLongCourses->count() < 2) {
+        $dayLongCourses = $courses->skip(2)->take(4);
+    }
+
     $jobs = \App\Models\JobPost::where('is_active', true)->latest()->take(3)->get();
-    return view('welcome', compact('courses', 'jobs'));
+    $recentBlogs = \App\Models\BlogPost::published()->latest('published_at')->take(3)->get();
+    return view('welcome', compact('courses', 'certificateCourses', 'dayLongCourses', 'jobs', 'recentBlogs'));
 });
+
+// Community Feed & Blogs (Minimal Community Like Facebook)
+Route::get('/feed', [App\Http\Controllers\FeedController::class, 'index'])->name('feed.index');
+Route::post('/feed/posts', [App\Http\Controllers\FeedController::class, 'store'])->name('feed.posts.store');
+Route::post('/feed/posts/{post}/like', [App\Http\Controllers\FeedController::class, 'like'])->name('feed.posts.like');
+Route::post('/feed/posts/{post}/comments', [App\Http\Controllers\FeedController::class, 'comment'])->name('feed.posts.comments.store');
+Route::delete('/feed/posts/{post}', [App\Http\Controllers\FeedController::class, 'destroy'])->name('feed.posts.destroy');
+Route::get('/community', function () {
+    return redirect()->route('feed.index');
+})->name('community.index');
+
+// Blog & Knowledge Hub Routes
+Route::get('/blog', [App\Http\Controllers\BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{post:slug}', [App\Http\Controllers\BlogController::class, 'show'])->name('blog.show');
+
+// Institutional Trust & Legal Suite
+Route::get('/contact', [App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [App\Http\Controllers\ContactController::class, 'submit'])->name('contact.submit');
+Route::get('/about', function () { return view('about.index'); })->name('about.index');
+Route::get('/privacy-policy', function () { return view('legal.privacy'); })->name('legal.privacy');
+Route::get('/terms-of-service', function () { return view('legal.terms'); })->name('legal.terms');
+Route::get('/refund-policy', function () { return view('legal.refund'); })->name('legal.refund');
+
+// Student Wishlist & Saved Courses
+Route::get('/wishlist', [App\Http\Controllers\WishlistController::class, 'index'])->name('wishlist.index');
+Route::post('/wishlist/{course}/toggle', [App\Http\Controllers\WishlistController::class, 'toggle'])->name('wishlist.toggle');
+
+// Public Verifiable Certificate Registry
+Route::get('/verify-certificate/{certificate_number}', [App\Http\Controllers\CertificateController::class, 'verify'])->name('certificate.verify');
+
+// Distinguished Faculty Directory (rich terminology replacing 'teacher')
+Route::get('/faculty', function () {
+    $courses = \App\Models\Course::where('is_published', true)->get();
+    return view('faculty.index', compact('courses'));
+})->name('faculty.index');
+
+// Direct course type filter shortcuts matching IPDP structure
+Route::get('/certificate-course', function () {
+    return redirect()->route('catalog.index', ['type' => 'certificate']);
+})->name('catalog.certificate');
+
+Route::get('/day-long-course', function () {
+    return redirect()->route('catalog.index', ['type' => 'day_long']);
+})->name('catalog.day_long');
+
+// InfinityFree Storage Symlink Workaround: Stream media files dynamically without requiring symlinks
+Route::get('/storage/{folder}/{file}', function ($folder, $file) {
+    $filePath = storage_path("app/public/{$folder}/" . $file);
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+    return response()->file($filePath, [
+        'Content-Type' => $mimeType,
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('file', '.*')->name('storage.stream');
+
+// Public Course Catalog & Category Routes (IPDP-style)
+Route::get('/catalog', [App\Http\Controllers\CatalogController::class, 'index'])->name('catalog.index');
+Route::get('/courses', [App\Http\Controllers\CatalogController::class, 'index'])->name('courses.index');
+Route::get('/category/{category}', [App\Http\Controllers\CatalogController::class, 'category'])->name('catalog.category');
+Route::get('/export-import', function () {
+    return redirect()->route('catalog.category', ['category' => 'export-import']);
+});
+
+// Public Course Overview & Enrollment Initiator
+Route::get('/courses/{course}', [App\Http\Controllers\CourseController::class, 'show'])->name('courses.show');
+Route::post('/courses/{course}/enroll', [App\Http\Controllers\CourseController::class, 'enroll'])->name('courses.enroll');
+Route::post('/courses/{course}/express-enroll', [App\Http\Controllers\PaymentController::class, 'expressEnroll'])->name('courses.express_enroll');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
@@ -43,21 +144,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
     Route::post('/onboarding', [OnboardingController::class, 'store']);
 
-    // Catalog & Performance
-    Route::get('/catalog', [App\Http\Controllers\CatalogController::class, 'index'])->name('catalog.index');
+    // Performance & Jobs
     Route::get('/performance', [App\Http\Controllers\PerformanceController::class, 'index'])->name('performance.index');
     Route::get('/jobs', [App\Http\Controllers\JobController::class, 'index'])->name('jobs.index');
     Route::post('/jobs/{job}/apply', [App\Http\Controllers\JobApplicationController::class, 'store'])->name('jobs.apply');
 
-    // Courses
-    Route::get('/courses/{course}', [App\Http\Controllers\CourseController::class, 'show'])->name('courses.show');
-    Route::post('/courses/{course}/enroll', [App\Http\Controllers\CourseController::class, 'enroll'])->name('courses.enroll');
+    // Authenticated Learning & Quizzes
     Route::get('/courses/{course}/lessons/{lesson}', [App\Http\Controllers\CourseController::class, 'showLesson'])->name('lessons.show');
     Route::post('/courses/{course}/lessons/{lesson}/complete', [App\Http\Controllers\CourseController::class, 'completeLesson'])->name('lessons.complete');
     Route::get('/courses/{course}/checkout', [App\Http\Controllers\PaymentController::class, 'checkout'])->name('courses.checkout');
     Route::post('/courses/{course}/checkout', [App\Http\Controllers\PaymentController::class, 'store'])->name('courses.checkout.store');
     Route::get('/courses/{course}/quizzes/{quiz}', [App\Http\Controllers\QuizController::class, 'show'])->name('quizzes.show');
     Route::post('/courses/{course}/quizzes/{quiz}', [App\Http\Controllers\QuizController::class, 'store'])->name('quizzes.store');
+
+    // Digital Certificate & Printable Tuition Invoice
+    Route::get('/courses/{course}/certificate', [App\Http\Controllers\CertificateController::class, 'show'])->name('courses.certificate');
+    Route::get('/payments/{payment}/invoice', [App\Http\Controllers\InvoiceController::class, 'show'])->name('payments.invoice');
 });
 
 Route::prefix('admin')->middleware(['auth', 'verified', \App\Http\Middleware\IsAdmin::class])->group(function () {
@@ -92,6 +194,15 @@ Route::prefix('admin')->middleware(['auth', 'verified', \App\Http\Middleware\IsA
     Route::resource('payment-methods', App\Http\Controllers\Admin\PaymentMethodController::class)->except(['create', 'show', 'edit'])->names('admin.payment-methods');
     Route::get('/payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('admin.payments.index');
     Route::post('/payments/{payment}/status', [App\Http\Controllers\Admin\PaymentController::class, 'updateStatus'])->name('admin.payments.updateStatus');
+
+    // Inquiries Inbox
+    Route::get('/inquiries', [App\Http\Controllers\Admin\InquiryController::class, 'index'])->name('admin.inquiries.index');
+    Route::get('/inquiries/{inquiry}', [App\Http\Controllers\Admin\InquiryController::class, 'show'])->name('admin.inquiries.show');
+    Route::patch('/inquiries/{inquiry}/status', [App\Http\Controllers\Admin\InquiryController::class, 'updateStatus'])->name('admin.inquiries.status');
+    Route::delete('/inquiries/{inquiry}', [App\Http\Controllers\Admin\InquiryController::class, 'destroy'])->name('admin.inquiries.destroy');
+
+    // Articles & Knowledge Hub
+    Route::resource('blogs', App\Http\Controllers\Admin\BlogController::class)->names('admin.blogs');
 
     Route::middleware([\App\Http\Middleware\IsStrictAdmin::class])->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');

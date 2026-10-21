@@ -84,25 +84,43 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
                     <textarea name="description" rows="3" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary"></textarea>
                 </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Short Excerpt / Card Snippet (Optional)</label>
+                    <input type="text" name="short_description" placeholder="Brief 1-2 sentence overview for course card" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                        <input type="text" name="duration" placeholder="e.g. 10 Hours" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Starting Date</label>
+                        <input type="date" name="start_date" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Price (৳ BDT)</label>
                         <input type="number" step="0.01" name="price" value="0.00" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Level (Optional)</label>
-                        <input type="text" name="level" placeholder="e.g. HSC" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                        <input type="text" name="duration" placeholder="e.g. 8 Days / 2 Months" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Category (Optional)</label>
-                        <input type="text" name="category" placeholder="e.g. Science" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Venue / Format</label>
+                        <input type="text" name="venue" placeholder="e.g. Online (Zoom) / Banani" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Level (Optional)</label>
+                        <input type="text" name="level" placeholder="e.g. Executive / Certificate" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <input type="text" name="category" placeholder="e.g. Export - Import" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Who Should Attend / Target Audience (Optional)</label>
+                    <textarea name="target_audience" rows="2" placeholder="e.g. Commercial Executives, Importers, Exporters, Entrepreneurs..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm"></textarea>
                 </div>
                 @if(auth()->user()->role === 'admin')
                 <div>

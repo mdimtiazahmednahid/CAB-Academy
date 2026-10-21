@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
-        <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
+        <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -47,14 +47,10 @@
 
                 <div class="relative z-10 w-full max-w-lg px-12">
                     <div class="mb-12">
-                        @php $logo = \App\Models\Setting::getVal('site_logo'); @endphp
-                        @if($logo)
-                            <img class="h-12 w-auto brightness-0 invert" src="{{ $logo }}" alt="Logo">
-                        @else
-                            <div class="w-12 h-12 bg-white text-primary rounded-xl flex items-center justify-center font-bold text-2xl shadow-lg">
-                                {{ substr(\App\Models\Setting::getVal('site_name', 'CAB'), 0, 1) }}
-                            </div>
-                        @endif
+                        <a href="{{ url('/') }}" class="inline-flex items-center gap-3 group">
+                            <img class="h-12 w-12 rounded-full bg-white object-contain shadow-md group-hover:scale-105 transition-transform" src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy">
+                            <span class="text-2xl font-black text-white tracking-tight uppercase leading-none">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
+                        </a>
                     </div>
 
                     <h1 class="text-4xl lg:text-5xl font-extrabold text-white mb-6 leading-tight">
@@ -102,7 +98,7 @@
                 </div>
 
                 <footer class="w-full text-center text-sm text-gray-500 mt-8">
-                    Developed by <a href="http://www.neurasoft.top" target="_blank" class="text-primary hover:underline font-medium transition-colors">@NeuraSoft</a>
+                    Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold transition-colors">NeuraSoft</a>
                 </footer>
             </div>
 

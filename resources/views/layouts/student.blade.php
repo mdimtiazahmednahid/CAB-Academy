@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
+    <title>@hasSection('title') @yield('title') - @endif{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
 
     <!-- Tailwind CSS & Alpine.js -->
@@ -52,10 +52,10 @@
     <aside class="hidden md:flex flex-col w-20 lg:w-64 h-screen fixed top-0 left-0 bg-white border-r border-gray-100 z-20">
         <!-- Logo -->
         <div class="p-4 lg:p-6 border-b border-gray-100 flex items-center justify-center lg:justify-start gap-3 h-16">
-            @if(\App\Models\Setting::getVal('site_logo'))
-                <img src="{{ \App\Models\Setting::getVal('site_logo') }}" alt="Logo" class="h-8 w-auto rounded-md object-contain">
-            @endif
-            <span class="hidden lg:block font-bold text-xl truncate">{{ \App\Models\Setting::getVal('site_name', 'Student') }}</span>
+            <a href="{{ url('/') }}" class="flex items-center gap-2.5">
+                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" class="h-8 w-8 rounded-full object-contain bg-white border border-gray-100">
+                <span class="hidden lg:block font-black text-lg tracking-tight text-[#0a2540] uppercase truncate">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
+            </a>
         </div>
         
         <!-- Nav -->
@@ -64,9 +64,9 @@
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span class="hidden lg:block">Home</span>
             </a>
-            <a href="{{ route('catalog.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('catalog.index') || request()->routeIs('courses.*') || request()->routeIs('lessons.*') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
-                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                <span class="hidden lg:block">Learn</span>
+            <a href="{{ route('feed.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('feed.*') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
+                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                <span class="hidden lg:block">Feed & Blogs</span>
             </a>
             <a href="{{ route('performance.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('performance.index') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -75,6 +75,11 @@
             <a href="{{ route('jobs.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('jobs.*') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                 <span class="hidden lg:block">Careers</span>
+            </a>
+
+            <a href="{{ route('wishlist.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('wishlist.*') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
+                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                <span class="hidden lg:block">Saved Wishlist</span>
             </a>
             
             <a href="{{ route('notifications.index') }}" class="flex items-center p-3 rounded-xl {{ request()->routeIs('notifications.*') ? 'bg-green-50 text-primary font-medium' : 'text-gray-500 hover:bg-gray-50' }} transition-colors">
@@ -156,7 +161,7 @@
         @yield('content')
         
         <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-gray-500 pb-16 md:pb-4">
-            Developed by <a href="http://www.neurasoft.top" target="_blank" class="text-primary hover:underline font-medium transition-colors">@NeuraSoft</a>
+            Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold transition-colors">NeuraSoft</a>
         </footer>
     </main>
 
@@ -167,9 +172,9 @@
             <span class="text-[10px] font-semibold tracking-wide">Home</span>
         </a>
         
-        <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center p-2 w-16 {{ request()->routeIs('catalog.index') || request()->routeIs('courses.*') || request()->routeIs('lessons.*') ? 'tab-active' : 'text-gray-400 hover:text-gray-600' }} transition-colors">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-            <span class="text-[10px] font-semibold tracking-wide">Learn</span>
+        <a href="{{ route('feed.index') }}" class="flex flex-col items-center justify-center p-2 w-16 {{ request()->routeIs('feed.*') ? 'tab-active' : 'text-gray-400 hover:text-gray-600' }} transition-colors">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+            <span class="text-[10px] font-semibold tracking-wide">Feed</span>
         </a>
         
         <a href="{{ route('performance.index') }}" class="flex flex-col items-center justify-center p-2 w-16 {{ request()->routeIs('performance.index') ? 'tab-active' : 'text-gray-400 hover:text-gray-600' }} transition-colors">

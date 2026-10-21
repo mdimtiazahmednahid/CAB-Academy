@@ -15,14 +15,20 @@ class CourseController extends Controller
         
         $course->increment('views');
         
-        $course->load(['sections' => function($q) {
-            $q->orderBy('order');
-        }, 'sections.lessons' => function($q) {
-            $q->orderBy('order');
-        }, 'quizzes']);
+        $course->load([
+            'instructor',
+            'sections' => function($q) {
+                $q->orderBy('order');
+            },
+            'sections.lessons' => function($q) {
+                $q->orderBy('order');
+            },
+            'quizzes'
+        ]);
         
-        $completedLessonIds = $request->user()->completedLessons()->pluck('lesson_id')->toArray();
-        $isEnrolled = $request->user()->enrolledCourses()->where('course_id', $course->id)->exists();
+        $user = $request->user();
+        $completedLessonIds = $user ? $user->completedLessons()->pluck('lesson_id')->toArray() : [];
+        $isEnrolled = $user ? $user->enrolledCourses()->where('course_id', $course->id)->exists() : false;
 
         return view('courses.show', compact('course', 'completedLessonIds', 'isEnrolled'));
     }
@@ -31,6 +37,11 @@ class CourseController extends Controller
     {
         abort_if(!$course->is_published, 404);
         
+        if (!auth()->check()) {
+            session()->put('url.intended', route('courses.show', $course));
+            return redirect()->route('login')->with('info', 'Please sign in or create an account to enroll in this course.');
+        }
+
         $user = $request->user();
 
         if ($course->price > 0) {

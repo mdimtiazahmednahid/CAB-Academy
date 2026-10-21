@@ -21,4 +21,18 @@ class Setting extends Model
 
         return $settings[$key] ?? $default;
     }
+
+    /**
+     * Set a setting value and clear cache.
+     */
+    public static function setVal($key, $value, $type = 'text', $group = 'general')
+    {
+        $setting = self::updateOrCreate(['key' => $key], [
+            'value' => $value,
+            'type' => $type,
+            'group' => $group,
+        ]);
+        Cache::forget('global_settings');
+        return $setting;
+    }
 }

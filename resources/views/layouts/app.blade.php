@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
-        <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
+        <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -43,7 +43,7 @@
             </main>
 
             <footer class="text-center py-6 text-sm text-gray-500">
-                Developed by <a href="http://www.neurasoft.top" target="_blank" class="text-primary hover:underline font-medium transition-colors">@NeuraSoft</a>
+                Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold transition-colors">NeuraSoft</a>
             </footer>
         </div>
     </body>

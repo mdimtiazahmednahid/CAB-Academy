@@ -53,6 +53,16 @@ class User extends Authenticatable
         return $this->hasMany(Payment::class);
     }
 
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
     /**
      * Gamification Logic
      */

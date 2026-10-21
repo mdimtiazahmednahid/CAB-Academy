@@ -25,12 +25,10 @@
 
     <!-- Mobile Top Bar -->
     <header class="md:hidden flex items-center justify-between p-4 bg-gray-900 text-white shadow-sm z-10 sticky top-0">
-        <div class="flex items-center gap-3">
-            @if(\App\Models\Setting::getVal('site_logo'))
-                <img src="{{ \App\Models\Setting::getVal('site_logo') }}" alt="Logo" class="h-8 w-auto rounded-md object-contain bg-white p-1">
-            @endif
-            <h1 class="font-semibold text-lg truncate">{{ \App\Models\Setting::getVal('site_name', 'EdTech Admin') }}</h1>
-        </div>
+        <a href="{{ url('/') }}" class="flex items-center gap-2.5">
+            <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" class="h-8 w-8 rounded-full object-contain bg-white border border-gray-100">
+            <h1 class="font-bold text-lg tracking-tight uppercase truncate">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</h1>
+        </a>
         <!-- Mobile Menu Button (Alpine could be used here to toggle sidebar) -->
         <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="p-2 text-gray-400 hover:text-white">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -40,10 +38,10 @@
     <!-- Desktop Sidebar -->
     <aside class="hidden md:flex flex-col w-64 h-screen fixed top-0 left-0 bg-gray-900 text-white border-r border-gray-800 z-20">
         <div class="p-6 border-b border-gray-800 flex items-center gap-3">
-            @if(\App\Models\Setting::getVal('site_logo'))
-                <img src="{{ \App\Models\Setting::getVal('site_logo') }}" alt="Logo" class="h-8 w-auto rounded-md object-contain bg-white p-1">
-            @endif
-            <span class="font-bold text-xl truncate">{{ \App\Models\Setting::getVal('site_name', 'Admin') }}</span>
+            <a href="{{ url('/') }}" class="flex items-center gap-2.5">
+                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" class="h-8 w-8 rounded-full object-contain bg-white border border-gray-100">
+                <span class="font-bold text-lg tracking-tight uppercase truncate">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
+            </a>
         </div>
         <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
@@ -61,6 +59,22 @@
             <a href="{{ route('admin.courses') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.courses*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 <span class="hidden lg:block">Courses</span>
+            </a>
+
+            <a href="{{ route('admin.inquiries.index') }}" class="flex items-center justify-between p-3 rounded-xl {{ request()->routeIs('admin.inquiries*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                    <span class="hidden lg:block">Inquiries</span>
+                </div>
+                @php $pendingInqCount = \App\Models\ContactInquiry::where('status', 'pending')->count(); @endphp
+                @if($pendingInqCount > 0)
+                    <span class="hidden lg:inline-flex px-2 py-0.5 text-[10px] font-bold bg-orange-500 text-white rounded-full">{{ $pendingInqCount }}</span>
+                @endif
+            </a>
+
+            <a href="{{ route('admin.blogs.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.blogs*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                <span class="hidden lg:block">Articles & Blogs</span>
             </a>
             
             @if(auth()->user()->role === 'admin')
@@ -119,6 +133,8 @@
             <a href="{{ route('admin.users') }}" class="block text-gray-300 hover:text-white py-2">Users</a>
             @endif
             <a href="{{ route('admin.courses') }}" class="block text-gray-300 hover:text-white py-2">Courses</a>
+            <a href="{{ route('admin.inquiries.index') }}" class="block text-gray-300 hover:text-white py-2">Inquiries</a>
+            <a href="{{ route('admin.blogs.index') }}" class="block text-gray-300 hover:text-white py-2">Articles & Blogs</a>
             @if(auth()->user()->role === 'admin')
             <a href="{{ route('admin.jobs') }}" class="block text-gray-300 hover:text-white py-2">Jobs</a>
             <a href="{{ route('admin.payment-methods.index') }}" class="block text-gray-300 hover:text-white py-2">Payment Methods</a>
@@ -156,7 +172,7 @@
         @yield('content')
         
         <footer class="mt-12 pt-6 border-t border-gray-200 text-center text-sm text-gray-500 pb-8">
-            Developed by <a href="http://www.neurasoft.top" target="_blank" class="text-primary hover:underline font-medium transition-colors">@NeuraSoft</a>
+            Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold transition-colors">NeuraSoft</a>
         </footer>
     </main>
 
