@@ -23,13 +23,15 @@
                         <span>Executive Professional Certification & Corporate Programs</span>
                     </div>
 
-                    <div class="space-y-1.5 sm:space-y-2">
+                    <div class="space-y-2">
                         <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
                             CAB Academy
                         </h1>
-                        <h3 class="text-xl sm:text-3xl lg:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-emerald-300 to-teal-100 tracking-wide drop-shadow-sm">
-                            Learn, Grow, Lead.
-                        </h3>
+                        <div>
+                            <h3 class="inline-block bg-[#c30102] text-white px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-xl sm:text-3xl lg:text-4xl font-black tracking-tight shadow-[0_6px_20px_rgba(195,1,2,0.35)]">
+                                Learn, Grow, Lead.
+                            </h3>
+                        </div>
                     </div>
                     
                     <p class="text-sm sm:text-lg text-slate-200/90 font-normal max-w-xl mx-auto lg:mx-0 leading-relaxed">
