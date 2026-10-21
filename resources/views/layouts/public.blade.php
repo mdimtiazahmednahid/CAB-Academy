@@ -85,7 +85,7 @@
                     <span>Live Admissions</span>
                 </span>
                 <span class="text-slate-200 text-xs">
-                    Batch 105th Enrolling &bull; Mirpur-Pallabi Campus & Live Zoom
+                    Batch 105th Enrolling &bull; 100% Live Interactive Online Masterclasses (Zoom)
                 </span>
             </div>
             <div class="flex items-center gap-4 text-xs text-slate-300">

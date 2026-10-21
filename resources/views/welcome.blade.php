@@ -20,7 +20,7 @@
                         <span class="w-2 h-2 rounded-full bg-[#c30102] animate-ping"></span>
                         <span class="text-emerald-400 font-extrabold">Admissions Active</span>
                         <span class="text-white/40">&bull;</span>
-                        <span class="text-slate-200">Mirpur Campus & Zoom Live</span>
+                        <span class="text-slate-200">100% Live Online Masterclasses (Zoom)</span>
                     </div>
 
                     <div class="space-y-2">
@@ -77,6 +77,7 @@
                             src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80" 
                             alt="CAB Academy Executive Training" 
                             class="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:scale-105 transition-transform duration-700"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1000&q=80';"
                         >
                         <div class="absolute inset-0 bg-gradient-to-t from-[#031330] via-black/40 to-transparent"></div>
                         <a 
@@ -566,89 +567,6 @@
         </div>
     </section>
 
-    <!-- 4.8. Executive Comparison Matrix (Apple-Style Architectural Clarity) -->
-    <section class="py-16 sm:py-20 bg-white border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-14">
-                <span class="text-xs uppercase tracking-widest font-extrabold text-[#c30102] block mb-1">Architectural Superiority</span>
-                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-[#051c45] tracking-tight">
-                    Why Corporate Leaders Choose CAB Academy
-                </h2>
-                <p class="text-slate-500 text-sm sm:text-base mt-2">
-                    A rigorous comparison between conventional academic diplomas and CAB Academy practical trade laboratories.
-                </p>
-            </div>
-
-            <!-- Modern Comparison Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                <!-- Left: Conventional Centers -->
-                <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200/90 shadow-sm space-y-6">
-                    <div class="flex items-center gap-3 pb-4 border-b border-slate-200">
-                        <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-lg font-bold">
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-black text-slate-800">Conventional Training Centers</h3>
-                            <span class="text-xs text-slate-500">Traditional textbook methodology</span>
-                        </div>
-                    </div>
-                    <ul class="space-y-4 text-xs sm:text-sm text-slate-600">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1 shrink-0"></i>
-                            <span>Rote theoretical lectures without authentic Customs Bill of Entry or L/C files</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1 shrink-0"></i>
-                            <span>Instructors lacking active NBR or customs clearance operational experience</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1 shrink-0"></i>
-                            <span>Paper-only non-verifiable attendance certificates vulnerable to fraud</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-times text-red-400 mt-1 shrink-0"></i>
-                            <span>Zero post-training regulatory advisory or SRO update briefings</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Right: CAB Academy Advantage -->
-                <div class="p-8 rounded-3xl bg-gradient-to-br from-[#051c45] to-[#0a2540] text-white border-2 border-[#c30102]/40 shadow-2xl space-y-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-40 h-40 bg-[#c30102]/20 rounded-full blur-2xl pointer-events-none"></div>
-                    <div class="flex items-center justify-between pb-4 border-b border-white/15 relative z-10">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-400/40 flex items-center justify-center text-lg font-bold">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-black text-white">The CAB Academy Standard</h3>
-                                <span class="text-xs text-emerald-300 font-bold">Executive Frontline Mastery</span>
-                            </div>
-                        </div>
-                        <span class="px-2.5 py-1 rounded bg-[#c30102] text-[10px] font-black uppercase tracking-wider text-white">Verified Advantage</span>
-                    </div>
-                    <ul class="space-y-4 text-xs sm:text-sm text-slate-200 relative z-10">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-emerald-400 mt-1 shrink-0"></i>
-                            <span>Live hands-on audit of actual L/C, Mushak 6.3, and Chittagong Port documentation</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-emerald-400 mt-1 shrink-0"></i>
-                            <span>Mentorship directly from active NBR legal advocates and C-suite supply chain directors</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-emerald-400 mt-1 shrink-0"></i>
-                            <span>Immutable SHA-256 cryptographic QR credentials instantly verifiable by employers worldwide</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-check text-emerald-400 mt-1 shrink-0"></i>
-                            <span>Lifetime access to regulatory circular alerts and private executive mastermind forums</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- 4.9. Executive Alumni Testimonials & Social Proof -->
     <section class="py-16 sm:py-20 bg-slate-50 border-b border-slate-200">
@@ -879,8 +797,8 @@
                         ],
                         [
                             'icon' => 'fa-laptop-house',
-                            'title' => 'Flexible Learning Options',
-                            'desc' => 'Interactive physical classroom sessions in Mirpur-Pallabi campus as well as remote live video stream options.'
+                            'title' => '100% Live Interactive Online',
+                            'desc' => 'Live Zoom masterclasses with real-time Q&A, session recordings, and cloud course materials accessible from anywhere.'
                         ],
                         [
                             'icon' => 'fa-certificate',

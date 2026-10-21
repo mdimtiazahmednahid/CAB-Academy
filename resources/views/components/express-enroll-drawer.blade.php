@@ -21,7 +21,7 @@
             name: '{{ auth()->check() ? addslashes(auth()->user()->name) : '' }}',
             phone: '',
             email: '{{ auth()->check() ? addslashes(auth()->user()->email) : '' }}',
-            trainingMode: 'in_person',
+            trainingMode: 'online_zoom',
             paymentMethodId: 2,
             senderNumber: '',
             transactionId: '',
@@ -279,19 +279,19 @@
                         <div class="grid grid-cols-2 gap-2.5 text-xs">
                             <label 
                                 class="flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer transition-all"
-                                :class="trainingMode === 'in_person' ? 'border-[#051c45] bg-[#051c45]/5 font-bold text-[#051c45]' : 'border-gray-200 text-gray-600'"
-                            >
-                                <input type="radio" x-model="trainingMode" value="in_person" class="hidden">
-                                <i class="fas fa-building text-sm"></i>
-                                <span>Mirpur Campus</span>
-                            </label>
-                            <label 
-                                class="flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer transition-all"
                                 :class="trainingMode === 'online_zoom' ? 'border-[#051c45] bg-[#051c45]/5 font-bold text-[#051c45]' : 'border-gray-200 text-gray-600'"
                             >
                                 <input type="radio" x-model="trainingMode" value="online_zoom" class="hidden">
                                 <i class="fas fa-video text-sm text-blue-500"></i>
-                                <span>Online (Zoom)</span>
+                                <span>Live Online (Zoom)</span>
+                            </label>
+                            <label 
+                                class="flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer transition-all"
+                                :class="trainingMode === 'in_person' ? 'border-[#051c45] bg-[#051c45]/5 font-bold text-[#051c45]' : 'border-gray-200 text-gray-600'"
+                            >
+                                <input type="radio" x-model="trainingMode" value="in_person" class="hidden">
+                                <i class="fas fa-building text-sm"></i>
+                                <span>Executive Campus</span>
                             </label>
                         </div>
                     </div>

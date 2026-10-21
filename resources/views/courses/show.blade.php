@@ -39,7 +39,7 @@
                             {{ $course->category ?? 'Certificate Course' }}
                         </span>
                         <span class="text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
-                            <i class="fas fa-check-circle text-xs"></i> Seats Open for Mirpur & Zoom
+                            <i class="fas fa-check-circle text-xs"></i> Admissions Open &bull; 100% Live Online Zoom
                         </span>
                     </div>
 
@@ -68,8 +68,8 @@
                         </div>
 
                         <div class="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/15">
-                            <i class="fas fa-map-marker-alt text-[#c30102]"></i>
-                            <span>{{ $course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom' }}</span>
+                            <i class="fas fa-video text-emerald-400"></i>
+                            <span>100% Live Online Masterclass (Zoom)</span>
                         </div>
 
                         <div class="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/15">
@@ -122,7 +122,7 @@
                         </p>
                         <div class="pt-2 border-t border-white/10 flex items-center justify-center gap-4 text-xs text-gray-300">
                             <span><i class="fas fa-check text-emerald-400 mr-1"></i> Lifetime Access</span>
-                            <span><i class="fas fa-check text-emerald-400 mr-1"></i> Physical + Zoom</span>
+                            <span><i class="fas fa-check text-emerald-400 mr-1"></i> 100% Live Zoom</span>
                         </div>
                     </div>
                 </div>
@@ -140,9 +140,9 @@
                 <!-- Course Banner Image -->
                 <div class="rounded-2xl overflow-hidden shadow-sm border border-[#e3e7f0] bg-white">
                     @if($course->cover_image)
-                        <img src="{{ asset($course->cover_image) }}" alt="{{ $course->title }}" class="w-full h-80 sm:h-96 object-cover">
+                        <img src="{{ asset($course->cover_image) }}" alt="{{ $course->title }}" class="w-full h-80 sm:h-96 object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80';">
                     @elseif($course->thumbnail)
-                        <img src="{{ $course->thumbnail }}" alt="{{ $course->title }}" class="w-full h-80 sm:h-96 object-cover">
+                        <img src="{{ $course->thumbnail }}" alt="{{ $course->title }}" class="w-full h-80 sm:h-96 object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80';">
                     @else
                         <div class="w-full h-80 bg-gradient-to-br from-[#051c45] via-[#0a2540] to-[#c30102] flex items-center justify-center text-white">
                             <span class="font-extrabold text-6xl opacity-30">{{ substr($course->title, 0, 1) }}</span>
@@ -179,14 +179,28 @@
                     </div>
                 @endif
 
-                <!-- Course Description & Overview -->
-                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-[#e3e7f0]">
-                    <h2 class="text-xl font-bold text-[#0f131f] mb-4 pb-2 border-b border-[#e3e7f0] flex items-center gap-2.5">
-                        <span class="w-2 h-5 bg-[#c30102] rounded-full inline-block"></span>
-                        <span>Course Overview</span>
-                    </h2>
-                    <div class="text-[#35415b] leading-relaxed text-sm space-y-4">
-                        <p>{{ $course->description ?? 'This program offers deep practical insight, live interactive case studies, and compliance methodologies essential for corporate mastery.' }}</p>
+                <!-- Course Description & Overview with Progressive Disclosure -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-[#e3e7f0]" x-data="{ expanded: false }">
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#e3e7f0]">
+                        <h2 class="text-xl font-bold text-[#0f131f] flex items-center gap-2.5">
+                            <span class="w-2 h-5 bg-[#c30102] rounded-full inline-block"></span>
+                            <span>Course Overview</span>
+                        </h2>
+                        <span class="text-xs font-semibold text-slate-500">Live Executive Syllabus</span>
+                    </div>
+                    <div class="text-[#35415b] leading-relaxed text-sm">
+                        <div :class="expanded ? '' : 'line-clamp-3'" class="transition-all duration-300">
+                            <p>{{ $course->description ?? 'This program offers deep practical insight, live interactive case studies, and compliance methodologies essential for corporate mastery.' }}</p>
+                        </div>
+                        @if(strlen($course->description ?? '') > 160)
+                            <button 
+                                @click="expanded = !expanded" 
+                                class="mt-3 text-xs font-bold text-[#c30102] hover:text-[#051c45] flex items-center gap-1.5 transition-colors group focus:outline-none"
+                            >
+                                <span x-text="expanded ? 'See Less' : 'See More'"></span>
+                                <i class="fas fa-chevron-down text-[10px] transition-transform duration-200" :class="expanded ? 'rotate-180' : ''"></i>
+                            </button>
+                        @endif
                     </div>
                 </div>
 
@@ -581,7 +595,7 @@
                     <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#e3e7f0] text-center">
                         <div class="w-[150px] h-[150px] rounded-full border-4 border-slate-100 shadow-md mx-auto mb-4 overflow-hidden bg-gray-100">
                             @if($course->instructor->profile_picture)
-                                <img src="{{ asset($course->instructor->profile_picture) }}" alt="{{ $course->instructor->name }}" class="w-full h-full object-cover object-top">
+                                <img src="{{ asset($course->instructor->profile_picture) }}" alt="{{ $course->instructor->name }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($course->instructor->name) }}&background=051c45&color=fff';">
                             @else
                                 <div class="w-full h-full bg-[#f2f4f7] text-[#051c45] flex items-center justify-center font-bold text-3xl">
                                     {{ substr($course->instructor->name, 0, 1) }}
@@ -596,15 +610,26 @@
                     </div>
                 @endif
 
-                <!-- 3. Operational Office & Venue Box -->
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#e3e7f0] space-y-2 text-xs text-[#35415b]">
-                    <h4 class="font-bold text-[#0f131f] text-sm uppercase tracking-wider">Venue & Schedule</h4>
-                    <p class="text-[#727f9f] leading-relaxed">
-                        <strong class="text-[#0f131f]">Campus:</strong> {{ $course->venue ?? 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216' }}
-                    </p>
-                    <p class="text-[#727f9f]">
-                        <strong class="text-[#0f131f]">Format:</strong> In-person classroom or live Zoom sessions.
-                    </p>
+                <!-- 3. Operational Delivery & Schedule Box -->
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#e3e7f0] space-y-3 text-xs text-[#35415b]">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <h4 class="font-bold text-[#0f131f] text-sm uppercase tracking-wider">Live Online Delivery</h4>
+                    </div>
+                    <div class="space-y-2 text-slate-600">
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-video text-blue-500 mt-0.5"></i>
+                            <span><strong>Live Classroom:</strong> Real-time interactive masterclass via Zoom</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-cloud-download-alt text-emerald-600 mt-0.5"></i>
+                            <span><strong>Digital Vault:</strong> Session recordings, L/C templates & circulars</span>
+                        </div>
+                        <div class="flex items-start gap-2 pt-1 border-t border-slate-100">
+                            <i class="fas fa-building text-slate-400 mt-0.5"></i>
+                            <span><strong>Registered Office:</strong> Mirpur-Pallabi, Dhaka, Bangladesh, 1216</span>
+                        </div>
+                    </div>
                 </div>
 
             </div>
