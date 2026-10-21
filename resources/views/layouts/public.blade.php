@@ -20,15 +20,15 @@
     <style>
         :root {
             --color-content-primary: #c30102;
-            --color-content-secondary: #051c45;
+            --color-content-secondary: #041536;
             --color-content-accent: #10b981;
             --color-content-bg-alt: #f8fafc;
-            --color-content-heading: #051c45;
+            --color-content-heading: #041536;
             --color-content-text: #334155;
             --color-content-faded: #64748b;
             --color-content-border: #e2e8f0;
-            --color-footer-bg: #031330;
-            --color-subfooter-bg: #020b1c;
+            --color-footer-bg: #020b18;
+            --color-subfooter-bg: #01060e;
         }
 
         body {
@@ -38,53 +38,53 @@
         }
 
         .bg-ipdp-primary { background-color: #c30102 !important; }
-        .bg-ipdp-secondary { background-color: #051c45 !important; }
+        .bg-ipdp-secondary { background-color: #041536 !important; }
         .text-ipdp-primary { color: #c30102 !important; }
-        .text-ipdp-secondary { color: #051c45 !important; }
+        .text-ipdp-secondary { color: #041536 !important; }
         .border-ipdp-primary { border-color: #c30102 !important; }
-        .border-ipdp-secondary { border-color: #051c45 !important; }
+        .border-ipdp-secondary { border-color: #041536 !important; }
 
-        /* Modernized Billion-Dollar Buttons */
+        /* Modernized Billion-Dollar Luxury Buttons */
         .btn-ipdp-primary {
-            background-color: #c30102 !important;
+            background: linear-gradient(135deg, #c30102 0%, #d61726 50%, #b00102 100%) !important;
             color: #ffffff !important;
-            font-weight: 700;
-            border-radius: 0.5rem;
+            font-weight: 800;
+            border-radius: 0.625rem;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 14px rgba(195, 1, 2, 0.25);
+            box-shadow: 0 4px 16px rgba(195, 1, 2, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
         .btn-ipdp-primary:hover {
-            background-color: #a50102 !important;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(195, 1, 2, 0.35);
+            background: linear-gradient(135deg, #b00102 0%, #c30102 50%, #9a0102 100%) !important;
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 24px rgba(195, 1, 2, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.25);
         }
 
         .btn-ipdp-secondary {
-            background-color: #051c45 !important;
+            background: linear-gradient(135deg, #041536 0%, #072152 50%, #020b18 100%) !important;
             color: #ffffff !important;
-            font-weight: 700;
-            border-radius: 0.5rem;
+            font-weight: 800;
+            border-radius: 0.625rem;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 14px rgba(5, 28, 69, 0.25);
+            box-shadow: 0 4px 16px rgba(4, 21, 54, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
         .btn-ipdp-secondary:hover {
-            background-color: #031330 !important;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(5, 28, 69, 0.35);
+            background: linear-gradient(135deg, #020b18 0%, #041536 50%, #01060e 100%) !important;
+            transform: translateY(-1.5px);
+            box-shadow: 0 8px 24px rgba(4, 21, 54, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col selection:bg-[#c30102] selection:text-white" x-data="{ searchModalOpen: false }">
 
     <!-- 0. Top Executive Announcement Bar -->
-    <div class="bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white py-2 px-4 text-xs font-medium border-b border-white/10 hidden sm:block">
+    <div class="bg-gradient-to-r from-[#020b18] via-[#041536] to-[#072152] text-white py-2 px-4 text-xs font-medium border-b border-white/10 hidden sm:block relative z-50">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#c30102] text-white text-[10px] font-black uppercase tracking-wider shadow">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white text-[10px] font-black uppercase tracking-wider shadow-sm border border-white/20">
                     <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
                     <span>Live Admissions</span>
                 </span>
-                <span class="text-slate-200 text-xs">
+                <span class="text-slate-200 text-xs font-medium">
                     Batch 105th Enrolling &bull; 100% Live Interactive Online Masterclasses (Zoom)
                 </span>
             </div>
@@ -107,20 +107,22 @@
     </div>
 
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_4px_25px_-5px_rgba(5,28,69,0.06)] transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- CAB Academy Brand Logo -->
                 <a href="{{ url('/') }}" class="flex items-center gap-3 shrink-0 group">
-                    <img class="h-12 w-12 sm:h-14 sm:w-14 object-contain rounded-full shadow-sm bg-white border border-gray-100 group-hover:scale-105 transition-transform" src="{{ asset('images/logo.png') }}" alt="CAB Academy">
+                    <div class="relative">
+                        <img class="h-12 w-12 sm:h-14 sm:w-14 object-contain rounded-full shadow-md bg-white border border-slate-100 ring-2 ring-slate-100 group-hover:ring-[#c30102]/30 group-hover:scale-105 transition-all duration-300" src="{{ asset('images/logo.png') }}" alt="CAB Academy">
+                    </div>
                     <div class="flex flex-col">
-                        <span class="text-lg sm:text-xl font-black tracking-tight text-[#0a2540] uppercase leading-none">CAB Academy</span>
-                        <span class="text-[9px] sm:text-[10px] tracking-widest uppercase font-bold text-[#c30102] mt-1">Learn, Grow, Lead.</span>
+                        <span class="text-lg sm:text-xl font-black tracking-tight text-[#041536] uppercase leading-none">CAB Academy</span>
+                        <span class="text-[9px] sm:text-[10px] tracking-widest uppercase font-black text-[#c30102] mt-1">Learn, Grow, Lead.</span>
                     </div>
                 </a>
 
                 <!-- Desktop Navigation Menu -->
-                <nav class="hidden lg:flex items-center space-x-7 text-[15px] font-semibold text-[#051c45]" x-data="{ courseDropdown: false }">
+                <nav class="hidden lg:flex items-center space-x-7 text-[15px] font-semibold text-[#041536]" x-data="{ courseDropdown: false }">
                     <a href="{{ url('/') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('/') ? 'text-[#c30102] font-bold' : '' }}">
                         <span>Home</span>
                         @if(request()->is('/'))
@@ -277,7 +279,7 @@
     </main>
 
     <!-- Footer & Subfooter -->
-    <footer id="contact" class="bg-[#031330] text-slate-300 pt-16 pb-8 border-t border-[#0a2540] mt-16 text-sm">
+    <footer id="contact" class="bg-[#020b18] text-slate-300 pt-16 pb-8 border-t border-slate-800/80 mt-16 text-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
                 <!-- Col 1: About Institute -->
