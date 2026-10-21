@@ -124,16 +124,22 @@
     <!-- 3 & 4. Course Showcase & Sticky Smart Category Navigation -->
     <div id="courses-section-wrapper" class="relative">
         <!-- 3. Sticky Smart Category Navigation Bar (Compact, Icon-Driven, Sticky across Course Section) -->
-        <section id="home-category" class="sticky top-20 z-40 bg-white/95 backdrop-blur-xl border-y border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(4,21,54,0.06)] py-2.5 transition-all" x-data="{
+        <section id="home-category" class="sticky top-20 z-40 bg-white/90 backdrop-blur-2xl border-y border-slate-200/75 shadow-[0_10px_28px_-6px_rgba(4,21,54,0.08)] py-2.5 transition-all" x-data="{
             scrollLeft() { $refs.catSlider.scrollBy({ left: -260, behavior: 'smooth' }) },
             scrollRight() { $refs.catSlider.scrollBy({ left: 260, behavior: 'smooth' }) }
         }">
+            <!-- Ultra-fine luxury Crimson accent hairline -->
+            <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#c30102]/45 to-transparent pointer-events-none"></div>
+
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between gap-3">
                     <!-- Compact Category Section Title & Visual Cue (Hidden on mobile for maximum pill space) -->
-                    <div class="hidden sm:flex items-center gap-2 shrink-0 pr-3 border-r border-slate-200/90">
-                        <span class="w-2 h-2 rounded-full bg-[#c30102] animate-pulse"></span>
-                        <h2 class="text-xs font-black uppercase tracking-wider text-[#041536] whitespace-nowrap">
+                    <div class="hidden sm:flex items-center gap-2 shrink-0 pr-3.5 border-r border-slate-200/90">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#c30102] opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#c30102]"></span>
+                        </span>
+                        <h2 class="text-[11px] font-black uppercase tracking-wider text-[#041536] whitespace-nowrap">
                             Course Categories
                         </h2>
                     </div>
@@ -163,36 +169,37 @@
                         @foreach($runningCategories as $cat)
                             <a 
                                 href="{{ route('catalog.category', $cat['slug']) }}" 
-                                class="category-nav-pill shrink-0 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-[#c30102] text-slate-700 hover:text-white border border-slate-200/90 hover:border-[#c30102] text-xs font-bold transition-all duration-200 group shadow-sm hover:shadow-md hover:scale-105 active:scale-95 cursor-pointer"
+                                class="category-nav-pill shrink-0 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-gradient-to-r hover:from-[#041536] hover:via-[#072152] hover:to-[#041536] text-[#0f172a] hover:text-white border border-slate-200/90 hover:border-[#0a2e6b] text-xs font-bold transition-all duration-300 group shadow-[0_2px_8px_-2px_rgba(4,21,54,0.06)] hover:shadow-[0_8px_20px_-4px_rgba(4,21,54,0.28)] hover:scale-105 active:scale-95 cursor-pointer"
                             >
-                                <span class="w-5 h-5 rounded-full bg-[#c30102]/10 group-hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
-                                    <i class="fas {{ $cat['icon'] }} text-[#c30102] group-hover:text-white text-[10px] transition-colors"></i>
+                                <span class="w-6 h-6 rounded-full bg-slate-100 group-hover:bg-[#c30102] text-[#c30102] group-hover:text-white flex items-center justify-center shrink-0 transition-all duration-300 shadow-inner group-hover:shadow-[0_0_10px_rgba(195,1,2,0.6)]">
+                                    <i class="fas {{ $cat['icon'] }} text-[10px] transition-colors"></i>
                                 </span>
-                                <span class="whitespace-nowrap">{{ $cat['name'] }}</span>
+                                <span class="whitespace-nowrap tracking-tight">{{ $cat['name'] }}</span>
                             </a>
                         @endforeach
                     </div>
 
                     <!-- Navigation Slider Arrows & View All -->
-                    <div class="hidden md:flex items-center gap-2 shrink-0 pl-3 border-l border-slate-200/90">
-                        <a href="{{ route('catalog.index') }}" class="text-[11px] font-bold text-[#c30102] hover:text-[#041536] transition-colors whitespace-nowrap mr-1">
-                            View All
+                    <div class="hidden md:flex items-center gap-2 shrink-0 pl-3.5 border-l border-slate-200/90">
+                        <a href="{{ route('catalog.index') }}" class="text-[11px] font-black uppercase tracking-wider text-[#c30102] hover:text-[#041536] transition-colors whitespace-nowrap mr-1 flex items-center gap-1">
+                            <span>All</span>
+                            <i class="fas fa-chevron-right text-[8px]"></i>
                         </a>
                         <button 
                             type="button" 
                             @click="scrollLeft()" 
-                            class="w-7 h-7 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-[#c30102] flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                            class="w-7 h-7 rounded-full bg-white hover:bg-[#041536] border border-slate-200/90 hover:border-[#041536] text-slate-600 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
                             aria-label="Previous Category"
                         >
-                            <i class="fas fa-chevron-left text-[10px]"></i>
+                            <i class="fas fa-chevron-left text-[9px]"></i>
                         </button>
                         <button 
                             type="button" 
                             @click="scrollRight()" 
-                            class="w-7 h-7 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-[#c30102] flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                            class="w-7 h-7 rounded-full bg-white hover:bg-[#041536] border border-slate-200/90 hover:border-[#041536] text-slate-600 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
                             aria-label="Next Category"
                         >
-                            <i class="fas fa-chevron-right text-[10px]"></i>
+                            <i class="fas fa-chevron-right text-[9px]"></i>
                         </button>
                     </div>
                 </div>
@@ -206,23 +213,25 @@
                 <!-- Connector Bracket & Centered 'View All Courses' -->
                 <div class="relative mb-8 sm:mb-10 lg:mb-14">
                     <div class="relative flex items-center justify-center">
-                        <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-transparent via-[#041536] to-[#c30102]"></div>
+                        <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-transparent via-[#041536] via-[#072152] to-[#c30102]"></div>
                         
-                        <a href="{{ route('catalog.index') }}" class="px-5 py-2.5 sm:px-8 sm:py-3.5 bg-white rounded-xl sm:rounded-2xl shadow-[0_4px_20px_rgba(4,21,54,0.08)] border border-slate-200 hover:border-[#c30102]/40 text-base sm:text-2xl font-black text-[#041536] hover:text-[#c30102] transition-all whitespace-nowrap z-10 mx-2 flex items-center gap-2 sm:gap-2.5 group hover:scale-[1.02]">
-                            <span>View All Courses</span>
-                            <i class="fas fa-arrow-right text-xs sm:text-base text-[#c30102] group-hover:translate-x-1.5 transition-transform"></i>
+                        <a href="{{ route('catalog.index') }}" class="px-6 py-3 sm:px-9 sm:py-3.5 bg-gradient-to-b from-white via-white to-slate-50/90 rounded-2xl shadow-[0_8px_30px_rgba(4,21,54,0.1),0_0_0_1px_rgba(4,21,54,0.06)] hover:shadow-[0_14px_40px_rgba(195,1,2,0.2),0_0_0_1px_rgba(195,1,2,0.35)] border border-slate-200/80 hover:border-[#c30102]/30 text-base sm:text-2xl font-black text-[#041536] hover:text-[#c30102] transition-all whitespace-nowrap z-10 mx-2 flex items-center gap-2.5 group hover:scale-[1.02]">
+                            <span class="tracking-tight">View All Courses</span>
+                            <span class="w-7 h-7 rounded-full bg-[#c30102]/10 group-hover:bg-[#c30102] flex items-center justify-center transition-all">
+                                <i class="fas fa-arrow-right text-xs sm:text-sm text-[#c30102] group-hover:text-white group-hover:translate-x-0.5 transition-all"></i>
+                            </span>
                         </a>
 
-                        <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-[#c30102] via-[#041536] to-transparent"></div>
+                        <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-[#c30102] via-[#072152] via-[#041536] to-transparent"></div>
                     </div>
 
                     <!-- Left and Right vertical drops pointing into each container on LG screens -->
                     <div class="hidden lg:grid grid-cols-2 gap-8 px-12 -mt-[2px]">
                         <div class="flex justify-center">
-                            <div class="w-[2px] h-8 bg-[#041536]/40"></div>
+                            <div class="w-[2px] h-8 bg-gradient-to-b from-[#041536]/60 to-emerald-500/60"></div>
                         </div>
                         <div class="flex justify-center">
-                            <div class="w-[2px] h-8 bg-[#c30102]/40"></div>
+                            <div class="w-[2px] h-8 bg-gradient-to-b from-[#c30102]/60 to-[#c30102]/80"></div>
                         </div>
                     </div>
                 </div>
@@ -231,13 +240,16 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
                     
                     <!-- Left Container: Certificate Course (Light Green Box with Subtle Radiant Depth) -->
-                    <div class="bg-[#f0f8ec] relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-emerald-500/30 shadow-[0_4px_25px_-5px_rgba(16,185,129,0.14)] overflow-hidden flex flex-col justify-between">
+                    <div class="bg-[#f0f8ec] bg-gradient-to-br from-[#f2f9ee]/95 via-[#f0f8ec] to-[#e8f5e2]/80 relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-emerald-500/35 shadow-[0_12px_36px_-6px_rgba(16,185,129,0.18)] overflow-hidden flex flex-col justify-between">
                         <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-400/12 rounded-full blur-3xl pointer-events-none"></div>
 
                         <div class="relative z-10">
-                            <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] text-center mb-4 sm:mb-6 tracking-tight">
-                                Certificate Course
-                            </h2>
+                            <div class="text-center mb-4 sm:mb-6">
+                                <span class="inline-block px-3 py-1 rounded-full bg-emerald-600/10 text-emerald-800 text-[10px] font-black uppercase tracking-widest border border-emerald-500/20 mb-2">Executive Master Track</span>
+                                <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
+                                    Certificate Course
+                                </h2>
+                            </div>
 
                             <!-- 2-Column Course Grid Inside Box -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-5">
@@ -257,13 +269,16 @@
                     </div>
 
                     <!-- Right Container: Day Long Course (Light Peach Box with Subtle Warm Glow) -->
-                    <div class="bg-[#fef4f0] relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-[#c30102]/25 shadow-[0_4px_25px_-5px_rgba(195,1,2,0.12)] overflow-hidden flex flex-col justify-between">
+                    <div class="bg-[#fef4f0] bg-gradient-to-br from-[#fff7f5]/95 via-[#fef4f0] to-[#fdebe4]/80 relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-[#c30102]/25 shadow-[0_12px_36px_-6px_rgba(195,1,2,0.16)] overflow-hidden flex flex-col justify-between">
                         <div class="absolute -top-24 -right-24 w-72 h-72 bg-[#c30102]/10 rounded-full blur-3xl pointer-events-none"></div>
 
                         <div class="relative z-10">
-                            <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] text-center mb-4 sm:mb-6 tracking-tight">
-                                Day Long Course
-                            </h2>
+                            <div class="text-center mb-4 sm:mb-6">
+                                <span class="inline-block px-3 py-1 rounded-full bg-[#c30102]/10 text-[#c30102] text-[10px] font-black uppercase tracking-widest border border-[#c30102]/20 mb-2">1-Day Accelerator</span>
+                                <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
+                                    Day Long Course
+                                </h2>
+                            </div>
 
                             <!-- 2-Column Course Grid Inside Box -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-5">

@@ -44,33 +44,39 @@
         .border-cab-primary, .border-ipdp-primary { border-color: #c30102 !important; }
         .border-cab-secondary, .border-ipdp-secondary { border-color: #041536 !important; }
 
-        /* Modernized Billion-Dollar Luxury Buttons */
+        /* Ultra-Luxury Billion-Dollar Crimson & Obsidian Navy Buttons */
         .btn-cab-primary, .btn-ipdp-primary {
-            background: linear-gradient(135deg, #c30102 0%, #d61726 50%, #b00102 100%) !important;
+            background: linear-gradient(135deg, #c30102 0%, #d8182b 40%, #b00102 85%, #8f0102 100%) !important;
             color: #ffffff !important;
             font-weight: 800;
-            border-radius: 0.625rem;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 16px rgba(195, 1, 2, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-radius: 0.75rem;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px -2px rgba(195, 1, 2, 0.38), 0 2px 6px -1px rgba(195, 1, 2, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            letter-spacing: 0.025em;
         }
         .btn-cab-primary:hover, .btn-ipdp-primary:hover {
-            background: linear-gradient(135deg, #b00102 0%, #c30102 50%, #9a0102 100%) !important;
+            background: linear-gradient(135deg, #a50102 0%, #c30102 50%, #880102 100%) !important;
             transform: translateY(-1.5px);
-            box-shadow: 0 8px 24px rgba(195, 1, 2, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 28px -2px rgba(195, 1, 2, 0.55), 0 4px 12px -2px rgba(195, 1, 2, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .btn-cab-secondary, .btn-ipdp-secondary {
-            background: linear-gradient(135deg, #041536 0%, #072152 50%, #020b18 100%) !important;
+            background: linear-gradient(135deg, #041536 0%, #072152 45%, #051c45 80%, #020b18 100%) !important;
             color: #ffffff !important;
             font-weight: 800;
-            border-radius: 0.625rem;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 16px rgba(4, 21, 54, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-radius: 0.75rem;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px -2px rgba(4, 21, 54, 0.35), 0 2px 6px -1px rgba(4, 21, 54, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            letter-spacing: 0.025em;
         }
         .btn-cab-secondary:hover, .btn-ipdp-secondary:hover {
             background: linear-gradient(135deg, #020b18 0%, #041536 50%, #01060e 100%) !important;
             transform: translateY(-1.5px);
-            box-shadow: 0 8px 24px rgba(4, 21, 54, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 28px -2px rgba(4, 21, 54, 0.52), 0 4px 12px -2px rgba(4, 21, 54, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+            border-color: rgba(255, 255, 255, 0.25);
         }
     </style>
 </head>
