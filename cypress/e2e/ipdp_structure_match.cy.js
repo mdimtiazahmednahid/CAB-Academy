@@ -58,11 +58,11 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
         });
     });
 
-    it('4. Verifies "Running Course Categories" Section (6 Columns, Circular Icons)', () => {
+    it('4. Verifies "Course Categories" Section (6 Columns, Circular Icons)', () => {
         cy.visit('/category/export-import');
 
         // Section heading
-        cy.contains('Running Course Categories').should('be.visible');
+        cy.contains('Course Categories').should('be.visible');
 
         // 6-column grid container
         cy.get('.grid.grid-cols-2.sm\\:grid-cols-3.lg\\:grid-cols-6').should('be.visible').within(() => {
@@ -124,8 +124,8 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
         // Corporate Clients
         cy.contains('Our Valuable Clients').should('be.visible');
 
-        // Running Course Categories with circular grid
-        cy.contains('Running Course Categories').should('be.visible');
+        // Course Categories with circular grid
+        cy.contains('Course Categories').should('be.visible');
         cy.get('#home-category .w-20.h-20.rounded-full').should('have.length.at.least', 6);
 
         // Centered "View All Courses" bracket header

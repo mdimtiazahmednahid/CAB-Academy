@@ -76,17 +76,14 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col selection:bg-[#c30102] selection:text-white" x-data="{ searchModalOpen: false }">
 
-    <!-- 0. Top Executive Announcement Bar -->
+    <!-- 0. Top Minimalist Contact Bar (Zero Fluff, Pure Utility) -->
     <div class="bg-gradient-to-r from-[#020b18] via-[#041536] to-[#072152] text-white py-2 px-4 text-xs font-medium border-b border-white/10 hidden sm:block relative z-50">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white text-[10px] font-black uppercase tracking-wider shadow-sm border border-white/20">
-                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                    <span>Live Admissions</span>
-                </span>
-                <span class="text-slate-200 text-xs font-medium">
-                    Batch 105th Enrolling &bull; 100% Live Interactive Online Masterclasses (Zoom)
-                </span>
+            <div class="flex items-center gap-2 text-xs text-slate-300 font-medium">
+                <i class="fas fa-map-marker-alt text-[#c30102] text-[11px]"></i>
+                <a href="{{ route('contact.index') }}" class="hover:text-white transition-colors">
+                    Mirpur-Pallabi, Dhaka-1216
+                </a>
             </div>
             <div class="flex items-center gap-4 text-xs text-slate-300">
                 <a href="tel:01917054664" class="hover:text-white flex items-center gap-1.5 transition-colors font-semibold">
@@ -96,11 +93,7 @@
                 <span class="text-white/30">&bull;</span>
                 <a href="https://wa.me/8801917054664" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors font-semibold">
                     <i class="fab fa-whatsapp text-sm"></i>
-                    <span>Instant WhatsApp</span>
-                </a>
-                <span class="text-white/30">&bull;</span>
-                <a href="{{ route('contact.index') }}" class="text-slate-300 hover:text-white transition-colors">
-                    Mirpur-Pallabi, Dhaka-1216
+                    <span>WhatsApp Support</span>
                 </a>
             </div>
         </div>

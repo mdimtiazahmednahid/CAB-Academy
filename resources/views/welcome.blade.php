@@ -17,11 +17,6 @@
                 
                 <!-- Left Content: CAB Academy Executive Branding -->
                 <div class="lg:col-span-7 space-y-5 sm:space-y-6 text-center lg:text-left">
-                    <!-- Executive Institutional Micro-Badge -->
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/95 text-xs font-semibold shadow-inner mx-auto lg:mx-0">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Executive Professional Certification & Corporate Programs</span>
-                    </div>
 
                     <div class="space-y-2">
                         <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
@@ -94,7 +89,6 @@
     <section class="py-10 sm:py-14 bg-gradient-to-b from-slate-50/80 via-white to-slate-50/50 border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-6 sm:mb-8">
-                <span class="bg-[#c30102]/10 text-[#c30102] px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider mb-2 inline-block">Corporate Trust & Affiliation</span>
                 <h2 class="text-lg sm:text-2xl font-black text-[#041536] tracking-tight uppercase">
                     Our Valuable Clients
                 </h2>
@@ -128,13 +122,12 @@
         </div>
     </section>
 
-    <!-- 3. Exact IPDP "Running Course Categories" Section (Modernized Ceramic Cards with Ring Glow) -->
-    <section id="home-category" class="py-10 sm:py-16 bg-slate-50/60 border-b border-slate-200/80">
+    <!-- 3. Course Categories Section (Clean, Authoritative, Minimalist) -->
+    <section id="home-category" class="py-10 sm:py-16 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#f8fafc] border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <div class="text-center mb-8 sm:mb-12">
-                <span class="text-[#c30102] bg-[#c30102]/10 px-3.5 py-1 rounded-full text-xs uppercase tracking-widest font-extrabold inline-block mb-2">Executive Disciplines</span>
                 <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-[#041536] tracking-tight">
-                    Running Course Categories
+                    Course Categories
                 </h2>
                 <div class="w-16 h-1 bg-gradient-to-r from-[#c30102] via-[#e11d48] to-[#041536] mx-auto mt-3 rounded-full"></div>
             </div>
@@ -179,7 +172,7 @@
     </section>
 
     <!-- 4. Exact IPDP Dual-Column Section: Certificate Course & Day Long Course Connected by 'View All Courses' Bracket -->
-    <section class="py-10 sm:py-16 lg:py-20 bg-white border-b border-slate-200/80">
+    <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc] border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             
             <!-- Connector Bracket & Centered 'View All Courses' -->
@@ -214,9 +207,6 @@
                     <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-400/12 rounded-full blur-3xl pointer-events-none"></div>
 
                     <div class="relative z-10">
-                        <div class="flex items-center justify-center gap-2 mb-2">
-                            <span class="px-3.5 py-1 rounded-full bg-emerald-700/12 border border-emerald-600/25 text-emerald-800 text-[11px] font-black uppercase tracking-wider shadow-sm">Multi-Week Diploma</span>
-                        </div>
                         <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] text-center mb-4 sm:mb-6 tracking-tight">
                             Certificate Course
                         </h2>
@@ -243,9 +233,6 @@
                     <div class="absolute -top-24 -right-24 w-72 h-72 bg-[#c30102]/10 rounded-full blur-3xl pointer-events-none"></div>
 
                     <div class="relative z-10">
-                        <div class="flex items-center justify-center gap-2 mb-2">
-                            <span class="px-3.5 py-1 rounded-full bg-[#c30102]/12 border border-[#c30102]/25 text-[#c30102] text-[11px] font-black uppercase tracking-wider shadow-sm">Intensive 1-Day Masterclass</span>
-                        </div>
                         <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] text-center mb-4 sm:mb-6 tracking-tight">
                             Day Long Course
                         </h2>
@@ -272,14 +259,10 @@
     </section>
 
     <!-- 5. Executive Insights & Knowledge Hub (Blog Section) -->
-    <section class="py-10 sm:py-16 lg:py-20 bg-white border-b border-slate-200/80">
+    <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#f4f7fb] to-[#f8fafc] border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-slate-200/80 gap-3">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#c30102]/10 text-[#c30102] text-xs font-black uppercase tracking-wider mb-2">
-                        <i class="fas fa-newspaper"></i>
-                        <span>Executive Insights & Research</span>
-                    </div>
                     <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
                         Knowledge Hub & Publications
                     </h2>
@@ -407,7 +390,6 @@
     <section id="features" class="py-10 sm:py-16 lg:py-20 bg-slate-50/70 border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-10 sm:mb-14">
-                <span class="bg-[#c30102]/10 text-[#c30102] px-3.5 py-1 rounded-full text-xs uppercase tracking-widest font-extrabold inline-block mb-2">Institutional Excellence</span>
                 <h2 class="text-2xl sm:text-3xl font-black text-[#041536] tracking-tight">
                     Our Features
                 </h2>
@@ -471,7 +453,7 @@
 
     <!-- 8. Student Career & Job Placement Section (Preserving Platform Job Board Feature) -->
     @if(isset($jobs) && $jobs->count() > 0)
-        <section class="py-16 bg-white">
+        <section class="py-16 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-slate-200">
                     <div>

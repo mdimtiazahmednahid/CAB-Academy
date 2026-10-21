@@ -109,15 +109,14 @@
         </div>
     </section>
 
-    <!-- 3. Exact IPDP "Running Course Categories" Section (6 Columns Grid, 80x80 Circular Avatars) -->
-    <section class="py-16 bg-white border-t border-[#e3e7f0]">
+    <!-- 3. Course Categories Section (6 Columns Grid, 80x80 Circular Avatars) -->
+    <section class="py-16 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#f8fafc] border-t border-[#e3e7f0]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Section Heading (Exact IPDP text) -->
+            <!-- Section Heading (Clean, Direct, Zero Redundancy) -->
             <div class="mb-10 text-center sm:text-left flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <span class="text-xs font-black tracking-widest text-[#c30102] uppercase block mb-1">Professional Taxonomies</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0f131f] tracking-tight">
-                        Running Course Categories
+                        Course Categories
                     </h2>
                 </div>
                 <p class="text-xs text-[#727f9f] max-w-md">

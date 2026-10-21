@@ -21,7 +21,7 @@ class CourseCatalogTest extends TestCase
     {
         $response = $this->get('/catalog');
         $response->assertStatus(200);
-        $response->assertSee('Running Course Categories');
+        $response->assertSee('Course Categories');
         $response->assertSee('L/C, Banking, Customs');
     }
 
