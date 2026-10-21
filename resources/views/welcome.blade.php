@@ -35,15 +35,22 @@
 
                     <!-- Call-to-Action Buttons -->
                     <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
-                        <a href="#home-category" class="btn-ipdp-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-white text-xs sm:text-sm font-black uppercase tracking-wider shadow-[0_10px_25px_-5px_rgba(195,1,2,0.45)] flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 flex-1 sm:flex-initial text-center">
+                        <a href="#home-category" class="btn-ipdp-primary px-7 sm:px-9 py-3.5 sm:py-4 rounded-xl text-white text-xs sm:text-sm font-black uppercase tracking-wider shadow-[0_10px_25px_-5px_rgba(195,1,2,0.45)] flex items-center justify-center gap-2.5 transition-all hover:scale-105 active:scale-95 flex-1 sm:flex-initial text-center group">
                             <span>Explore Courses</span>
-                            <i class="fas fa-arrow-down text-xs"></i>
+                            <i class="fas fa-arrow-down text-xs group-hover:translate-y-0.5 transition-transform"></i>
                         </a>
 
-                        <a href="{{ route('catalog.category', 'export-import') }}" class="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/25 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all flex-1 sm:flex-initial text-center">
+                        <a href="{{ route('catalog.category', 'export-import') }}" class="px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/25 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all flex-1 sm:flex-initial text-center">
                             <span>Export – Import</span>
                             <i class="fas fa-chevron-right text-xs"></i>
                         </a>
+                    </div>
+
+                    <!-- Marketing Trust Reassurance Line -->
+                    <div class="flex items-center justify-center lg:justify-start gap-4 text-[11px] sm:text-xs text-slate-300/80 pt-1 font-medium">
+                        <span class="flex items-center gap-1.5"><i class="fas fa-check-circle text-emerald-400"></i> Govt. Approved & Verified</span>
+                        <span class="text-white/20">&bull;</span>
+                        <span class="flex items-center gap-1.5"><i class="fas fa-user-graduate text-[#c30102]"></i> 10,000+ Corporate Alumni</span>
                     </div>
                 </div>
 
@@ -192,6 +199,10 @@
                         <h3 class="text-xs font-bold text-[#041536] group-hover:text-[#c30102] transition-colors leading-tight line-clamp-1 w-full">
                             {{ $cat['name'] }}
                         </h3>
+                        <div class="mt-1 flex items-center justify-center gap-1 text-[10px] font-bold text-slate-400 group-hover:text-[#c30102] transition-colors">
+                            <span>Browse</span>
+                            <i class="fas fa-chevron-right text-[8px] group-hover:translate-x-0.5 transition-transform"></i>
+                        </div>
                     </a>
                 @endforeach
             </div>
@@ -248,7 +259,7 @@
 
                     <!-- Bottom Action Button -->
                     <div class="text-center mt-6 sm:mt-8 relative z-10">
-                        <a href="{{ route('catalog.certificate') }}" class="btn-ipdp-secondary inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
+                        <a href="{{ route('catalog.certificate') }}" class="btn-ipdp-secondary inline-flex items-center justify-center gap-2 px-8 py-3.5 min-h-[46px] rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
                             <span>View All Certificate Courses</span>
                             <i class="fas fa-arrow-right text-xs"></i>
                         </a>
@@ -274,7 +285,7 @@
 
                     <!-- Bottom Action Button -->
                     <div class="text-center mt-6 sm:mt-8 relative z-10">
-                        <a href="{{ route('catalog.day_long') }}" class="btn-ipdp-primary inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
+                        <a href="{{ route('catalog.day_long') }}" class="btn-ipdp-primary inline-flex items-center justify-center gap-2 px-8 py-3.5 min-h-[46px] rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
                             <span>View All Day Long Courses</span>
                             <i class="fas fa-arrow-right text-xs"></i>
                         </a>
@@ -401,11 +412,15 @@
                 Connect with our academic counselors for corporate training customized for your organization, batch reservations, or curriculum guidance.
             </p>
             <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
-                <a href="tel:01917054664" class="btn-ipdp-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-xs sm:text-sm shadow-[0_10px_25px_rgba(195,1,2,0.45)] flex items-center justify-center gap-2 hover:scale-105 transition-all w-full sm:w-auto">
+                <a href="tel:01917054664" class="btn-ipdp-primary px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-xs sm:text-sm shadow-[0_10px_25px_rgba(195,1,2,0.45)] flex items-center justify-center gap-2 hover:scale-105 transition-all w-full sm:w-auto">
                     <i class="fas fa-phone-alt"></i>
                     <span>Call: 01917-054664</span>
                 </a>
-                <a href="{{ route('catalog.category', 'export-import') }}" class="bg-white text-[#041536] hover:bg-slate-100 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-xs sm:text-sm shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105 w-full sm:w-auto">
+                <a href="https://wa.me/8801917054664" target="_blank" rel="noopener noreferrer" class="bg-[#25D366] hover:bg-[#20ba5a] text-white px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-xs sm:text-sm shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105 w-full sm:w-auto">
+                    <i class="fab fa-whatsapp text-base"></i>
+                    <span>Instant WhatsApp</span>
+                </a>
+                <a href="{{ route('catalog.category', 'export-import') }}" class="bg-white text-[#041536] hover:bg-slate-100 px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-xs sm:text-sm shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105 w-full sm:w-auto">
                     <span>Explore Export – Import</span>
                     <i class="fas fa-arrow-right text-xs"></i>
                 </a>

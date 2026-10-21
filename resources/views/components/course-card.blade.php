@@ -116,21 +116,27 @@
 
         <!-- 3. Bottom Conversion Zone: Schedule + Centered High-Focus "Enroll Now" Button -->
         <div class="border-t border-slate-100 pt-2.5 mt-auto flex flex-col gap-2">
-            <!-- Schedule / Start Date (Centered) -->
-            <div class="flex items-center justify-center text-[11px] sm:text-xs text-slate-500 font-semibold gap-1.5">
-                <i class="far fa-clock text-[11px] text-[#041536]"></i>
-                <span>
-                    @if($course->start_date)
-                        Starts {{ $course->start_date->format('d M, Y') }}
-                    @elseif($course->duration)
-                        {{ $course->duration }}
-                    @else
-                        Upcoming Batch
-                    @endif
+            <!-- Schedule / Start Date + Urgency Badge (Centered) -->
+            <div class="flex items-center justify-center text-[11px] sm:text-xs text-slate-500 font-semibold gap-2 flex-wrap">
+                <div class="flex items-center gap-1.5">
+                    <i class="far fa-clock text-[11px] text-[#c30102]"></i>
+                    <span>
+                        @if($course->start_date)
+                            Starts {{ $course->start_date->format('d M, Y') }}
+                        @elseif($course->duration)
+                            {{ $course->duration }}
+                        @else
+                            Upcoming Batch
+                        @endif
+                    </span>
+                </div>
+                <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 uppercase tracking-wider">
+                    <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Seats Open</span>
                 </span>
             </div>
 
-            <!-- Centered Prominent High-Conversion Action Button -->
+            <!-- Centered Prominent High-Conversion Action Button (46px Touch Ergonomics) -->
             <a 
                 href="{{ route('courses.show', $course) }}" 
                 onclick="event.preventDefault(); openEnrollDrawer({ 
@@ -141,7 +147,7 @@
                     batch: '{{ $course->batch ?? '105th BATCH' }}', 
                     venue: 'Interactive Live Zoom Masterclass' 
                 })"
-                class="btn-ipdp-primary w-full py-2.5 sm:py-3 px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase shadow-[0_4px_16px_rgba(195,1,2,0.32)] hover:shadow-[0_8px_24px_rgba(195,1,2,0.48)] flex items-center justify-center gap-2 cursor-pointer group/btn transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center"
+                class="btn-ipdp-primary w-full py-3 sm:py-3.5 min-h-[46px] px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase shadow-[0_4px_16px_rgba(195,1,2,0.32)] hover:shadow-[0_8px_24px_rgba(195,1,2,0.48)] flex items-center justify-center gap-2 cursor-pointer group/btn transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center"
             >
                 <span>Enroll Now</span>
                 <i class="fas fa-arrow-right text-[10px] sm:text-xs group-hover/btn:translate-x-1 transition-transform"></i>
