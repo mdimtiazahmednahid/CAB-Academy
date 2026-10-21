@@ -69,14 +69,6 @@
                                 <i class="fas fa-play text-lg sm:text-2xl ml-0.5 sm:ml-1 text-white relative z-10"></i>
                             </a>
 
-                            <!-- Floating Micro-Capsule Inside Video Preview -->
-                            <div class="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3 bg-[#020b18]/85 backdrop-blur-md border border-white/15 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl flex items-center justify-between text-[11px] sm:text-xs text-slate-200">
-                                <span class="flex items-center gap-1.5 sm:gap-2 font-semibold truncate">
-                                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                                    <span class="truncate">Interactive Masterclasses</span>
-                                </span>
-                                <span class="text-[9px] sm:text-[10px] text-slate-300 uppercase tracking-wider font-bold shrink-0">Zoom Pro Live</span>
-                            </div>
                         </div>
                     </div>
                 </div>
