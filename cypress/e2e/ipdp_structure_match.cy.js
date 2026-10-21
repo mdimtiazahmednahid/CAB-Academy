@@ -124,9 +124,9 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
         // Corporate Clients
         cy.contains('Our Valuable Clients').should('be.visible');
 
-        // Course Categories with circular grid
+        // Course Categories with smart navigation pills
         cy.contains('Course Categories').should('be.visible');
-        cy.get('#home-category .w-20.h-20.rounded-full').should('have.length.at.least', 6);
+        cy.get('#home-category .category-nav-pill').should('have.length.at.least', 6);
 
         // Centered "View All Courses" bracket header
         cy.contains('View All Courses').should('be.visible');

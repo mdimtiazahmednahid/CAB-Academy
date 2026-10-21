@@ -20,9 +20,9 @@ describe('Mobile Viewport & Course Card Layout Verification', () => {
         cy.contains('Learn, Grow, Lead.').should('be.visible');
         cy.contains('Explore Courses').should('be.visible');
 
-        // 3. Scroll to Categories and verify 2-column grid
+        // 3. Scroll to Categories and verify navigation pills
         cy.get('#home-category').scrollIntoView();
-        cy.get('#home-category .w-20.h-20.rounded-full').should('have.length.at.least', 6);
+        cy.get('#home-category .category-nav-pill').should('have.length.at.least', 6);
 
         // 4. Verify Dual Containers and Course Cards
         cy.get('.bg-\\[\\#f0f8ec\\]').scrollIntoView();

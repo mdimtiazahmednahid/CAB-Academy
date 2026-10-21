@@ -48,7 +48,7 @@
 
                     <!-- Marketing Trust Reassurance Line -->
                     <div class="flex items-center justify-center lg:justify-start gap-4 text-[11px] sm:text-xs text-slate-300/80 pt-1 font-medium">
-                        <span class="flex items-center gap-1.5"><i class="fas fa-check-circle text-emerald-400"></i> Govt. Approved & Verified</span>
+                        <!-- <span class="flex items-center gap-1.5"><i class="fas fa-check-circle text-emerald-400"></i> Govt. Approved & Verified</span> -->
                         <span class="text-white/20">&bull;</span>
                         <span class="flex items-center gap-1.5"><i class="fas fa-user-graduate text-[#c30102]"></i> 10,000+ Corporate Alumni</span>
                     </div>
@@ -121,180 +121,171 @@
         </div>
     </section>
 
-    <!-- 3. Course Categories Slider (Sleek, Compact Single-Row Luxury Carousel) -->
-    <section id="home-category" class="py-6 sm:py-8 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#f8fafc] border-b border-slate-200/80" x-data="{
-        scrollLeft() { $refs.catSlider.scrollBy({ left: -320, behavior: 'smooth' }) },
-        scrollRight() { $refs.catSlider.scrollBy({ left: 320, behavior: 'smooth' }) }
-    }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header with Title and Navigation Slider Arrows -->
-            <div class="flex items-center justify-between mb-4 sm:mb-5">
-                <div>
-                    <h2 class="text-xl sm:text-2xl font-black text-[#041536] tracking-tight">
-                        Course Categories
-                    </h2>
-                </div>
+    <!-- 3 & 4. Course Showcase & Sticky Smart Category Navigation -->
+    <div id="courses-section-wrapper" class="relative">
+        <!-- 3. Sticky Smart Category Navigation Bar (Compact, Icon-Driven, Sticky across Course Section) -->
+        <section id="home-category" class="sticky top-20 z-40 bg-white/95 backdrop-blur-xl border-y border-slate-200/80 shadow-[0_4px_20px_-4px_rgba(4,21,54,0.06)] py-2.5 transition-all" x-data="{
+            scrollLeft() { $refs.catSlider.scrollBy({ left: -260, behavior: 'smooth' }) },
+            scrollRight() { $refs.catSlider.scrollBy({ left: 260, behavior: 'smooth' }) }
+        }">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between gap-3">
+                    <!-- Compact Category Section Title & Visual Cue -->
+                    <div class="flex items-center gap-2 shrink-0 pr-3 border-r border-slate-200/90">
+                        <span class="w-2 h-2 rounded-full bg-[#c30102] animate-pulse"></span>
+                        <h2 class="text-xs font-black uppercase tracking-wider text-[#041536] whitespace-nowrap">
+                            Course Categories
+                        </h2>
+                    </div>
 
-                <!-- Sleek Slider Controls & View All -->
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('catalog.index') }}" class="text-xs font-bold text-[#c30102] hover:text-[#041536] transition-colors hidden sm:inline-block mr-2">
-                        View All
-                    </a>
-                    <button 
-                        type="button" 
-                        @click="scrollLeft()" 
-                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white border border-slate-200/90 shadow-sm hover:shadow-md text-[#041536] hover:text-[#c30102] hover:border-[#c30102]/40 flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
-                        aria-label="Previous Category"
-                    >
-                        <i class="fas fa-chevron-left text-xs"></i>
-                    </button>
-                    <button 
-                        type="button" 
-                        @click="scrollRight()" 
-                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white border border-slate-200/90 shadow-sm hover:shadow-md text-[#041536] hover:text-[#c30102] hover:border-[#c30102]/40 flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
-                        aria-label="Next Category"
-                    >
-                        <i class="fas fa-chevron-right text-xs"></i>
-                    </button>
-                </div>
-            </div>
+                    @php
+                        $runningCategories = [
+                            ['name' => 'Soft Skills', 'slug' => 'soft-skills', 'icon' => 'fa-comments'],
+                            ['name' => 'Supply Chain Management', 'slug' => 'supply-chain-management', 'icon' => 'fa-truck-fast'],
+                            ['name' => 'Value Added Tax', 'slug' => 'value-added-tax', 'icon' => 'fa-file-invoice-dollar'],
+                            ['name' => 'Export – Import', 'slug' => 'export-import', 'icon' => 'fa-ship'],
+                            ['name' => 'Accounting', 'slug' => 'accounting', 'icon' => 'fa-calculator'],
+                            ['name' => 'Human Resource', 'slug' => 'human-resource', 'icon' => 'fa-people-group'],
+                            ['name' => 'Civil Construction Project', 'slug' => 'civil-construction-project', 'icon' => 'fa-helmet-safety'],
+                            ['name' => 'Fire Safety', 'slug' => 'fire-safety', 'icon' => 'fa-fire-extinguisher'],
+                            ['name' => 'Law & Compliance', 'slug' => 'law', 'icon' => 'fa-scale-balanced'],
+                            ['name' => 'Leadership', 'slug' => 'leadership', 'icon' => 'fa-award'],
+                            ['name' => 'Production & Ops', 'slug' => 'production', 'icon' => 'fa-industry'],
+                            ['name' => 'Project Management', 'slug' => 'project-management', 'icon' => 'fa-diagram-project'],
+                        ];
+                    @endphp
 
-            @php
-                $runningCategories = [
-                    ['name' => 'Soft Skills', 'slug' => 'soft-skills', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Soft-Skills.jpg'],
-                    ['name' => 'Supply Chain Management', 'slug' => 'supply-chain-management', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Supply-Chain-Management.jpg'],
-                    ['name' => 'Value Added Tax', 'slug' => 'value-added-tax', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Income-Tax-Management.jpg'],
-                    ['name' => 'Export – Import', 'slug' => 'export-import', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Import-Export-879.png'],
-                    ['name' => 'Accounting', 'slug' => 'accounting', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Accounting.jpg'],
-                    ['name' => 'Human Resource', 'slug' => 'human-resource', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Human-Recourse.png'],
-                    ['name' => 'Civil Construction Project', 'slug' => 'civil-construction-project', 'img' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80'],
-                    ['name' => 'Fire Safety', 'slug' => 'fire-safety', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Fire-Safety.jpg'],
-                    ['name' => 'Law & Compliance', 'slug' => 'law', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Law.jpg'],
-                    ['name' => 'Leadership', 'slug' => 'leadership', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Leadership.jpg'],
-                    ['name' => 'Production & Ops', 'slug' => 'production', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/47d4e0_329ee2938ea94e5d8a507a6547c9686dmv2.avif'],
-                    ['name' => 'Project Management', 'slug' => 'project-management', 'img' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Project-Management.jpg'],
-                ];
-            @endphp
-
-            <!-- Compact Sliding Category Track -->
-            <div 
-                x-ref="catSlider" 
-                class="flex items-center gap-3 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1 -mx-1 snap-x snap-mandatory"
-            >
-                @foreach($runningCategories as $cat)
-                    <a 
-                        href="{{ route('catalog.category', $cat['slug']) }}" 
-                        class="group shrink-0 w-36 sm:w-44 bg-white rounded-xl sm:rounded-2xl p-3 sm:p-3.5 border border-slate-200/90 hover:border-[#c30102]/40 shadow-[0_2px_8px_rgba(4,21,54,0.04)] hover:shadow-[0_10px_24px_-4px_rgba(4,21,54,0.12)] transition-all duration-300 flex flex-col items-center justify-center text-center snap-start hover:-translate-y-1"
+                    <!-- Horizontal Smart Category Navigation Pills with Semantic Icons -->
+                    <div 
+                        x-ref="catSlider" 
+                        class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1 w-full"
                     >
-                        <!-- 80x80 Circular Thumbnail (Preserves Cypress #home-category .w-20.h-20.rounded-full selector) -->
-                        <div class="w-20 h-20 rounded-full overflow-hidden mb-2 ring-2 ring-slate-100 group-hover:ring-[#c30102] group-hover:scale-105 transition-all duration-300 shadow-sm bg-slate-100 flex items-center justify-center shrink-0">
-                            <img 
-                                src="{{ $cat['img'] }}" 
-                                alt="{{ $cat['name'] }}" 
-                                class="w-full h-full object-cover object-center"
-                                loading="lazy"
-                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80';"
+                        @foreach($runningCategories as $cat)
+                            <a 
+                                href="{{ route('catalog.category', $cat['slug']) }}" 
+                                class="category-nav-pill shrink-0 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-[#c30102] text-slate-700 hover:text-white border border-slate-200/90 hover:border-[#c30102] text-xs font-bold transition-all duration-200 group shadow-sm hover:shadow-md hover:scale-105 active:scale-95 cursor-pointer"
                             >
-                        </div>
-                        <h3 class="text-xs font-bold text-[#041536] group-hover:text-[#c30102] transition-colors leading-tight line-clamp-1 w-full">
-                            {{ $cat['name'] }}
-                        </h3>
-                        <div class="mt-1 flex items-center justify-center gap-1 text-[10px] font-bold text-slate-400 group-hover:text-[#c30102] transition-colors">
-                            <span>Browse</span>
-                            <i class="fas fa-chevron-right text-[8px] group-hover:translate-x-0.5 transition-transform"></i>
-                        </div>
-                    </a>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. Exact IPDP Dual-Column Section: Certificate Course & Day Long Course Connected by 'View All Courses' Bracket -->
-    <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc] border-b border-slate-200/80">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-            
-            <!-- Connector Bracket & Centered 'View All Courses' -->
-            <div class="relative mb-8 sm:mb-10 lg:mb-14">
-                <div class="relative flex items-center justify-center">
-                    <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-transparent via-[#041536] to-[#c30102]"></div>
-                    
-                    <a href="{{ route('catalog.index') }}" class="px-5 py-2.5 sm:px-8 sm:py-3.5 bg-white rounded-xl sm:rounded-2xl shadow-[0_4px_20px_rgba(4,21,54,0.08)] border border-slate-200 hover:border-[#c30102]/40 text-base sm:text-2xl font-black text-[#041536] hover:text-[#c30102] transition-all whitespace-nowrap z-10 mx-2 flex items-center gap-2 sm:gap-2.5 group hover:scale-[1.02]">
-                        <span>View All Courses</span>
-                        <i class="fas fa-arrow-right text-xs sm:text-base text-[#c30102] group-hover:translate-x-1.5 transition-transform"></i>
-                    </a>
-
-                    <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-[#c30102] via-[#041536] to-transparent"></div>
-                </div>
-
-                <!-- Left and Right vertical drops pointing into each container on LG screens -->
-                <div class="hidden lg:grid grid-cols-2 gap-8 px-12 -mt-[2px]">
-                    <div class="flex justify-center">
-                        <div class="w-[2px] h-8 bg-[#041536]/40"></div>
+                                <span class="w-5 h-5 rounded-full bg-[#c30102]/10 group-hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
+                                    <i class="fas {{ $cat['icon'] }} text-[#c30102] group-hover:text-white text-[10px] transition-colors"></i>
+                                </span>
+                                <span class="whitespace-nowrap">{{ $cat['name'] }}</span>
+                            </a>
+                        @endforeach
                     </div>
-                    <div class="flex justify-center">
-                        <div class="w-[2px] h-8 bg-[#c30102]/40"></div>
+
+                    <!-- Navigation Slider Arrows & View All -->
+                    <div class="hidden md:flex items-center gap-2 shrink-0 pl-3 border-l border-slate-200/90">
+                        <a href="{{ route('catalog.index') }}" class="text-[11px] font-bold text-[#c30102] hover:text-[#041536] transition-colors whitespace-nowrap mr-1">
+                            View All
+                        </a>
+                        <button 
+                            type="button" 
+                            @click="scrollLeft()" 
+                            class="w-7 h-7 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-[#c30102] flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                            aria-label="Previous Category"
+                        >
+                            <i class="fas fa-chevron-left text-[10px]"></i>
+                        </button>
+                        <button 
+                            type="button" 
+                            @click="scrollRight()" 
+                            class="w-7 h-7 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-[#c30102] flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                            aria-label="Next Category"
+                        >
+                            <i class="fas fa-chevron-right text-[10px]"></i>
+                        </button>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Dual Side-By-Side Course Containers -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
+        <!-- 4. Exact IPDP Dual-Column Section: Certificate Course & Day Long Course Connected by 'View All Courses' Bracket -->
+        <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc] border-b border-slate-200/80">
+            <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                 
-                <!-- Left Container: Certificate Course (Light Green Box with Subtle Radiant Depth) -->
-                <div class="bg-[#f0f8ec] relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-emerald-500/30 shadow-[0_4px_25px_-5px_rgba(16,185,129,0.14)] overflow-hidden flex flex-col justify-between">
-                    <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-400/12 rounded-full blur-3xl pointer-events-none"></div>
+                <!-- Connector Bracket & Centered 'View All Courses' -->
+                <div class="relative mb-8 sm:mb-10 lg:mb-14">
+                    <div class="relative flex items-center justify-center">
+                        <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-transparent via-[#041536] to-[#c30102]"></div>
+                        
+                        <a href="{{ route('catalog.index') }}" class="px-5 py-2.5 sm:px-8 sm:py-3.5 bg-white rounded-xl sm:rounded-2xl shadow-[0_4px_20px_rgba(4,21,54,0.08)] border border-slate-200 hover:border-[#c30102]/40 text-base sm:text-2xl font-black text-[#041536] hover:text-[#c30102] transition-all whitespace-nowrap z-10 mx-2 flex items-center gap-2 sm:gap-2.5 group hover:scale-[1.02]">
+                            <span>View All Courses</span>
+                            <i class="fas fa-arrow-right text-xs sm:text-base text-[#c30102] group-hover:translate-x-1.5 transition-transform"></i>
+                        </a>
 
-                    <div class="relative z-10">
-                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] text-center mb-4 sm:mb-6 tracking-tight">
-                            Certificate Course
-                        </h2>
-
-                        <!-- 2-Column Course Grid Inside Box -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-5">
-                            @foreach($certificateCourses->take(4) as $course)
-                                <x-course-card :course="$course" />
-                            @endforeach
-                        </div>
+                        <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-[#c30102] via-[#041536] to-transparent"></div>
                     </div>
 
-                    <!-- Bottom Action Button -->
-                    <div class="text-center mt-6 sm:mt-8 relative z-10">
-                        <a href="{{ route('catalog.certificate') }}" class="btn-ipdp-secondary inline-flex items-center justify-center gap-2 px-8 py-3.5 min-h-[46px] rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
-                            <span>View All Certificate Courses</span>
-                            <i class="fas fa-arrow-right text-xs"></i>
-                        </a>
+                    <!-- Left and Right vertical drops pointing into each container on LG screens -->
+                    <div class="hidden lg:grid grid-cols-2 gap-8 px-12 -mt-[2px]">
+                        <div class="flex justify-center">
+                            <div class="w-[2px] h-8 bg-[#041536]/40"></div>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="w-[2px] h-8 bg-[#c30102]/40"></div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Right Container: Day Long Course (Light Peach Box with Subtle Warm Glow) -->
-                <div class="bg-[#fef4f0] relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-[#c30102]/25 shadow-[0_4px_25px_-5px_rgba(195,1,2,0.12)] overflow-hidden flex flex-col justify-between">
-                    <div class="absolute -top-24 -right-24 w-72 h-72 bg-[#c30102]/10 rounded-full blur-3xl pointer-events-none"></div>
+                <!-- Dual Side-By-Side Course Containers -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
+                    
+                    <!-- Left Container: Certificate Course (Light Green Box with Subtle Radiant Depth) -->
+                    <div class="bg-[#f0f8ec] relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-emerald-500/30 shadow-[0_4px_25px_-5px_rgba(16,185,129,0.14)] overflow-hidden flex flex-col justify-between">
+                        <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-400/12 rounded-full blur-3xl pointer-events-none"></div>
 
-                    <div class="relative z-10">
-                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] text-center mb-4 sm:mb-6 tracking-tight">
-                            Day Long Course
-                        </h2>
+                        <div class="relative z-10">
+                            <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] text-center mb-4 sm:mb-6 tracking-tight">
+                                Certificate Course
+                            </h2>
 
-                        <!-- 2-Column Course Grid Inside Box -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-5">
-                            @foreach($dayLongCourses->take(4) as $course)
-                                <x-course-card :course="$course" />
-                            @endforeach
+                            <!-- 2-Column Course Grid Inside Box -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-5">
+                                @foreach($certificateCourses->take(4) as $course)
+                                    <x-course-card :course="$course" />
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Bottom Action Button -->
+                        <div class="text-center mt-6 sm:mt-8 relative z-10">
+                            <a href="{{ route('catalog.certificate') }}" class="btn-ipdp-secondary inline-flex items-center justify-center gap-2 px-8 py-3.5 min-h-[46px] rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
+                                <span>View All Certificate Courses</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Bottom Action Button -->
-                    <div class="text-center mt-6 sm:mt-8 relative z-10">
-                        <a href="{{ route('catalog.day_long') }}" class="btn-ipdp-primary inline-flex items-center justify-center gap-2 px-8 py-3.5 min-h-[46px] rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
-                            <span>View All Day Long Courses</span>
-                            <i class="fas fa-arrow-right text-xs"></i>
-                        </a>
-                    </div>
-                </div>
+                    <!-- Right Container: Day Long Course (Light Peach Box with Subtle Warm Glow) -->
+                    <div class="bg-[#fef4f0] relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-[#c30102]/25 shadow-[0_4px_25px_-5px_rgba(195,1,2,0.12)] overflow-hidden flex flex-col justify-between">
+                        <div class="absolute -top-24 -right-24 w-72 h-72 bg-[#c30102]/10 rounded-full blur-3xl pointer-events-none"></div>
 
+                        <div class="relative z-10">
+                            <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] text-center mb-4 sm:mb-6 tracking-tight">
+                                Day Long Course
+                            </h2>
+
+                            <!-- 2-Column Course Grid Inside Box -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-5">
+                                @foreach($dayLongCourses->take(4) as $course)
+                                    <x-course-card :course="$course" />
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Bottom Action Button -->
+                        <div class="text-center mt-6 sm:mt-8 relative z-10">
+                            <a href="{{ route('catalog.day_long') }}" class="btn-ipdp-primary inline-flex items-center justify-center gap-2 px-8 py-3.5 min-h-[46px] rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
+                                <span>View All Day Long Courses</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- 5. Executive Insights & Knowledge Hub (Blog Section) -->
     <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#f4f7fb] to-[#f8fafc] border-b border-slate-200/80">
