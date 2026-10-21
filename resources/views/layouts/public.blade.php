@@ -37,15 +37,15 @@
             color: var(--color-content-text);
         }
 
-        .bg-ipdp-primary { background-color: #c30102 !important; }
-        .bg-ipdp-secondary { background-color: #041536 !important; }
-        .text-ipdp-primary { color: #c30102 !important; }
-        .text-ipdp-secondary { color: #041536 !important; }
-        .border-ipdp-primary { border-color: #c30102 !important; }
-        .border-ipdp-secondary { border-color: #041536 !important; }
+        .bg-cab-primary, .bg-ipdp-primary { background-color: #c30102 !important; }
+        .bg-cab-secondary, .bg-ipdp-secondary { background-color: #041536 !important; }
+        .text-cab-primary, .text-ipdp-primary { color: #c30102 !important; }
+        .text-cab-secondary, .text-ipdp-secondary { color: #041536 !important; }
+        .border-cab-primary, .border-ipdp-primary { border-color: #c30102 !important; }
+        .border-cab-secondary, .border-ipdp-secondary { border-color: #041536 !important; }
 
         /* Modernized Billion-Dollar Luxury Buttons */
-        .btn-ipdp-primary {
+        .btn-cab-primary, .btn-ipdp-primary {
             background: linear-gradient(135deg, #c30102 0%, #d61726 50%, #b00102 100%) !important;
             color: #ffffff !important;
             font-weight: 800;
@@ -53,13 +53,13 @@
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 16px rgba(195, 1, 2, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
-        .btn-ipdp-primary:hover {
+        .btn-cab-primary:hover, .btn-ipdp-primary:hover {
             background: linear-gradient(135deg, #b00102 0%, #c30102 50%, #9a0102 100%) !important;
             transform: translateY(-1.5px);
             box-shadow: 0 8px 24px rgba(195, 1, 2, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.25);
         }
 
-        .btn-ipdp-secondary {
+        .btn-cab-secondary, .btn-ipdp-secondary {
             background: linear-gradient(135deg, #041536 0%, #072152 50%, #020b18 100%) !important;
             color: #ffffff !important;
             font-weight: 800;
@@ -67,7 +67,7 @@
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 16px rgba(4, 21, 54, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
-        .btn-ipdp-secondary:hover {
+        .btn-cab-secondary:hover, .btn-ipdp-secondary:hover {
             background: linear-gradient(135deg, #020b18 0%, #041536 50%, #01060e 100%) !important;
             transform: translateY(-1.5px);
             box-shadow: 0 8px 24px rgba(4, 21, 54, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);

@@ -96,14 +96,14 @@
             <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-2.5 sm:gap-6 items-center">
                 @php
                     $clients = [
-                        ['name' => 'SSG', 'logo' => 'https://ipdpbd.com/wp-content/uploads/2025/06/SSG.jpg'],
-                        ['name' => 'United Hospital', 'logo' => 'https://ipdpbd.com/wp-content/uploads/2025/06/United-Hospital.jpg'],
-                        ['name' => 'Square', 'logo' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Square.jpg'],
-                        ['name' => 'Robi', 'logo' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Robi.jpg'],
-                        ['name' => 'Grameenphone', 'logo' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Grameenphone.jpg'],
-                        ['name' => 'Incepta', 'logo' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Incepta.jpg'],
-                        ['name' => 'IPDC', 'logo' => 'https://ipdpbd.com/wp-content/uploads/2025/06/IPDC.jpg'],
-                        ['name' => 'Runner', 'logo' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Runner.jpg'],
+                        ['name' => 'SSG', 'logo' => asset('images/clients/ssg.jpg')],
+                        ['name' => 'United Hospital', 'logo' => asset('images/clients/united-hospital.jpg')],
+                        ['name' => 'Square', 'logo' => asset('images/clients/square.jpg')],
+                        ['name' => 'Robi', 'logo' => asset('images/clients/robi.jpg')],
+                        ['name' => 'Grameenphone', 'logo' => asset('images/clients/grameenphone.jpg')],
+                        ['name' => 'Incepta', 'logo' => asset('images/clients/incepta.jpg')],
+                        ['name' => 'IPDC', 'logo' => asset('images/clients/ipdc.jpg')],
+                        ['name' => 'Runner', 'logo' => asset('images/clients/runner.jpg')],
                     ];
                 @endphp
 
@@ -199,7 +199,7 @@
             </div>
         </section>
 
-        <!-- 4. Exact IPDP Dual-Column Section: Certificate Course & Day Long Course Connected by 'View All Courses' Bracket -->
+        <!-- 4. Course Showcase: Certificate Course & Day Long Course Connected by 'View All Courses' Bracket -->
         <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc] border-b border-slate-200/80">
             <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                 
@@ -389,7 +389,7 @@
         </div>
     </section>
 
-    <!-- 6. Exact IPDP "Need To Learn More ?" CTA Section (Upgraded Jewel Emerald Canvas) -->
+    <!-- 6. Executive Counseling & Admissions Hotline Section -->
     <section class="py-12 sm:py-20 bg-gradient-to-r from-[#022b1e] via-[#045037] via-[#066345] to-[#033726] relative overflow-hidden text-white shadow-2xl">
         <!-- Ambient Jewel Glows -->
         <div class="absolute -top-24 -left-24 w-96 h-96 bg-emerald-400/15 rounded-full blur-[100px] pointer-events-none"></div>
@@ -419,7 +419,7 @@
         </div>
     </section>
 
-    <!-- 7. IPDP "Our Features" Section (Distinguished Faculty & Fellows Terminology) -->
+    <!-- 7. Our Features Section (Distinguished Faculty & Fellows) -->
     <section id="features" class="py-10 sm:py-16 lg:py-20 bg-slate-50/70 border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-10 sm:mb-14">

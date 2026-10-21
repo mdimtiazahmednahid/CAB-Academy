@@ -17,7 +17,7 @@ Route::get('/reset-db', function () {
 Route::get('/', function () {
     $courses = \App\Models\Course::where('is_published', true)->latest()->get();
     
-    // Certificate Courses (IPDP Certificate Section)
+    // Certificate Courses Section
     $certificateCourses = \App\Models\Course::where('is_published', true)
         ->where(function($q) {
             $q->where('title', 'like', '%Certificate%')
@@ -32,7 +32,7 @@ Route::get('/', function () {
         $certificateCourses = $courses->take(4);
     }
 
-    // Day Long Courses (IPDP Day Long Section)
+    // Day Long Courses Section
     $dayLongCourses = \App\Models\Course::where('is_published', true)
         ->where(function($q) {
             $q->where('title', 'like', '%Commercial%')
@@ -86,7 +86,7 @@ Route::get('/faculty', function () {
     return view('faculty.index', compact('courses'));
 })->name('faculty.index');
 
-// Direct course type filter shortcuts matching IPDP structure
+// Direct course type filter shortcuts
 Route::get('/certificate-course', function () {
     return redirect()->route('catalog.index', ['type' => 'certificate']);
 })->name('catalog.certificate');
@@ -108,7 +108,7 @@ Route::get('/storage/{folder}/{file}', function ($folder, $file) {
     ]);
 })->where('file', '.*')->name('storage.stream');
 
-// Public Course Catalog & Category Routes (IPDP-style)
+// Public Course Catalog & Category Routes
 Route::get('/catalog', [App\Http\Controllers\CatalogController::class, 'index'])->name('catalog.index');
 Route::get('/courses', [App\Http\Controllers\CatalogController::class, 'index'])->name('courses.index');
 Route::get('/category/{category}', [App\Http\Controllers\CatalogController::class, 'category'])->name('catalog.category');

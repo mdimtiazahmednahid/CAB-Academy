@@ -51,7 +51,7 @@
                         {{ $course->short_description ?? ($course->description ?? 'Comprehensive professional training curriculum designed for industry mastery.') }}
                     </p>
 
-                    <!-- Exact IPDP Course Price Display (.course-price: Price TK) -->
+                    <!-- Course Price Display (.course-price: Price TK) -->
                     <div class="text-2xl sm:text-3xl font-black text-emerald-400 mb-6 flex items-baseline gap-2">
                         <span class="text-white text-base font-normal">Price TK:</span>
                         <span>{{ number_format($course->price, 2) }}</span>
@@ -254,7 +254,7 @@
                     </div>
                 </div>
 
-                <!-- Course Accordions (Exact IPDP .course-accordian with #90c642 header class for test parity + executive gradient) -->
+                <!-- Course Accordions (.course-accordian with #90c642 header class) -->
                 <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-[#e3e7f0]">
                     <div class="flex items-center justify-between mb-6 pb-2 border-b border-[#e3e7f0]">
                         <h2 class="text-xl font-bold text-[#0f131f] flex items-center gap-2.5">
@@ -269,7 +269,7 @@
                     <div class="space-y-4">
                         @forelse($course->sections as $index => $section)
                             <div class="border border-[#e3e7f0] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all" x-data="{ open: {{ $index === 0 ? 'true' : 'false' }} }">
-                                <!-- Exact IPDP Accordion Header: #90c642 background with modern Navy gradient & Crimson accent -->
+                                <!-- Accordion Header: #90c642 background with modern Navy gradient & Crimson accent -->
                                 <button 
                                     @click="open = !open" 
                                     class="w-full px-5 py-4 flex items-center justify-between bg-[#90c642] bg-gradient-to-r from-[#051c45] via-[#07214b] to-[#0a2540] hover:from-[#08224d] hover:to-[#041638] text-white font-bold transition-all text-left border-l-4 border-[#c30102]"
@@ -590,7 +590,7 @@
                     </div>
                 </div>
 
-                <!-- 2. Exact IPDP Instructor Card (.course-teacher-image: 150px circle) -->
+                <!-- 2. Instructor Card (.course-teacher-image: 150px circle) -->
                 @if($course->instructor)
                     <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#e3e7f0] text-center">
                         <div class="w-[150px] h-[150px] rounded-full border-4 border-slate-100 shadow-md mx-auto mb-4 overflow-hidden bg-gray-100">
@@ -637,7 +637,7 @@
         </div>
     </div>
 
-    <!-- 3. Exact IPDP Mobile Sticky Action Bar (.add-to-cart-button: bottom 10px, 60% width) -->
+    <!-- 3. Mobile Sticky Action Bar (.add-to-cart-button: bottom 10px, 60% width) -->
     <div class="lg:hidden fixed bottom-3 left-1/2 -translate-x-1/2 w-[75%] max-w-sm z-50">
         @if($isEnrolled)
             <a 

@@ -27,22 +27,27 @@ class DemoDataSeeder extends Seeder
 
         // 2. Create Instructor (Md. Delwar Hossain Bhuiyan)
         $instructor = User::firstOrCreate(
-            ['email' => 'delwar@ipdpbd.com'],
+            ['email' => 'delwar@cabacademy.com'],
             [
                 'name' => 'Md. Delwar Hossain Bhuiyan',
                 'password' => bcrypt('password'),
                 'role' => 'instructor',
-                'profile_picture' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80'
+                'profile_picture' => '/images/faculty/delwar-hossain.jpg'
             ]
         );
 
         // 3. Create Student
         $student = User::firstOrCreate(
             ['email' => 'student@cab-academy.com'],
-            ['name' => 'Alice Student', 'password' => bcrypt('password'), 'role' => 'student']
+            [
+                'name' => 'Alice Student',
+                'password' => bcrypt('password'),
+                'role' => 'student',
+                'preferences' => ['level' => 'Professional', 'subjects' => ['Export – Import'], 'goals' => ['Certification']]
+            ]
         );
 
-        // 4. Create IPDP-Style Courses
+        // 4. Create Career Certification Courses
         $courses = [
             [
                 'title' => 'L/C, Banking, Customs & Shipping for Import – Export',

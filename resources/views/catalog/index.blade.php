@@ -83,7 +83,7 @@
                 </form>
             </div>
 
-            <!-- 3-Column Course Grid (Exact IPDP Structure) -->
+            <!-- 3-Column Course Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 pb-10">
                 @forelse($courses as $course)
                     <x-course-card :course="$course" />
@@ -124,14 +124,14 @@
                 </p>
             </div>
 
-            <!-- 6 Columns Categories Grid (Matches IPDP --columns: 6; --gap: 10px) -->
+            <!-- 6 Columns Categories Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                 @foreach($runningCategories as $catItem)
                     <a 
                         href="{{ route('catalog.category', $catItem['slug']) }}" 
                         class="group bg-white rounded-2xl p-4 border border-[#e3e7f0] shadow-sm hover:shadow-xl hover:border-[#c30102]/30 transition-all duration-300 text-center flex flex-col items-center justify-between hover:-translate-y-1"
                     >
-                        <!-- 80x80px Circular Thumbnail (Exact IPDP .teacher-list img style) -->
+                        <!-- 80x80px Circular Thumbnail -->
                         <div class="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-white shadow-md bg-gray-100 group-hover:scale-105 group-hover:ring-2 group-hover:ring-[#c30102] transition-all duration-300 shrink-0">
                             <img 
                                 src="{{ $catItem['image'] }}" 

@@ -43,7 +43,7 @@
             </span>
         </div>
 
-        <!-- Exact IPDP Price Placement: Bottom-Left on Image with compact glass shield -->
+        <!-- Course Price Placement: Bottom-Left on Image with compact glass shield -->
         <div class="absolute left-0 bottom-0 z-10 bg-gradient-to-r from-[#020b18]/95 via-[#041536]/90 to-[#072152]/85 backdrop-blur-md text-white border-t border-r border-white/20 px-2.5 sm:px-3 py-1 rounded-tr-xl shadow-lg flex items-center gap-1.5 pointer-events-none">
             @if($course->price > 0)
                 <span class="text-[9px] text-slate-300 font-bold uppercase hidden sm:inline">Fee:</span>
@@ -56,7 +56,7 @@
             @endif
         </div>
 
-        <!-- Exact IPDP Teacher Avatar Placement: Compact Right Corner Badge (-bottom-10 hook preserved for Cypress) -->
+        <!-- Instructor Avatar Placement: Compact Right Corner Badge (-bottom-10 hook preserved for Cypress) -->
         @if($course->instructor)
             <div class="absolute -bottom-10 right-3 z-20 flex items-end justify-end pointer-events-auto">
                 <a href="{{ route('courses.show', $course) }}" title="{{ $course->instructor->name }}" class="block relative group/avatar translate-y-5 sm:translate-y-4">

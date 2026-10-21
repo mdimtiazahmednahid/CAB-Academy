@@ -95,7 +95,7 @@
             </div>
         </div>
 
-        <!-- Why Choose CAB Academy (IPDP Benchmarking) -->
+        <!-- Why Choose CAB Academy -->
         <div class="bg-white rounded-3xl p-8 sm:p-12 border border-[#e3e7f0] shadow-sm mb-20">
             <div class="text-center max-w-2xl mx-auto mb-12">
                 <span class="text-xs font-black tracking-widest text-[#c30102] uppercase block mb-1">Institutional Excellence</span>

@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class CatalogController extends Controller
 {
     /**
-     * Standard category images / metadata for IPDP layout
+     * Standard category images / metadata for Course Catalog layout
      */
     protected static array $categoryMeta = [
         'export-import' => [

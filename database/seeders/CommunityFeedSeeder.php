@@ -13,7 +13,7 @@ class CommunityFeedSeeder extends Seeder
     public function run(): void
     {
         $admin = User::where('email', 'admin@cab-academy.com')->first();
-        $instructor = User::where('email', 'delwar@ipdpbd.com')->first();
+        $instructor = User::where('email', 'delwar@cabacademy.com')->first();
         $student = User::where('email', 'student@cab-academy.com')->first();
 
         // 0. Ensure default BlogPosts exist
@@ -27,7 +27,7 @@ class CommunityFeedSeeder extends Seeder
                 'featured_image' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1000&q=80',
                 'author_name' => 'Md. Delwar Hossain Bhuiyan',
                 'author_title' => 'Principal Trade Finance Fellow',
-                'author_avatar' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Md.-Delwar-Hossain-Bhuiyan.jpg',
+                'author_avatar' => '/images/faculty/delwar-hossain.jpg',
                 'read_time' => '6 min read',
                 'is_published' => true,
                 'published_at' => now()->subDays(2),
@@ -57,7 +57,7 @@ class CommunityFeedSeeder extends Seeder
                 'featured_image' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1000&q=80',
                 'author_name' => 'Asif Ahmed, FCS',
                 'author_title' => 'Distinguished Faculty & Tax Counsel',
-                'author_avatar' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Asif-Ahmmed.jpg',
+                'author_avatar' => '/images/faculty/asif-ahmmed.jpg',
                 'read_time' => '7 min read',
                 'is_published' => true,
                 'published_at' => now()->subDays(8),
@@ -101,7 +101,7 @@ class CommunityFeedSeeder extends Seeder
             [
                 'author_name' => 'Md. Delwar Hossain Bhuiyan',
                 'author_title' => 'Principal Trade Finance Fellow',
-                'author_avatar' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Md.-Delwar-Hossain-Bhuiyan.jpg',
+                'author_avatar' => '/images/faculty/delwar-hossain.jpg',
                 'category' => 'Export – Import',
                 'title' => 'Updated HS Code Mandatory Guidelines for L/C Applications',
                 'content' => "Attention import-export professionals & commercial executives:\n\nBangladesh Bank has reiterated the mandatory 8-digit HS Code compliance on commercial invoices for all import L/Cs processed through the automated customs clearance single-window. Ensure your shipping documents and C&F packing lists align precisely before submission to avoid port demurrage holds at Chittagong or Benapole.",
@@ -149,7 +149,7 @@ class CommunityFeedSeeder extends Seeder
             [
                 'author_name' => 'Asif Ahmed, FCS',
                 'author_title' => 'Distinguished Faculty & Tax Counsel',
-                'author_avatar' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Asif-Ahmmed.jpg',
+                'author_avatar' => '/images/faculty/asif-ahmmed.jpg',
                 'category' => 'Tax, VAT & Compliance',
                 'title' => 'Corporate VAT Rebate Checklist: Month-End Guidelines',
                 'content' => "Essential reminder for corporate accountants:\n\nTo claim 100% input tax rebate under the VAT Act, make sure:\n1. Mushak 6.3 tax invoice is issued at the exact time of delivery\n2. Banking channel payment proofs are maintained for invoices above BDT 100,000\n3. Withholding certificates (Mushak 6.6) are uploaded to the NBR portal within 15 days.",

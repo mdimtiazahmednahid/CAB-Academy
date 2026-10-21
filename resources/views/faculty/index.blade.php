@@ -40,14 +40,14 @@
                         'name' => 'Md. Delwar Hossain Bhuiyan',
                         'title' => 'Principal Trade Finance Fellow & Customs Consultant',
                         'expertise' => 'Banking, L/C, Customs & Shipping Procedure',
-                        'avatar' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Md.-Delwar-Hossain-Bhuiyan.jpg',
+                        'avatar' => asset('images/faculty/delwar-hossain.jpg'),
                         'bio' => 'Over 22 years of senior corporate experience advising multinational commercial ventures and leading banking clearing operations across Chittagong and Dhaka ports.'
                     ],
                     [
                         'name' => 'Asif Ahmed, FCS',
                         'title' => 'Distinguished Faculty & Corporate Legal Counsel',
                         'expertise' => 'VAT, Corporate Taxation & Business Compliance',
-                        'avatar' => 'https://ipdpbd.com/wp-content/uploads/2025/06/Asif-Ahmmed.jpg',
+                        'avatar' => asset('images/faculty/asif-ahmmed.jpg'),
                         'bio' => 'Renowned corporate tax advisor and fellow chartered secretary specializing in corporate tax assessment, audit dispute resolution, and NBR compliance.'
                     ],
                     [
