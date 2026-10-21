@@ -13,7 +13,7 @@
 
     <style>
         :root {
-            --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#1F6F54') }};
+            --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#051c45') }};
         }
         .bg-primary { background-color: var(--primary-color); }
         .text-primary { color: var(--primary-color); }
@@ -130,9 +130,9 @@
                 $prevLevelXp = ($level > 1) ? (($level - 1) * $level / 2) * 100 : 0;
                 $progress = ($nextLevelXp - $prevLevelXp > 0) ? (($currentXp - $prevLevelXp) / ($nextLevelXp - $prevLevelXp)) * 100 : 0;
             @endphp
-            <div class="bg-gradient-to-r from-primary to-green-600 rounded-2xl p-4 text-white shadow-lg mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] border border-[#1e2d4a] rounded-2xl p-4 text-white shadow-xl mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-4 w-full md:w-auto flex-1">
-                    <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center font-bold text-xl border-2 border-white/40 shrink-0">
+                    <div class="w-12 h-12 rounded-full bg-[#c30102] flex items-center justify-center font-bold text-xl border-2 border-white/40 shrink-0 shadow-md">
                         {{ $level }}
                     </div>
                     <div class="flex-1 max-w-sm">

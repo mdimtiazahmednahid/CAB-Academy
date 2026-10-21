@@ -5,25 +5,34 @@
 @section('content')
 <div>
 
-    <!-- Hero Banner -->
-    <section class="bg-[#90c642] text-white py-12 border-b border-[#e3e7f0]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <!-- Hero Banner (Modern Imperial Navy Masthead) -->
+    <section class="bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white py-14 sm:py-18 border-b border-[#1e2d4a] relative overflow-hidden">
+        <!-- Ambient Glow -->
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-[#c30102]/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[#10b981]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#10b981] text-xs font-black uppercase tracking-wider mb-4 shadow-sm">
+                <i class="fas fa-book-reader text-xs"></i>
+                <span>Executive Research & Regulatory Gazette</span>
+            </div>
+
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3">
                 Insights & Knowledge Hub
             </h1>
-            <p class="text-sm sm:text-base text-white/90 max-w-2xl mx-auto">
+            <p class="text-xs sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
                 Industry-standard research, regulatory frameworks, commercial guidelines, and executive insights curated by CAB Academy faculty.
             </p>
-            <div class="flex items-center justify-center gap-2 text-xs sm:text-sm text-white/90 font-medium mt-4">
-                <a href="{{ url('/') }}" class="hover:underline">Home</a>
-                <span>/</span>
-                <span class="font-bold underline">Blog & Insights</span>
+            <div class="flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-300 font-medium mt-5">
+                <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
+                <span class="text-slate-500">/</span>
+                <span class="font-bold text-white underline">Blog & Insights</span>
             </div>
         </div>
     </section>
 
     <!-- Main Content -->
-    <section class="py-14 bg-[#f2f4f7]">
+    <section class="py-16 bg-[#f8fafc]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Category Filtering & Search Bar -->
@@ -31,14 +40,14 @@
                 <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-none">
                     <a 
                         href="{{ route('blog.index') }}" 
-                        class="px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors {{ !request('category') ? 'bg-[#f15a29] text-white' : 'bg-white text-[#35415b] hover:bg-[#e3e7f0] border border-[#e3e7f0]' }}"
+                        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ !request('category') ? 'bg-[#c30102] text-white shadow-md shadow-[#c30102]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200' }}"
                     >
                         All Insights
                     </a>
                     @foreach($categories as $cat)
                         <a 
                             href="{{ route('blog.index', ['category' => $cat]) }}" 
-                            class="px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors {{ request('category') === $cat ? 'bg-[#f15a29] text-white' : 'bg-white text-[#35415b] hover:bg-[#e3e7f0] border border-[#e3e7f0]' }}"
+                            class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ request('category') === $cat ? 'bg-[#c30102] text-white shadow-md shadow-[#c30102]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200' }}"
                         >
                             {{ $cat }}
                         </a>
@@ -55,9 +64,9 @@
                             name="search" 
                             value="{{ request('search') }}" 
                             placeholder="Search articles..." 
-                            class="w-full bg-white border border-[#e3e7f0] text-[#35415b] text-xs rounded-lg py-2 pl-3 pr-10 focus:ring-[#f15a29] focus:border-[#f15a29] shadow-sm font-medium"
+                            class="w-full bg-white border border-slate-200 text-[#0f131f] text-xs rounded-xl py-2.5 pl-3.5 pr-10 focus:ring-2 focus:ring-[#c30102] focus:border-[#c30102] shadow-sm font-medium"
                         >
-                        <button type="submit" class="absolute right-3 top-2.5 text-[#727f9f] hover:text-[#f15a29]">
+                        <button type="submit" class="absolute right-3 top-3 text-slate-400 hover:text-[#c30102]">
                             <i class="fas fa-search text-xs"></i>
                         </button>
                     </div>
@@ -67,7 +76,7 @@
             <!-- Articles Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($posts as $post)
-                    <article class="bg-white rounded-2xl border border-[#e3e7f0] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                    <article class="bg-white rounded-3xl border border-[#e3e7f0] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group hover:border-[#c30102]/30">
                         <div>
                             <!-- Featured Image -->
                             <div class="relative aspect-video overflow-hidden bg-gray-100">
@@ -76,20 +85,20 @@
                                     alt="{{ $post->title }}" 
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 >
-                                <span class="absolute top-3 left-3 bg-[#f15a29] text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                                <span class="absolute top-3 left-3 bg-[#c30102] text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
                                     {{ $post->category }}
                                 </span>
                             </div>
 
                             <!-- Post Body -->
                             <div class="p-6">
-                                <div class="flex items-center gap-3 text-xs text-[#727f9f] font-semibold mb-2">
-                                    <span><i class="far fa-calendar-alt text-[#f15a29] mr-1"></i> {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Recent' }}</span>
+                                <div class="flex items-center gap-3 text-xs text-slate-500 font-semibold mb-2.5">
+                                    <span><i class="far fa-calendar-alt text-[#c30102] mr-1"></i> {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Recent' }}</span>
                                     <span>&bull;</span>
-                                    <span><i class="far fa-clock text-[#f15a29] mr-1"></i> {{ $post->read_time }}</span>
+                                    <span><i class="far fa-clock text-[#10b981] mr-1"></i> {{ $post->read_time }}</span>
                                 </div>
 
-                                <h3 class="text-base sm:text-lg font-bold text-[#0f131f] group-hover:text-[#f15a29] transition-colors leading-snug mb-3">
+                                <h3 class="text-base sm:text-lg font-bold text-[#0f131f] group-hover:text-[#c30102] transition-colors leading-snug mb-3">
                                     <a href="{{ route('blog.show', $post) }}">
                                         {{ $post->title }}
                                     </a>
@@ -102,7 +111,7 @@
                         </div>
 
                         <!-- Author & Read CTA -->
-                        <div class="px-6 py-4 border-t border-[#e3e7f0] bg-[#f8fafc] flex items-center justify-between">
+                        <div class="px-6 py-4 border-t border-slate-100 bg-[#f8fafc] flex items-center justify-between">
                             <div class="flex items-center gap-2.5">
                                 <img 
                                     src="{{ $post->author_avatar ?: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" 
@@ -115,18 +124,18 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('blog.show', $post) }}" class="text-xs font-bold text-[#f15a29] hover:text-[#90c642] transition-colors inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            <a href="{{ route('blog.show', $post) }}" class="text-xs font-bold text-[#c30102] hover:text-[#051c45] transition-colors inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                                 <span>Read</span>
                                 <i class="fas fa-chevron-right text-[10px]"></i>
                             </a>
                         </div>
                     </article>
                 @empty
-                    <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-[#e3e7f0]">
+                    <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-dashed border-[#e3e7f0] shadow-sm">
                         <i class="fas fa-newspaper text-4xl text-[#727f9f] mb-3"></i>
                         <h3 class="text-lg font-bold text-[#0f131f] mb-1">No Articles Found</h3>
                         <p class="text-xs text-[#727f9f] mb-4">Check back soon for latest publications from CAB Academy faculty.</p>
-                        <a href="{{ route('blog.index') }}" class="btn-ipdp-primary px-5 py-2 rounded text-xs font-bold inline-block">
+                        <a href="{{ route('blog.index') }}" class="btn-ipdp-primary px-5 py-2.5 rounded-xl text-xs font-bold inline-block shadow-sm">
                             Reset Filters
                         </a>
                     </div>

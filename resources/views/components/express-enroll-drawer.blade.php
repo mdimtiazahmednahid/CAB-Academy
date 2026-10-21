@@ -160,7 +160,7 @@
                 <span class="px-2.5 py-0.5 rounded bg-[#c30102] text-white text-[10px] font-black tracking-wider uppercase shadow">
                     <span x-text="courseBatch"></span>
                 </span>
-                <span class="text-xs text-[#90c642] font-semibold flex items-center gap-1">
+                <span class="text-xs text-[#10b981] font-semibold flex items-center gap-1">
                     <i class="fas fa-bolt text-xs"></i> 30-Second Express Enroll
                 </span>
             </div>
@@ -206,7 +206,7 @@
                     <template x-if="successData.transaction_id">
                         <div class="flex justify-between border-t border-gray-200 pt-2">
                             <span class="text-gray-500">Reference TrxID:</span>
-                            <span class="font-mono font-bold text-[#f15a29]" x-text="successData.transaction_id"></span>
+                            <span class="font-mono font-bold text-[#c30102]" x-text="successData.transaction_id"></span>
                         </div>
                     </template>
                 </div>

@@ -16,7 +16,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <style>
             :root {
-                --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#1F6F54') }};
+                --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#051c45') }};
             }
             .bg-primary { background-color: var(--primary-color); }
             .text-primary { color: var(--primary-color); }

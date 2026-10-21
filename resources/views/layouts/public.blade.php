@@ -8,10 +8,10 @@
     <title>@yield('title', 'Course Catalog') - {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
     <link rel="icon" href="{{ asset('images/logo.png') }}">
 
-    <!-- Google Fonts: Poppins -->
+    <!-- Google Fonts: Inter & Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Tailwind & App JS -->
@@ -19,56 +19,95 @@
 
     <style>
         :root {
-            --color-content-primary: #f15a29;
-            --color-content-secondary: #90c642;
-            --color-content-bg-alt: #f2f4f7;
-            --color-content-heading: #0f131f;
-            --color-content-text: #35415b;
-            --color-content-faded: #727f9f;
-            --color-content-border: #e3e7f0;
-            --color-footer-bg: #0f131f;
-            --color-subfooter-bg: #35415b;
+            --color-content-primary: #c30102;
+            --color-content-secondary: #051c45;
+            --color-content-accent: #10b981;
+            --color-content-bg-alt: #f8fafc;
+            --color-content-heading: #051c45;
+            --color-content-text: #334155;
+            --color-content-faded: #64748b;
+            --color-content-border: #e2e8f0;
+            --color-footer-bg: #031330;
+            --color-subfooter-bg: #020b1c;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', 'Poppins', sans-serif;
             background-color: var(--color-content-bg-alt);
             color: var(--color-content-text);
         }
 
-        .bg-ipdp-primary { background-color: #f15a29; }
-        .bg-ipdp-secondary { background-color: #90c642; }
-        .text-ipdp-primary { color: #f15a29; }
-        .text-ipdp-secondary { color: #90c642; }
-        .border-ipdp-primary { border-color: #f15a29; }
-        .border-ipdp-secondary { border-color: #90c642; }
+        .bg-ipdp-primary { background-color: #c30102 !important; }
+        .bg-ipdp-secondary { background-color: #051c45 !important; }
+        .text-ipdp-primary { color: #c30102 !important; }
+        .text-ipdp-secondary { color: #051c45 !important; }
+        .border-ipdp-primary { border-color: #c30102 !important; }
+        .border-ipdp-secondary { border-color: #051c45 !important; }
 
-        /* Exact IPDP Buttons */
+        /* Modernized Billion-Dollar Buttons */
         .btn-ipdp-primary {
-            background-color: #f15a29;
-            color: #ffffff;
-            transition: all 0.3s ease;
+            background-color: #c30102 !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            border-radius: 0.5rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 14px rgba(195, 1, 2, 0.25);
         }
         .btn-ipdp-primary:hover {
-            background-color: #90c642;
-            color: #ffffff;
+            background-color: #a50102 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(195, 1, 2, 0.35);
         }
 
         .btn-ipdp-secondary {
-            background-color: #90c642;
-            color: #ffffff;
-            transition: all 0.3s ease;
+            background-color: #051c45 !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            border-radius: 0.5rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 14px rgba(5, 28, 69, 0.25);
         }
         .btn-ipdp-secondary:hover {
-            background-color: #f15a29;
-            color: #ffffff;
+            background-color: #031330 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(5, 28, 69, 0.35);
         }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col selection:bg-[#f15a29] selection:text-white">
+<body class="antialiased min-h-screen flex flex-col selection:bg-[#c30102] selection:text-white" x-data="{ searchModalOpen: false }">
+
+    <!-- 0. Top Executive Announcement Bar -->
+    <div class="bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white py-2 px-4 text-xs font-medium border-b border-white/10 hidden sm:block">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#c30102] text-white text-[10px] font-black uppercase tracking-wider shadow">
+                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                    <span>Live Admissions</span>
+                </span>
+                <span class="text-slate-200 text-xs">
+                    Batch 105th Enrolling &bull; Mirpur-Pallabi Campus & Live Zoom
+                </span>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-slate-300">
+                <a href="tel:01917054664" class="hover:text-white flex items-center gap-1.5 transition-colors font-semibold">
+                    <i class="fas fa-phone-alt text-[#c30102]"></i>
+                    <span>01917-054664</span>
+                </a>
+                <span class="text-white/30">&bull;</span>
+                <a href="https://wa.me/8801917054664" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors font-semibold">
+                    <i class="fab fa-whatsapp text-sm"></i>
+                    <span>Instant WhatsApp</span>
+                </a>
+                <span class="text-white/30">&bull;</span>
+                <a href="{{ route('contact.index') }}" class="text-slate-300 hover:text-white transition-colors">
+                    Mirpur-Pallabi, Dhaka-1216
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white border-b border-[#e3e7f0] shadow-sm">
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- CAB Academy Brand Logo -->
@@ -76,114 +115,124 @@
                     <img class="h-12 w-12 sm:h-14 sm:w-14 object-contain rounded-full shadow-sm bg-white border border-gray-100 group-hover:scale-105 transition-transform" src="{{ asset('images/logo.png') }}" alt="CAB Academy">
                     <div class="flex flex-col">
                         <span class="text-lg sm:text-xl font-black tracking-tight text-[#0a2540] uppercase leading-none">CAB Academy</span>
-                        <span class="text-[9px] sm:text-[10px] tracking-widest uppercase font-bold text-[#dc2626] mt-1">Learn, Grow, Lead.</span>
+                        <span class="text-[9px] sm:text-[10px] tracking-widest uppercase font-bold text-[#c30102] mt-1">Learn, Grow, Lead.</span>
                     </div>
                 </a>
 
                 <!-- Desktop Navigation Menu -->
-                <nav class="hidden lg:flex items-center space-x-6 text-[15px] font-semibold text-[#35415b]" x-data="{ courseDropdown: false }">
-                    <a href="{{ url('/') }}" class="hover:text-[#f15a29] transition-colors {{ request()->is('/') ? 'text-[#f15a29]' : '' }}">
-                        Home
+                <nav class="hidden lg:flex items-center space-x-7 text-[15px] font-semibold text-[#051c45]" x-data="{ courseDropdown: false }">
+                    <a href="{{ url('/') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('/') ? 'text-[#c30102] font-bold' : '' }}">
+                        <span>Home</span>
+                        @if(request()->is('/'))
+                            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#c30102] rounded-full"></span>
+                        @endif
                     </a>
 
                     <!-- Course Dropdown -->
                     <div class="relative py-2" @mouseenter="courseDropdown = true" @mouseleave="courseDropdown = false">
-                        <a href="{{ route('catalog.index') }}" class="flex items-center gap-1 hover:text-[#f15a29] transition-colors {{ request()->is('catalog*') || request()->is('courses*') ? 'text-[#f15a29]' : '' }}">
+                        <a href="{{ route('catalog.index') }}" class="flex items-center gap-1 hover:text-[#c30102] transition-colors {{ request()->is('catalog*') || request()->is('courses*') ? 'text-[#c30102] font-bold' : '' }}">
                             <span>Course</span>
-                            <svg class="w-4 h-4 transition-transform duration-200" :class="courseDropdown ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <svg class="w-4 h-4 transition-transform duration-200" :class="courseDropdown ? 'rotate-180 text-[#c30102]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </a>
                         <!-- Submenu -->
                         <div 
                             x-show="courseDropdown" 
                             x-transition:enter="transition ease-out duration-150"
-                            x-transition:enter-start="opacity-0 translate-y-1"
-                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
                             x-transition:leave="transition ease-in duration-100"
-                            x-transition:leave-start="opacity-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 translate-y-1"
-                            class="absolute top-full left-0 w-64 bg-white rounded-xl shadow-xl border border-[#e3e7f0] py-2 z-50"
+                            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                            class="absolute top-full left-0 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200/80 p-2 z-50"
                             style="display: none;"
                         >
-                            <a href="{{ route('catalog.index') }}" class="block px-4 py-2.5 text-sm hover:bg-[#f2f4f7] hover:text-[#f15a29] transition-colors font-medium">
-                                All Courses
+                            <a href="{{ route('catalog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                                <i class="fas fa-layer-group text-xs text-[#c30102]"></i>
+                                <span>All Courses</span>
                             </a>
-                            <a href="{{ route('catalog.certificate') }}" class="block px-4 py-2.5 text-sm hover:bg-[#f2f4f7] hover:text-[#f15a29] transition-colors font-medium">
-                                Certificate Course
+                            <a href="{{ route('catalog.certificate') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                                <i class="fas fa-award text-xs text-[#051c45]"></i>
+                                <span>Certificate Programs</span>
                             </a>
-                            <a href="{{ route('catalog.day_long') }}" class="block px-4 py-2.5 text-sm hover:bg-[#f2f4f7] hover:text-[#f15a29] transition-colors font-medium">
-                                Day Long Course
+                            <a href="{{ route('catalog.day_long') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                                <i class="fas fa-calendar-day text-xs text-[#10b981]"></i>
+                                <span>Day Long Masterclasses</span>
                             </a>
-                            <div class="border-t border-gray-100 my-1"></div>
-                            <a href="{{ route('catalog.category', 'export-import') }}" class="block px-4 py-2.5 text-sm hover:bg-[#f2f4f7] hover:text-[#f15a29] transition-colors font-medium">
-                                Export – Import
+                            <div class="border-t border-slate-100 my-1"></div>
+                            <a href="{{ route('catalog.category', 'export-import') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                                <i class="fas fa-ship text-[11px] text-slate-400"></i>
+                                <span>Export – Import</span>
                             </a>
-                            <a href="{{ route('catalog.category', 'supply-chain-management') }}" class="block px-4 py-2.5 text-sm hover:bg-[#f2f4f7] hover:text-[#f15a29] transition-colors font-medium">
-                                Supply Chain Management
+                            <a href="{{ route('catalog.category', 'supply-chain-management') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                                <i class="fas fa-boxes text-[11px] text-slate-400"></i>
+                                <span>Supply Chain Management</span>
                             </a>
-                            <a href="{{ route('catalog.category', 'accounting') }}" class="block px-4 py-2.5 text-sm hover:bg-[#f2f4f7] hover:text-[#f15a29] transition-colors font-medium">
-                                Accounting & Finance
+                            <a href="{{ route('catalog.category', 'accounting') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                                <i class="fas fa-calculator text-[11px] text-slate-400"></i>
+                                <span>Accounting & Finance</span>
                             </a>
                         </div>
                     </div>
 
-                    <!-- Distinguished Faculty (Rich terminology replacing 'Teacher') -->
-                    <a href="{{ route('faculty.index') }}" class="hover:text-[#f15a29] transition-colors {{ request()->is('faculty*') ? 'text-[#f15a29]' : '' }}">
-                        Faculty
+                    <!-- Distinguished Faculty -->
+                    <a href="{{ route('faculty.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('faculty*') ? 'text-[#c30102] font-bold' : '' }}">
+                        <span>Faculty</span>
                     </a>
 
                     <!-- Knowledge Hub / Blog -->
-                    <a href="{{ route('blog.index') }}" class="hover:text-[#f15a29] transition-colors {{ request()->is('blog*') ? 'text-[#f15a29]' : '' }}">
-                        Blog
+                    <a href="{{ route('blog.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('blog*') ? 'text-[#c30102] font-bold' : '' }}">
+                        <span>Blog</span>
                     </a>
 
                     <!-- Community Feed -->
-                    <a href="{{ route('feed.index') }}" class="hover:text-[#f15a29] transition-colors {{ request()->is('feed*') || request()->is('community*') ? 'text-[#f15a29]' : '' }}">
-                        Feed
+                    <a href="{{ route('feed.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('feed*') || request()->is('community*') ? 'text-[#c30102] font-bold' : '' }}">
+                        <span>Feed</span>
                     </a>
 
-                    <a href="{{ route('about.index') }}" class="hover:text-[#f15a29] transition-colors {{ request()->routeIs('about.*') ? 'text-[#f15a29]' : '' }}">
-                        About Us
+                    <a href="{{ route('about.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->routeIs('about.*') ? 'text-[#c30102] font-bold' : '' }}">
+                        <span>About Us</span>
                     </a>
 
-                    <a href="{{ route('jobs.index') }}" class="hover:text-[#f15a29] transition-colors {{ request()->is('jobs*') ? 'text-[#f15a29]' : '' }}">
-                        Careers
+                    <a href="{{ route('jobs.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('jobs*') ? 'text-[#c30102] font-bold' : '' }}">
+                        <span>Careers</span>
                     </a>
 
-                    <a href="{{ route('contact.index') }}" class="hover:text-[#f15a29] transition-colors {{ request()->routeIs('contact.*') ? 'text-[#f15a29]' : '' }}">
-                        Contact
+                    <a href="{{ route('contact.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->routeIs('contact.*') ? 'text-[#c30102] font-bold' : '' }}">
+                        <span>Contact</span>
                     </a>
                 </nav>
 
-                <!-- Actions: Wishlist Heart, Auth, Header Search (Exact IPDP Layout) -->
+                <!-- Actions: Wishlist Heart, Auth, Header Search -->
                 <div class="hidden sm:flex items-center gap-3">
                     <!-- Wishlist Heart Icon with dynamic badge -->
-                    <a href="{{ route('wishlist.index') }}" title="Saved Wishlist" class="relative text-[#f15a29] p-2 hover:scale-110 transition-transform">
-                        <i class="fas fa-heart text-lg"></i>
-                        <span id="wishlist-count-badge" class="absolute -top-1 -right-1 bg-[#f15a29] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center {{ auth()->check() && auth()->user()->wishlists()->count() > 0 ? '' : 'hidden' }}">
+                    <a href="{{ route('wishlist.index') }}" title="Saved Wishlist" class="relative text-[#c30102] p-2 hover:scale-110 transition-transform">
+                        <i class="fas fa-heart text-xl"></i>
+                        <span id="wishlist-count-badge" class="absolute -top-1 -right-1 bg-[#c30102] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow {{ auth()->check() && auth()->user()->wishlists()->count() > 0 ? '' : 'hidden' }}">
                             {{ auth()->check() ? auth()->user()->wishlists()->count() : 0 }}
                         </span>
                     </a>
 
                     @auth
-                        <a href="{{ route('dashboard') }}" class="btn-ipdp-primary px-5 py-2.5 rounded text-sm font-semibold shadow-sm flex items-center gap-2">
+                        <a href="{{ route('dashboard') }}" class="btn-ipdp-primary px-5 py-2.5 rounded-xl text-sm font-bold shadow-md flex items-center gap-2">
                             <i class="far fa-user"></i>
                             <span>My Account</span>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="btn-ipdp-primary px-5 py-2 rounded text-sm font-semibold shadow-sm">
-                            Sign In
+                        <a href="{{ route('login') }}" class="btn-ipdp-primary px-5 py-2.5 rounded-xl text-sm font-bold shadow-md flex items-center gap-1.5">
+                            <i class="fas fa-lock text-xs"></i>
+                            <span>Sign In</span>
                         </a>
                     @endauth
 
-                    <!-- Integrated Search Input -->
-                    <form action="{{ route('catalog.index') }}" method="GET" class="relative hidden xl:block w-44">
+                    <!-- Integrated Search Input with Keyboard Shortcut Pill -->
+                    <form action="{{ route('catalog.index') }}" method="GET" class="relative hidden xl:block w-48">
                         <input 
                             type="text" 
                             name="search" 
-                            placeholder="Search..." 
-                            class="w-full bg-[#f2f4f7] border border-[#e3e7f0] rounded text-xs py-2 pl-3 pr-8 text-[#35415b] focus:ring-1 focus:ring-[#f15a29] focus:outline-none"
+                            placeholder="Quick search..." 
+                            class="w-full bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl text-xs py-2 pl-3.5 pr-8 text-slate-800 focus:ring-2 focus:ring-[#c30102]/20 focus:border-[#c30102] transition-all outline-none"
                         >
-                        <button type="submit" class="absolute right-2.5 top-2.5 text-gray-500 hover:text-[#f15a29]">
+                        <button type="submit" class="absolute right-3 top-2.5 text-slate-400 hover:text-[#c30102] transition-colors">
                             <i class="fas fa-search text-xs"></i>
                         </button>
                     </form>
@@ -191,28 +240,28 @@
 
                 <!-- Mobile Hamburger Toggle -->
                 <div class="lg:hidden flex items-center" x-data="{ open: false }">
-                    <button @click="open = !open" class="p-2 text-gray-700 hover:text-[#f15a29]">
+                    <button @click="open = !open" class="p-2 text-slate-700 hover:text-[#c30102] focus:outline-none">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <!-- Mobile Drawer -->
-                    <div x-show="open" @click.away="open = false" x-transition class="absolute top-20 left-0 w-full bg-white border-b border-[#e3e7f0] shadow-xl p-4 space-y-3 z-50 text-sm font-semibold" style="display: none;">
-                        <a href="{{ url('/') }}" class="block py-2 hover:text-[#f15a29]">Home</a>
-                        <a href="{{ route('catalog.index') }}" class="block py-2 hover:text-[#f15a29]">Course Catalog</a>
-                        <a href="{{ route('faculty.index') }}" class="block py-2 hover:text-[#f15a29]">Distinguished Faculty</a>
-                        <a href="{{ route('blog.index') }}" class="block py-2 hover:text-[#f15a29]">Blog & Insights</a>
-                        <a href="{{ route('feed.index') }}" class="block py-2 hover:text-[#f15a29]">Community Feed</a>
-                        <a href="{{ route('catalog.category', 'export-import') }}" class="block py-2 hover:text-[#f15a29]">Export – Import</a>
-                        <a href="{{ route('about.index') }}" class="block py-2 hover:text-[#f15a29]">About Us</a>
-                        <a href="{{ route('jobs.index') }}" class="block py-2 hover:text-[#f15a29]">Careers</a>
-                        <a href="{{ route('wishlist.index') }}" class="block py-2 hover:text-[#f15a29]">My Wishlist</a>
-                        <a href="{{ route('contact.index') }}" class="block py-2 hover:text-[#f15a29]">Contact</a>
-                        <div class="pt-3 border-t border-gray-100">
+                    <div x-show="open" @click.away="open = false" x-transition class="absolute top-20 left-0 w-full bg-white/98 backdrop-blur-xl border-b border-slate-200 shadow-2xl p-5 space-y-3 z-50 text-sm font-semibold" style="display: none;">
+                        <a href="{{ url('/') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Home</a>
+                        <a href="{{ route('catalog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Course Catalog</a>
+                        <a href="{{ route('faculty.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Distinguished Faculty</a>
+                        <a href="{{ route('blog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Blog & Insights</a>
+                        <a href="{{ route('feed.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Community Feed</a>
+                        <a href="{{ route('catalog.category', 'export-import') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Export – Import</a>
+                        <a href="{{ route('about.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">About Us</a>
+                        <a href="{{ route('jobs.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Careers</a>
+                        <a href="{{ route('wishlist.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">My Wishlist</a>
+                        <a href="{{ route('contact.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Contact</a>
+                        <div class="pt-3">
                             @auth
-                                <a href="{{ route('dashboard') }}" class="block w-full text-center py-2.5 btn-ipdp-primary rounded font-bold">My Account</a>
+                                <a href="{{ route('dashboard') }}" class="block w-full text-center py-2.5 btn-ipdp-primary rounded-xl font-bold">My Account</a>
                             @else
                                 <div class="flex gap-2">
-                                    <a href="{{ route('login') }}" class="w-1/2 text-center py-2 btn-ipdp-primary rounded font-bold">Sign In</a>
-                                    <a href="{{ route('register') }}" class="w-1/2 text-center py-2 btn-ipdp-secondary rounded font-bold">Register</a>
+                                    <a href="{{ route('login') }}" class="w-1/2 text-center py-2.5 btn-ipdp-primary rounded-xl font-bold">Sign In</a>
+                                    <a href="{{ route('register') }}" class="w-1/2 text-center py-2.5 btn-ipdp-secondary rounded-xl font-bold">Register</a>
                                 </div>
                             @endauth
                         </div>
@@ -228,29 +277,29 @@
     </main>
 
     <!-- Footer & Subfooter -->
-    <footer id="contact" class="bg-[#0f131f] text-[#8d9096] pt-16 pb-8 border-t border-[#2b3242] mt-16 text-sm">
+    <footer id="contact" class="bg-[#031330] text-slate-300 pt-16 pb-8 border-t border-[#0a2540] mt-16 text-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
                 <!-- Col 1: About Institute -->
                 <div>
                     <div class="flex items-center gap-3 mb-4">
-                        <img class="h-11 w-11 object-contain rounded-full bg-white p-0.5" src="{{ asset('images/logo.png') }}" alt="CAB Academy">
+                        <img class="h-11 w-11 object-contain rounded-full bg-white p-0.5 shadow-md" src="{{ asset('images/logo.png') }}" alt="CAB Academy">
                         <div>
                             <h3 class="text-white font-black text-lg leading-tight uppercase tracking-tight">CAB Academy</h3>
-                            <span class="text-[10px] text-[#dc2626] font-bold tracking-widest uppercase block">Learn, Grow, Lead.</span>
+                            <span class="text-[10px] text-[#c30102] font-black tracking-widest uppercase block">Learn, Grow, Lead.</span>
                         </div>
                     </div>
-                    <p class="leading-relaxed mb-6 text-xs sm:text-sm">
+                    <p class="leading-relaxed mb-6 text-xs sm:text-sm text-slate-300">
                         CAB Academy is a specialized professional training institute delivering practical, industry-standard certification programs in Export-Import, Supply Chain, VAT & Tax, and Corporate Leadership.
                     </p>
                     <div class="flex items-center gap-3">
-                        <a href="#" class="w-9 h-9 rounded-full bg-[#1e2533] flex items-center justify-center text-white hover:bg-[#f15a29] transition-colors">
+                        <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#c30102] transition-colors">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="w-9 h-9 rounded-full bg-[#1e2533] flex items-center justify-center text-white hover:bg-[#f15a29] transition-colors">
+                        <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#c30102] transition-colors">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
-                        <a href="#" class="w-9 h-9 rounded-full bg-[#1e2533] flex items-center justify-center text-white hover:bg-[#f15a29] transition-colors">
+                        <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#c30102] transition-colors">
                             <i class="fab fa-youtube"></i>
                         </a>
                     </div>
@@ -258,35 +307,35 @@
 
                 <!-- Col 2: Useful Links -->
                 <div>
-                    <h4 class="text-white font-bold text-base mb-4">Useful Links</h4>
+                    <h4 class="text-white font-bold text-base mb-4 tracking-wide uppercase text-xs">Useful Links</h4>
                     <ul class="space-y-2 text-xs sm:text-sm">
-                        <li><a href="{{ url('/') }}" class="hover:text-[#f15a29] transition-colors">Home</a></li>
-                        <li><a href="{{ route('catalog.index') }}" class="hover:text-[#f15a29] transition-colors">Course</a></li>
-                        <li><a href="{{ route('faculty.index') }}" class="hover:text-[#f15a29] transition-colors">Distinguished Faculty</a></li>
-                        <li><a href="{{ route('blog.index') }}" class="hover:text-[#f15a29] transition-colors">Blog & Insights</a></li>
-                        <li><a href="{{ route('feed.index') }}" class="hover:text-[#f15a29] transition-colors">Community Feed</a></li>
-                        <li><a href="{{ route('catalog.category', 'export-import') }}" class="hover:text-[#f15a29] transition-colors">Export – Import</a></li>
-                        <li><a href="{{ route('about.index') }}" class="hover:text-[#f15a29] transition-colors">About Us</a></li>
-                        <li><a href="{{ route('contact.index') }}" class="hover:text-[#f15a29] transition-colors">Contact & Admissions</a></li>
-                        <li><a href="{{ route('jobs.index') }}" class="hover:text-[#f15a29] transition-colors">Careers</a></li>
+                        <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Course</a></li>
+                        <li><a href="{{ route('faculty.index') }}" class="hover:text-white transition-colors">Distinguished Faculty</a></li>
+                        <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Blog & Insights</a></li>
+                        <li><a href="{{ route('feed.index') }}" class="hover:text-white transition-colors">Community Feed</a></li>
+                        <li><a href="{{ route('catalog.category', 'export-import') }}" class="hover:text-white transition-colors">Export – Import</a></li>
+                        <li><a href="{{ route('about.index') }}" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="{{ route('contact.index') }}" class="hover:text-white transition-colors">Contact & Admissions</a></li>
+                        <li><a href="{{ route('jobs.index') }}" class="hover:text-white transition-colors">Careers</a></li>
                     </ul>
                 </div>
 
                 <!-- Col 3: Contact & Operational Office -->
                 <div>
-                    <h4 class="text-white font-bold text-base mb-4">Contact</h4>
+                    <h4 class="text-white font-bold text-base mb-4 tracking-wide uppercase text-xs">Contact</h4>
                     <div class="space-y-2.5 text-xs sm:text-sm">
                         <p class="leading-relaxed">
                             <strong class="text-white">Operational Office Address:</strong><br>
                             Mirpur-Pallabi, Dhaka, Bangladesh, 1216
                         </p>
                         <p>
-                            <a href="mailto:commercialacademy868@gmail.com" class="hover:text-[#f15a29] transition-colors">
+                            <a href="mailto:commercialacademy868@gmail.com" class="hover:text-white transition-colors">
                                 commercialacademy868@gmail.com
                             </a>
                         </p>
                         <p>
-                            <a href="tel:01917054664" class="hover:text-[#f15a29] transition-colors">
+                            <a href="tel:01917054664" class="hover:text-white transition-colors">
                                 01917-054664
                             </a>
                         </p>
@@ -295,20 +344,20 @@
 
                 <!-- Col 4: Legal & Compliance -->
                 <div>
-                    <h4 class="text-white font-bold text-base mb-4">Legal & Compliance</h4>
+                    <h4 class="text-white font-bold text-base mb-4 tracking-wide uppercase text-xs">Legal & Compliance</h4>
                     <ul class="space-y-2 text-xs sm:text-sm">
-                        <li><a href="{{ route('legal.privacy') }}" class="hover:text-[#f15a29] transition-colors">Privacy Policy</a></li>
-                        <li><a href="{{ route('legal.refund') }}" class="hover:text-[#f15a29] transition-colors">Refund and Returns Policy</a></li>
-                        <li><a href="{{ route('legal.terms') }}" class="hover:text-[#f15a29] transition-colors">Terms of Service</a></li>
+                        <li><a href="{{ route('legal.privacy') }}" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="{{ route('legal.refund') }}" class="hover:text-white transition-colors">Refund and Returns Policy</a></li>
+                        <li><a href="{{ route('legal.terms') }}" class="hover:text-white transition-colors">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
 
             <!-- Subfooter (With NeuraSoft Attribution) -->
-            <div class="border-t border-[#2b3242] pt-6 pb-6 flex flex-col sm:flex-row justify-between items-center text-xs text-[#8d9096] gap-3">
+            <div class="border-t border-white/10 pt-6 pb-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-3">
                 <p>© {{ date('Y') }} CAB Academy. All Rights Reserved.</p>
                 <p class="sm:mr-20">
-                    Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[#f15a29] font-bold underline underline-offset-4 transition-colors">NeuraSoft</a>
+                    Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[#c30102] font-bold underline underline-offset-4 transition-colors">NeuraSoft</a>
                 </p>
             </div>
         </div>
@@ -329,7 +378,7 @@
     <!-- Floating Scroll-To-Top Button (Matches Reference Screenshot) -->
     <button 
         onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
-        class="fixed bottom-5 left-5 z-40 w-10 h-10 rounded-lg bg-gray-800/80 hover:bg-[#f15a29] text-white flex items-center justify-center shadow-lg transition-all duration-300"
+        class="fixed bottom-5 left-5 z-40 w-10 h-10 rounded-xl bg-slate-900/80 hover:bg-[#c30102] text-white flex items-center justify-center shadow-lg transition-all duration-300"
         aria-label="Scroll to Top"
         title="Scroll to Top"
     >
@@ -374,16 +423,16 @@
                     const icon = btn.querySelector('i');
                     const text = btn.querySelector('span');
                     if (data.status === 'added') {
-                        btn.classList.add('text-[#f15a29]');
+                        btn.classList.add('text-[#c30102]');
                         if (icon) {
                             icon.classList.remove('far');
-                            icon.classList.add('fas', 'text-[#f15a29]');
+                            icon.classList.add('fas', 'text-[#c30102]');
                         }
                         if (text) text.innerText = 'Saved in Wishlist';
                     } else {
-                        btn.classList.remove('text-[#f15a29]');
+                        btn.classList.remove('text-[#c30102]');
                         if (icon) {
-                            icon.classList.remove('fas', 'text-[#f15a29]');
+                            icon.classList.remove('fas', 'text-[#c30102]');
                             icon.classList.add('far');
                         }
                         if (text) text.innerText = 'Save to Wishlist';

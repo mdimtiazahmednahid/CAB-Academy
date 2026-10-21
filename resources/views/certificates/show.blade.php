@@ -49,14 +49,14 @@
                 <i class="fas fa-arrow-left"></i> Dashboard
             </a>
             <span class="text-xs text-slate-300">
-                Official Credential: <strong class="text-orange-400 font-mono">{{ $certificate->certificate_number }}</strong>
+                Official Credential: <strong class="text-emerald-400 font-mono">{{ $certificate->certificate_number }}</strong>
             </span>
         </div>
 
         <div class="flex items-center gap-3">
             <button 
                 onclick="window.print()" 
-                class="px-4 py-2 bg-[#f15a29] hover:bg-[#90c642] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
+                class="px-4 py-2 bg-[#c30102] hover:bg-[#a50001] text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
                 <i class="fas fa-print"></i> Print / Save Official PDF
             </button>
@@ -117,7 +117,7 @@
                 </p>
 
                 <!-- Course Title -->
-                <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-[#f15a29] mt-3 uppercase tracking-wide">
+                <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-[#c30102] mt-3 uppercase tracking-wide">
                     {{ $course->title }}
                 </h3>
 
@@ -168,7 +168,7 @@
 
             <!-- Bottom QR Verification Link Hint -->
             <div class="mt-8 text-center text-[9px] text-gray-400">
-                Online Registry Verification: <a href="{{ route('certificate.verify', $certificate->certificate_number) }}" class="underline text-gray-600 hover:text-[#f15a29]">{{ url('/verify-certificate/' . $certificate->certificate_number) }}</a>
+                Online Registry Verification: <a href="{{ route('certificate.verify', $certificate->certificate_number) }}" class="underline text-gray-600 hover:text-[#c30102]">{{ url('/verify-certificate/' . $certificate->certificate_number) }}</a>
             </div>
 
         </div>

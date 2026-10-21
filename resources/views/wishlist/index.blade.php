@@ -9,7 +9,7 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-[#e3e7f0]">
             <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-100 text-[#f15a29] mb-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#c30102]/10 text-[#c30102] border border-[#c30102]/20 mb-2">
                     <i class="fas fa-heart text-xs"></i> Student Wishlist
                 </span>
                 <h1 class="text-3xl sm:text-4xl font-black text-[#0f131f] tracking-tight">
@@ -42,7 +42,7 @@
         @else
             <!-- Empty State -->
             <div class="bg-white rounded-3xl p-12 text-center border border-[#e3e7f0] shadow-sm max-w-2xl mx-auto my-12">
-                <div class="w-20 h-20 rounded-full bg-orange-50 text-[#f15a29] flex items-center justify-center mx-auto text-3xl mb-6 shadow-inner">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#c30102]/15 to-[#051c45]/10 text-[#c30102] border border-[#c30102]/20 flex items-center justify-center mx-auto text-3xl mb-6 shadow-sm">
                     <i class="far fa-heart"></i>
                 </div>
                 <h3 class="text-2xl font-black text-[#0f131f]">Your Wishlist is Empty</h3>

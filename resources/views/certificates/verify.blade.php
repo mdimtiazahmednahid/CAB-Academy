@@ -8,7 +8,7 @@
         
         <!-- Verification Title -->
         <div class="text-center mb-10">
-            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-[#10b981] mb-3">
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/30 mb-3">
                 <i class="fas fa-shield-alt text-xs"></i> Official Credential Registry
             </span>
             <h1 class="text-3xl sm:text-4xl font-black text-[#0f131f] tracking-tight">
@@ -23,8 +23,8 @@
             <!-- Verified Card -->
             <div class="bg-white rounded-3xl p-8 sm:p-10 border-2 border-emerald-500 shadow-xl relative overflow-hidden">
                 <!-- Top Emerald Banner -->
-                <div class="bg-emerald-500 text-white text-center py-2.5 px-4 -mx-8 sm:-mx-10 -mt-8 sm:-mt-10 mb-8 flex items-center justify-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider">
-                    <i class="fas fa-check-circle text-base"></i> Authentic Credential Confirmed & Validated
+                <div class="bg-gradient-to-r from-[#051c45] via-[#0a2540] to-[#10b981] text-white text-center py-3 px-4 -mx-8 sm:-mx-10 -mt-8 sm:-mt-10 mb-8 flex items-center justify-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider shadow-sm">
+                    <i class="fas fa-check-circle text-[#10b981] text-base"></i> Authentic Credential Confirmed & Validated
                 </div>
 
                 <div class="space-y-6">
@@ -35,7 +35,7 @@
                         </div>
                         <div class="sm:text-right">
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Credential ID</span>
-                            <span class="font-mono text-base font-bold text-[#f15a29]">{{ $certificate->certificate_number }}</span>
+                            <span class="font-mono text-base font-bold text-[#c30102]">{{ $certificate->certificate_number }}</span>
                         </div>
                     </div>
 
@@ -43,7 +43,7 @@
                         <div>
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Executive Program</span>
                             <h3 class="text-base font-bold text-[#0f131f] mt-1">{{ $certificate->course->title }}</h3>
-                            <a href="{{ route('courses.show', $certificate->course) }}" class="text-xs font-semibold text-[#f15a29] hover:underline mt-1 inline-block">
+                            <a href="{{ route('courses.show', $certificate->course) }}" class="text-xs font-semibold text-[#c30102] hover:underline mt-1 inline-block">
                                 View Course Curriculum &rarr;
                             </a>
                         </div>
@@ -91,7 +91,7 @@
                             id="searchCert" 
                             placeholder="Enter Serial (e.g. CAB-2026-XXXXXXXX)" 
                             required
-                            class="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#f15a29]"
+                            class="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#c30102]"
                         >
                         <button type="submit" class="btn-ipdp-primary px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm">
                             Validate
@@ -106,7 +106,7 @@
             <h4 class="font-bold text-sm text-[#0f131f] mb-1">Employers & HR Verification Desk</h4>
             <p class="text-xs text-gray-500 mb-4">
                 To request formal verification letters or bulk credential audits, please contact our registry desk directly at 
-                <a href="mailto:commercialacademy868@gmail.com" class="text-[#f15a29] font-bold">commercialacademy868@gmail.com</a> or call <strong>01917-054664</strong>.
+                <a href="mailto:commercialacademy868@gmail.com" class="text-[#c30102] font-bold">commercialacademy868@gmail.com</a> or call <strong>01917-054664</strong>.
             </p>
         </div>
 

@@ -29,7 +29,7 @@
             <i class="fas fa-arrow-left"></i> Return to Dashboard
         </a>
         <div class="flex items-center gap-3">
-            <button onclick="window.print()" class="px-5 py-2.5 bg-[#f15a29] hover:bg-[#90c642] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer">
+            <button onclick="window.print()" class="px-5 py-2.5 bg-[#c30102] hover:bg-[#a50001] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer">
                 <i class="fas fa-print"></i> Print Official Receipt
             </button>
         </div>
@@ -133,7 +133,7 @@
                 </div>
                 <div class="flex justify-between text-base font-black text-[#051c45] pt-2 border-t border-gray-200">
                     <span>Total Paid:</span>
-                    <span class="font-mono text-[#f15a29]">৳{{ number_format($payment->amount, 2) }}</span>
+                    <span class="font-mono text-[#c30102]">৳{{ number_format($payment->amount, 2) }}</span>
                 </div>
             </div>
         </div>

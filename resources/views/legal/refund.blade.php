@@ -8,7 +8,9 @@
         <div class="bg-white rounded-3xl p-8 sm:p-12 border border-[#e3e7f0] shadow-sm">
             
             <div class="border-b border-gray-100 pb-6 mb-8">
-                <span class="text-xs font-bold text-[#f15a29] uppercase tracking-wider block mb-2">Legal & Compliance</span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-[#c30102] bg-[#c30102]/10 border border-[#c30102]/20 uppercase tracking-wider block w-fit mb-2">
+                    <i class="fas fa-undo-alt text-xs"></i> Legal & Compliance
+                </span>
                 <h1 class="text-3xl font-black text-[#0f131f] tracking-tight">Refund & Cancellation Policy</h1>
                 <p class="text-xs text-gray-500 mt-2">Effective Date: October 2026 | Last Updated: October 2026</p>
             </div>
@@ -40,7 +42,7 @@
                 <section>
                     <h2 class="text-lg font-bold text-[#0f131f] mb-2">3. Refund Processing Procedure</h2>
                     <p>
-                        To request a refund, please send an official email to <a href="mailto:commercialacademy868@gmail.com" class="text-[#f15a29] font-medium underline">commercialacademy868@gmail.com</a> with the subject header <code>"Refund Request - [Course Name] - [Your Full Name]"</code> along with:
+                        To request a refund, please send an official email to <a href="mailto:commercialacademy868@gmail.com" class="text-[#c30102] font-medium underline">commercialacademy868@gmail.com</a> with the subject header <code>"Refund Request - [Course Name] - [Your Full Name]"</code> along with:
                     </p>
                     <ul class="list-disc list-inside space-y-1 text-gray-600 mt-2">
                         <li>Your registration email and contact number.</li>

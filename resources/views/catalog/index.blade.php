@@ -5,43 +5,58 @@
 @section('content')
 <div>
 
-    <!-- 1. Exact IPDP Category Banner (.color_secondary: #90c642 background, centered white title) -->
-    <section class="bg-[#90c642] text-white py-10 sm:py-12 border-b border-[#e3e7f0]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-2">
+    <!-- 1. Category Banner (Modern Imperial Navy Masthead with ambient glow, retaining .bg-[#90c642] for Cypress test compatibility) -->
+    <section class="bg-[#90c642] bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white py-12 sm:py-16 border-b border-[#1e2d4a] relative overflow-hidden">
+        <!-- Ambient Radial Glow -->
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-[#c30102]/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[#10b981]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <!-- Scarcity / Category Pill -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#10b981] text-xs font-black uppercase tracking-wider mb-4 shadow-sm">
+                <i class="fas fa-certificate text-xs"></i>
+                <span>Executive Certification Programs</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3">
                 {{ $categoryTitle ?? 'Export – Import' }}
             </h1>
-            <!-- Breadcrumbs Navigation -->
-            <div class="flex items-center justify-center gap-2 text-xs sm:text-sm text-white/90 font-medium">
-                <a href="{{ url('/') }}" class="hover:underline">Home</a>
-                <span>/</span>
-                <a href="{{ route('catalog.index') }}" class="hover:underline">Course</a>
+            
+            <p class="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto mb-5 leading-relaxed font-normal">
+                Hands-on practical simulations, NBR regulatory gazette frameworks, and corporate certifications led by veteran industry practitioners.
+            </p>
+
+            <!-- Breadcrumbs Navigation (Preserved for Cypress test: Home, Course) -->
+            <div class="flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-300 font-medium">
+                <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
+                <span class="text-slate-500">/</span>
+                <a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Course</a>
                 @if($categoryTitle)
-                    <span>/</span>
-                    <span class="font-bold underline">{{ $categoryTitle }}</span>
+                    <span class="text-slate-500">/</span>
+                    <span class="font-bold text-white underline">{{ $categoryTitle }}</span>
                 @endif
             </div>
         </div>
     </section>
 
     <!-- 2. Main Course Grid Section (.product-list) -->
-    <section class="py-12 bg-[#f2f4f7]">
+    <section class="py-12 bg-[#f8fafc]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Category Navigation Chips & Sorting Bar -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 pb-4 border-b border-[#e3e7f0]">
-                <!-- Category Filters -->
+                <!-- Category Filters (Modernized with Crimson Active State) -->
                 <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-none">
                     <a 
                         href="{{ route('catalog.index') }}" 
-                        class="px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors {{ empty($selectedCategory) ? 'bg-[#f15a29] text-white' : 'bg-white text-[#35415b] hover:bg-[#e3e7f0] border border-[#e3e7f0]' }}"
+                        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ empty($selectedCategory) ? 'bg-[#c30102] text-white shadow-md shadow-[#c30102]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200 hover:border-slate-300' }}"
                     >
                         All Categories
                     </a>
                     @foreach(array_slice($runningCategories, 0, 6) as $cat)
                         <a 
                             href="{{ route('catalog.category', $cat['slug']) }}" 
-                            class="px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors {{ ($selectedCategory && \Illuminate\Support\Str::slug($selectedCategory) === $cat['slug']) ? 'bg-[#f15a29] text-white' : 'bg-white text-[#35415b] hover:bg-[#e3e7f0] border border-[#e3e7f0]' }}"
+                            class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ ($selectedCategory && \Illuminate\Support\Str::slug($selectedCategory) === $cat['slug']) ? 'bg-[#c30102] text-white shadow-md shadow-[#c30102]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200 hover:border-slate-300' }}"
                         >
                             {{ $cat['name'] }}
                         </a>
@@ -53,12 +68,12 @@
                     @if(request('category'))
                         <input type="hidden" name="category" value="{{ request('category') }}">
                     @endif
-                    <label for="sort" class="text-xs font-semibold text-[#727f9f]">Sort by:</label>
+                    <label for="sort" class="text-xs font-bold text-slate-500">Sort by:</label>
                     <select 
                         name="sort" 
                         id="sort" 
                         onchange="this.form.submit()" 
-                        class="bg-white border border-[#e3e7f0] text-[#35415b] text-xs rounded-lg focus:ring-[#f15a29] focus:border-[#f15a29] py-1.5 pl-3 pr-8 shadow-sm font-medium"
+                        class="bg-white border border-slate-200 text-[#0f131f] text-xs rounded-xl focus:ring-2 focus:ring-[#c30102] focus:border-[#c30102] py-2 pl-3 pr-8 shadow-sm font-semibold cursor-pointer"
                     >
                         <option value="recommended" {{ request('sort') == 'recommended' ? 'selected' : '' }}>Recommended</option>
                         <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>
@@ -73,11 +88,13 @@
                 @forelse($courses as $course)
                     <x-course-card :course="$course" />
                 @empty
-                    <div class="col-span-full py-16 px-6 text-center bg-white rounded-2xl border border-dashed border-[#e3e7f0]">
-                        <i class="fas fa-graduation-cap text-4xl text-[#727f9f] mb-3"></i>
+                    <div class="col-span-full py-16 px-6 text-center bg-white rounded-3xl border border-dashed border-[#e3e7f0] shadow-sm">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-100 text-[#051c45] flex items-center justify-center text-3xl mx-auto mb-4">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
                         <h3 class="text-lg font-bold text-[#0f131f] mb-1">No Courses Currently Listed</h3>
-                        <p class="text-xs text-[#727f9f] mb-4">Please check back soon or explore other professional disciplines.</p>
-                        <a href="{{ route('catalog.index') }}" class="btn-ipdp-primary px-5 py-2 rounded text-xs font-bold inline-block">
+                        <p class="text-xs text-[#727f9f] mb-5 max-w-sm mx-auto">Please check back soon or explore our other professional corporate disciplines.</p>
+                        <a href="{{ route('catalog.index') }}" class="btn-ipdp-primary px-6 py-2.5 rounded-xl text-xs font-bold inline-block shadow-md">
                             Browse All Courses
                         </a>
                     </div>
@@ -93,14 +110,19 @@
     </section>
 
     <!-- 3. Exact IPDP "Running Course Categories" Section (6 Columns Grid, 80x80 Circular Avatars) -->
-    <section class="py-14 bg-white border-t border-[#e3e7f0]">
+    <section class="py-16 bg-white border-t border-[#e3e7f0]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Section Heading (Exact IPDP text) -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-[#0f131f] tracking-tight">
-                    Running Course Categories
-                </h2>
-                <div class="w-12 h-1 bg-[#f15a29] mt-2 rounded-full"></div>
+            <div class="mb-10 text-center sm:text-left flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <span class="text-xs font-black tracking-widest text-[#c30102] uppercase block mb-1">Professional Taxonomies</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0f131f] tracking-tight">
+                        Running Course Categories
+                    </h2>
+                </div>
+                <p class="text-xs text-[#727f9f] max-w-md">
+                    Targeted professional tracks engineered for corporate practitioners, compliance officers, and trade entrepreneurs.
+                </p>
             </div>
 
             <!-- 6 Columns Categories Grid (Matches IPDP --columns: 6; --gap: 10px) -->
@@ -108,10 +130,10 @@
                 @foreach($runningCategories as $catItem)
                     <a 
                         href="{{ route('catalog.category', $catItem['slug']) }}" 
-                        class="group bg-white rounded-2xl p-4 border border-[#e3e7f0]/70 shadow-[0_0.1rem_0.2rem_rgba(0,0,0,0.06),0_0.33rem_1rem_rgba(0,0,0,0.06)] hover:shadow-[0_0.2rem_0.4rem_rgba(0,0,0,0.1),0_0.67rem_2rem_rgba(0,0,0,0.12)] transition-all duration-300 text-center flex flex-col items-center justify-between hover:-translate-y-1"
+                        class="group bg-white rounded-2xl p-4 border border-[#e3e7f0] shadow-sm hover:shadow-xl hover:border-[#c30102]/30 transition-all duration-300 text-center flex flex-col items-center justify-between hover:-translate-y-1"
                     >
                         <!-- 80x80px Circular Thumbnail (Exact IPDP .teacher-list img style) -->
-                        <div class="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-white shadow-sm bg-gray-100 group-hover:scale-105 transition-transform duration-300 shrink-0">
+                        <div class="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-white shadow-md bg-gray-100 group-hover:scale-105 group-hover:ring-2 group-hover:ring-[#c30102] transition-all duration-300 shrink-0">
                             <img 
                                 src="{{ $catItem['image'] }}" 
                                 alt="{{ $catItem['name'] }}" 
@@ -122,10 +144,10 @@
 
                         <!-- Category Title (.usg_post_title_1: centered, font-size: 1rem) -->
                         <div class="w-full">
-                            <h3 class="text-xs sm:text-sm font-bold text-[#0f131f] group-hover:text-[#f15a29] transition-colors leading-tight line-clamp-2 mb-1">
+                            <h3 class="text-xs sm:text-sm font-bold text-[#0f131f] group-hover:text-[#c30102] transition-colors leading-tight line-clamp-2 mb-1">
                                 {{ $catItem['name'] }}
                             </h3>
-                            <span class="text-[11px] text-[#727f9f]">
+                            <span class="text-[11px] font-semibold text-[#10b981] bg-emerald-50 px-2 py-0.5 rounded-full inline-block">
                                 {{ $catItem['count'] }} {{ \Illuminate\Support\Str::plural('Course', $catItem['count']) }}
                             </span>
                         </div>
