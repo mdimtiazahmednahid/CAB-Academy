@@ -130,8 +130,8 @@
         }">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between gap-3">
-                    <!-- Compact Category Section Title & Visual Cue -->
-                    <div class="flex items-center gap-2 shrink-0 pr-3 border-r border-slate-200/90">
+                    <!-- Compact Category Section Title & Visual Cue (Hidden on mobile for maximum pill space) -->
+                    <div class="hidden sm:flex items-center gap-2 shrink-0 pr-3 border-r border-slate-200/90">
                         <span class="w-2 h-2 rounded-full bg-[#c30102] animate-pulse"></span>
                         <h2 class="text-xs font-black uppercase tracking-wider text-[#041536] whitespace-nowrap">
                             Course Categories
