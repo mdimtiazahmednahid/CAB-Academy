@@ -114,23 +114,23 @@
             </p>
         </div>
 
-        <!-- 3. Bottom Meta Bar (Clock + Start Date + Enroll Now Button) -->
-        <div class="border-t border-slate-100 pt-2.5 sm:pt-3 mt-auto flex items-center justify-between gap-2">
-            <!-- Starting Date with Clock Icon -->
-            <div class="flex items-center text-[11px] sm:text-xs text-slate-500 font-semibold gap-1.5 truncate">
+        <!-- 3. Bottom Conversion Zone: Schedule + Centered High-Focus "Enroll Now" Button -->
+        <div class="border-t border-slate-100 pt-2.5 mt-auto flex flex-col gap-2">
+            <!-- Schedule / Start Date (Centered) -->
+            <div class="flex items-center justify-center text-[11px] sm:text-xs text-slate-500 font-semibold gap-1.5">
                 <i class="far fa-clock text-[11px] text-[#041536]"></i>
-                <span class="truncate">
+                <span>
                     @if($course->start_date)
-                        {{ $course->start_date->format('d M, Y') }}
+                        Starts {{ $course->start_date->format('d M, Y') }}
                     @elseif($course->duration)
                         {{ $course->duration }}
                     @else
-                        Upcoming
+                        Upcoming Batch
                     @endif
                 </span>
             </div>
 
-            <!-- Enroll Now Action Button -->
+            <!-- Centered Prominent High-Conversion Action Button -->
             <a 
                 href="{{ route('courses.show', $course) }}" 
                 onclick="event.preventDefault(); openEnrollDrawer({ 
@@ -141,10 +141,10 @@
                     batch: '{{ $course->batch ?? '105th BATCH' }}', 
                     venue: 'Interactive Live Zoom Masterclass' 
                 })"
-                class="btn-ipdp-primary text-[11px] sm:text-xs font-black px-3 sm:px-3.5 py-1.5 rounded-lg shadow-sm hover:shadow-md inline-flex items-center gap-1 shrink-0 cursor-pointer group/btn transition-all"
+                class="btn-ipdp-primary w-full py-2.5 sm:py-3 px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase shadow-[0_4px_16px_rgba(195,1,2,0.32)] hover:shadow-[0_8px_24px_rgba(195,1,2,0.48)] flex items-center justify-center gap-2 cursor-pointer group/btn transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center"
             >
                 <span>Enroll Now</span>
-                <i class="fas fa-arrow-right text-[9px] group-hover/btn:translate-x-0.5 transition-transform"></i>
+                <i class="fas fa-arrow-right text-[10px] sm:text-xs group-hover/btn:translate-x-1 transition-transform"></i>
             </a>
         </div>
     </div>
