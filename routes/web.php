@@ -87,11 +87,9 @@ Route::post('/wishlist/{course}/toggle', [App\Http\Controllers\WishlistControlle
 // Public Verifiable Certificate Registry
 Route::get('/verify-certificate/{certificate_number}', [App\Http\Controllers\CertificateController::class, 'verify'])->name('certificate.verify');
 
-// Distinguished Faculty Directory (rich terminology replacing 'teacher')
-Route::get('/faculty', function () {
-    $courses = \App\Models\Course::where('is_published', true)->get();
-    return view('faculty.index', compact('courses'));
-})->name('faculty.index');
+// Executive Instructors & Faculty Directory
+Route::get('/instructors', [App\Http\Controllers\InstructorController::class, 'index'])->name('instructors.index');
+Route::get('/faculty', [App\Http\Controllers\InstructorController::class, 'index'])->name('faculty.index');
 
 // Direct course type filter shortcuts
 Route::get('/certificate-course', function () {
@@ -210,6 +208,9 @@ Route::prefix('admin')->middleware(['auth', 'verified', \App\Http\Middleware\IsA
 
     // Articles & Knowledge Hub
     Route::resource('blogs', App\Http\Controllers\Admin\BlogController::class)->names('admin.blogs');
+    
+    // Executive Instructors Management
+    Route::resource('instructors', App\Http\Controllers\Admin\InstructorController::class)->names('admin.instructors');
 
     Route::middleware([\App\Http\Middleware\IsStrictAdmin::class])->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');

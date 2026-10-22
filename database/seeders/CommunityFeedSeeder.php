@@ -25,7 +25,7 @@ class CommunityFeedSeeder extends Seeder
                 'excerpt' => 'Practical blueprint for commercial managers and entrepreneurs navigating shipping documents, Bill of Entry, and HS Code harmonization.',
                 'content' => "In international commercial trade, an irrevocable Letter of Credit (L/C) remains the bedrock of cross-border payment security. However, minor discrepancies in commercial invoices, packing lists, bills of lading, and certificate of origin documents routinely trigger costly demurrage and customs delays at Chittagong Port and Dhaka Airport Cargo terminals.\n\n### Essential Checkpoints for Flawless Customs Clearance\n\n1. **HS Code Precision**: Ensure harmonization between the HS Code specified in the Proforma Invoice (PI) and the National Board of Revenue (NBR) customs tariff schedule.\n2. **UCP 600 Alignment**: Verify that credit terms strictly observe ICC Uniform Customs and Practice standards.\n3. **Bonded Warehouse Discrepancies**: Maintain accurate utilization declarations (UD) to prevent audit notices and export duty liabilities.",
                 'featured_image' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1000&q=80',
-                'author_name' => 'Md. Delwar Hossain Bhuiyan',
+                'author_name' => 'Prof. Dr. M. A. Rahman',
                 'author_title' => 'Principal Trade Finance Fellow',
                 'author_avatar' => '/images/faculty/delwar-hossain.jpg',
                 'read_time' => '6 min read',
@@ -40,7 +40,7 @@ class CommunityFeedSeeder extends Seeder
                 'excerpt' => 'How to optimize vendor lead times, safety stock calculations, and warehouse storage costs in fluctuating supply markets.',
                 'content' => "Optimizing inventory is a critical lever for maximizing corporate liquidity. When supply chain disruptions ripple through global shipping lanes, industrial manufacturers face stock-outs or excessive carrying costs.\n\n### Key Strategies for Lean Inventory\n\n1. **Safety Stock Formula**: Calculate safety stock based on standard deviation of lead time and demand variability.\n2. **Supplier Scorecards**: Audit vendor on-time-in-full (OTIF) metrics quarterly to negotiate preferential container rates.\n3. **Warehouse Space Utilization**: Implement ABC classification to place fast-moving raw materials near dispatch docks.",
                 'featured_image' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1000&q=80',
-                'author_name' => 'Engr. Tariqul Islam',
+                'author_name' => 'Engr. S. M. Hossain, PMP',
                 'author_title' => 'Supply Chain & Operations Fellow',
                 'author_avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
                 'read_time' => '5 min read',
@@ -55,7 +55,7 @@ class CommunityFeedSeeder extends Seeder
                 'excerpt' => 'Step-by-step guidance on input tax credits, Mushak 6.3 issuance, and withholding tax certificates under current Bangladesh tax regulations.',
                 'content' => "Under the Value Added Tax and Supplementary Duty Act, maximizing allowable input tax rebates directly impacts the corporate bottom line. Proper documentation is paramount to survive NBR VAT audits.\n\n### Critical Compliance Procedures\n\n1. **Mushak 6.3 Issuance**: Must be generated prior to dispatch of goods; retroactive invoices are disqualified for rebates.\n2. **Bank Transfer Records**: Ensure transactions over statutory limits are routed through formal banking or approved MFS channels.\n3. **VDS Certificates**: Upload Mushak 6.6 withholding certificates within the mandated 15-day statutory window.",
                 'featured_image' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1000&q=80',
-                'author_name' => 'Asif Ahmed, FCS',
+                'author_name' => 'Advocate K. H. Chowdhury, FCS',
                 'author_title' => 'Distinguished Faculty & Tax Counsel',
                 'author_avatar' => '/images/faculty/asif-ahmmed.jpg',
                 'read_time' => '7 min read',
@@ -99,7 +99,7 @@ class CommunityFeedSeeder extends Seeder
         // 2. Add organic community discussions
         $discussions = [
             [
-                'author_name' => 'Md. Delwar Hossain Bhuiyan',
+                'author_name' => 'Prof. Dr. M. A. Rahman',
                 'author_title' => 'Principal Trade Finance Fellow',
                 'author_avatar' => '/images/faculty/delwar-hossain.jpg',
                 'category' => 'Export – Import',
@@ -115,7 +115,7 @@ class CommunityFeedSeeder extends Seeder
                         'content' => 'Sir, does this also apply to back-to-back L/C imports for 100% export-oriented RMG units?',
                     ],
                     [
-                        'author_name' => 'Md. Delwar Hossain Bhuiyan',
+                        'author_name' => 'Prof. Dr. M. A. Rahman',
                         'content' => 'Yes Alice, back-to-back L/Cs must carry matching 8-digit HS codes verified against the master export entitlement.',
                     ],
                     [
@@ -141,13 +141,13 @@ class CommunityFeedSeeder extends Seeder
                         'content' => 'Great job Alice! Working on the same module right now.',
                     ],
                     [
-                        'author_name' => 'Md. Delwar Hossain Bhuiyan',
+                        'author_name' => 'Prof. Dr. M. A. Rahman',
                         'content' => 'Excellent work Alice, your duty calculation methodology was spot-on.',
                     ],
                 ],
             ],
             [
-                'author_name' => 'Asif Ahmed, FCS',
+                'author_name' => 'Advocate K. H. Chowdhury, FCS',
                 'author_title' => 'Distinguished Faculty & Tax Counsel',
                 'author_avatar' => '/images/faculty/asif-ahmmed.jpg',
                 'category' => 'Tax, VAT & Compliance',
@@ -160,7 +160,7 @@ class CommunityFeedSeeder extends Seeder
                 'comments' => [
                     [
                         'author_name' => 'Shakil Mahmud',
-                        'content' => 'Very clear checklist Asif sir. The banking channel threshold rule is often missed.',
+                        'content' => 'Very clear checklist Advocate sir. The banking channel threshold rule is often missed.',
                     ],
                 ],
             ],

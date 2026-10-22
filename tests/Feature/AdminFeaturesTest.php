@@ -99,5 +99,45 @@ class AdminFeaturesTest extends TestCase
         // Since clients section was disabled:
         $homeResponse->assertDontSee('Our Valuable Clients');
     }
+
+    public function test_admin_can_manage_and_remove_instructors()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        // 1. Create Instructor via admin backend
+        $postResponse = $this->actingAs($admin)->post('/admin/instructors', [
+            'name' => 'Prof. Dr. M. A. Rahman',
+            'title' => 'Principal Trade Finance Fellow',
+            'expertise' => 'Banking, L/C, Customs & Shipping Procedure',
+            'email' => 'delwar@cabacademy.com',
+            'phone' => '01917-054664',
+            'bio' => 'Distinguished advisory expert.',
+            'order' => 1,
+            'is_active' => '1',
+        ]);
+
+        $postResponse->assertSessionHas('success');
+        $this->assertDatabaseHas('instructors', [
+            'name' => 'Prof. Dr. M. A. Rahman',
+            'expertise' => 'Banking, L/C, Customs & Shipping Procedure',
+            'is_active' => true,
+        ]);
+
+        $instructor = \App\Models\Instructor::where('name', 'Prof. Dr. M. A. Rahman')->first();
+
+        // 2. Public directory displays instructor
+        $publicResponse = $this->get('/instructors');
+        $publicResponse->assertStatus(200);
+        $publicResponse->assertSee('Prof. Dr. M. A. Rahman');
+
+        // 3. Admin can remove instructor from backend
+        $deleteResponse = $this->actingAs($admin)->delete("/admin/instructors/{$instructor->id}");
+        $deleteResponse->assertSessionHas('success');
+        $this->assertSoftDeleted('instructors', ['id' => $instructor->id]);
+
+        // 4. Removed instructor no longer appears on public directory
+        $publicAfterDelete = $this->get('/instructors');
+        $publicAfterDelete->assertDontSee('Prof. Dr. M. A. Rahman');
+    }
 }
 

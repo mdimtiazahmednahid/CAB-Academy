@@ -13,6 +13,7 @@ use App\Models\Option;
 use App\Models\JobPost;
 use App\Models\PaymentMethod;
 use App\Models\Setting;
+use App\Models\Instructor;
 use Illuminate\Support\Str;
 
 class DemoDataSeeder extends Seeder
@@ -25,16 +26,83 @@ class DemoDataSeeder extends Seeder
             ['name' => 'Super Admin', 'password' => bcrypt('password'), 'role' => 'admin']
         );
 
-        // 2. Create Instructor (Md. Delwar Hossain Bhuiyan)
-        $instructor = User::firstOrCreate(
-            ['email' => 'delwar@cabacademy.com'],
-            [
-                'name' => 'Md. Delwar Hossain Bhuiyan',
+        // 2. Create Instructor (Prof. Dr. M. A. Rahman - Demo Professional Name)
+        $instructor = User::withTrashed()->where('email', 'delwar@cabacademy.com')->first();
+        if ($instructor) {
+            $instructor->restore();
+            $instructor->update([
+                'name' => 'Prof. Dr. M. A. Rahman',
+                'role' => 'instructor',
+                'profile_picture' => '/images/faculty/delwar-hossain.jpg'
+            ]);
+        } else {
+            $instructor = User::create([
+                'email' => 'delwar@cabacademy.com',
+                'name' => 'Prof. Dr. M. A. Rahman',
                 'password' => bcrypt('password'),
                 'role' => 'instructor',
                 'profile_picture' => '/images/faculty/delwar-hossain.jpg'
-            ]
-        );
+            ]);
+        }
+
+        // Seed Executive Instructors Directory
+        $instructorRoster = [
+            [
+                'name' => 'Prof. Dr. M. A. Rahman',
+                'title' => 'Principal Trade Finance Fellow & Customs Consultant',
+                'expertise' => 'Banking, L/C, Customs & Shipping Procedure',
+                'avatar' => '/images/faculty/delwar-hossain.jpg',
+                'bio' => 'Over 22 years of senior corporate experience advising multinational commercial ventures and leading banking clearing operations across Chittagong and Dhaka ports.',
+                'email' => 'delwar@cabacademy.com',
+                'phone' => '01917-054664',
+                'order' => 1,
+                'is_active' => true,
+                'user_id' => $instructor->id,
+            ],
+            [
+                'name' => 'Advocate K. H. Chowdhury, FCS',
+                'title' => 'Distinguished Faculty & Corporate Legal Counsel',
+                'expertise' => 'VAT, Corporate Taxation & Business Compliance',
+                'avatar' => '/images/faculty/asif-ahmmed.jpg',
+                'bio' => 'Renowned corporate tax advisor and fellow chartered secretary specializing in corporate tax assessment, audit dispute resolution, and NBR compliance.',
+                'email' => 'tax.counsel@cab-academy.com',
+                'phone' => '01917-054664',
+                'order' => 2,
+                'is_active' => true,
+                'user_id' => null,
+            ],
+            [
+                'name' => 'Engr. S. M. Hossain, PMP',
+                'title' => 'Faculty Chair & Head of SCM Operations',
+                'expertise' => 'Supply Chain Strategy & Sourcing Excellence',
+                'avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+                'bio' => 'Supply chain architect with extensive background directing international procurement pipelines, safety stock forecasting, and vendor negotiations.',
+                'email' => 'scm.fellow@cab-academy.com',
+                'phone' => '01917-054664',
+                'order' => 3,
+                'is_active' => true,
+                'user_id' => null,
+            ],
+            [
+                'name' => 'Dr. A. K. Saiful, SPHR',
+                'title' => 'Senior Industry Fellow in Human Resource Governance',
+                'expertise' => 'Labor Laws, Compliance & Organizational Strategy',
+                'avatar' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+                'bio' => 'Leading labor court mediator and senior human resource consultant specializing in industrial disputes, workplace safety, and talent performance.',
+                'email' => 'hr.governance@cab-academy.com',
+                'phone' => '01917-054664',
+                'order' => 4,
+                'is_active' => true,
+                'user_id' => null,
+            ],
+        ];
+
+        foreach ($instructorRoster as $inst) {
+            Instructor::updateOrCreate(
+                ['name' => $inst['name']],
+                $inst
+            );
+        }
 
         // 3. Create Student
         $student = User::firstOrCreate(

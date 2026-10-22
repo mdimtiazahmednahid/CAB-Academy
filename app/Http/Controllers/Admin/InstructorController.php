@@ -1,0 +1,110 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Instructor;
+use Illuminate\Http\Request;
+
+class InstructorController extends Controller
+{
+    /**
+     * Display a listing of instructors in the admin panel.
+     */
+    public function index()
+    {
+        $instructors = Instructor::orderBy('order', 'asc')
+            ->latest('id')
+            ->paginate(15);
+
+        return view('admin.instructors.index', compact('instructors'));
+    }
+
+    /**
+     * Show the form for creating a new instructor.
+     */
+    public function create()
+    {
+        return view('admin.instructors.create');
+    }
+
+    /**
+     * Store a newly created instructor in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'expertise' => 'required|string|max:255',
+            'avatar' => 'nullable|string|max:500',
+            'avatar_file' => 'nullable|image|max:5120',
+            'bio' => 'nullable|string',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'order' => 'nullable|integer',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        if ($request->hasFile('avatar_file')) {
+            $path = $request->file('avatar_file')->store('instructors', 'public');
+            $validated['avatar'] = $path;
+        }
+
+        $validated['order'] = $request->input('order', 0);
+        $validated['is_active'] = $request->has('is_active');
+
+        Instructor::create($validated);
+
+        return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile created successfully.');
+    }
+
+    /**
+     * Show the form for editing the specified instructor.
+     */
+    public function edit(Instructor $instructor)
+    {
+        return view('admin.instructors.edit', compact('instructor'));
+    }
+
+    /**
+     * Update the specified instructor in storage.
+     */
+    public function update(Request $request, Instructor $instructor)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'expertise' => 'required|string|max:255',
+            'avatar' => 'nullable|string|max:500',
+            'avatar_file' => 'nullable|image|max:5120',
+            'bio' => 'nullable|string',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'order' => 'nullable|integer',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        if ($request->hasFile('avatar_file')) {
+            $path = $request->file('avatar_file')->store('instructors', 'public');
+            $validated['avatar'] = $path;
+        }
+
+        $validated['order'] = $request->input('order', 0);
+        $validated['is_active'] = $request->has('is_active');
+
+        $instructor->update($validated);
+
+        return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile updated successfully.');
+    }
+
+    /**
+     * Remove the specified instructor from the frontend and database.
+     */
+    public function destroy(Instructor $instructor)
+    {
+        $instructor->delete();
+
+        return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile removed successfully.');
+    }
+}

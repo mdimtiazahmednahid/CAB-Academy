@@ -175,9 +175,9 @@
                         </div>
                     </div>
 
-                    <!-- Distinguished Faculty -->
-                    <a href="{{ route('faculty.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('faculty*') ? 'text-[#c30102] font-bold' : '' }}">
-                        <span>Faculty</span>
+                    <!-- Instructors Directory -->
+                    <a href="{{ route('instructors.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('instructors*') || request()->is('faculty*') ? 'text-[#c30102] font-bold' : '' }}">
+                        <span>Instructors</span>
                     </a>
 
                     <!-- Knowledge Hub / Blog -->
@@ -260,7 +260,7 @@
                         </form>
                         <a href="{{ url('/') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Home</a>
                         <a href="{{ route('catalog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Course Catalog</a>
-                        <a href="{{ route('faculty.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Distinguished Faculty</a>
+                        <a href="{{ route('instructors.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Instructors</a>
                         <a href="{{ route('blog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Blog & Insights</a>
                         <a href="{{ route('feed.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Community Feed</a>
                         <a href="{{ route('catalog.category', 'export-import') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Export – Import</a>
@@ -324,7 +324,7 @@
                     <ul class="space-y-2 text-xs sm:text-sm">
                         <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a></li>
                         <li><a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Course</a></li>
-                        <li><a href="{{ route('faculty.index') }}" class="hover:text-white transition-colors">Distinguished Faculty</a></li>
+                        <li><a href="{{ route('instructors.index') }}" class="hover:text-white transition-colors">Instructors</a></li>
                         <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Blog & Insights</a></li>
                         <li><a href="{{ route('feed.index') }}" class="hover:text-white transition-colors">Community Feed</a></li>
                         <li><a href="{{ route('catalog.category', 'export-import') }}" class="hover:text-white transition-colors">Export – Import</a></li>

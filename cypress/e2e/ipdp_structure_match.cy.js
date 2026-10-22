@@ -163,9 +163,9 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
         // Official CAB Academy Circular Logo in Header
         cy.get('header img[alt="CAB Academy"]').should('be.visible');
 
-        // Navigation uses rich words: Faculty, Blog (no generic "Teacher")
+        // Navigation uses rich words: Instructors, Blog (no generic "Teacher")
         cy.get('nav').within(() => {
-            cy.contains('Faculty').should('be.visible');
+            cy.contains(/Instructors?|Faculty/).should('be.visible');
             cy.contains('Blog').should('be.visible');
             cy.contains('Teacher').should('not.exist');
         });
@@ -192,12 +192,16 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
         cy.contains('All Insights').should('be.visible');
         cy.get('article.group').should('have.length.at.least', 1);
 
-        // Faculty Directory Page
-        cy.visit('/faculty');
+        // Faculty & Instructors Directory Page
+        cy.visit('/instructors');
         cy.title().should('contain', 'Distinguished Faculty & Industry Fellows');
         cy.contains('Distinguished Faculty & Fellows').should('be.visible');
-        cy.contains('Md. Delwar Hossain Bhuiyan').should('be.visible');
-        cy.contains('Asif Ahmed, FCS').should('be.visible');
+        cy.contains('Prof. Dr. M. A. Rahman').should('be.visible');
+        cy.contains('Advocate K. H. Chowdhury, FCS').should('be.visible');
+
+        // Verify /faculty alias also loads the same directory
+        cy.visit('/faculty');
+        cy.contains('Prof. Dr. M. A. Rahman').should('be.visible');
     });
 
 });

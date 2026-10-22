@@ -591,24 +591,29 @@
                 </div>
 
                 <!-- 2. Instructor Card (.course-teacher-image: 150px circle) -->
-                @if($course->instructor)
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#e3e7f0] text-center">
-                        <div class="w-[150px] h-[150px] rounded-full border-4 border-slate-100 shadow-md mx-auto mb-4 overflow-hidden bg-gray-100">
-                            @if($course->instructor->profile_picture)
-                                <img src="{{ asset($course->instructor->profile_picture) }}" alt="{{ $course->instructor->name }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($course->instructor->name) }}&background=051c45&color=fff';">
-                            @else
-                                <div class="w-full h-full bg-[#f2f4f7] text-[#051c45] flex items-center justify-center font-bold text-3xl">
-                                    {{ substr($course->instructor->name, 0, 1) }}
-                                </div>
-                            @endif
-                        </div>
-                        <h4 class="font-bold text-[#0f131f] text-base mb-1">{{ $course->instructor->name }}</h4>
-                        <p class="text-xs text-[#c30102] font-bold uppercase tracking-wider mb-2">Senior Faculty & Specialist</p>
-                        <p class="text-xs text-[#727f9f] leading-relaxed">
-                            Distinguished Faculty Member with extensive international trade, corporate compliance, and executive advisory experience.
-                        </p>
+                @php
+                    $leadInstructor = $course->instructor ?? \App\Models\Instructor::where('is_active', true)->first();
+                    $instructorName = $leadInstructor ? $leadInstructor->name : 'Prof. Dr. M. A. Rahman';
+                    $instructorTitle = $leadInstructor ? ($leadInstructor->title ?? 'Executive Master Instructor & Specialist') : 'Senior Instructor & Specialist';
+                    $instructorAvatar = $leadInstructor ? ($leadInstructor->profile_picture ?? $leadInstructor->avatar) : '/images/faculty/delwar-hossain.jpg';
+                    $instructorBio = $leadInstructor ? ($leadInstructor->bio ?? 'Distinguished Faculty Member with extensive international trade, corporate compliance, and executive advisory experience.') : 'Distinguished Faculty Member with extensive international trade, corporate compliance, and executive advisory experience.';
+                @endphp
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#e3e7f0] text-center">
+                    <div class="w-[150px] h-[150px] rounded-full border-4 border-slate-100 shadow-md mx-auto mb-4 overflow-hidden bg-gray-100">
+                        @if($instructorAvatar)
+                            <img src="{{ asset($instructorAvatar) }}" alt="{{ $instructorName }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($instructorName) }}&background=051c45&color=fff';">
+                        @else
+                            <div class="w-full h-full bg-[#f2f4f7] text-[#051c45] flex items-center justify-center font-bold text-3xl">
+                                {{ substr($instructorName, 0, 1) }}
+                            </div>
+                        @endif
                     </div>
-                @endif
+                    <h4 class="font-bold text-[#0f131f] text-base mb-1">{{ $instructorName }}</h4>
+                    <p class="text-xs text-[#c30102] font-bold uppercase tracking-wider mb-2">{{ $instructorTitle }}</p>
+                    <p class="text-xs text-[#727f9f] leading-relaxed">
+                        {{ $instructorBio }}
+                    </p>
+                </div>
 
                 <!-- 3. Operational Delivery & Schedule Box -->
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#e3e7f0] space-y-3 text-xs text-[#35415b]">
