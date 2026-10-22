@@ -3,7 +3,7 @@ name: billion-dollar-ux-color-psychology
 description: >-
   Provides elite UI/UX architecture, color science, conversion psychology, and rapid course enrollment
   patterns for CAB Academy. Synthesizes design principles from Apple, Stripe, and MasterClass with the
-  authentic CAB Academy logo palette (#051c45 Imperial Navy, #c30102 Conversion Crimson, #10b981 Verification
+  authentic CAB Academy logo palette (#051c45 Imperial Navy, #c30102 Conversion Crimson, #103db9ff Verification
   Emerald). Use when designing visual layouts, high-converting enrollment engines, interactive
   scrollytelling sections, color harmony systems, or optimizing course checkout velocity.
 ---
