@@ -166,8 +166,7 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle whether the top flagship hero canvas is rendered on the home page.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="landing_hero_enabled" value="0">
-                        <input type="checkbox" name="landing_hero_enabled" value="1" x-model="heroEnabled" class="sr-only peer">
+                        <input type="checkbox" name="landing_hero_enabled" value="1" {{ ($settings['landing_hero_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="heroEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="heroEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="heroEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -278,8 +277,7 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the corporate client logo ribbon below the hero.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="landing_clients_enabled" value="0">
-                        <input type="checkbox" name="landing_clients_enabled" value="1" x-model="clientsEnabled" class="sr-only peer">
+                        <input type="checkbox" name="landing_clients_enabled" value="1" {{ ($settings['landing_clients_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="clientsEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="clientsEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="clientsEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -317,8 +315,7 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the compact, icon-driven sticky navigation bar across the course section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="landing_categories_enabled" value="0">
-                        <input type="checkbox" name="landing_categories_enabled" value="1" x-model="categoriesEnabled" class="sr-only peer">
+                        <input type="checkbox" name="landing_categories_enabled" value="1" {{ ($settings['landing_categories_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="categoriesEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="categoriesEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="categoriesEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -372,8 +369,7 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the Certificate Course & Day Long Course dual-column section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="landing_courses_enabled" value="0">
-                        <input type="checkbox" name="landing_courses_enabled" value="1" x-model="coursesEnabled" class="sr-only peer">
+                        <input type="checkbox" name="landing_courses_enabled" value="1" {{ ($settings['landing_courses_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="coursesEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="coursesEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="coursesEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -494,8 +490,7 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the insights, publications, and thought leadership articles section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="landing_blog_enabled" value="0">
-                        <input type="checkbox" name="landing_blog_enabled" value="1" x-model="blogEnabled" class="sr-only peer">
+                        <input type="checkbox" name="landing_blog_enabled" value="1" {{ ($settings['landing_blog_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="blogEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="blogEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="blogEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -554,8 +549,7 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the high-conversion emerald admissions hotline and instant WhatsApp counseling banner.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="landing_counseling_enabled" value="0">
-                        <input type="checkbox" name="landing_counseling_enabled" value="1" x-model="counselingEnabled" class="sr-only peer">
+                        <input type="checkbox" name="landing_counseling_enabled" value="1" {{ ($settings['landing_counseling_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="counselingEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="counselingEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="counselingEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -641,8 +635,7 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the 6 institutional capability cards and distinguished mentorship section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="landing_features_enabled" value="0">
-                        <input type="checkbox" name="landing_features_enabled" value="1" x-model="featuresEnabled" class="sr-only peer">
+                        <input type="checkbox" name="landing_features_enabled" value="1" {{ ($settings['landing_features_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="featuresEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="featuresEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="featuresEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -715,8 +708,7 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the exclusive job and placement openings section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="hidden" name="landing_jobs_enabled" value="0">
-                        <input type="checkbox" name="landing_jobs_enabled" value="1" x-model="jobsEnabled" class="sr-only peer">
+                        <input type="checkbox" name="landing_jobs_enabled" value="1" {{ ($settings['landing_jobs_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="jobsEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="jobsEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="jobsEnabled ? 'Active' : 'Hidden'"></span>
                     </label>

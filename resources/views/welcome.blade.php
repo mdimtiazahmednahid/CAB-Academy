@@ -28,7 +28,7 @@
                             {{ \App\Models\Setting::getVal('landing_hero_title', 'CAB Academy') }}
                         </h1>
                         <div>
-                            <h3 class="inline-block bg-[#c30102] text-white px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-xl sm:text-3xl lg:text-4xl font-black tracking-tight shadow-[0_6px_20px_rgba(195,1,2,0.35)]">
+                            <h3 class="inline-block bg-gradient-to-r from-[#c30102] via-[#d60102] to-[#c30102] text-white px-3 sm:px-4 py-1 rounded-lg text-xl sm:text-3xl lg:text-4xl font-black tracking-tight shadow-[0_8px_25px_rgba(195,1,2,0.45)] border border-white/20">
                                 {{ \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.') }}
                             </h3>
                         </div>
@@ -52,9 +52,12 @@
                     </div>
 
                     <!-- Marketing Trust Reassurance Line -->
-                    <div class="flex items-center justify-center lg:justify-start gap-4 text-[11px] sm:text-xs text-slate-300/80 pt-1 font-medium">
-                        <span class="text-white/20">&bull;</span>
-                        <span class="flex items-center gap-1.5"><i class="fas fa-user-graduate text-[#c30102]"></i> {{ \App\Models\Setting::getVal('landing_hero_alumni_text', '10,000+ Corporate Alumni') }}</span>
+                    <div class="pt-2 flex items-center justify-center lg:justify-start">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-sm text-xs font-semibold text-slate-200">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <i class="fas fa-user-graduate text-[#c30102]"></i>
+                            <span>{{ \App\Models\Setting::getVal('landing_hero_alumni_text', '10,000+ Corporate Alumni') }}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -95,12 +98,14 @@
 
 {{-- 2. "Our Valuable Clients" (Grid of Corporate Partners) --}}
     @if(\App\Models\Setting::getVal('landing_clients_enabled', '1') == '1')
-    <section class="py-10 sm:py-14 bg-gradient-to-b from-slate-50/80 via-white to-slate-50/50 border-b border-slate-200/80">
+    <section class="py-12 sm:py-16 bg-gradient-to-b from-slate-50/90 via-white to-slate-50/60 border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-6 sm:mb-8">
-                <h2 class="text-lg sm:text-2xl font-black text-[#041536] tracking-tight uppercase">
+            <div class="text-center mb-8 sm:mb-10">
+                <span class="inline-block text-[11px] font-black uppercase tracking-widest text-[#c30102] mb-1.5">Enterprise Partnerships & Executive Alumni</span>
+                <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight uppercase">
                     {{ \App\Models\Setting::getVal('landing_clients_title', 'Our Valuable Clients') }}
                 </h2>
+                <div class="w-12 h-1 bg-gradient-to-r from-[#041536] via-[#c30102] to-[#10b981] mx-auto mt-2.5 rounded-full"></div>
             </div>
 
             <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-2.5 sm:gap-6 items-center">
@@ -267,47 +272,59 @@
         <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc] border-b border-slate-200/80">
             <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                 
-                <!-- Connector Bracket & Centered 'View All Courses' -->
-                <div class="relative mb-8 sm:mb-10 lg:mb-14">
-                    <div class="relative flex items-center justify-center">
-                        <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-transparent via-[#041536] via-[#072152] to-[#c30102]"></div>
-                        
-                        <a href="{{ \App\Models\Setting::getVal('landing_courses_bracket_url', route('catalog.index')) }}" class="px-6 py-3 sm:px-9 sm:py-3.5 bg-gradient-to-b from-white via-white to-slate-50/90 rounded-2xl shadow-[0_8px_30px_rgba(4,21,54,0.1),0_0_0_1px_rgba(4,21,54,0.06)] hover:shadow-[0_14px_40px_rgba(195,1,2,0.2),0_0_0_1px_rgba(195,1,2,0.35)] border border-slate-200/80 hover:border-[#c30102]/30 text-base sm:text-2xl font-black text-[#041536] hover:text-[#c30102] transition-all whitespace-nowrap z-10 mx-2 flex items-center gap-2.5 group hover:scale-[1.02]">
-                            <span class="tracking-tight">{{ \App\Models\Setting::getVal('landing_courses_bracket_text', 'View All Courses') }}</span>
-                            <span class="w-7 h-7 rounded-full bg-[#c30102]/10 group-hover:bg-[#c30102] flex items-center justify-center transition-all">
-                                <i class="fas fa-arrow-right text-xs sm:text-sm text-[#c30102] group-hover:text-white group-hover:translate-x-0.5 transition-all"></i>
-                            </span>
-                        </a>
-
-                        <div class="hidden lg:block w-[36%] h-[2px] bg-gradient-to-r from-[#c30102] via-[#072152] via-[#041536] to-transparent"></div>
+                <!-- Executive Curriculum Gateway Header (Modern, Distinctive, Non-IPDP) -->
+                <div class="relative mb-10 sm:mb-14 text-center max-w-3xl mx-auto">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-slate-200/90 text-[#041536] text-[11px] font-black uppercase tracking-wider mb-2.5 shadow-xs">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#c30102] animate-pulse"></span>
+                        <span>Academic Curriculum Tracks</span>
                     </div>
 
-                    <!-- Left and Right vertical drops pointing into each container on LG screens -->
-                    <div class="hidden lg:grid grid-cols-2 gap-8 px-12 -mt-[2px]">
-                        <div class="flex justify-center">
-                            <div class="w-[2px] h-8 bg-gradient-to-b from-[#041536]/60 to-emerald-500/60"></div>
-                        </div>
-                        <div class="flex justify-center">
-                            <div class="w-[2px] h-8 bg-gradient-to-b from-[#c30102]/60 to-[#c30102]/80"></div>
-                        </div>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-[#041536] tracking-tight">
+                        Dual Certification Pathways
+                    </h2>
+
+                    <p class="text-xs sm:text-sm text-slate-500 mt-2 font-medium max-w-xl mx-auto leading-relaxed">
+                        Choose an extensive multi-week mastertrack for verified industry credentials, or enroll in a fast-track 1-day executive accelerator.
+                    </p>
+
+                    <!-- Elevated 'View All Courses' Action Gateway -->
+                    <div class="mt-6 flex items-center justify-center">
+                        <a href="{{ \App\Models\Setting::getVal('landing_courses_bracket_url', route('catalog.index')) }}" 
+                           class="px-8 py-3.5 sm:px-10 sm:py-4 bg-white hover:bg-[#041536] rounded-2xl shadow-[0_8px_25px_rgba(4,21,54,0.08),0_0_0_1px_rgba(4,21,54,0.08)] hover:shadow-[0_16px_35px_rgba(4,21,54,0.22)] border border-slate-200/90 hover:border-[#041536] text-sm sm:text-base font-black text-[#041536] hover:text-white transition-all duration-300 flex items-center gap-3 group hover:scale-[1.03] active:scale-95">
+                            <span class="tracking-tight">{{ \App\Models\Setting::getVal('landing_courses_bracket_text', 'View All Courses') }}</span>
+                            <span class="w-7 h-7 rounded-xl bg-[#c30102] text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                <i class="fas fa-arrow-right text-xs group-hover:translate-x-0.5 transition-transform"></i>
+                            </span>
+                        </a>
                     </div>
                 </div>
 
                 <!-- Dual Side-By-Side Course Containers -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
                     
-                    <!-- Left Container: Certificate Course (Light Green Box with Subtle Radiant Depth) -->
-                    <div class="bg-[#f0f8ec] bg-gradient-to-br from-[#f2f9ee]/95 via-[#f0f8ec] to-[#e8f5e2]/80 relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-emerald-500/35 shadow-[0_12px_36px_-6px_rgba(16,185,129,0.18)] overflow-hidden flex flex-col justify-between">
-                        <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-400/12 rounded-full blur-3xl pointer-events-none"></div>
+                    <!-- Left Container: Certificate Course Track -->
+                    <div class="bg-[#f0f8ec] bg-gradient-to-b from-[#f2f9ee]/95 via-[#f0f8ec] to-[#e4f4dc] relative rounded-3xl p-4 sm:p-6 lg:p-7 border border-emerald-500/25 shadow-[0_14px_35px_-8px_rgba(16,185,129,0.14)] overflow-hidden flex flex-col justify-between ring-1 ring-emerald-500/10">
+                        <!-- Ambient Depth Glow -->
+                        <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none"></div>
 
                         <div class="relative z-10">
-                            <div class="text-center mb-4 sm:mb-6">
-                                <span class="inline-block px-3 py-1 rounded-full bg-emerald-600/10 text-emerald-800 text-[10px] font-black uppercase tracking-widest border border-emerald-500/20 mb-2">
-                                    {{ \App\Models\Setting::getVal('landing_cert_badge', 'Executive Master Track') }}
-                                </span>
+                            <!-- Container Executive Banner -->
+                            <div class="bg-white/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-emerald-500/20 shadow-xs mb-5 sm:mb-6">
+                                <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/10 text-emerald-800 text-[10px] font-black uppercase tracking-widest border border-emerald-500/25">
+                                        <i class="fas fa-certificate text-emerald-600"></i>
+                                        <span>{{ \App\Models\Setting::getVal('landing_cert_badge', 'Executive Master Track') }}</span>
+                                    </span>
+                                    <span class="text-[11px] font-bold text-emerald-800/80 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200/50">
+                                        4–8 Weeks Mastery
+                                    </span>
+                                </div>
                                 <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
                                     {{ \App\Models\Setting::getVal('landing_cert_title', 'Certificate Course') }}
                                 </h2>
+                                <p class="text-xs text-slate-600 mt-1 font-normal leading-relaxed">
+                                    Comprehensive multi-module industry masterclasses with live Zoom sessions, practical case analysis, and verifiable institutional credentials.
+                                </p>
                             </div>
 
                             <!-- 2-Column Course Grid Inside Box -->
@@ -327,18 +344,29 @@
                         </div>
                     </div>
 
-                    <!-- Right Container: Day Long Course (Light Peach Box with Subtle Warm Glow) -->
-                    <div class="bg-[#fef4f0] bg-gradient-to-br from-[#fff7f5]/95 via-[#fef4f0] to-[#fdebe4]/80 relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 border-2 border-[#c30102]/25 shadow-[0_12px_36px_-6px_rgba(195,1,2,0.16)] overflow-hidden flex flex-col justify-between">
+                    <!-- Right Container: Day Long Course Track -->
+                    <div class="bg-[#fef4f0] bg-gradient-to-b from-[#fff7f5]/95 via-[#fef4f0] to-[#fae6de] relative rounded-3xl p-4 sm:p-6 lg:p-7 border border-[#c30102]/20 shadow-[0_14px_35px_-8px_rgba(195,1,2,0.12)] overflow-hidden flex flex-col justify-between ring-1 ring-[#c30102]/10">
+                        <!-- Ambient Depth Glow -->
                         <div class="absolute -top-24 -right-24 w-72 h-72 bg-[#c30102]/10 rounded-full blur-3xl pointer-events-none"></div>
 
                         <div class="relative z-10">
-                            <div class="text-center mb-4 sm:mb-6">
-                                <span class="inline-block px-3 py-1 rounded-full bg-[#c30102]/10 text-[#c30102] text-[10px] font-black uppercase tracking-widest border border-[#c30102]/20 mb-2">
-                                    {{ \App\Models\Setting::getVal('landing_daylong_badge', '1-Day Accelerator') }}
-                                </span>
+                            <!-- Container Executive Banner -->
+                            <div class="bg-white/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-[#c30102]/20 shadow-xs mb-5 sm:mb-6">
+                                <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#c30102]/10 text-[#c30102] text-[10px] font-black uppercase tracking-widest border border-[#c30102]/25">
+                                        <i class="fas fa-bolt text-[#c30102]"></i>
+                                        <span>{{ \App\Models\Setting::getVal('landing_daylong_badge', '1-Day Accelerator') }}</span>
+                                    </span>
+                                    <span class="text-[11px] font-bold text-[#c30102]/90 bg-red-50 px-2.5 py-0.5 rounded-md border border-red-200/50">
+                                        1-Day Intensive
+                                    </span>
+                                </div>
                                 <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
                                     {{ \App\Models\Setting::getVal('landing_daylong_title', 'Day Long Course') }}
                                 </h2>
+                                <p class="text-xs text-slate-600 mt-1 font-normal leading-relaxed">
+                                    High-impact full-day accelerator masterclasses focusing on urgent customs SRO updates, corporate VAT audits, supply chain, and labor law.
+                                </p>
                             </div>
 
                             <!-- 2-Column Course Grid Inside Box -->

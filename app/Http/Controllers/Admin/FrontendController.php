@@ -46,7 +46,7 @@ class FrontendController extends Controller
             ];
 
             foreach ($toggleKeys as $toggleKey) {
-                $data[$toggleKey] = $request->input($toggleKey, '0');
+                $data[$toggleKey] = $request->has($toggleKey) ? '1' : '0';
             }
         }
 
