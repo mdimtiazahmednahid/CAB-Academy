@@ -70,7 +70,7 @@ class CourseController extends Controller
 
     public function show(Course $course)
     {
-        if (auth()->user()->role === 'instructor' && $course->instructor_id !== auth()->id()) {
+        if (!auth()->user()->isAdmin() && auth()->user()->role === 'instructor' && $course->instructor_id && $course->instructor_id !== auth()->id()) {
             abort(403, 'Unauthorized access.');
         }
 
@@ -121,7 +121,7 @@ class CourseController extends Controller
 
     public function update(Request $request, Course $course)
     {
-        if (auth()->user()->role === 'instructor' && $course->instructor_id !== auth()->id()) {
+        if (!auth()->user()->isAdmin() && auth()->user()->role === 'instructor' && $course->instructor_id && $course->instructor_id !== auth()->id()) {
             abort(403, 'Unauthorized access.');
         }
 
@@ -136,6 +136,7 @@ class CourseController extends Controller
             'target_audience' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
             'cover_image' => 'nullable|image|max:2048',
+            'cover_image_base64' => 'nullable|string',
             'level' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
             'instructor_id' => 'nullable|exists:users,id'
@@ -144,13 +145,26 @@ class CourseController extends Controller
         $data['is_published'] = $request->has('is_published');
         $data['price'] = $data['price'] ?? 0.00;
 
-        if (auth()->user()->role === 'instructor') {
+        if (auth()->user()->role === 'instructor' && !auth()->user()->isAdmin()) {
             $data['instructor_id'] = auth()->id();
         }
 
         if ($request->hasFile('cover_image')) {
             $data['cover_image'] = $request->file('cover_image')->store('course_covers', 'public');
+        } elseif ($request->filled('cover_image_base64')) {
+            $base64 = $request->input('cover_image_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {
+                $base64 = substr($base64, strpos($base64, ',') + 1);
+                $type = strtolower($type[1]);
+                $decoded = base64_decode($base64);
+                if ($decoded !== false) {
+                    $filename = 'course_' . time() . '_' . uniqid() . '.' . $type;
+                    Storage::disk('public')->put('course_covers/' . $filename, $decoded);
+                    $data['cover_image'] = 'course_covers/' . $filename;
+                }
+            }
         }
+        unset($data['cover_image_base64']);
 
         $wasPublished = $course->is_published;
         
@@ -171,7 +185,7 @@ class CourseController extends Controller
 
     public function destroy(Course $course)
     {
-        if (auth()->user()->role === 'instructor' && $course->instructor_id !== auth()->id()) {
+        if (!auth()->user()->isAdmin() && auth()->user()->role === 'instructor' && $course->instructor_id && $course->instructor_id !== auth()->id()) {
             abort(403, 'Unauthorized access.');
         }
 

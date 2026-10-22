@@ -58,6 +58,21 @@ class SettingsController extends Controller
                 ['key' => 'site_logo'],
                 ['value' => $url, 'type' => 'image']
             );
+        } elseif ($request->filled('logo_base64')) {
+            $data = $request->input('logo_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+                $data = substr($data, strpos($data, ',') + 1);
+                $type = strtolower($type[1]);
+                $data = base64_decode($data);
+                if ($data !== false) {
+                    $filename = 'logo_' . time() . '.' . $type;
+                    Storage::disk('public')->put('logos/' . $filename, $data);
+                    Setting::updateOrCreate(
+                        ['key' => 'site_logo'],
+                        ['value' => Storage::url('logos/' . $filename), 'type' => 'image']
+                    );
+                }
+            }
         }
 
         Cache::forget('global_settings');

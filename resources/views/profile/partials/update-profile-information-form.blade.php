@@ -13,9 +13,8 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
-        @method('patch')
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
@@ -47,28 +46,53 @@
             @endif
         <div class="space-y-4">
             <div>
-                <x-input-label for="profile_picture" :value="__('Profile Picture')" />
+                <x-input-label for="profile_picture_input" :value="__('Profile Picture')" />
                 @if($user->profile_picture)
                     <div class="mt-2 mb-2">
                         <img src="{{ Storage::url($user->profile_picture) }}" alt="Profile" class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover shadow-sm border border-gray-200">
                     </div>
                 @endif
-                <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                <input type="file" id="profile_picture_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                <input type="hidden" name="profile_picture_base64" id="profile_picture_base64">
                 <x-input-error class="mt-2" :messages="$errors->get('profile_picture')" />
             </div>
 
             <div>
-                <x-input-label for="cover_photo" :value="__('Cover Photo')" />
+                <x-input-label for="cover_photo_input" :value="__('Cover Photo')" />
                 @if($user->cover_photo)
                     <div class="mt-2 mb-2 w-full max-w-2xl">
                         <img src="{{ Storage::url($user->cover_photo) }}" alt="Cover" class="w-full h-32 md:h-48 rounded-lg object-cover shadow-sm border border-gray-200">
                     </div>
                 @endif
-                <input type="file" id="cover_photo" name="cover_photo" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                <input type="file" id="cover_photo_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                <input type="hidden" name="cover_photo_base64" id="cover_photo_base64">
                 <x-input-error class="mt-2" :messages="$errors->get('cover_photo')" />
             </div>
         </div>
         </div>
+
+        <script>
+            document.getElementById('profile_picture_input')?.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        document.getElementById('profile_picture_base64').value = evt.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            document.getElementById('cover_photo_input')?.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        document.getElementById('cover_photo_base64').value = evt.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        </script>
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>

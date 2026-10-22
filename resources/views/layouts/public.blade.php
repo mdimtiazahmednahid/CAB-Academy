@@ -88,16 +88,21 @@
             <div class="flex items-center gap-2 text-xs text-slate-300 font-medium">
                 <i class="fas fa-map-marker-alt text-[#c30102] text-[11px]"></i>
                 <a href="{{ route('contact.index') }}" class="hover:text-white transition-colors">
-                    Mirpur-Pallabi, Dhaka-1216
+                    {{ \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka-1216') }}
                 </a>
             </div>
             <div class="flex items-center gap-4 text-xs text-slate-300">
-                <a href="tel:01917054664" class="hover:text-white flex items-center gap-1.5 transition-colors font-semibold">
+                @php
+                    $topHotline = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+                    $topHotlineTel = preg_replace('/[^0-9+]/', '', $topHotline) ?: '01917054664';
+                    $topWhatsapp = \App\Models\Setting::getVal('contact_whatsapp', '8801917054664');
+                @endphp
+                <a href="tel:{{ $topHotlineTel }}" class="hover:text-white flex items-center gap-1.5 transition-colors font-semibold">
                     <i class="fas fa-phone-alt text-[#c30102]"></i>
-                    <span>01917-054664</span>
+                    <span>{{ $topHotline }}</span>
                 </a>
                 <span class="text-white/30">&bull;</span>
-                <a href="https://wa.me/8801917054664" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors font-semibold">
+                <a href="https://wa.me/{{ $topWhatsapp }}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors font-semibold">
                     <i class="fab fa-whatsapp text-sm"></i>
                     <span>WhatsApp Support</span>
                 </a>
@@ -107,33 +112,31 @@
 
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_4px_25px_-5px_rgba(5,28,69,0.06)] transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
+            <div class="flex justify-between items-center h-16 sm:h-20 gap-2 lg:gap-4">
+                
                 <!-- CAB Academy Brand Logo -->
-                <a href="{{ url('/') }}" class="flex items-center gap-3 shrink-0 group">
+                <a href="{{ url('/') }}" class="flex items-center gap-2 sm:gap-3 shrink-0 group">
                     <div class="relative">
-                        <img class="h-12 w-12 sm:h-14 sm:w-14 object-contain rounded-full shadow-md bg-white border border-slate-100 ring-2 ring-slate-100 group-hover:ring-[#c30102]/30 group-hover:scale-105 transition-all duration-300" src="{{ asset('images/logo.png') }}" alt="CAB Academy">
+                        <img class="h-10 w-10 sm:h-12 sm:w-12 xl:h-13 xl:w-13 object-contain rounded-full shadow-sm bg-white border border-slate-100 ring-2 ring-slate-100 group-hover:ring-[#c30102]/30 group-hover:scale-105 transition-all duration-300" src="{{ asset('images/logo.png') }}" alt="CAB Academy">
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-lg sm:text-xl font-black tracking-tight text-[#041536] uppercase leading-none">CAB Academy</span>
-                        <span class="text-[9px] sm:text-[10px] tracking-widest uppercase font-black text-[#c30102] mt-1">Learn, Grow, Lead.</span>
+                        <span class="text-base sm:text-lg xl:text-xl font-black tracking-tight text-[#041536] uppercase leading-none">CAB Academy</span>
+                        <span class="text-[8px] sm:text-[9.5px] tracking-widest uppercase font-black text-[#c30102] mt-0.5">Learn, Grow, Lead.</span>
                     </div>
                 </a>
 
-                <!-- Desktop Navigation Menu -->
-                <nav class="hidden lg:flex items-center space-x-7 text-[15px] font-semibold text-[#041536]" x-data="{ courseDropdown: false }">
-                    <a href="{{ url('/') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('/') ? 'text-[#c30102] font-bold' : '' }}">
+                <!-- Desktop Navigation Menu (Careers & Jobs Prominently Featured) -->
+                <nav class="hidden lg:flex items-center gap-0.5 xl:gap-1.5 2xl:gap-3 text-xs xl:text-[13.5px] 2xl:text-[14.5px] font-semibold text-[#041536]" x-data="{ courseDropdown: false, communityDropdown: false }">
+                    <a href="{{ url('/') }}" class="px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('/') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                         <span>Home</span>
-                        @if(request()->is('/'))
-                            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#c30102] rounded-full"></span>
-                        @endif
                     </a>
 
                     <!-- Course Dropdown -->
-                    <div class="relative py-2" @mouseenter="courseDropdown = true" @mouseleave="courseDropdown = false">
-                        <a href="{{ route('catalog.index') }}" class="flex items-center gap-1 hover:text-[#c30102] transition-colors {{ request()->is('catalog*') || request()->is('courses*') ? 'text-[#c30102] font-bold' : '' }}">
-                            <span>Course</span>
-                            <svg class="w-4 h-4 transition-transform duration-200" :class="courseDropdown ? 'rotate-180 text-[#c30102]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <div class="relative py-2" @mouseenter="courseDropdown = true" @mouseleave="courseDropdown = false" @click.away="courseDropdown = false">
+                        <a href="{{ route('catalog.index') }}" @click="if (window.innerWidth < 1280) { $event.preventDefault(); courseDropdown = !courseDropdown; }" class="flex items-center gap-1 px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('catalog*') || request()->is('courses*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                            <span>Courses</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="courseDropdown ? 'rotate-180 text-[#c30102]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </a>
                         <!-- Submenu -->
                         <div 
@@ -144,108 +147,150 @@
                             x-transition:leave="transition ease-in duration-100"
                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                             x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-                            class="absolute top-full left-0 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200/80 p-2 z-50"
+                            class="absolute top-full left-0 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200/80 p-2 z-50 pt-2"
                             style="display: none;"
                         >
-                            <a href="{{ route('catalog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                            <a href="{{ route('catalog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
                                 <i class="fas fa-layer-group text-xs text-[#c30102]"></i>
                                 <span>All Courses</span>
                             </a>
-                            <a href="{{ route('catalog.certificate') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                            <a href="{{ route('catalog.certificate') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
                                 <i class="fas fa-award text-xs text-[#051c45]"></i>
-                                <span>Certificate Programs</span>
+                                <span>Certificate Programs (4)</span>
                             </a>
-                            <a href="{{ route('catalog.day_long') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                            <a href="{{ route('catalog.day_long') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
                                 <i class="fas fa-calendar-day text-xs text-[#10b981]"></i>
-                                <span>Day Long Masterclasses</span>
+                                <span>Day Long Masterclasses (4)</span>
                             </a>
-                            <div class="border-t border-slate-100 my-1"></div>
-                            <a href="{{ route('catalog.category', 'export-import') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
-                                <i class="fas fa-ship text-[11px] text-slate-400"></i>
-                                <span>Export – Import</span>
-                            </a>
-                            <a href="{{ route('catalog.category', 'supply-chain-management') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
-                                <i class="fas fa-boxes text-[11px] text-slate-400"></i>
-                                <span>Supply Chain Management</span>
-                            </a>
-                            <a href="{{ route('catalog.category', 'accounting') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
-                                <i class="fas fa-calculator text-[11px] text-slate-400"></i>
-                                <span>Accounting & Finance</span>
-                            </a>
+                            @php
+                                $publicNavCategories = \App\Models\Category::active()->ordered()->take(4)->get();
+                            @endphp
+                            @if($publicNavCategories->isNotEmpty())
+                                <div class="border-t border-slate-100 my-1"></div>
+                                @foreach($publicNavCategories as $pCat)
+                                    <a href="{{ route('catalog.category', $pCat->slug) }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                                        <i class="fas {{ $pCat->icon ?? 'fa-tag' }} text-[11px] text-slate-400"></i>
+                                        <span>{{ $pCat->name }}</span>
+                                    </a>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
 
+                    <!-- Career & Placement Opportunities (Front & Center!) -->
+                    <a href="{{ route('jobs.index') }}" class="flex items-center gap-1.5 px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('jobs*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                        <i class="fas fa-briefcase text-xs text-[#051c45]"></i>
+                        <span>Careers & Jobs</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[9px] bg-emerald-500 text-white font-black uppercase tracking-wider shadow-sm">Hiring</span>
+                    </a>
+
                     <!-- Instructors Directory -->
-                    <a href="{{ route('instructors.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('instructors*') || request()->is('faculty*') ? 'text-[#c30102] font-bold' : '' }}">
+                    <a href="{{ route('instructors.index') }}" class="px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('instructors*') || request()->is('faculty*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                         <span>Instructors</span>
                     </a>
 
-                    <!-- Knowledge Hub / Blog -->
-                    <a href="{{ route('blog.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('blog*') ? 'text-[#c30102] font-bold' : '' }}">
-                        <span>Blog</span>
+                    <!-- About Us -->
+                    <a href="{{ route('about.index') }}" class="px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('about.*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                        <span>About</span>
                     </a>
 
-                    <!-- Community Feed -->
-                    <a href="{{ route('feed.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('feed*') || request()->is('community*') ? 'text-[#c30102] font-bold' : '' }}">
-                        <span>Feed</span>
-                    </a>
-
-                    <a href="{{ route('about.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->routeIs('about.*') ? 'text-[#c30102] font-bold' : '' }}">
-                        <span>About Us</span>
-                    </a>
-
-                    <a href="{{ route('jobs.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->is('jobs*') ? 'text-[#c30102] font-bold' : '' }}">
-                        <span>Careers</span>
-                    </a>
-
-                    <a href="{{ route('contact.index') }}" class="hover:text-[#c30102] transition-colors relative py-2 {{ request()->routeIs('contact.*') ? 'text-[#c30102] font-bold' : '' }}">
+                    <!-- Contact -->
+                    <a href="{{ route('contact.index') }}" class="px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('contact.*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                         <span>Contact</span>
                     </a>
+
+                    <!-- Community & Insights Dropdown (Feed, Blog, Verification, Policies) -->
+                    <div class="relative py-2" @mouseenter="communityDropdown = true" @mouseleave="communityDropdown = false" @click.away="communityDropdown = false">
+                        <button type="button" @click="communityDropdown = !communityDropdown" class="flex items-center gap-1 px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('feed*') || request()->is('blog*') || request()->is('verify-certificate*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                            <span>Community & Insights</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="communityDropdown ? 'rotate-180 text-[#c30102]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div 
+                            x-show="communityDropdown" 
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                            class="absolute top-full right-0 w-60 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200/80 p-2 z-50 pt-2"
+                            style="display: none;"
+                        >
+                            <a href="{{ route('feed.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                                <i class="fas fa-comments text-xs text-[#051c45]"></i>
+                                <span>Community Discussion Feed</span>
+                            </a>
+                            <a href="{{ route('blog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                                <i class="fas fa-book-reader text-xs text-[#c30102]"></i>
+                                <span>Knowledge Hub & Blogs</span>
+                            </a>
+                            <a href="{{ route('certificate.verify', 'demo') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                                <i class="fas fa-shield-alt text-xs text-[#10b981]"></i>
+                                <span>Verify Certificate</span>
+                            </a>
+                            <div class="border-t border-slate-100 my-1"></div>
+                            <a href="{{ route('legal.privacy') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                                <i class="fas fa-user-shield text-[11px] text-slate-400"></i>
+                                <span>Privacy Policy</span>
+                            </a>
+                            <a href="{{ route('legal.terms') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                                <i class="fas fa-file-contract text-[11px] text-slate-400"></i>
+                                <span>Terms of Service</span>
+                            </a>
+                            <a href="{{ route('legal.refund') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                                <i class="fas fa-undo-alt text-[11px] text-slate-400"></i>
+                                <span>Refund Policy</span>
+                            </a>
+                        </div>
+                    </div>
                 </nav>
 
-                <!-- Actions: Wishlist Heart, Auth, Header Search -->
-                <div class="hidden sm:flex items-center gap-3">
+                <!-- Actions: Wishlist Heart, Auth, Smooth Search (Responsive at all screen sizes) -->
+                <div class="hidden sm:flex items-center gap-2 xl:gap-3 shrink-0">
+                    <!-- Quick Expanding Search Pill -->
+                    <div class="relative hidden lg:block" x-data="{ expanded: false }">
+                        <form action="{{ route('catalog.index') }}" method="GET" class="relative flex items-center">
+                            <input 
+                                type="text" 
+                                name="search" 
+                                placeholder="Search..." 
+                                @focus="expanded = true" 
+                                @blur="expanded = false"
+                                :class="expanded ? 'w-40 xl:w-52 ring-2 ring-[#c30102]/20 border-[#c30102] bg-white' : 'w-24 xl:w-32 bg-slate-100/90 border-slate-200'"
+                                class="transition-all duration-300 text-xs py-1.5 xl:py-2 pl-7 xl:pl-8 pr-2.5 rounded-xl border text-slate-800 outline-none placeholder:text-slate-400 font-medium"
+                            >
+                            <i class="fas fa-search text-[11px] text-slate-400 absolute left-2.5 pointer-events-none"></i>
+                        </form>
+                    </div>
+
                     <!-- Wishlist Heart Icon with dynamic badge -->
-                    <a href="{{ route('wishlist.index') }}" title="Saved Wishlist" class="relative text-[#c30102] p-2 hover:scale-110 transition-transform">
-                        <i class="fas fa-heart text-xl"></i>
-                        <span id="wishlist-count-badge" class="absolute -top-1 -right-1 bg-[#c30102] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow {{ auth()->check() && auth()->user()->wishlists()->count() > 0 ? '' : 'hidden' }}">
+                    <a href="{{ route('wishlist.index') }}" title="Saved Wishlist" class="relative text-[#c30102] p-1.5 xl:p-2 hover:scale-110 transition-transform">
+                        <i class="fas fa-heart text-base xl:text-lg"></i>
+                        <span id="wishlist-count-badge" class="absolute -top-0.5 -right-0.5 bg-[#c30102] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow {{ auth()->check() && auth()->user()->wishlists()->count() > 0 ? '' : 'hidden' }}">
                             {{ auth()->check() ? auth()->user()->wishlists()->count() : 0 }}
                         </span>
                     </a>
 
                     @auth
-                        <a href="{{ route('dashboard') }}" class="btn-ipdp-primary px-5 py-2.5 rounded-xl text-sm font-bold shadow-md flex items-center gap-2">
-                            <i class="far fa-user"></i>
-                            <span>My Account</span>
+                        <a href="{{ route('dashboard') }}" class="btn-ipdp-primary px-3 xl:px-4 py-2 xl:py-2.5 rounded-xl text-xs xl:text-sm font-bold shadow-md flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="far fa-user text-xs"></i>
+                            <span>Dashboard</span>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="btn-ipdp-primary px-5 py-2.5 rounded-xl text-sm font-bold shadow-md flex items-center gap-1.5">
+                        <a href="{{ route('login') }}" class="btn-ipdp-primary px-3 xl:px-4 py-2 xl:py-2.5 rounded-xl text-xs xl:text-sm font-bold shadow-md flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fas fa-lock text-xs"></i>
                             <span>Sign In</span>
                         </a>
                     @endauth
-
-                    <!-- Integrated Search Input with Keyboard Shortcut Pill -->
-                    <form action="{{ route('catalog.index') }}" method="GET" class="relative hidden xl:block w-48">
-                        <input 
-                            type="text" 
-                            name="search" 
-                            placeholder="Quick search..." 
-                            class="w-full bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl text-xs py-2 pl-3.5 pr-8 text-slate-800 focus:ring-2 focus:ring-[#c30102]/20 focus:border-[#c30102] transition-all outline-none"
-                        >
-                        <button type="submit" class="absolute right-3 top-2.5 text-slate-400 hover:text-[#c30102] transition-colors">
-                            <i class="fas fa-search text-xs"></i>
-                        </button>
-                    </form>
                 </div>
 
-                <!-- Mobile Hamburger Toggle -->
+                <!-- Mobile & Tablet Hamburger Toggle -->
                 <div class="lg:hidden flex items-center" x-data="{ open: false }">
                     <button @click="open = !open" class="p-2 text-slate-700 hover:text-[#c30102] focus:outline-none" aria-label="Toggle navigation">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <!-- Mobile Drawer -->
-                    <div x-show="open" @click.away="open = false" x-transition class="absolute top-20 left-0 w-full bg-white border-b border-slate-200 shadow-[0_25px_50px_-12px_rgba(4,21,54,0.25)] p-5 space-y-3 z-50 text-sm font-semibold max-h-[85vh] overflow-y-auto" style="display: none;">
+                    <div x-show="open" @click.away="open = false" x-transition class="absolute top-16 sm:top-20 left-0 w-full bg-white border-b border-slate-200 shadow-[0_25px_50px_-12px_rgba(4,21,54,0.25)] p-5 space-y-3 z-50 text-sm font-semibold max-h-[85vh] overflow-y-auto" style="display: none;">
                         <!-- Quick Search in Mobile Drawer -->
                         <form action="{{ route('catalog.index') }}" method="GET" class="relative pb-2">
                             <input 
@@ -260,17 +305,21 @@
                         </form>
                         <a href="{{ url('/') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Home</a>
                         <a href="{{ route('catalog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Course Catalog</a>
+                        <a href="{{ route('catalog.certificate') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100 text-xs pl-2 text-slate-600">↳ Certificate Programs (4)</a>
+                        <a href="{{ route('catalog.day_long') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100 text-xs pl-2 text-slate-600">↳ Day Long Masterclasses (4)</a>
                         <a href="{{ route('instructors.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Instructors</a>
                         <a href="{{ route('blog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Blog & Insights</a>
                         <a href="{{ route('feed.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Community Feed</a>
-                        <a href="{{ route('catalog.category', 'export-import') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Export – Import</a>
+                        @foreach(\App\Models\Category::active()->ordered()->take(3)->get() as $mCat)
+                            <a href="{{ route('catalog.category', $mCat->slug) }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">{{ $mCat->name }}</a>
+                        @endforeach
                         <a href="{{ route('about.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">About Us</a>
                         <a href="{{ route('jobs.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Careers</a>
                         <a href="{{ route('wishlist.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">My Wishlist</a>
                         <a href="{{ route('contact.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Contact</a>
                         <div class="pt-3">
                             @auth
-                                <a href="{{ route('dashboard') }}" class="block w-full text-center py-2.5 btn-ipdp-primary rounded-xl font-bold">My Account</a>
+                                <a href="{{ route('dashboard') }}" class="block w-full text-center py-2.5 btn-ipdp-primary rounded-xl font-bold">Dashboard</a>
                             @else
                                 <div class="flex gap-2">
                                     <a href="{{ route('login') }}" class="w-1/2 text-center py-2.5 btn-ipdp-primary rounded-xl font-bold">Sign In</a>
@@ -340,16 +389,20 @@
                     <div class="space-y-2.5 text-xs sm:text-sm">
                         <p class="leading-relaxed">
                             <strong class="text-white">Operational Office Address:</strong><br>
-                            Mirpur-Pallabi, Dhaka, Bangladesh, 1216
+                            {{ \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216') }}
                         </p>
                         <p>
-                            <a href="mailto:commercialacademy868@gmail.com" class="hover:text-white transition-colors">
-                                commercialacademy868@gmail.com
+                            <a href="mailto:{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}" class="hover:text-white transition-colors">
+                                {{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}
                             </a>
                         </p>
                         <p>
-                            <a href="tel:01917054664" class="hover:text-white transition-colors">
-                                01917-054664
+                            @php
+                                $ftHotline = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+                                $ftHotlineTel = preg_replace('/[^0-9+]/', '', $ftHotline) ?: '01917054664';
+                            @endphp
+                            <a href="tel:{{ $ftHotlineTel }}" class="hover:text-white transition-colors">
+                                {{ $ftHotline }}
                             </a>
                         </p>
                     </div>
@@ -378,7 +431,7 @@
 
     <!-- Floating WhatsApp Action Button (Matches Reference Screenshot) -->
     <a 
-        href="https://wa.me/8801917054664" 
+        href="https://wa.me/{{ \App\Models\Setting::getVal('contact_whatsapp', '8801917054664') }}" 
         target="_blank" 
         rel="noopener noreferrer" 
         class="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300"

@@ -19,18 +19,31 @@
         <article class="bg-white rounded-3xl border border-[#e3e7f0] shadow-xl overflow-hidden p-6 sm:p-10 mb-12">
             
             <!-- Category & Metadata Header -->
-            <div class="mb-5 flex flex-wrap items-center gap-3">
-                <span class="bg-[#c30102]/10 text-[#c30102] text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full">
-                    {{ $post->category }}
-                </span>
-                <span class="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
-                    <i class="far fa-calendar-alt text-[#c30102]"></i>
-                    {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Recent' }}
-                </span>
-                <span class="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
-                    <i class="far fa-clock text-[#10b981]"></i>
-                    {{ $post->read_time }}
-                </span>
+            <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="bg-[#c30102]/10 text-[#c30102] text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full">
+                        {{ $post->category }}
+                    </span>
+                    <span class="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
+                        <i class="far fa-calendar-alt text-[#c30102]"></i>
+                        {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Recent' }}
+                    </span>
+                    <span class="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
+                        <i class="far fa-clock text-[#10b981]"></i>
+                        {{ $post->read_time }}
+                    </span>
+                    @if($post->views_count > 0)
+                        <span class="text-xs text-slate-400 font-medium flex items-center gap-1">
+                            <i class="far fa-eye"></i> {{ number_format($post->views_count) }} views
+                        </span>
+                    @endif
+                </div>
+
+                @if(auth()->check() && auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.blogs.edit', $post) }}" class="px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#c30102] transition-colors inline-flex items-center gap-1.5 shadow-sm">
+                        <i class="fas fa-pen text-[10px]"></i> Edit Article
+                    </a>
+                @endif
             </div>
 
             <!-- Title -->
@@ -54,7 +67,7 @@
             <!-- Hero Image -->
             @if($post->featured_image)
                 <div class="rounded-2xl overflow-hidden mb-8 shadow-md max-h-[460px]">
-                    <img src="{{ $post->featured_image }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+                    <img src="{{ str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
                 </div>
             @endif
 

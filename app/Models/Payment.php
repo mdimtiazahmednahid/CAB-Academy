@@ -13,8 +13,29 @@ class Payment extends Model
         'amount',
         'sender_number',
         'transaction_id',
+        'invoice_number',
+        'payment_type',
         'status',
+        'notes',
+        'verified_at',
+        'verified_by',
     ];
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'verified_at' => 'datetime',
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($payment) {
+            if (empty($payment->invoice_number)) {
+                $payment->invoice_number = 'CAB-' . date('Y') . '-' . strtoupper(substr(uniqid(), -6));
+            }
+        });
+    }
 
     public function user()
     {
@@ -29,5 +50,10 @@ class Payment extends Model
     public function paymentMethod()
     {
         return $this->belongsTo(PaymentMethod::class);
+    }
+
+    public function verifier()
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 }

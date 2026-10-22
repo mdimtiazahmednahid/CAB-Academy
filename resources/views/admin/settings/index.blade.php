@@ -12,7 +12,7 @@
     </div>
 @endif
 
-<form action="{{ route('admin.settings.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8 max-w-2xl relative pb-24 md:pb-0">
+<form action="{{ route('admin.settings.store') }}" method="POST" class="space-y-8 max-w-2xl relative pb-24 md:pb-0">
     @csrf
 
     <!-- Branding Section -->
@@ -30,14 +30,27 @@
 
             <!-- Logo Upload -->
             <div class="focus-ring-primary rounded-lg">
-                <label for="logo" class="block text-sm font-medium text-gray-700 mb-2">Site Logo</label>
+                <label for="logo_input" class="block text-sm font-medium text-gray-700 mb-2">Site Logo</label>
                 @if(isset($settings['site_logo']) && $settings['site_logo']->value)
                     <div class="mb-3 p-3 bg-gray-50 rounded-lg inline-block border border-gray-100">
                         <img src="{{ $settings['site_logo']->value }}" alt="Current Logo" class="h-12 w-auto object-contain">
                     </div>
                 @endif
-                <input type="file" id="logo" name="logo" accept="image/*"
+                <input type="file" id="logo_input" accept="image/*"
                        class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-primary hover:file:bg-green-100 transition-colors cursor-pointer">
+                <input type="hidden" name="logo_base64" id="logo_base64">
+                <script>
+                    document.getElementById('logo_input')?.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(evt) {
+                                document.getElementById('logo_base64').value = evt.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                </script>
             </div>
 
             <!-- Primary Color -->
@@ -62,11 +75,35 @@
         <h3 class="text-lg font-semibold mb-4 border-b border-gray-50 pb-2">Contact & SEO</h3>
         
         <div class="space-y-5">
+            <!-- Campus Address -->
+            <div class="focus-ring-primary rounded-lg">
+                <label for="contact_address" class="block text-sm font-medium text-gray-700 mb-1">Campus Address</label>
+                <input type="text" id="contact_address" name="contact_address" 
+                       value="{{ $settings['contact_address']->value ?? 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216' }}"
+                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+            </div>
+
+            <!-- Executive Hotline -->
+            <div class="focus-ring-primary rounded-lg">
+                <label for="contact_hotline" class="block text-sm font-medium text-gray-700 mb-1">Executive Hotline</label>
+                <input type="text" id="contact_hotline" name="contact_hotline" 
+                       value="{{ $settings['contact_hotline']->value ?? '01917-054664' }}"
+                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+            </div>
+
+            <!-- WhatsApp Number -->
+            <div class="focus-ring-primary rounded-lg">
+                <label for="contact_whatsapp" class="block text-sm font-medium text-gray-700 mb-1">WhatsApp Hotline</label>
+                <input type="text" id="contact_whatsapp" name="contact_whatsapp" 
+                       value="{{ $settings['contact_whatsapp']->value ?? '8801917054664' }}"
+                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+            </div>
+
             <!-- Contact Email -->
             <div class="focus-ring-primary rounded-lg">
                 <label for="contact_email" class="block text-sm font-medium text-gray-700 mb-1">Support Email</label>
                 <input type="email" id="contact_email" name="contact_email" 
-                       value="{{ $settings['contact_email']->value ?? 'support@example.com' }}"
+                       value="{{ $settings['contact_email']->value ?? 'commercialacademy868@gmail.com' }}"
                        class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
             </div>
 

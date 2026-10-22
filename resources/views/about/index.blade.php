@@ -10,13 +10,13 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-20">
             <div class="lg:col-span-7">
                 <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-[#c30102]/10 text-[#c30102] mb-4">
-                    <i class="fas fa-award text-xs"></i> Premier Trade & Executive Institute
+                    <i class="fas fa-award text-xs"></i> {{ \App\Models\Setting::getVal('about_hero_badge', 'Premier Trade & Executive Institute') }}
                 </span>
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0f131f] tracking-tight leading-tight">
-                    Empowering Bangladesh's Next Generation of <span class="text-[#c30102]">Global Trade Leaders</span>
+                    {{ \App\Models\Setting::getVal('about_hero_title', "Empowering Bangladesh's Next Generation of Global Trade Leaders") }}
                 </h1>
                 <p class="mt-5 text-base sm:text-lg text-[#35415b] leading-relaxed">
-                    Commercial Academy Bangladesh (CAB Academy) is the national vanguard in specialized executive development. Founded to bridge the critical gap between theoretical academia and high-stakes commercial reality, we provide rigorous, practical masterclasses in Export-Import Management, Supply Chain Logistics, Customs VAT & Tax, and Corporate Governance.
+                    {{ \App\Models\Setting::getVal('about_hero_desc', 'Commercial Academy Bangladesh (CAB Academy) is the national vanguard in specialized executive development. Founded to bridge the critical gap between theoretical academia and high-stakes commercial reality, we provide rigorous, practical masterclasses in Export-Import Management, Supply Chain Logistics, Customs VAT & Tax, and Corporate Governance.') }}
                 </p>
                 <div class="mt-8 flex flex-wrap gap-4">
                     <a href="{{ route('catalog.index') }}" class="btn-ipdp-primary px-6 py-3.5 rounded-xl font-bold shadow-md inline-flex items-center gap-2 text-sm">
@@ -41,20 +41,20 @@
                         </div>
                         <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100 text-center">
                             <div class="p-3 bg-slate-50 rounded-2xl">
-                                <span class="block text-2xl font-black text-[#0f131f]">5,000+</span>
-                                <span class="text-xs text-gray-500 font-semibold uppercase">Graduates Trained</span>
+                                <span class="block text-2xl font-black text-[#0f131f]">{{ \App\Models\Setting::getVal('about_stat_graduates', '5,000+') }}</span>
+                                <span class="text-xs text-gray-500 font-semibold uppercase">{{ \App\Models\Setting::getVal('about_stat_graduates_label', 'Graduates Trained') }}</span>
                             </div>
                             <div class="p-3 bg-slate-50 rounded-2xl">
-                                <span class="block text-2xl font-black text-[#c30102]">98%</span>
-                                <span class="text-xs text-gray-500 font-semibold uppercase">Practical Curriculum</span>
+                                <span class="block text-2xl font-black text-[#c30102]">{{ \App\Models\Setting::getVal('about_stat_curriculum', '98%') }}</span>
+                                <span class="text-xs text-gray-500 font-semibold uppercase">{{ \App\Models\Setting::getVal('about_stat_curriculum_label', 'Practical Curriculum') }}</span>
                             </div>
                             <div class="p-3 bg-slate-50 rounded-2xl">
-                                <span class="block text-2xl font-black text-[#10b981]">15+</span>
-                                <span class="text-xs text-gray-500 font-semibold uppercase">Fellow Faculty</span>
+                                <span class="block text-2xl font-black text-[#10b981]">{{ \App\Models\Setting::getVal('about_stat_faculty', '15+') }}</span>
+                                <span class="text-xs text-gray-500 font-semibold uppercase">{{ \App\Models\Setting::getVal('about_stat_faculty_label', 'Fellow Faculty') }}</span>
                             </div>
                             <div class="p-3 bg-slate-50 rounded-2xl">
-                                <span class="block text-2xl font-black text-[#051c45]">120+</span>
-                                <span class="text-xs text-gray-500 font-semibold uppercase">Corporate Partners</span>
+                                <span class="block text-2xl font-black text-[#051c45]">{{ \App\Models\Setting::getVal('about_stat_partners', '120+') }}</span>
+                                <span class="text-xs text-gray-500 font-semibold uppercase">{{ \App\Models\Setting::getVal('about_stat_partners_label', 'Corporate Partners') }}</span>
                             </div>
                         </div>
                     </div>
@@ -68,9 +68,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-[#c30102]/10 text-[#c30102] flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-bullseye"></i>
                 </div>
-                <h3 class="text-xl font-bold text-[#0f131f] mb-3">Our Mission</h3>
+                <h3 class="text-xl font-bold text-[#0f131f] mb-3">{{ \App\Models\Setting::getVal('about_mission_title', 'Our Mission') }}</h3>
                 <p class="text-sm text-[#35415b] leading-relaxed">
-                    To engineer real-world competency and career breakthroughs for professionals through industry-vetted coursework, simulated trade laboratories, and personalized mentoring by C-suite practitioners.
+                    {{ \App\Models\Setting::getVal('about_mission_text', 'To engineer real-world competency and career breakthroughs for professionals through industry-vetted coursework, simulated trade laboratories, and personalized mentoring by C-suite practitioners.') }}
                 </p>
             </div>
 
@@ -78,9 +78,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-[#10b981] flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-eye"></i>
                 </div>
-                <h3 class="text-xl font-bold text-[#0f131f] mb-3">Our Vision</h3>
+                <h3 class="text-xl font-bold text-[#0f131f] mb-3">{{ \App\Models\Setting::getVal('about_vision_title', 'Our Vision') }}</h3>
                 <p class="text-sm text-[#35415b] leading-relaxed">
-                    To be South Asia's preeminent institute for commercial trade, customs navigation, and supply chain excellence, recognized worldwide for ethical leadership and operational mastery.
+                    {{ \App\Models\Setting::getVal('about_vision_text', "To be South Asia's preeminent institute for commercial trade, customs navigation, and supply chain excellence, recognized worldwide for ethical leadership and operational mastery.") }}
                 </p>
             </div>
 
@@ -88,9 +88,9 @@
                 <div class="w-12 h-12 rounded-2xl bg-blue-100 text-[#051c45] flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-shield-alt"></i>
                 </div>
-                <h3 class="text-xl font-bold text-[#0f131f] mb-3">Core Philosophy</h3>
+                <h3 class="text-xl font-bold text-[#0f131f] mb-3">{{ \App\Models\Setting::getVal('about_philosophy_title', 'Core Philosophy') }}</h3>
                 <p class="text-sm text-[#35415b] leading-relaxed">
-                    Zero Fluff, 100% Applicability. Every case study, L/C draft, bill of lading, and VAT audit calculation directly reflects the current regulatory landscape of the National Board of Revenue (NBR) and Bangladesh Bank.
+                    {{ \App\Models\Setting::getVal('about_philosophy_text', 'Zero Fluff, 100% Applicability. Every case study, L/C draft, bill of lading, and VAT audit calculation directly reflects the current regulatory landscape of the National Board of Revenue (NBR) and Bangladesh Bank.') }}
                 </p>
             </div>
         </div>

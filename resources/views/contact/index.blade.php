@@ -67,12 +67,19 @@
                             <div>
                                 <h4 class="font-bold text-[#0f131f] text-sm">Operational Campus Address</h4>
                                 <p class="text-xs sm:text-sm text-gray-600 mt-1 leading-relaxed">
-                                    Mirpur-Pallabi, Dhaka, Bangladesh, 1216
+                                    {{ \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216') }}
                                 </p>
                             </div>
                         </div>
 
                         <!-- Phone / Hotlines -->
+                        @php
+                            $contactHotline = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+                            $contactHotlineTel = preg_replace('/[^0-9+]/', '', $contactHotline) ?: '01917054664';
+                            $contactEmail = \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com');
+                            $contactWhatsapp = \App\Models\Setting::getVal('contact_whatsapp', '8801917054664');
+                            $contactHours = \App\Models\Setting::getVal('contact_hours', '9:00 AM – 8:00 PM, Saturday to Thursday');
+                        @endphp
                         <div class="flex items-start gap-4">
                             <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#10b981] flex items-center justify-center shrink-0">
                                 <i class="fas fa-phone-alt text-base"></i>
@@ -80,10 +87,10 @@
                             <div>
                                 <h4 class="font-bold text-[#0f131f] text-sm">Executive Hotline</h4>
                                 <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                                    <a href="tel:01917054664" class="font-semibold text-[#0f131f] hover:text-[#c30102] transition-colors">
-                                        01917-054664
+                                    <a href="tel:{{ $contactHotlineTel }}" class="font-semibold text-[#0f131f] hover:text-[#c30102] transition-colors">
+                                        {{ $contactHotline }}
                                     </a>
-                                    <span class="text-xs text-gray-500 block">(9:00 AM – 8:00 PM, Saturday to Thursday)</span>
+                                    <span class="text-xs text-gray-500 block">({{ $contactHours }})</span>
                                 </p>
                             </div>
                         </div>
@@ -96,8 +103,8 @@
                             <div>
                                 <h4 class="font-bold text-[#0f131f] text-sm">Official Inquiries & Admissions</h4>
                                 <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                                    <a href="mailto:commercialacademy868@gmail.com" class="font-semibold text-[#0f131f] hover:text-[#c30102] transition-colors">
-                                        commercialacademy868@gmail.com
+                                    <a href="mailto:{{ $contactEmail }}" class="font-semibold text-[#0f131f] hover:text-[#c30102] transition-colors">
+                                        {{ $contactEmail }}
                                     </a>
                                 </p>
                             </div>
@@ -106,7 +113,7 @@
                         <!-- WhatsApp Instant Chat -->
                         <div class="pt-2">
                             <a 
-                                href="https://wa.me/8801917054664?text=Hello%20CAB%20Academy%2C%20I%20am%20inquiring%20about%20your%20executive%20courses." 
+                                href="https://wa.me/{{ $contactWhatsapp }}?text=Hello%20CAB%20Academy%2C%20I%20am%20inquiring%20about%20your%20executive%20courses." 
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20ba59] transition-colors shadow-sm text-sm"
@@ -240,7 +247,7 @@
                                     id="organization" 
                                     name="organization" 
                                     value="{{ old('organization') }}" 
-                                    placeholder="e.g. Apex Footwear / DU"
+                                    placeholder="e.g. Global Logistics Ltd. / University"
                                     class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c30102] focus:bg-white transition-all font-medium"
                                 >
                             </div>

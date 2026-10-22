@@ -61,6 +61,11 @@
                 <span class="hidden lg:block">Courses</span>
             </a>
 
+            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.categories*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
+                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                <span class="hidden lg:block">Categories</span>
+            </a>
+
             <a href="{{ route('admin.instructors.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.instructors*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 <span class="hidden lg:block">Instructors</span>
@@ -77,6 +82,11 @@
                 @endif
             </a>
 
+            <a href="{{ route('admin.feeds.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.feeds*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
+                <span class="hidden lg:block">Community Feed</span>
+            </a>
+
             <a href="{{ route('admin.blogs.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.blogs*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
                 <span class="hidden lg:block">Articles & Blogs</span>
@@ -86,6 +96,17 @@
             <a href="{{ route('admin.jobs') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.jobs*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                 <span class="hidden lg:block">Jobs</span>
+            </a>
+
+            <a href="{{ route('admin.accounting.index') }}" class="flex items-center justify-between p-3 rounded-xl {{ request()->routeIs('admin.accounting*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="hidden lg:block">Accounting & Ledger</span>
+                </div>
+                @php $pendingPayCount = \App\Models\Payment::where('status', 'pending')->count(); @endphp
+                @if($pendingPayCount > 0)
+                    <span class="hidden lg:inline-flex px-2 py-0.5 text-[10px] font-bold bg-amber-500 text-white rounded-full">{{ $pendingPayCount }}</span>
+                @endif
             </a>
 
             <a href="{{ route('admin.payment-methods.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.payment-methods*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
@@ -101,6 +122,11 @@
             <a href="{{ route('admin.frontend.index') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.frontend.*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                 <span class="hidden lg:block">Frontend</span>
+            </a>
+
+            <a href="{{ route('admin.announcements.create') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.announcements*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                <span class="hidden lg:block">Announcements</span>
             </a>
 
             <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 p-3 rounded-xl {{ request()->routeIs('admin.settings*') ? 'bg-gray-800 text-white font-medium' : 'text-gray-400 hover:bg-gray-800 hover:text-white' }} transition-colors">
@@ -138,10 +164,14 @@
             <a href="{{ route('admin.users') }}" class="block text-gray-300 hover:text-white py-2">Users</a>
             @endif
             <a href="{{ route('admin.courses') }}" class="block text-gray-300 hover:text-white py-2">Courses</a>
+            <a href="{{ route('admin.categories.index') }}" class="block text-gray-300 hover:text-white py-2">Categories</a>
+            <a href="{{ route('admin.instructors.index') }}" class="block text-gray-300 hover:text-white py-2">Instructors</a>
             <a href="{{ route('admin.inquiries.index') }}" class="block text-gray-300 hover:text-white py-2">Inquiries</a>
+            <a href="{{ route('admin.feeds.index') }}" class="block text-gray-300 hover:text-white py-2">Community Feed</a>
             <a href="{{ route('admin.blogs.index') }}" class="block text-gray-300 hover:text-white py-2">Articles & Blogs</a>
             @if(auth()->user()->role === 'admin')
             <a href="{{ route('admin.jobs') }}" class="block text-gray-300 hover:text-white py-2">Jobs</a>
+            <a href="{{ route('admin.accounting.index') }}" class="block text-gray-300 hover:text-white py-2">Accounting & Ledger</a>
             <a href="{{ route('admin.payment-methods.index') }}" class="block text-gray-300 hover:text-white py-2">Payment Methods</a>
             <a href="{{ route('admin.payments.index') }}" class="block text-gray-300 hover:text-white py-2">Pending Payments</a>
             <a href="{{ route('admin.frontend.index') }}" class="block text-gray-300 hover:text-white py-2">Frontend</a>

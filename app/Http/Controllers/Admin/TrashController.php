@@ -28,7 +28,7 @@ class TrashController extends Controller
 
     public function index()
     {
-        if (auth()->user()->role !== 'admin') {
+        if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized. Only Super Admin can access the Trash Bin.');
         }
 
@@ -47,7 +47,7 @@ class TrashController extends Controller
 
     public function restore(Request $request, $type, $id)
     {
-        if (auth()->user()->role !== 'admin') {
+        if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 
@@ -64,7 +64,7 @@ class TrashController extends Controller
 
     public function forceDelete(Request $request, $type, $id)
     {
-        if (auth()->user()->role !== 'admin') {
+        if (!auth()->user()->isAdmin()) {
             abort(403, 'Unauthorized.');
         }
 

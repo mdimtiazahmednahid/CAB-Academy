@@ -132,9 +132,8 @@
             <h3 class="text-lg font-bold">Edit Job Post</h3>
             <button onclick="document.getElementById('editJobModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
-        <form method="POST" id="editJobForm" action="" enctype="multipart/form-data">
+        <form method="POST" id="editJobForm" action="">
             @csrf
-            @method('PUT')
             <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Job Title <span class="text-red-500">*</span></label>
@@ -146,7 +145,20 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Company Logo (Optional)</label>
-                    <input type="file" name="company_logo" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <input type="file" id="edit_job_logo_file" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <input type="hidden" name="company_logo_base64" id="edit_company_logo_base64">
+                    <script>
+                        document.getElementById('edit_job_logo_file')?.addEventListener('change', function(e) {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = function(evt) {
+                                    document.getElementById('edit_company_logo_base64').value = evt.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        });
+                    </script>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>

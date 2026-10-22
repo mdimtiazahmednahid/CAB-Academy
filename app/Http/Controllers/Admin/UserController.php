@@ -75,7 +75,9 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:admin,instructor,student',
             'profile_picture' => 'nullable|image|max:5120',
+            'profile_picture_base64' => 'nullable|string',
             'cover_photo' => 'nullable|image|max:10240',
+            'cover_photo_base64' => 'nullable|string',
         ]);
 
         if (!empty($data['password'])) {
@@ -87,12 +89,38 @@ class UserController extends Controller
         if ($request->hasFile('profile_picture')) {
             $user->profile_picture = $request->file('profile_picture')->store('profiles', 'public');
             unset($data['profile_picture']);
+        } elseif ($request->filled('profile_picture_base64')) {
+            $dataBase64 = $request->input('profile_picture_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $dataBase64, $type)) {
+                $dataBase64 = substr($dataBase64, strpos($dataBase64, ',') + 1);
+                $type = strtolower($type[1]);
+                $decoded = base64_decode($dataBase64);
+                if ($decoded !== false) {
+                    $filename = 'profile_' . time() . '_' . uniqid() . '.' . $type;
+                    \Illuminate\Support\Facades\Storage::disk('public')->put('profiles/' . $filename, $decoded);
+                    $user->profile_picture = 'profiles/' . $filename;
+                }
+            }
         }
+        unset($data['profile_picture_base64']);
 
         if ($request->hasFile('cover_photo')) {
             $user->cover_photo = $request->file('cover_photo')->store('covers', 'public');
             unset($data['cover_photo']);
+        } elseif ($request->filled('cover_photo_base64')) {
+            $dataBase64 = $request->input('cover_photo_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $dataBase64, $type)) {
+                $dataBase64 = substr($dataBase64, strpos($dataBase64, ',') + 1);
+                $type = strtolower($type[1]);
+                $decoded = base64_decode($dataBase64);
+                if ($decoded !== false) {
+                    $filename = 'cover_' . time() . '_' . uniqid() . '.' . $type;
+                    \Illuminate\Support\Facades\Storage::disk('public')->put('covers/' . $filename, $decoded);
+                    $user->cover_photo = 'covers/' . $filename;
+                }
+            }
         }
+        unset($data['cover_photo_base64']);
 
         $user->fill($data);
         $user->save();

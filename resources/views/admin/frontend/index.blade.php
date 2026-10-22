@@ -28,7 +28,7 @@
     </div>
 @endif
 
-<form action="{{ route('admin.frontend.store') }}" method="POST" enctype="multipart/form-data" 
+<form action="{{ route('admin.frontend.store') }}" method="POST" 
       x-data="{ 
           activeTab: 'hero',
           mode: '{{ $settings['landing_page_mode'] ?? 'default' }}',
@@ -91,14 +91,14 @@
                 <span class="w-2 h-2 rounded-full" :class="coursesEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
 
-            <button type="button" @click="activeTab = 'blog'" 
-                    :class="activeTab === 'blog' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+            <button type="button" @click="activeTab = 'jobs'" 
+                    :class="activeTab === 'jobs' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-newspaper text-sm"></i>
-                    <span>5. Knowledge Hub</span>
+                    <i class="fas fa-briefcase text-sm"></i>
+                    <span>5. Career & Jobs</span>
                 </span>
-                <span class="w-2 h-2 rounded-full" :class="blogEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+                <span class="w-2 h-2 rounded-full" :class="jobsEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
 
             <button type="button" @click="activeTab = 'counseling'" 
@@ -121,14 +121,43 @@
                 <span class="w-2 h-2 rounded-full" :class="featuresEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
 
-            <button type="button" @click="activeTab = 'jobs'" 
-                    :class="activeTab === 'jobs' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+            <button type="button" @click="activeTab = 'blog'" 
+                    :class="activeTab === 'blog' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-briefcase text-sm"></i>
-                    <span>8. Career & Jobs</span>
+                    <i class="fas fa-newspaper text-sm"></i>
+                    <span>8. Knowledge Hub</span>
                 </span>
-                <span class="w-2 h-2 rounded-full" :class="jobsEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+                <span class="w-2 h-2 rounded-full" :class="blogEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
+
+            <div class="px-3 pt-3 pb-1 text-xs font-bold uppercase tracking-wider text-gray-400 border-t border-gray-100">Inner Pages CMS</div>
+
+            <button type="button" @click="activeTab = 'about'" 
+                    :class="activeTab === 'about' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-university text-sm"></i>
+                    <span>9. About Us Page</span>
+                </span>
+            </button>
+
+            <button type="button" @click="activeTab = 'contact'" 
+                    :class="activeTab === 'contact' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-map-marker-alt text-sm"></i>
+                    <span>10. Contact Coordinates</span>
+                </span>
+            </button>
+
+            <button type="button" @click="activeTab = 'legal'" 
+                    :class="activeTab === 'legal' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-balance-scale text-sm"></i>
+                    <span>11. Legal & Policies</span>
+                </span>
             </button>
 
             <div class="pt-2 border-t border-gray-100">
@@ -166,7 +195,8 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle whether the top flagship hero canvas is rendered on the home page.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="landing_hero_enabled" value="1" {{ ($settings['landing_hero_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="heroEnabled" class="sr-only peer">
+                        <input type="hidden" name="landing_hero_enabled" :value="heroEnabled ? '1' : '0'">
+                        <input type="checkbox" x-model="heroEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="heroEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="heroEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -277,7 +307,8 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the corporate client logo ribbon below the hero.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="landing_clients_enabled" value="1" {{ ($settings['landing_clients_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="clientsEnabled" class="sr-only peer">
+                        <input type="hidden" name="landing_clients_enabled" :value="clientsEnabled ? '1' : '0'">
+                        <input type="checkbox" x-model="clientsEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="clientsEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="clientsEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -297,9 +328,9 @@
                             <span class="text-xs text-gray-400 font-medium">Leave blank for authentic defaults</span>
                         </div>
                         <textarea name="landing_clients_data" rows="9" 
-                                  placeholder="SSG | /images/clients/ssg.jpg&#10;United Hospital | /images/clients/united-hospital.jpg&#10;Square | /images/clients/square.jpg&#10;Robi | /images/clients/robi.jpg&#10;Grameenphone | /images/clients/grameenphone.jpg&#10;Incepta | /images/clients/incepta.jpg&#10;IPDC | /images/clients/ipdc.jpg&#10;Runner | /images/clients/runner.jpg" 
+                                  placeholder="International Trade & L/C&#10;Supply Chain Management&#10;Customs & Freight Clearance&#10;Corporate Tax & VAT&#10;Commercial Banking & Finance&#10;Industrial HR & Labor Laws&#10;Corporate Law & Compliance&#10;Project Planning & BOQ" 
                                   class="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ $settings['landing_clients_data'] ?? '' }}</textarea>
-                        <p class="text-[11px] text-gray-500 mt-1">Format: <code>Company Name | Logo URL</code> (if logo URL is omitted or image not found, the clean company name is rendered automatically).</p>
+                        <p class="text-[11px] text-gray-500 mt-1">Format: <code>Sector / Partner Name | Logo URL</code> (if logo URL is omitted, the clean name badge is rendered automatically).</p>
                     </div>
                 </div>
             </div>
@@ -315,7 +346,8 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the compact, icon-driven sticky navigation bar across the course section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="landing_categories_enabled" value="1" {{ ($settings['landing_categories_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="categoriesEnabled" class="sr-only peer">
+                        <input type="hidden" name="landing_categories_enabled" :value="categoriesEnabled ? '1' : '0'">
+                        <input type="checkbox" x-model="categoriesEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="categoriesEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="categoriesEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -369,7 +401,8 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the Certificate Course & Day Long Course dual-column section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="landing_courses_enabled" value="1" {{ ($settings['landing_courses_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="coursesEnabled" class="sr-only peer">
+                        <input type="hidden" name="landing_courses_enabled" :value="coursesEnabled ? '1' : '0'">
+                        <input type="checkbox" x-model="coursesEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="coursesEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="coursesEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -490,7 +523,8 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the insights, publications, and thought leadership articles section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="landing_blog_enabled" value="1" {{ ($settings['landing_blog_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="blogEnabled" class="sr-only peer">
+                        <input type="hidden" name="landing_blog_enabled" :value="blogEnabled ? '1' : '0'">
+                        <input type="checkbox" x-model="blogEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="blogEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="blogEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -549,7 +583,8 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the high-conversion emerald admissions hotline and instant WhatsApp counseling banner.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="landing_counseling_enabled" value="1" {{ ($settings['landing_counseling_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="counselingEnabled" class="sr-only peer">
+                        <input type="hidden" name="landing_counseling_enabled" :value="counselingEnabled ? '1' : '0'">
+                        <input type="checkbox" x-model="counselingEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="counselingEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="counselingEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -635,7 +670,8 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the 6 institutional capability cards and distinguished mentorship section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="landing_features_enabled" value="1" {{ ($settings['landing_features_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="featuresEnabled" class="sr-only peer">
+                        <input type="hidden" name="landing_features_enabled" :value="featuresEnabled ? '1' : '0'">
+                        <input type="checkbox" x-model="featuresEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="featuresEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="featuresEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -708,7 +744,8 @@
                         <p class="text-xs text-gray-500 mt-0.5">Toggle the exclusive job and placement openings section.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="landing_jobs_enabled" value="1" {{ ($settings['landing_jobs_enabled'] ?? '1') == '1' ? 'checked' : '' }} x-model="jobsEnabled" class="sr-only peer">
+                        <input type="hidden" name="landing_jobs_enabled" :value="jobsEnabled ? '1' : '0'">
+                        <input type="checkbox" x-model="jobsEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                         <span class="ml-3 text-xs font-extrabold uppercase" :class="jobsEnabled ? 'text-emerald-700' : 'text-gray-400'" x-text="jobsEnabled ? 'Active' : 'Hidden'"></span>
                     </label>
@@ -748,7 +785,214 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- 9. TEMPLATE MODE & CUSTOM CODE -->
+            <!-- 9. ABOUT US PAGE CMS -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'about'" class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-blue-100 text-[#051c45]">Inner Page</span>
+                            <span class="text-xs text-gray-500 font-semibold">/about</span>
+                        </div>
+                        <h3 class="text-lg font-black text-gray-900">About Us Page Customizer</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Control the hero heading, statistical performance counters, mission, vision, and core institutional philosophy.</p>
+                    </div>
+
+                    <!-- Hero Section -->
+                    <div class="pt-3 border-t border-gray-100 space-y-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">1. Hero Section</h4>
+                        
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Pill / Badge</label>
+                            <input type="text" name="about_hero_badge" value="{{ $settings['about_hero_badge'] ?? 'Commercial Academy Bangladesh' }}" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Headline Title</label>
+                            <input type="text" name="about_hero_title" value="{{ $settings['about_hero_title'] ?? 'South Asia\'s Premier Institute for Commercial Trade & Industry Mastery' }}" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Narrative Description</label>
+                            <textarea name="about_hero_desc" rows="3" 
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_hero_desc'] ?? 'Commercial Academy Bangladesh (CAB Academy) stands as the gold standard for executive trade education, supply chain logistics, customs clearance, and corporate compliance.' }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="pt-4 border-t border-gray-100 space-y-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">2. Statistical Metric Counters</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Metric 1 Counter</label>
+                                <input type="text" name="about_stat_graduates" value="{{ $settings['about_stat_graduates'] ?? '5,000+' }}" 
+                                       class="w-full px-3 py-2 bg-white rounded-lg border border-gray-300 text-sm mb-2">
+                                <label class="block text-xs font-semibold text-gray-500 mb-1">Metric 1 Label</label>
+                                <input type="text" name="about_stat_graduates_label" value="{{ $settings['about_stat_graduates_label'] ?? 'Corporate Alumni' }}" 
+                                       class="w-full px-3 py-2 bg-white rounded-lg border border-gray-300 text-xs">
+                            </div>
+
+                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Metric 2 Counter</label>
+                                <input type="text" name="about_stat_curriculum" value="{{ $settings['about_stat_curriculum'] ?? '98%' }}" 
+                                       class="w-full px-3 py-2 bg-white rounded-lg border border-gray-300 text-sm mb-2">
+                                <label class="block text-xs font-semibold text-gray-500 mb-1">Metric 2 Label</label>
+                                <input type="text" name="about_stat_curriculum_label" value="{{ $settings['about_stat_curriculum_label'] ?? 'Practical Curriculum' }}" 
+                                       class="w-full px-3 py-2 bg-white rounded-lg border border-gray-300 text-xs">
+                            </div>
+
+                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Metric 3 Counter</label>
+                                <input type="text" name="about_stat_faculty" value="{{ $settings['about_stat_faculty'] ?? '25+' }}" 
+                                       class="w-full px-3 py-2 bg-white rounded-lg border border-gray-300 text-sm mb-2">
+                                <label class="block text-xs font-semibold text-gray-500 mb-1">Metric 3 Label</label>
+                                <input type="text" name="about_stat_faculty_label" value="{{ $settings['about_stat_faculty_label'] ?? 'Distinguished Faculty' }}" 
+                                       class="w-full px-3 py-2 bg-white rounded-lg border border-gray-300 text-xs">
+                            </div>
+
+                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Metric 4 Counter</label>
+                                <input type="text" name="about_stat_partners" value="{{ $settings['about_stat_partners'] ?? '120+' }}" 
+                                       class="w-full px-3 py-2 bg-white rounded-lg border border-gray-300 text-sm mb-2">
+                                <label class="block text-xs font-semibold text-gray-500 mb-1">Metric 4 Label</label>
+                                <input type="text" name="about_stat_partners_label" value="{{ $settings['about_stat_partners_label'] ?? 'Corporate Partners' }}" 
+                                       class="w-full px-3 py-2 bg-white rounded-lg border border-gray-300 text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mission & Vision -->
+                    <div class="pt-4 border-t border-gray-100 space-y-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">3. Mission, Vision & Core Values</h4>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Mission Statement Title & Text</label>
+                            <input type="text" name="about_mission_title" value="{{ $settings['about_mission_title'] ?? 'Our Mission' }}" 
+                                   class="w-full px-4 py-2 rounded-xl border border-gray-300 text-sm mb-2 font-bold">
+                            <textarea name="about_mission_text" rows="3" 
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_mission_text'] ?? 'To engineer real-world competency and career breakthroughs for professionals through industry-vetted coursework, simulated trade laboratories, and personalized mentoring by C-suite practitioners.' }}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Vision Statement Title & Text</label>
+                            <input type="text" name="about_vision_title" value="{{ $settings['about_vision_title'] ?? 'Our Vision' }}" 
+                                   class="w-full px-4 py-2 rounded-xl border border-gray-300 text-sm mb-2 font-bold">
+                            <textarea name="about_vision_text" rows="3" 
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_vision_text'] ?? 'To be South Asia\'s preeminent institute for commercial trade, customs navigation, and supply chain excellence, recognized worldwide for ethical leadership and operational mastery.' }}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Core Philosophy Title & Text</label>
+                            <input type="text" name="about_philosophy_title" value="{{ $settings['about_philosophy_title'] ?? 'Core Philosophy' }}" 
+                                   class="w-full px-4 py-2 rounded-xl border border-gray-300 text-sm mb-2 font-bold">
+                            <textarea name="about_philosophy_text" rows="3" 
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_philosophy_text'] ?? 'Zero Fluff, 100% Applicability. Every case study, L/C draft, bill of lading, and VAT audit calculation directly reflects the current regulatory landscape of the National Board of Revenue (NBR) and Bangladesh Bank.' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 10. CONTACT & CAMPUS COORDINATES -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'contact'" class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800">Global Coordinates</span>
+                            <span class="text-xs text-gray-500 font-semibold">Universal Header, Footer & Contact Page</span>
+                        </div>
+                        <h3 class="text-lg font-black text-gray-900">Campus Contact & Communication Channels</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">These official coordinates automatically synchronize across the topbar, navigation drawer, contact page, and website footer.</p>
+                    </div>
+
+                    <div class="space-y-4 pt-3 border-t border-gray-100">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Campus Name / Facility Title</label>
+                            <input type="text" name="contact_campus_name" value="{{ $settings['contact_campus_name'] ?? 'CAB Academy Corporate Campus' }}" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Physical Campus Address</label>
+                            <input type="text" name="contact_address" value="{{ $settings['contact_address'] ?? 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216' }}" 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Executive Hotline (Displayed)</label>
+                                <input type="text" name="contact_hotline" value="{{ $settings['contact_hotline'] ?? '01917-054664' }}" 
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Official Inquiries Email</label>
+                                <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? 'commercialacademy868@gmail.com' }}" 
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">WhatsApp Number (e.g. 8801917054664)</label>
+                                <input type="text" name="contact_whatsapp" value="{{ $settings['contact_whatsapp'] ?? '8801917054664' }}" 
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Office & Support Hours</label>
+                                <input type="text" name="contact_hours" value="{{ $settings['contact_hours'] ?? '9:00 AM – 8:00 PM, Saturday to Thursday' }}" 
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 11. LEGAL POLICIES CMS -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'legal'" class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-red-100 text-[#c30102]">Compliance Desk</span>
+                            <span class="text-xs text-gray-500 font-semibold">Privacy, Terms & Refund Policies</span>
+                        </div>
+                        <h3 class="text-lg font-black text-gray-900">Legal Policy Overrides</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Leave any field blank to preserve CAB Academy's default pre-vetted corporate legal policy.</p>
+                    </div>
+
+                    <div class="space-y-5 pt-3 border-t border-gray-100">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Privacy Policy Content (HTML / Text)</label>
+                            <textarea name="policy_privacy_content" rows="6" 
+                                      placeholder="Leave blank to use default corporate privacy policy..." 
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536] font-mono">{{ $settings['policy_privacy_content'] ?? '' }}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Terms of Service Content (HTML / Text)</label>
+                            <textarea name="policy_terms_content" rows="6" 
+                                      placeholder="Leave blank to use default corporate terms of service..." 
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536] font-mono">{{ $settings['policy_terms_content'] ?? '' }}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Refund & Cancellation Policy Content (HTML / Text)</label>
+                            <textarea name="policy_refund_content" rows="6" 
+                                      placeholder="Leave blank to use default corporate refund policy..." 
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536] font-mono">{{ $settings['policy_refund_content'] ?? '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 12. TEMPLATE MODE & CUSTOM CODE -->
             <!-- ========================================== -->
             <div x-show="activeTab === 'mode'" class="space-y-6">
                 

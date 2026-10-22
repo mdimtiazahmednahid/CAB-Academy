@@ -21,8 +21,14 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center gap-3 shrink-0 flex-wrap">
             @auth
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.feeds.index') }}" class="px-4 py-2 rounded-2xl bg-[#051c45] hover:bg-[#072559] text-xs font-bold text-white flex items-center gap-2 shadow-sm transition-all">
+                        <i class="fas fa-shield-alt text-amber-400"></i>
+                        <span>Admin Moderation Desk</span>
+                    </a>
+                @endif
                 <div class="px-4 py-2 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center gap-2">
                     <span class="text-base">✨</span>
                     <span>Earn +15 XP per post</span>

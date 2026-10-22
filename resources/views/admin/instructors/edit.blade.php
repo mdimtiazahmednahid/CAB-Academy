@@ -23,9 +23,8 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.instructors.update', $instructor) }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-6">
+    <form action="{{ route('admin.instructors.update', $instructor) }}" method="POST" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-6">
         @csrf
-        @method('PUT')
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -66,7 +65,20 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Upload New Photo</label>
-                <input type="file" name="avatar_file" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-xl text-sm">
+                <input type="file" id="avatar_file_input" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-xl text-sm">
+                <input type="hidden" name="avatar_base64" id="avatar_base64_input">
+                <script>
+                    document.getElementById('avatar_file_input').addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(evt) {
+                                document.getElementById('avatar_base64_input').value = evt.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                </script>
             </div>
 
             <div>

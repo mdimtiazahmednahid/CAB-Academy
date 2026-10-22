@@ -5,7 +5,8 @@ describe('Express Enroll & Apple Scrollytelling Visual Verification', () => {
 
     it('Captures Course Page and Express Drawer Open State', () => {
         cy.viewport(1440, 900);
-        cy.visit('/courses/1');
+        cy.visit('/catalog');
+        cy.get('article.group').first().find('h3 a').click();
         cy.contains('Price TK:').should('be.visible');
         cy.contains('Why Corporate Leaders Choose This Masterclass').should('be.visible');
 

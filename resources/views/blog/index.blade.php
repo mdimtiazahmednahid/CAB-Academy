@@ -28,6 +28,16 @@
                 <span class="text-slate-500">/</span>
                 <span class="font-bold text-white underline">Blog & Insights</span>
             </div>
+
+            @if(auth()->check() && auth()->user()->role === 'admin')
+                <div class="mt-6 flex justify-center">
+                    <a href="{{ route('admin.blogs.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 backdrop-blur-md transition-all shadow-sm">
+                        <i class="fas fa-edit text-[#10b981]"></i>
+                        <span>Admin Knowledge Hub Manager</span>
+                        <span class="px-2 py-0.5 rounded-full bg-[#c30102] text-[10px] font-mono">{{ \App\Models\BlogPost::count() }} Total</span>
+                    </a>
+                </div>
+            @endif
         </div>
     </section>
 
@@ -80,8 +90,13 @@
                         <div>
                             <!-- Featured Image -->
                             <div class="relative aspect-video overflow-hidden bg-gray-100">
+                                @php
+                                    $blogImg = $post->featured_image 
+                                        ? (str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset($post->featured_image)) 
+                                        : 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80';
+                                @endphp
                                 <img 
-                                    src="{{ $post->featured_image ?: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80' }}" 
+                                    src="{{ $blogImg }}" 
                                     alt="{{ $post->title }}" 
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 >

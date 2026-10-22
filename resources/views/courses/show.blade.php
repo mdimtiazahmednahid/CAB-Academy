@@ -592,10 +592,11 @@
 
                 <!-- 2. Instructor Card (.course-teacher-image: 150px circle) -->
                 @php
-                    $leadInstructor = $course->instructor ?? \App\Models\Instructor::where('is_active', true)->first();
-                    $instructorName = $leadInstructor ? $leadInstructor->name : 'Prof. Dr. M. A. Rahman';
-                    $instructorTitle = $leadInstructor ? ($leadInstructor->title ?? 'Executive Master Instructor & Specialist') : 'Senior Instructor & Specialist';
-                    $instructorAvatar = $leadInstructor ? ($leadInstructor->profile_picture ?? $leadInstructor->avatar) : '/images/faculty/delwar-hossain.jpg';
+                    $profile = $course->instructorProfile;
+                    $leadInstructor = $profile ?? $course->instructor ?? \App\Models\Instructor::where('is_active', true)->first();
+                    $instructorName = $leadInstructor ? $leadInstructor->name : 'CAB Academy Senior Faculty';
+                    $instructorTitle = $leadInstructor ? ($leadInstructor->title ?? 'Executive Master Instructor & Specialist') : 'Senior Faculty & Specialist';
+                    $instructorAvatar = $leadInstructor ? ($leadInstructor->avatar ?? $leadInstructor->profile_picture) : null;
                     $instructorBio = $leadInstructor ? ($leadInstructor->bio ?? 'Distinguished Faculty Member with extensive international trade, corporate compliance, and executive advisory experience.') : 'Distinguished Faculty Member with extensive international trade, corporate compliance, and executive advisory experience.';
                 @endphp
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#e3e7f0] text-center">

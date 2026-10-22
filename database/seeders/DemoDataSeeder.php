@@ -14,82 +14,228 @@ use App\Models\JobPost;
 use App\Models\PaymentMethod;
 use App\Models\Setting;
 use App\Models\Instructor;
+use App\Models\Category;
 use Illuminate\Support\Str;
 
 class DemoDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Ensure Admin Exists
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@cab-academy.com'],
-            ['name' => 'Super Admin', 'password' => bcrypt('password'), 'role' => 'admin']
-        );
+        // 0. Seed Authentic Course Categories
+        $categories = [
+            [
+                'name' => 'Export – Import',
+                'slug' => 'export-import',
+                'icon' => 'fa-ship',
+                'description' => 'L/C, Banking, Customs, Bond Management, and International Trade Procedures',
+                'image' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&q=80',
+                'order' => 1,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Supply Chain Management',
+                'slug' => 'supply-chain-management',
+                'icon' => 'fa-truck-fast',
+                'description' => 'Procurement, Logistics, Warehouse, and Inventory Optimization',
+                'image' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80',
+                'order' => 2,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Accounting',
+                'slug' => 'accounting',
+                'icon' => 'fa-calculator',
+                'description' => 'Financial Reporting, Auditing, Corporate Tax, and Budgeting',
+                'image' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80',
+                'order' => 3,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Income Tax Management',
+                'slug' => 'income-tax-management',
+                'icon' => 'fa-file-invoice-dollar',
+                'description' => 'Tax Assessment, VAT & Customs, Returns, and Legal Compliance',
+                'image' => 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80',
+                'order' => 4,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Human Resource',
+                'slug' => 'human-resource',
+                'icon' => 'fa-people-group',
+                'description' => 'HR Operations, Labor Law, Talent Acquisition, and Performance Appraisal',
+                'image' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80',
+                'order' => 5,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Civil Construction Project',
+                'slug' => 'civil-construction-project',
+                'icon' => 'fa-helmet-safety',
+                'description' => 'Project Planning, Site Supervision, Quality Control, and Estimating',
+                'image' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80',
+                'order' => 6,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Fire Safety',
+                'slug' => 'fire-safety',
+                'icon' => 'fa-fire-extinguisher',
+                'description' => 'Industrial Safety, Disaster Management, NFPA Codes, and Compliance',
+                'image' => 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=600&q=80',
+                'order' => 7,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Leadership & Soft Skills',
+                'slug' => 'leadership',
+                'icon' => 'fa-award',
+                'description' => 'Executive Leadership, Communication, Conflict Resolution, and Negotiations',
+                'image' => 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80',
+                'order' => 8,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Soft Skills',
+                'slug' => 'soft-skills',
+                'icon' => 'fa-comments',
+                'description' => 'Effective Corporate Presentation, Workplace Communication, and Etiquette',
+                'image' => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80',
+                'order' => 9,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Value Added Tax',
+                'slug' => 'value-added-tax',
+                'icon' => 'fa-receipt',
+                'description' => 'VAT Registration, VDS, Mushak Forms, and Auditing Standards',
+                'image' => 'https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&w=600&q=80',
+                'order' => 10,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Law & Compliance',
+                'slug' => 'law',
+                'icon' => 'fa-scale-balanced',
+                'description' => 'Company Law, Corporate Secretarial Practices, and Contract Management',
+                'image' => 'https://images.unsplash.com/photo-1453733197783-64768dd7467b?auto=format&fit=crop&w=600&q=80',
+                'order' => 11,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Project Management',
+                'slug' => 'project-management',
+                'icon' => 'fa-diagram-project',
+                'description' => 'Agile, PMP Methodologies, Risk Mitigation, and Resource Allocation',
+                'image' => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80',
+                'order' => 12,
+                'is_active' => true,
+            ],
+        ];
 
-        // 2. Create Instructor (Prof. Dr. M. A. Rahman - Demo Professional Name)
-        $instructor = User::withTrashed()->where('email', 'delwar@cabacademy.com')->first();
-        if ($instructor) {
-            $instructor->restore();
-            $instructor->update([
-                'name' => 'Prof. Dr. M. A. Rahman',
-                'role' => 'instructor',
-                'profile_picture' => '/images/faculty/delwar-hossain.jpg'
-            ]);
+        foreach ($categories as $catData) {
+            Category::updateOrCreate(
+                ['slug' => $catData['slug']],
+                $catData
+            );
+        }
+
+        // 1. Ensure Admin and Academy Director Exist with role = 'admin'
+        $admin = User::withTrashed()->where('email', 'admin@cab-academy.com')->first();
+        if ($admin) {
+            $admin->restore();
+            $admin->update(['name' => 'Academy Administrator', 'role' => 'admin', 'email_verified_at' => now()]);
         } else {
-            $instructor = User::create([
-                'email' => 'delwar@cabacademy.com',
-                'name' => 'Prof. Dr. M. A. Rahman',
+            $admin = User::create([
+                'name' => 'Academy Administrator',
+                'email' => 'admin@cab-academy.com',
                 'password' => bcrypt('password'),
-                'role' => 'instructor',
-                'profile_picture' => '/images/faculty/delwar-hossain.jpg'
+                'role' => 'admin',
+                'email_verified_at' => now(),
             ]);
         }
 
-        // Seed Executive Instructors Directory
+        $owner = User::withTrashed()->where('email', 'commercialacademy868@gmail.com')->first();
+        if ($owner) {
+            $owner->restore();
+            $owner->update(['name' => 'Academy Director', 'role' => 'admin', 'email_verified_at' => now()]);
+        } else {
+            User::create([
+                'name' => 'Academy Director',
+                'email' => 'commercialacademy868@gmail.com',
+                'password' => bcrypt('password'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
+            ]);
+        }
+
+        // 2. Create Faculty User Account (Institutional Role - No Personal / Real Names)
+        $instructor = User::withTrashed()->where('email', 'faculty@cab-academy.com')->first();
+        if ($instructor) {
+            $instructor->restore();
+            $instructor->update([
+                'name' => 'Faculty Chair - Trade & Commercial Operations',
+                'role' => 'instructor',
+                'profile_picture' => null
+            ]);
+        } else {
+            $instructor = User::create([
+                'email' => 'faculty@cab-academy.com',
+                'name' => 'Faculty Chair - Trade & Commercial Operations',
+                'password' => bcrypt('password'),
+                'role' => 'instructor',
+                'profile_picture' => null
+            ]);
+        }
+
+        // Clean up any old instructor records with personal names
+        Instructor::query()->forceDelete();
+
+        // Seed Executive Faculty Roster (Strictly Institutional Roles - No Personal/Real/IPDP Names)
         $instructorRoster = [
             [
-                'name' => 'Prof. Dr. M. A. Rahman',
-                'title' => 'Principal Trade Finance Fellow & Customs Consultant',
+                'name' => 'Faculty Chair – Trade & Customs',
+                'title' => 'Executive Fellow in Trade Finance & Customs Clearance',
                 'expertise' => 'Banking, L/C, Customs & Shipping Procedure',
-                'avatar' => '/images/faculty/delwar-hossain.jpg',
-                'bio' => 'Over 22 years of senior corporate experience advising multinational commercial ventures and leading banking clearing operations across Chittagong and Dhaka ports.',
-                'email' => 'delwar@cabacademy.com',
+                'avatar' => null,
+                'bio' => 'Senior academic advisory board with extensive commercial experience guiding international trade, customs regulations, and banking documentation.',
+                'email' => 'trade.faculty@cab-academy.com',
                 'phone' => '01917-054664',
                 'order' => 1,
                 'is_active' => true,
                 'user_id' => $instructor->id,
             ],
             [
-                'name' => 'Advocate K. H. Chowdhury, FCS',
-                'title' => 'Distinguished Faculty & Corporate Legal Counsel',
-                'expertise' => 'VAT, Corporate Taxation & Business Compliance',
-                'avatar' => '/images/faculty/asif-ahmmed.jpg',
-                'bio' => 'Renowned corporate tax advisor and fellow chartered secretary specializing in corporate tax assessment, audit dispute resolution, and NBR compliance.',
-                'email' => 'tax.counsel@cab-academy.com',
+                'name' => 'Faculty Chair – Supply Chain',
+                'title' => 'Executive Fellow in SCM Strategy & Procurement',
+                'expertise' => 'Supply Chain Strategy & Sourcing Excellence',
+                'avatar' => null,
+                'bio' => 'Operations faculty specializing in strategic sourcing, warehouse safety stock modeling, freight optimization, and global logistics.',
+                'email' => 'scm.faculty@cab-academy.com',
                 'phone' => '01917-054664',
                 'order' => 2,
                 'is_active' => true,
                 'user_id' => null,
             ],
             [
-                'name' => 'Engr. S. M. Hossain, PMP',
-                'title' => 'Faculty Chair & Head of SCM Operations',
-                'expertise' => 'Supply Chain Strategy & Sourcing Excellence',
-                'avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
-                'bio' => 'Supply chain architect with extensive background directing international procurement pipelines, safety stock forecasting, and vendor negotiations.',
-                'email' => 'scm.fellow@cab-academy.com',
+                'name' => 'Faculty Chair – Tax & VAT',
+                'title' => 'Executive Fellow in Corporate Tax & NBR Compliance',
+                'expertise' => 'VAT, Corporate Taxation & Financial Audits',
+                'avatar' => null,
+                'bio' => 'Advisory faculty specializing in corporate tax assessment, monthly VAT returns, withholding tax certificates, and statutory audit compliance.',
+                'email' => 'tax.faculty@cab-academy.com',
                 'phone' => '01917-054664',
                 'order' => 3,
                 'is_active' => true,
                 'user_id' => null,
             ],
             [
-                'name' => 'Dr. A. K. Saiful, SPHR',
-                'title' => 'Senior Industry Fellow in Human Resource Governance',
-                'expertise' => 'Labor Laws, Compliance & Organizational Strategy',
-                'avatar' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
-                'bio' => 'Leading labor court mediator and senior human resource consultant specializing in industrial disputes, workplace safety, and talent performance.',
-                'email' => 'hr.governance@cab-academy.com',
+                'name' => 'Faculty Chair – Law & Governance',
+                'title' => 'Executive Fellow in Corporate Law & Labor Relations',
+                'expertise' => 'Labor Laws, Compliance & Organizational Governance',
+                'avatar' => null,
+                'bio' => 'Corporate legal faculty specializing in company law, statutory filings, employment regulations, domestic inquiries, and workplace compliance.',
+                'email' => 'law.faculty@cab-academy.com',
                 'phone' => '01917-054664',
                 'order' => 4,
                 'is_active' => true,
@@ -98,110 +244,144 @@ class DemoDataSeeder extends Seeder
         ];
 
         foreach ($instructorRoster as $inst) {
-            Instructor::updateOrCreate(
-                ['name' => $inst['name']],
-                $inst
-            );
+            Instructor::create($inst);
         }
 
-        // 3. Create Student
-        $student = User::firstOrCreate(
+        // Purge any legacy user with real/personal names from earlier seeders
+        User::withTrashed()->where('email', 'delwar@cabacademy.com')->forceDelete();
+
+        // 3. Create Student (Generic Professional Learner)
+        $student = User::updateOrCreate(
             ['email' => 'student@cab-academy.com'],
             [
-                'name' => 'Alice Student',
+                'name' => 'Executive Learner',
                 'password' => bcrypt('password'),
                 'role' => 'student',
-                'preferences' => ['level' => 'Professional', 'subjects' => ['Export – Import'], 'goals' => ['Certification']]
+                'preferences' => ['level' => 'Certificate', 'subjects' => ['Export – Import'], 'goals' => ['Certification']]
             ]
         );
 
-        // 4. Create Career Certification Courses
+        // 4. Create 8 Executive Courses (4 Certificate Programs + 4 Day Long Masterclasses)
         $courses = [
+            // 4 Certificate Courses
             [
-                'title' => 'L/C, Banking, Customs & Shipping for Import – Export',
-                'description' => 'A comprehensive 8-day masterclass covering letter of credit (L/C), international banking, bill of entry, customs clearance, port logistics, and commercial document processing.',
-                'short_description' => 'New Entrepreneurs and professionals will know A to Z Import Export business procedure, documentation, and L/C management.',
+                'title' => 'Certificate Course in L/C, Banking, Customs & Shipping for Import – Export',
+                'description' => 'A comprehensive 8-week executive certificate program designed for entrepreneurs, commercial managers, and international trade professionals covering letter of credit (L/C), international banking, bill of entry, customs clearance, port logistics, and commercial document processing.',
+                'short_description' => 'Master complete import-export documentation, commercial banking, L/C issuance, port clearance, and customs regulations.',
                 'price' => 9000.00,
                 'is_published' => true,
-                'level' => 'Executive',
+                'level' => 'Certificate',
                 'category' => 'Export – Import',
-                'duration' => '8 Days (Fridays)',
-                'start_date' => now()->addDays(2),
+                'duration' => '8 Weeks (Every Friday)',
+                'start_date' => now()->addDays(3),
                 'venue' => 'Mirpur-Pallabi Campus & Online Live via Zoom',
                 'target_audience' => 'Importers, Exporters, Supply Chain Executives, Commercial Managers, C&F Agents, Bank Trade Officers, and New Entrepreneurs.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80',
             ],
             [
-                'title' => 'Commercial Guideline with Banking, Customs, Insurance, C&F Agent, Logistics',
-                'description' => 'Hands-on practical workshop covering commercial documentation, HS codes, insurance policies, customs inspection, shipping lines, and bonded warehouse compliance.',
-                'short_description' => 'Step-by-step guideline for commercial executives to navigate customs, shipping lines, and bank compliance without penalties.',
-                'price' => 7000.00,
+                'title' => 'Certificate Course in Supply Chain Management & Strategic Sourcing',
+                'description' => 'Explore end-to-end modern supply chain logistics, supplier scorecards, ERP procurement modules, inventory safety stock modeling, freight forwarding cost reductions, and international freight contracts.',
+                'short_description' => 'Optimize supply chain flow, minimize lead time, safety stock modeling, and maximize vendor efficiency across industrial setups.',
+                'price' => 8500.00,
                 'is_published' => true,
                 'level' => 'Certificate',
-                'category' => 'Export – Import',
-                'duration' => '2-Day Long Workshop',
-                'start_date' => now()->addDays(9),
-                'venue' => 'Mirpur-Pallabi Campus & Online Live',
-                'target_audience' => 'Commercial officers, clearing agents, logistics personnel, and business owners.',
+                'category' => 'Supply Chain Management',
+                'duration' => '6 Weeks Workshop',
+                'start_date' => now()->addDays(7),
+                'venue' => 'Online Live Interactive (Zoom)',
+                'target_audience' => 'Procurement heads, supply chain managers, warehouse leads, logistics officers, and plant managers.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
             ],
             [
-                'title' => 'Supply Chain Management & Strategic Sourcing Masterclass',
-                'description' => 'Explore vendor negotiation strategies, warehousing 4.0, inventory safety stock modeling, freight forwarding cost reductions, and ERP procurement modules.',
-                'short_description' => 'Optimize supply chain flow, minimize lead time, and maximize vendor efficiency across industrial setups.',
+                'title' => 'Certificate Course in Financial Accounting, VAT & Corporate Tax Management',
+                'description' => 'Hands-on filing of monthly VAT returns, corporate tax calculations, withholding tax certificates, and double-entry auditing standards under current Bangladesh Finance Acts.',
+                'short_description' => 'Practical handbook on corporate tax deductions, monthly VAT returns, withholding tax certificates, and audited financial statements.',
                 'price' => 8000.00,
                 'is_published' => true,
-                'level' => 'Executive',
-                'category' => 'Supply Chain Management',
-                'duration' => '4 Weeks Workshop',
-                'start_date' => now()->addDays(14),
-                'venue' => 'Online Live Interactive (Zoom)',
-                'target_audience' => 'Procurement heads, supply chain managers, warehouse leads, and plant managers.',
-                'thumbnail' => 'https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80',
-            ],
-            [
-                'title' => 'Financial Accounting, VAT Assessment & Corporate Tax Management',
-                'description' => 'Learn practical filing of monthly VAT returns, corporate tax calculations, withholding tax certificates, and double-entry auditing standards under current Bangladesh Finance Acts.',
-                'short_description' => 'Practical handbook on corporate tax deductions, VAT rebates, and audited financial statements.',
-                'price' => 8500.00,
-                'is_published' => true,
-                'level' => 'Professional',
+                'level' => 'Certificate',
                 'category' => 'Accounting',
-                'duration' => '6 Sessions',
-                'start_date' => now()->addDays(21),
+                'duration' => '8 Sessions (Fridays)',
+                'start_date' => now()->addDays(12),
                 'venue' => 'Mirpur-Pallabi Campus / Zoom',
                 'target_audience' => 'Accountants, finance managers, tax advisors, auditors, and startup founders.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
             ],
             [
-                'title' => 'Labor Law, HR Compliance & Talent Management',
-                'description' => 'Understand Bangladesh Labor Act provisions, grievance management, executive recruitment, salary structuring, and workplace safety compliance standards.',
-                'short_description' => 'Essential legal compliance, payroll handling, and dispute resolution for modern HR leaders.',
-                'price' => 6000.00,
+                'title' => 'Certificate Course in Corporate Governance, Company Law & Secretarial Practice',
+                'description' => 'In-depth mastery of the Companies Act 1994, board meetings and resolution drafting, corporate filings, shareholder agreements, RJSC compliance, and corporate compliance audit frameworks.',
+                'short_description' => 'Comprehensive legal and compliance curriculum for company secretaries, legal counsels, and corporate directors navigating RJSC filings and statutory audits.',
+                'price' => 9500.00,
                 'is_published' => true,
-                'level' => 'Executive',
+                'level' => 'Certificate',
+                'category' => 'Law & Compliance',
+                'duration' => '6 Weeks (Fridays)',
+                'start_date' => now()->addDays(16),
+                'venue' => 'Mirpur-Pallabi Campus & Zoom',
+                'target_audience' => 'Company secretaries, corporate advocates, compliance managers, and executive directors.',
+                'thumbnail' => 'https://images.unsplash.com/photo-1453733197783-64768dd7467b?auto=format&fit=crop&w=800&q=80',
+            ],
+
+            // 4 Day Long Masterclasses
+            [
+                'title' => 'Commercial Guideline with Customs, C&F Agent & Shipping Procedures (Day-Long)',
+                'description' => 'Practical one-day intensive workshop covering commercial documentation, HS codes, insurance policies, customs inspection, shipping lines, and bonded warehouse compliance.',
+                'short_description' => 'Step-by-step guideline for commercial executives to navigate customs, shipping lines, insurance policies, and bonded warehouses without penalties.',
+                'price' => 3500.00,
+                'is_published' => true,
+                'level' => 'Day Long',
+                'category' => 'Export – Import',
+                'duration' => 'Full Day Workshop (9 AM - 6 PM)',
+                'start_date' => now()->addDays(5),
+                'venue' => 'Mirpur-Pallabi Campus & Online Live',
+                'target_audience' => 'Commercial officers, clearing agents, logistics personnel, and business owners.',
+                'thumbnail' => 'https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80',
+            ],
+            [
+                'title' => 'Labor Law, HR Compliance & Industrial Disputes Masterclass (Day-Long)',
+                'description' => 'Understand Bangladesh Labor Act provisions, grievance management, domestic inquiries, executive recruitment, salary structuring, and workplace safety compliance standards.',
+                'short_description' => 'Essential legal compliance, payroll handling, domestic inquiry procedures, and dispute resolution for modern HR leaders.',
+                'price' => 3500.00,
+                'is_published' => true,
+                'level' => 'Day Long',
                 'category' => 'Human Resource',
-                'duration' => '3 Days Workshop',
-                'start_date' => now()->addDays(28),
+                'duration' => 'Full Day Intensive (9 AM - 6 PM)',
+                'start_date' => now()->addDays(10),
                 'venue' => 'Mirpur-Pallabi Training Room',
                 'target_audience' => 'HR executives, admin managers, factory HR personnel, and managing directors.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
             ],
             [
-                'title' => 'Civil Construction Project Planning, Quality & Cost Estimation',
-                'description' => 'Advanced project budgeting, BOQ preparation, contractor agreements, site inspection standards, and Primavera/MS Project tracking for civil engineers.',
-                'short_description' => 'From land feasibility to final handover: practical project estimation and QA/QC procedures.',
-                'price' => 12000.00,
+                'title' => 'Civil Construction Project Planning, BOQ & Cost Estimation (Day-Long)',
+                'description' => 'Advanced project budgeting, BOQ preparation, contractor agreements, site inspection standards, and Primavera/MS Project tracking for civil engineers and site managers.',
+                'short_description' => 'From land feasibility to final handover: practical project estimation, BOQ preparation, and QA/QC procedures for engineers.',
+                'price' => 4000.00,
                 'is_published' => true,
-                'level' => 'Advanced',
+                'level' => 'Day Long',
                 'category' => 'Civil Construction Project',
-                'duration' => '8 Weeks',
-                'start_date' => now()->addDays(35),
+                'duration' => 'Full Day Masterclass (9 AM - 6 PM)',
+                'start_date' => now()->addDays(15),
                 'venue' => 'Classroom Mirpur-Pallabi Campus',
-                'target_audience' => 'Civil engineers, site supervisors, project directors, real estate developers.',
+                'target_audience' => 'Civil engineers, site supervisors, project directors, and real estate developers.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
-            ]
+            ],
+            [
+                'title' => 'Fire Safety, Disaster Management & Factory Compliance Masterclass (Day-Long)',
+                'description' => 'Comprehensive training on fire hazard identification, risk assessment, fire prevention systems, sprinkler and hydrant operations, and compliance with national and international industrial fire safety codes.',
+                'short_description' => 'Industrial safety, NFPA standards, emergency evacuation protocols, firefighting equipment handling, and international audit compliance.',
+                'price' => 3000.00,
+                'is_published' => true,
+                'level' => 'Day Long',
+                'category' => 'Fire Safety',
+                'duration' => 'Full Day Workshop (9 AM - 6 PM)',
+                'start_date' => now()->addDays(20),
+                'venue' => 'Mirpur-Pallabi Campus',
+                'target_audience' => 'EHS managers, safety officers, factory compliance heads, and facility managers.',
+                'thumbnail' => 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=800&q=80',
+            ],
         ];
+
+        // Prune legacy courses not in the canonical 8
+        Course::whereNotIn('title', array_column($courses, 'title'))->delete();
 
         foreach ($courses as $courseData) {
             $course = Course::updateOrCreate(
@@ -263,30 +443,39 @@ class DemoDataSeeder extends Seeder
             }
         }
 
-        // 7. Create Job Posts
-        if (JobPost::count() == 0) {
-            JobPost::create([
-                'title' => 'Assistant Manager - Commercial & Shipping',
-                'company' => 'Apex Global Logistics',
-                'location' => 'Dhaka (Mirpur-Pallabi)',
-                'salary_range' => '৳50,000 - ৳70,000',
-                'description' => 'Looking for experienced Commercial Officer with strong background in Import-Export, L/C, and Customs.',
-                'apply_link' => 'https://example.com/careers',
-                'is_active' => true,
-            ]);
+        // 7. Create Job Posts (Generic Institutional Employers - No Real Company Names)
+        JobPost::query()->delete();
+        JobPost::create([
+            'title' => 'Commercial & Shipping Operations Specialist',
+            'company' => 'Global Logistics & Trade Solutions Ltd.',
+            'location' => 'Dhaka (Mirpur-Pallabi)',
+            'salary_range' => '৳50,000 - ৳70,000',
+            'description' => 'Seeking an experienced commercial officer with practical background in Import-Export operations, L/C handling, and port customs clearance.',
+            'apply_link' => '#',
+            'is_active' => true,
+        ]);
 
-            JobPost::create([
-                'title' => 'Supply Chain Analyst',
-                'company' => 'Transcom Logistics',
-                'location' => 'Gazipur / Remote',
-                'salary_range' => '৳40,000 - ৳60,000',
-                'description' => 'Responsible for inventory tracking, procurement audits, and shipping schedule verification.',
-                'apply_link' => 'https://example.com/careers',
-                'is_active' => true,
-            ]);
-        }
+        JobPost::create([
+            'title' => 'Supply Chain & Sourcing Analyst',
+            'company' => 'National Supply Chain & Freight Enterprise',
+            'location' => 'Dhaka / Hybrid',
+            'salary_range' => '৳40,000 - ৳60,000',
+            'description' => 'Responsible for procurement tracking, vendor audit coordination, inventory modeling, and shipping schedule verification.',
+            'apply_link' => '#',
+            'is_active' => true,
+        ]);
 
-        // 8. Create Payment Methods (bKash, Nagad, Bank Transfer)
+        JobPost::create([
+            'title' => 'Corporate VAT & Tax Compliance Specialist',
+            'company' => 'Industrial Advisory & Compliance Group',
+            'location' => 'Dhaka (Motijheel C/A)',
+            'salary_range' => '৳45,000 - ৳65,000',
+            'description' => 'Manage monthly Mushak returns, withholding tax deduction certificates, and coordinate statutory audit compliance.',
+            'apply_link' => '#',
+            'is_active' => true,
+        ]);
+
+        // 8. Create Payment Methods (bKash, Nagad, Corporate Bank Transfer)
         PaymentMethod::updateOrCreate(
             ['provider_name' => 'bKash Merchant'],
             [
@@ -310,9 +499,9 @@ class DemoDataSeeder extends Seeder
         PaymentMethod::updateOrCreate(
             ['provider_name' => 'Bank Transfer'],
             [
-                'account_number' => '102-120-998877',
+                'account_number' => '000-000-000000',
                 'account_type' => 'Corporate Account',
-                'instructions' => "Bank Name: Dutch-Bangla Bank Limited (DBBL)\nBranch: Mirpur Branch, Dhaka\nAccount Name: CAB Academy Foundation\nA/C Number: 102-120-998877\nRouting: 090260458\nPlease upload deposit slip or bank receipt.",
+                'instructions' => "Bank Name: Corporate Commercial Bank PLC\nBranch: Principal Corporate Branch, Dhaka\nAccount Name: CAB Academy\nA/C Number: 000-000-000000\nRouting: 000000000\nPlease upload deposit slip or bank receipt.",
                 'is_active' => true,
             ]
         );
@@ -324,5 +513,9 @@ class DemoDataSeeder extends Seeder
         Setting::updateOrCreate(['key' => 'contact_email'], ['value' => 'commercialacademy868@gmail.com']);
         Setting::updateOrCreate(['key' => 'contact_phone'], ['value' => '01917-054664']);
         Setting::updateOrCreate(['key' => 'contact_address'], ['value' => 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216']);
+        Setting::updateOrCreate(['key' => 'landing_cert_count'], ['value' => '4']);
+        Setting::updateOrCreate(['key' => 'landing_daylong_count'], ['value' => '4']);
+        Setting::updateOrCreate(['key' => 'landing_clients_title'], ['value' => 'Industry Sectors & Enterprise Training']);
+        Setting::updateOrCreate(['key' => 'landing_clients_data'], ['value' => "International Trade & L/C\nSupply Chain Management\nCustoms & Freight Clearance\nCorporate Tax & VAT\nCommercial Banking & Finance\nIndustrial HR & Labor Laws\nCorporate Law & Compliance\nProject Planning & BOQ"]);
     }
 }

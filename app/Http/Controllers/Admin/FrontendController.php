@@ -12,7 +12,7 @@ class FrontendController extends Controller
 {
     public function index()
     {
-        $settings = Setting::where('key', 'like', 'landing_%')->pluck('value', 'key')->toArray();
+        $settings = Setting::pluck('value', 'key')->toArray();
         return view('admin.frontend.index', compact('settings'));
     }
 

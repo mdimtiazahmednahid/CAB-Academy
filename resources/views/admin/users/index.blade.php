@@ -149,9 +149,8 @@
             <h3 class="text-lg font-bold">Edit User</h3>
             <button onclick="document.getElementById('editUserModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
-        <form method="POST" id="editUserForm" action="" enctype="multipart/form-data">
+        <form method="POST" id="editUserForm" action="">
             @csrf
-            @method('PUT')
             <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Name <span class="text-red-500">*</span></label>
@@ -175,11 +174,37 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Profile Picture (Optional)</label>
-                    <input type="file" name="profile_picture" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <input type="file" id="edit_user_profile_pic_file" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <input type="hidden" name="profile_picture_base64" id="edit_user_profile_pic_base64">
+                    <script>
+                        document.getElementById('edit_user_profile_pic_file')?.addEventListener('change', function(e) {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = function(evt) {
+                                    document.getElementById('edit_user_profile_pic_base64').value = evt.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        });
+                    </script>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Cover Photo (Optional)</label>
-                    <input type="file" name="cover_photo" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <input type="file" id="edit_user_cover_file" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <input type="hidden" name="cover_photo_base64" id="edit_user_cover_base64">
+                    <script>
+                        document.getElementById('edit_user_cover_file')?.addEventListener('change', function(e) {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = function(evt) {
+                                    document.getElementById('edit_user_cover_base64').value = evt.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        });
+                    </script>
                 </div>
                 <button type="submit" class="w-full px-4 py-2 bg-primary text-white rounded-lg font-medium hover:opacity-90 mt-2">Save Changes</button>
             </div>

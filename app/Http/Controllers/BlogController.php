@@ -42,6 +42,8 @@ class BlogController extends Controller
             abort(404);
         }
 
+        $post->incrementViews();
+
         $relatedPosts = BlogPost::published()
             ->where('id', '!=', $post->id)
             ->where('category', $post->category)

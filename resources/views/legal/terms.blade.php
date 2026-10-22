@@ -15,6 +15,11 @@
                 <p class="text-xs text-gray-500 mt-2">Effective Date: October 2026 | Last Updated: October 2026</p>
             </div>
 
+            @if(!empty(\App\Models\Setting::getVal('policy_terms_content')))
+                <div class="prose max-w-none text-sm text-[#35415b] leading-relaxed whitespace-pre-line">
+                    {!! \App\Models\Setting::getVal('policy_terms_content') !!}
+                </div>
+            @else
             <div class="space-y-6 text-sm text-[#35415b] leading-relaxed">
                 <section>
                     <h2 class="text-lg font-bold text-[#0f131f] mb-2">1. Acceptance of Terms</h2>
@@ -53,6 +58,7 @@
                     </p>
                 </section>
             </div>
+            @endif
 
         </div>
     </div>

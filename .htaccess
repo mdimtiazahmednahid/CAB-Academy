@@ -1,4 +1,24 @@
 <IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
     RewriteEngine On
+
+    # Prevent loop if already under public/
+    RewriteCond %{REQUEST_URI} ^/public/
+    RewriteRule ^ - [L]
+
+    # Serve physical file or folder directly if it exists in root (e.g. cmd.php, favicon.ico)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # If physical file or folder exists inside public/, serve it directly (e.g. build/assets, images)
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -d
     RewriteRule ^(.*)$ public/$1 [L]
+
+    # Route all other dynamic application requests to public/index.php
+    RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>

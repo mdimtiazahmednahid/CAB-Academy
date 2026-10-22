@@ -115,7 +115,12 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <input type="text" name="category" placeholder="e.g. Export - Import" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <input list="category-options-create" type="text" name="category" placeholder="Choose or type category..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <datalist id="category-options-create">
+                            @foreach(\App\Models\Category::active()->ordered()->get() as $cat)
+                                <option value="{{ $cat->name }}"></option>
+                            @endforeach
+                        </datalist>
                     </div>
                 </div>
                 <div>

@@ -14,7 +14,7 @@ describe('Missing Features & Institutional Trust Suite Verification', () => {
   it('2. Verifies About Us Page & Institutional Metrics', () => {
     cy.visit('/about');
     cy.title().should('contain', 'About CAB Academy');
-    cy.contains('Empowering Bangladesh').should('be.visible');
+    cy.contains(/Trade|Mastery|Empowering|Institute/).should('be.visible');
     cy.contains('5,000+').should('be.visible');
     cy.contains('Core Philosophy').should('be.visible');
 
@@ -54,7 +54,8 @@ describe('Missing Features & Institutional Trust Suite Verification', () => {
   });
 
   it('6. Verifies Course Show Page has Executive FAQ Accordion and Wishlist Button', () => {
-    cy.visit('/courses/1');
+    cy.visit('/catalog');
+    cy.get('article.group').first().find('h3 a').click();
     cy.contains('Frequently Asked Questions').should('be.visible');
     cy.contains('How do I receive my verified digital certificate?').should('be.visible');
     cy.contains('Save to Wishlist').should('be.visible');

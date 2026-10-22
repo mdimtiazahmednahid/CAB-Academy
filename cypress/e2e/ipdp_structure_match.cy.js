@@ -196,12 +196,12 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
         cy.visit('/instructors');
         cy.title().should('contain', 'Distinguished Faculty & Industry Fellows');
         cy.contains('Distinguished Faculty & Fellows').should('be.visible');
-        cy.contains('Prof. Dr. M. A. Rahman').should('be.visible');
-        cy.contains('Advocate K. H. Chowdhury, FCS').should('be.visible');
+        cy.contains('Faculty Chair – Trade & Customs').should('be.visible');
+        cy.contains('Faculty Chair – Tax & VAT').should('be.visible');
 
         // Verify /faculty alias also loads the same directory
         cy.visit('/faculty');
-        cy.contains('Prof. Dr. M. A. Rahman').should('be.visible');
+        cy.contains('Faculty Chair – Trade & Customs').should('be.visible');
     });
 
 });

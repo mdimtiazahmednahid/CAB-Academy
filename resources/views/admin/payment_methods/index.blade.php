@@ -20,14 +20,16 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
-                    <input type="text" name="account_number" maxlength="11" minlength="11" pattern="01[3-9][0-9]{8}" title="Must be exactly 11 digits starting with 01" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary" required>
+                    <input type="text" name="account_number" placeholder="Mobile number or Bank Account No." class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary" required>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
                     <select name="account_type" class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
+                        <option value="Merchant">Merchant</option>
                         <option value="Personal">Personal</option>
                         <option value="Agent">Agent</option>
-                        <option value="Merchant">Merchant</option>
+                        <option value="Corporate Account">Corporate Account</option>
+                        <option value="Bank Account">Bank Account</option>
                     </select>
                 </div>
             </div>
@@ -108,15 +110,17 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Account Number <span class="text-red-500">*</span></label>
-                        <input type="text" name="account_number" id="edit_account_number" maxlength="11" minlength="11" pattern="01[3-9][0-9]{8}" title="Must be exactly 11 digits starting with 01" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <input type="text" name="account_number" id="edit_account_number" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Account Type <span class="text-red-500">*</span></label>
                     <select name="account_type" id="edit_account_type" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <option value="Merchant">Merchant</option>
                         <option value="Personal">Personal</option>
                         <option value="Agent">Agent</option>
-                        <option value="Merchant">Merchant</option>
+                        <option value="Corporate Account">Corporate Account</option>
+                        <option value="Bank Account">Bank Account</option>
                     </select>
                 </div>
                 <div>

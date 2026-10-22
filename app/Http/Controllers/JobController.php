@@ -7,9 +7,26 @@ use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jobs = JobPost::where('is_active', true)->latest()->get();
+        $query = JobPost::where('is_active', true)->latest();
+
+        if ($request->filled('type') && $request->type !== 'all') {
+            $query->where('job_type', $request->type);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('company', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $jobs = $query->get();
+
         return view('jobs.index', compact('jobs'));
     }
 }

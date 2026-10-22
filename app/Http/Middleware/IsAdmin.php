@@ -15,10 +15,20 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && in_array(auth()->user()->role, ['admin', 'instructor'])) {
+        if (!auth()->check()) {
+            return redirect()->guest(route('login'));
+        }
+
+        $user = auth()->user();
+        if ($user->isAdmin() || $user->isInstructor()) {
             return $next($request);
         }
 
-        abort(403, 'Unauthorized access.');
+        $role = strtolower(trim($user->role ?? ''));
+        if (in_array($role, ['admin', 'superadmin', 'super_admin', 'super admin', 'manager', 'instructor'])) {
+            return $next($request);
+        }
+
+        abort(403, 'Unauthorized access. Administrator or Instructor privileges required.');
     }
 }

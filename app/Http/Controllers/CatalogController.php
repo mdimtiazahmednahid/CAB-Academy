@@ -3,58 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CatalogController extends Controller
 {
-    /**
-     * Standard category images / metadata for Course Catalog layout
-     */
-    protected static array $categoryMeta = [
-        'export-import' => [
-            'name' => 'Export – Import',
-            'image' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&q=80',
-            'desc' => 'L/C, Banking, Customs, Bond Management, and International Trade Procedures'
-        ],
-        'supply-chain-management' => [
-            'name' => 'Supply Chain Management',
-            'image' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80',
-            'desc' => 'Procurement, Logistics, Warehouse, and Inventory Optimization'
-        ],
-        'accounting' => [
-            'name' => 'Accounting & Finance',
-            'image' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80',
-            'desc' => 'Financial Reporting, Auditing, Corporate Tax, and Budgeting'
-        ],
-        'income-tax-management' => [
-            'name' => 'Income Tax Management',
-            'image' => 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80',
-            'desc' => 'Tax Assessment, VAT & Customs, Returns, and Legal Compliance'
-        ],
-        'human-resource' => [
-            'name' => 'Human Resource',
-            'image' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80',
-            'desc' => 'HR Operations, Labor Law, Talent Acquisition, and Performance Appraisal'
-        ],
-        'civil-construction-project' => [
-            'name' => 'Civil Construction Project',
-            'image' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80',
-            'desc' => 'Project Planning, Site Supervision, Quality Control, and Estimating'
-        ],
-        'fire-safety' => [
-            'name' => 'Fire Safety',
-            'image' => 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=600&q=80',
-            'desc' => 'Industrial Safety, Disaster Management, NFPA Codes, and Compliance'
-        ],
-        'leadership' => [
-            'name' => 'Leadership & Soft Skills',
-            'image' => 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80',
-            'desc' => 'Executive Leadership, Communication, Conflict Resolution, and Negotiations'
-        ],
-    ];
-
     public function index(Request $request, ?string $category = null)
     {
         $selectedCategory = $category ?? $request->query('category');
@@ -67,13 +22,15 @@ class CatalogController extends Controller
 
         // Apply category filter if provided
         if ($selectedCategory) {
-            $matchedName = null;
-            foreach (self::$categoryMeta as $slug => $meta) {
-                if ($slug === Str::slug($selectedCategory)) {
-                    $matchedName = $meta['name'];
-                    $categoryDesc = $meta['desc'];
-                    break;
-                }
+            $catRecord = Category::where('slug', $selectedCategory)
+                ->orWhere('name', $selectedCategory)
+                ->orWhere('slug', Str::slug($selectedCategory))
+                ->first();
+
+            $matchedName = $catRecord ? $catRecord->name : null;
+            if ($catRecord) {
+                $categoryDesc = $catRecord->description;
+                $categoryTitle = $catRecord->name;
             }
 
             $query->where(function ($q) use ($selectedCategory, $matchedName) {
@@ -84,7 +41,34 @@ class CatalogController extends Controller
                 }
             });
 
-            $categoryTitle = $matchedName ?? ucwords(str_replace('-', ' ', $selectedCategory));
+            if (!$categoryTitle) {
+                $categoryTitle = ucwords(str_replace('-', ' ', $selectedCategory));
+            }
+        }
+
+        // Filter by course type if provided (?type=certificate or ?type=day_long)
+        $type = $request->query('type');
+        if ($type === 'certificate') {
+            $query->where(function($q) {
+                $q->where('level', 'Certificate')
+                  ->orWhere('title', 'like', '%Certificate%');
+            });
+            if (!$categoryTitle) {
+                $categoryTitle = 'Certificate Programs';
+                $categoryDesc = 'Comprehensive, multi-week executive certification tracks engineered for career growth and organizational impact.';
+            }
+        } elseif ($type === 'day_long') {
+            $query->where(function($q) {
+                $q->where('level', 'Day Long')
+                  ->orWhere('duration', 'like', '%Day%')
+                  ->orWhere('title', 'like', '%Day-Long%')
+                  ->orWhere('title', 'like', '%Day Long%')
+                  ->orWhere('title', 'like', '%Masterclass%');
+            });
+            if (!$categoryTitle) {
+                $categoryTitle = 'Day Long Masterclasses';
+                $categoryDesc = 'Intensive, high-impact one-day executive workshops covering practical commercial compliance and industrial operations.';
+            }
         }
 
         // Sorting
@@ -120,39 +104,49 @@ class CatalogController extends Controller
 
         $courses = $query->paginate(9)->withQueryString();
 
-        // Fetch Running Course Categories with active course counts
-        $dbCategories = Course::where('is_published', true)
+        // Count published courses per category
+        $dbCategoryCounts = Course::where('is_published', true)
             ->whereNotNull('category')
             ->where('category', '!=', '')
             ->select('category', DB::raw('count(*) as count'))
             ->groupBy('category')
-            ->get();
+            ->pluck('count', 'category');
 
+        // Fetch dynamic categories from the database
+        $dbCategories = Category::active()->ordered()->get();
         $runningCategories = [];
+
         foreach ($dbCategories as $cat) {
-            $slug = Str::slug($cat->category);
-            $meta = self::$categoryMeta[$slug] ?? null;
+            $count = $dbCategoryCounts->get($cat->name, 0);
             $runningCategories[] = [
-                'name' => $cat->category,
-                'slug' => $slug,
-                'count' => $cat->count,
-                'image' => $meta['image'] ?? 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80',
-                'desc' => $meta['desc'] ?? 'Professional training and skills development',
+                'id' => $cat->id,
+                'name' => $cat->name,
+                'slug' => $cat->slug,
+                'count' => $count,
+                'image' => $cat->image ?: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80',
+                'desc' => $cat->description ?: 'Professional training and skills development',
+                'icon' => $cat->icon ?: 'fa-tag',
             ];
         }
 
-        // Fallback standard categories if DB has few
-        if (count($runningCategories) < 4) {
-            foreach (self::$categoryMeta as $slug => $meta) {
-                if (!collect($runningCategories)->contains('slug', $slug)) {
-                    $runningCategories[] = [
-                        'name' => $meta['name'],
-                        'slug' => $slug,
-                        'count' => 0,
-                        'image' => $meta['image'],
-                        'desc' => $meta['desc'],
-                    ];
-                }
+        // Graceful fallback if categories table has not been seeded yet
+        if (empty($runningCategories)) {
+            $coursesCats = Course::where('is_published', true)
+                ->whereNotNull('category')
+                ->where('category', '!=', '')
+                ->distinct()
+                ->pluck('category');
+
+            foreach ($coursesCats as $cName) {
+                $runningCategories[] = [
+                    'id' => 0,
+                    'name' => $cName,
+                    'slug' => Str::slug($cName),
+                    'count' => $dbCategoryCounts->get($cName, 0),
+                    'image' => 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80',
+                    'desc' => 'Professional training and skills development',
+                    'icon' => 'fa-tag',
+                ];
             }
         }
 

@@ -153,7 +153,7 @@
                 <div class="text-right">
                     <div class="inline-block border-b border-gray-700 pb-1 px-4 text-center">
                         <span class="font-script text-2xl sm:text-3xl text-[#051c45] block">
-                            Prof. M. Rahman
+                            Academic Director
                         </span>
                     </div>
                     <span class="text-[10px] font-bold text-[#051c45] uppercase tracking-wider block mt-1">

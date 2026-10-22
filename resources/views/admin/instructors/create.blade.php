@@ -23,13 +23,13 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.instructors.store') }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-6">
+    <form action="{{ route('admin.instructors.store') }}" method="POST" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-6">
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Instructor Name *</label>
-                <input type="text" name="name" value="{{ old('name') }}" required placeholder="e.g. Prof. Dr. M. A. Rahman" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                <input type="text" name="name" value="{{ old('name') }}" required placeholder="e.g. Faculty Chair – Trade & Customs" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
             </div>
 
             <div>
@@ -65,12 +65,25 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Upload Photo</label>
-                <input type="file" name="avatar_file" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-xl text-sm">
+                <input type="file" id="create_avatar_file_input" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-xl text-sm">
+                <input type="hidden" name="avatar_base64" id="create_avatar_base64_input">
+                <script>
+                    document.getElementById('create_avatar_file_input').addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(evt) {
+                                document.getElementById('create_avatar_base64_input').value = evt.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                </script>
             </div>
 
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Or Photo URL / Path</label>
-                <input type="text" name="avatar" value="{{ old('avatar') }}" placeholder="/images/faculty/delwar-hossain.jpg" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                <input type="text" name="avatar" value="{{ old('avatar') }}" placeholder="https://images.unsplash.com/photo-..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
             </div>
         </div>
 

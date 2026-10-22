@@ -10,6 +10,16 @@ class Setting extends Model
 {
     protected $fillable = ['key', 'value', 'type', 'group'];
 
+    protected static function booted()
+    {
+        static::saved(function () {
+            Cache::forget('global_settings');
+        });
+        static::deleted(function () {
+            Cache::forget('global_settings');
+        });
+    }
+
     /**
      * Get a setting value, preferring cached version.
      */

@@ -101,14 +101,14 @@
     <section class="py-12 sm:py-16 bg-gradient-to-b from-slate-50/90 via-white to-slate-50/60 border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-8 sm:mb-10">
-                <span class="inline-block text-[11px] font-black uppercase tracking-widest text-[#c30102] mb-1.5">Enterprise Partnerships & Executive Alumni</span>
+                <span class="inline-block text-[11px] font-black uppercase tracking-widest text-[#c30102] mb-1.5">Executive Professional Training & Enterprise Cohorts</span>
                 <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight uppercase">
-                    {{ \App\Models\Setting::getVal('landing_clients_title', 'Our Valuable Clients') }}
+                    {{ \App\Models\Setting::getVal('landing_clients_title', 'Industry Sectors & Enterprise Training') }}
                 </h2>
                 <div class="w-12 h-1 bg-gradient-to-r from-[#041536] via-[#c30102] to-[#10b981] mx-auto mt-2.5 rounded-full"></div>
             </div>
 
-            <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-2.5 sm:gap-6 items-center">
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-2.5 sm:gap-4 items-center">
                 @php
                     $rawClients = \App\Models\Setting::getVal('landing_clients_data');
                     if (!empty(trim($rawClients))) {
@@ -127,14 +127,14 @@
                         }
                     } else {
                         $clients = [
-                            ['name' => 'SSG', 'logo' => asset('images/clients/ssg.jpg')],
-                            ['name' => 'United Hospital', 'logo' => asset('images/clients/united-hospital.jpg')],
-                            ['name' => 'Square', 'logo' => asset('images/clients/square.jpg')],
-                            ['name' => 'Robi', 'logo' => asset('images/clients/robi.jpg')],
-                            ['name' => 'Grameenphone', 'logo' => asset('images/clients/grameenphone.jpg')],
-                            ['name' => 'Incepta', 'logo' => asset('images/clients/incepta.jpg')],
-                            ['name' => 'IPDC', 'logo' => asset('images/clients/ipdc.jpg')],
-                            ['name' => 'Runner', 'logo' => asset('images/clients/runner.jpg')],
+                            ['name' => 'Import – Export', 'logo' => null],
+                            ['name' => 'Supply Chain', 'logo' => null],
+                            ['name' => 'Trade Finance', 'logo' => null],
+                            ['name' => 'Customs & Port', 'logo' => null],
+                            ['name' => 'VAT & Tax', 'logo' => null],
+                            ['name' => 'Corporate Law', 'logo' => null],
+                            ['name' => 'Human Resource', 'logo' => null],
+                            ['name' => 'Project Mgmt', 'logo' => null],
                         ];
                     }
                 @endphp
@@ -163,7 +163,7 @@
         
         {{-- 3. Sticky Smart Category Navigation Bar (Compact, Icon-Driven, Sticky across Course Section) --}}
         @if(\App\Models\Setting::getVal('landing_categories_enabled', '1') == '1')
-        <section id="home-category" class="sticky top-20 z-40 bg-white/90 backdrop-blur-2xl border-y border-slate-200/75 shadow-[0_10px_28px_-6px_rgba(4,21,54,0.08)] py-2.5 transition-all" x-data="{
+        <section id="home-category" class="sticky top-16 sm:top-20 z-40 bg-white/95 backdrop-blur-2xl border-y border-slate-200/75 shadow-[0_10px_28px_-6px_rgba(4,21,54,0.08)] py-2.5 transition-all" x-data="{
             scrollLeft() { $refs.catSlider.scrollBy({ left: -260, behavior: 'smooth' }) },
             scrollRight() { $refs.catSlider.scrollBy({ left: 260, behavior: 'smooth' }) }
         }">
@@ -184,38 +184,49 @@
                     </div>
 
                     @php
-                        $rawCats = \App\Models\Setting::getVal('landing_categories_data');
-                        if (!empty(trim($rawCats))) {
-                            $catLines = array_filter(array_map('trim', explode("\n", $rawCats)));
-                            $runningCategories = [];
-                            foreach ($catLines as $line) {
-                                $parts = array_map('trim', explode('|', $line));
-                                $name = $parts[0] ?? '';
-                                $slug = $parts[1] ?? \Illuminate\Support\Str::slug($name);
-                                $icon = $parts[2] ?? 'fa-tag';
-                                if ($name !== '') {
-                                    $runningCategories[] = [
-                                        'name' => $name,
-                                        'slug' => $slug,
-                                        'icon' => str_starts_with($icon, 'fa-') ? $icon : ('fa-' . $icon),
-                                    ];
-                                }
-                            }
+                        $dbCategories = \App\Models\Category::active()->ordered()->get();
+                        if ($dbCategories->isNotEmpty()) {
+                            $runningCategories = $dbCategories->map(function ($cat) {
+                                return [
+                                    'name' => $cat->name,
+                                    'slug' => $cat->slug,
+                                    'icon' => $cat->icon ?: 'fa-tag',
+                                ];
+                            })->toArray();
                         } else {
-                            $runningCategories = [
-                                ['name' => 'Soft Skills', 'slug' => 'soft-skills', 'icon' => 'fa-comments'],
-                                ['name' => 'Supply Chain Management', 'slug' => 'supply-chain-management', 'icon' => 'fa-truck-fast'],
-                                ['name' => 'Value Added Tax', 'slug' => 'value-added-tax', 'icon' => 'fa-file-invoice-dollar'],
-                                ['name' => 'Export – Import', 'slug' => 'export-import', 'icon' => 'fa-ship'],
-                                ['name' => 'Accounting', 'slug' => 'accounting', 'icon' => 'fa-calculator'],
-                                ['name' => 'Human Resource', 'slug' => 'human-resource', 'icon' => 'fa-people-group'],
-                                ['name' => 'Civil Construction Project', 'slug' => 'civil-construction-project', 'icon' => 'fa-helmet-safety'],
-                                ['name' => 'Fire Safety', 'slug' => 'fire-safety', 'icon' => 'fa-fire-extinguisher'],
-                                ['name' => 'Law & Compliance', 'slug' => 'law', 'icon' => 'fa-scale-balanced'],
-                                ['name' => 'Leadership', 'slug' => 'leadership', 'icon' => 'fa-award'],
-                                ['name' => 'Production & Ops', 'slug' => 'production', 'icon' => 'fa-industry'],
-                                ['name' => 'Project Management', 'slug' => 'project-management', 'icon' => 'fa-diagram-project'],
-                            ];
+                            $rawCats = \App\Models\Setting::getVal('landing_categories_data');
+                            if (!empty(trim($rawCats))) {
+                                $catLines = array_filter(array_map('trim', explode("\n", $rawCats)));
+                                $runningCategories = [];
+                                foreach ($catLines as $line) {
+                                    $parts = array_map('trim', explode('|', $line));
+                                    $name = $parts[0] ?? '';
+                                    $slug = $parts[1] ?? \Illuminate\Support\Str::slug($name);
+                                    $icon = $parts[2] ?? 'fa-tag';
+                                    if ($name !== '') {
+                                        $runningCategories[] = [
+                                            'name' => $name,
+                                            'slug' => $slug,
+                                            'icon' => str_starts_with($icon, 'fa-') ? $icon : ('fa-' . $icon),
+                                        ];
+                                    }
+                                }
+                            } else {
+                                $runningCategories = [
+                                    ['name' => 'Soft Skills', 'slug' => 'soft-skills', 'icon' => 'fa-comments'],
+                                    ['name' => 'Supply Chain Management', 'slug' => 'supply-chain-management', 'icon' => 'fa-truck-fast'],
+                                    ['name' => 'Value Added Tax', 'slug' => 'value-added-tax', 'icon' => 'fa-file-invoice-dollar'],
+                                    ['name' => 'Export – Import', 'slug' => 'export-import', 'icon' => 'fa-ship'],
+                                    ['name' => 'Accounting', 'slug' => 'accounting', 'icon' => 'fa-calculator'],
+                                    ['name' => 'Human Resource', 'slug' => 'human-resource', 'icon' => 'fa-people-group'],
+                                    ['name' => 'Civil Construction Project', 'slug' => 'civil-construction-project', 'icon' => 'fa-helmet-safety'],
+                                    ['name' => 'Fire Safety', 'slug' => 'fire-safety', 'icon' => 'fa-fire-extinguisher'],
+                                    ['name' => 'Law & Compliance', 'slug' => 'law', 'icon' => 'fa-scale-balanced'],
+                                    ['name' => 'Leadership', 'slug' => 'leadership', 'icon' => 'fa-award'],
+                                    ['name' => 'Production & Ops', 'slug' => 'production', 'icon' => 'fa-industry'],
+                                    ['name' => 'Project Management', 'slug' => 'project-management', 'icon' => 'fa-diagram-project'],
+                                ];
+                            }
                         }
                         $allCatUrl = \App\Models\Setting::getVal('landing_categories_all_url', route('catalog.index'));
                         $allCatText = \App\Models\Setting::getVal('landing_categories_all_text', 'All');
@@ -269,34 +280,18 @@
 
         {{-- 4. Course Showcase: Certificate Course & Day Long Course Connected by 'View All Courses' Bracket --}}
         @if(\App\Models\Setting::getVal('landing_courses_enabled', '1') == '1')
-        <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc] border-b border-slate-200/80">
+        <section class="py-6 sm:py-10 lg:py-12 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc] border-b border-slate-200/80">
             <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                 
-                <!-- Executive Curriculum Gateway Header (Modern, Distinctive, Non-IPDP) -->
-                <div class="relative mb-10 sm:mb-14 text-center max-w-3xl mx-auto">
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-slate-200/90 text-[#041536] text-[11px] font-black uppercase tracking-wider mb-2.5 shadow-xs">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#c30102] animate-pulse"></span>
-                        <span>Academic Curriculum Tracks</span>
-                    </div>
-
-                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-[#041536] tracking-tight">
-                        Dual Certification Pathways
-                    </h2>
-
-                    <p class="text-xs sm:text-sm text-slate-500 mt-2 font-medium max-w-xl mx-auto leading-relaxed">
-                        Choose an extensive multi-week mastertrack for verified industry credentials, or enroll in a fast-track 1-day executive accelerator.
-                    </p>
-
-                    <!-- Elevated 'View All Courses' Action Gateway -->
-                    <div class="mt-6 flex items-center justify-center">
-                        <a href="{{ \App\Models\Setting::getVal('landing_courses_bracket_url', route('catalog.index')) }}" 
-                           class="px-8 py-3.5 sm:px-10 sm:py-4 bg-white hover:bg-[#041536] rounded-2xl shadow-[0_8px_25px_rgba(4,21,54,0.08),0_0_0_1px_rgba(4,21,54,0.08)] hover:shadow-[0_16px_35px_rgba(4,21,54,0.22)] border border-slate-200/90 hover:border-[#041536] text-sm sm:text-base font-black text-[#041536] hover:text-white transition-all duration-300 flex items-center gap-3 group hover:scale-[1.03] active:scale-95">
-                            <span class="tracking-tight">{{ \App\Models\Setting::getVal('landing_courses_bracket_text', 'View All Courses') }}</span>
-                            <span class="w-7 h-7 rounded-xl bg-[#c30102] text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
-                                <i class="fas fa-arrow-right text-xs group-hover:translate-x-0.5 transition-transform"></i>
-                            </span>
-                        </a>
-                    </div>
+                <!-- Central 'View All Courses' Gateway Action -->
+                <div class="mb-6 sm:mb-8 flex items-center justify-center">
+                    <a href="{{ \App\Models\Setting::getVal('landing_courses_bracket_url', route('catalog.index')) }}" 
+                       class="px-7 py-3 sm:px-9 sm:py-3.5 bg-white hover:bg-[#041536] rounded-2xl shadow-[0_4px_20px_rgba(4,21,54,0.07),0_0_0_1px_rgba(4,21,54,0.06)] hover:shadow-[0_12px_30px_rgba(4,21,54,0.2)] border border-slate-200/90 hover:border-[#041536] text-xs sm:text-sm font-black text-[#041536] hover:text-white transition-all duration-300 flex items-center gap-2.5 group hover:scale-[1.02] active:scale-95">
+                        <span class="tracking-tight">{{ \App\Models\Setting::getVal('landing_courses_bracket_text', 'View All Courses') }}</span>
+                        <span class="w-6 h-6 rounded-lg bg-[#c30102] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
+                            <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                        </span>
+                    </a>
                 </div>
 
                 <!-- Dual Side-By-Side Course Containers -->
@@ -392,106 +387,144 @@
         @endif
     </div>
 
-    {{-- 5. Executive Insights & Knowledge Hub (Blog Section) --}}
-    @if(\App\Models\Setting::getVal('landing_blog_enabled', '1') == '1')
-    <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#f4f7fb] to-[#f8fafc] border-b border-slate-200/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-slate-200/80 gap-3">
+    {{-- 5. Executive Career & Job Placement Opportunities (Spotlighted on Front View) --}}
+    @if(\App\Models\Setting::getVal('landing_jobs_enabled', '1') == '1' && isset($jobs) && $jobs->count() > 0)
+    <section class="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#ffffff] border-b border-slate-200/80 relative overflow-hidden">
+        <!-- Subtle Ambient Accents -->
+        <div class="absolute top-0 right-0 w-96 h-96 bg-[#c30102]/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-[#041536]/5 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Header Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-slate-200/80 gap-4">
                 <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2 border border-emerald-200">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <i class="fas fa-briefcase text-xs"></i>
+                        <span>Corporate Placement Cell</span>
+                    </div>
                     <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
-                        {{ \App\Models\Setting::getVal('landing_blog_title', 'Knowledge Hub & Publications') }}
+                        {{ \App\Models\Setting::getVal('landing_jobs_title', 'Career & Placement Opportunities') }}
                     </h2>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
-                        {{ \App\Models\Setting::getVal('landing_blog_subtitle', 'Thought leadership, customs directives, tax reforms, and supply chain insights by CAB Academy Distinguished Faculty.') }}
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium max-w-2xl">
+                        {{ \App\Models\Setting::getVal('landing_jobs_subtitle', 'Explore active corporate openings, commercial executive roles, and direct recruitment pathways for CAB Academy certified professionals.') }}
                     </p>
                 </div>
-                <a href="{{ \App\Models\Setting::getVal('landing_blog_btn_url', route('blog.index')) }}" class="text-xs sm:text-sm font-bold text-[#c30102] hover:text-[#041536] transition-colors inline-flex items-center gap-1.5 group shrink-0">
-                    <span>{{ \App\Models\Setting::getVal('landing_blog_btn_text', 'View All Publications') }}</span>
-                    <i class="fas fa-arrow-right text-xs group-hover:translate-x-1.5 transition-transform"></i>
-                </a>
+                <div class="flex items-center gap-3 shrink-0">
+                    <a href="{{ \App\Models\Setting::getVal('landing_jobs_btn_url', route('jobs.index')) }}" class="btn-ipdp-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-xl transition-all">
+                        <span>{{ \App\Models\Setting::getVal('landing_jobs_btn_text', 'Browse All Openings') }}</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
             </div>
 
-            <!-- 3-Column Blog Cards Grid -->
+            <!-- Job Cards Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                @php
-                    $defaultBlogImgs = [
-                        'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
-                        'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
-                        'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
-                    ];
-                @endphp
-                @foreach($recentBlogs as $blog)
-                    <article class="group bg-white rounded-2xl sm:rounded-3xl shadow-[0_4px_16px_rgba(4,21,54,0.06)] hover:shadow-[0_20px_45px_-10px_rgba(4,21,54,0.16)] border border-slate-200/90 hover:border-[#c30102]/30 overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-1.5">
-                        <!-- Cover Image -->
-                        <div class="relative aspect-video w-full overflow-hidden bg-slate-900">
-                            <a href="{{ route('blog.show', $blog->slug) }}">
-                                @php
-                                    $coverUrl = $blog->cover_image ? asset($blog->cover_image) : ($defaultBlogImgs[$loop->index % 3]);
-                                @endphp
-                                <img 
-                                   src="{{ $coverUrl }}" 
-                                   alt="{{ $blog->title }}" 
-                                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95 group-hover:opacity-100"
-                                   loading="lazy"
-                                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80';"
-                                >
-                            </a>
-                            <div class="absolute top-3 left-3">
-                                <span class="inline-block px-3 py-1 bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white rounded-lg text-[10px] font-black uppercase tracking-wider shadow-md border border-white/20">
-                                    {{ $blog->category ?? 'Insights' }}
-                                </span>
+                @foreach($jobs as $job)
+                    <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-[0_4px_16px_rgba(4,21,54,0.05)] hover:shadow-[0_20px_45px_-10px_rgba(4,21,54,0.14)] hover:border-[#c30102]/30 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1.5 relative overflow-hidden">
+                        
+                        <!-- Top Accent Line -->
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#041536] via-[#c30102] to-[#10b981] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                        <div>
+                            <!-- Header: Badges & Logo -->
+                            <div class="flex items-start justify-between gap-3 mb-4">
+                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#041536]/10 to-[#041536]/5 text-[#041536] border border-slate-200/60 flex items-center justify-center text-lg font-black group-hover:scale-105 transition-transform shrink-0 shadow-sm">
+                                    @if(!empty($job->company_logo))
+                                        <img src="{{ Storage::url($job->company_logo) }}" alt="{{ $job->company ?? 'Company' }}" class="w-full h-full object-cover rounded-2xl">
+                                    @else
+                                        <span>{{ substr($job->company ?? 'CAB', 0, 2) }}</span>
+                                    @endif
+                                </div>
+                                <div class="flex flex-col items-end gap-1.5">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                        <i class="fas fa-check-circle text-[9px] mr-1"></i>Active Role
+                                    </span>
+                                    @if($job->created_at && $job->created_at->diffInDays(now()) < 14)
+                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#c30102]/10 text-[#c30102]">
+                                            Recent
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
+
+                            <!-- Title & Company -->
+                            <h3 class="text-base sm:text-lg font-black text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug mb-1">
+                                {{ $job->title }}
+                            </h3>
+                            <p class="text-xs sm:text-sm font-semibold text-slate-500 mb-4 flex items-center gap-1.5">
+                                <i class="fas fa-building text-slate-400 text-xs"></i>
+                                <span>{{ $job->company ?? $job->company_name ?? 'Corporate Partner Enterprise' }}</span>
+                            </p>
+
+                            <!-- Meta Pills (Location, Job Type, Salary Range) -->
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                @if(!empty($job->location))
+                                <div class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100/90 px-2.5 py-1 rounded-lg">
+                                    <i class="fas fa-map-marker-alt text-[#c30102] text-[10px]"></i>
+                                    <span>{{ $job->location }}</span>
+                                </div>
+                                @endif
+
+                                <div class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100/90 px-2.5 py-1 rounded-lg">
+                                    <i class="fas fa-clock text-slate-400 text-[10px]"></i>
+                                    <span>{{ $job->job_type ?? 'Full-time' }}</span>
+                                </div>
+
+                                @if(!empty($job->salary_range))
+                                <div class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
+                                    <i class="fas fa-money-bill-wave text-[10px]"></i>
+                                    <span>{{ $job->salary_range }}</span>
+                                </div>
+                                @endif
+                            </div>
+
+                            <!-- Description Snippet -->
+                            <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-5">
+                                {{ $job->description }}
+                            </p>
                         </div>
 
-                        <!-- Article Content -->
-                        <div class="p-4 sm:p-6 flex-1 flex flex-col justify-between">
-                            <div>
-                                <!-- Meta info: Date & Reading Time -->
-                                <div class="flex items-center gap-2 text-xs text-slate-500 font-medium mb-2">
-                                    <i class="far fa-calendar-alt text-[#c30102]"></i>
-                                    <span>{{ $blog->published_at ? $blog->published_at->format('M d, Y') : date('M d, Y') }}</span>
-                                    <span>&bull;</span>
-                                    <i class="far fa-clock text-emerald-600"></i>
-                                    <span>{{ $blog->reading_time ?? '5 min' }} read</span>
-                                </div>
-
-                                <!-- Title -->
-                                <h3 class="text-sm sm:text-base lg:text-lg font-bold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug mb-2 line-clamp-2">
-                                    <a href="{{ route('blog.show', $blog->slug) }}">
-                                        {{ $blog->title }}
-                                    </a>
-                                </h3>
-
-                                <!-- Excerpt -->
-                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2 sm:line-clamp-3 mb-4 font-normal">
-                                    {{ $blog->excerpt }}
-                                </p>
-                            </div>
-
-                            <!-- Author & Action Footer -->
-                            <div class="border-t border-slate-100 pt-3 sm:pt-4 mt-auto flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-xs font-bold text-[#041536]">
-                                        @if($blog->author && $blog->author->profile_picture)
-                                            <img src="{{ asset($blog->author->profile_picture) }}" alt="{{ $blog->author_name }}" class="w-full h-full object-cover">
-                                        @else
-                                            {{ substr($blog->author_name ?? 'F', 0, 1) }}
-                                        @endif
-                                    </div>
-                                    <span class="text-xs font-bold text-[#041536] truncate max-w-[110px] sm:max-w-[130px]">
-                                        {{ $blog->author_name ?? 'Distinguished Faculty' }}
-                                    </span>
-                                </div>
-
-                                <a href="{{ route('blog.show', $blog->slug) }}" class="text-xs font-bold text-[#c30102] group-hover:text-[#041536] flex items-center gap-1 transition-colors">
-                                    <span>Read Brief</span>
+                        <!-- Action Button -->
+                        <div class="pt-3 border-t border-slate-100 mt-auto">
+                            @if(!empty($job->apply_link))
+                                <a href="{{ $job->apply_link }}" target="_blank" rel="noopener noreferrer" class="btn-cab-secondary w-full py-2.5 px-4 rounded-xl text-xs font-black flex items-center justify-center gap-2 group-hover:shadow-md transition-all">
+                                    <span>Apply on Company Site</span>
+                                    <i class="fas fa-external-link-alt text-[10px]"></i>
+                                </a>
+                            @else
+                                <a href="{{ route('jobs.index') }}" class="btn-cab-secondary w-full py-2.5 px-4 rounded-xl text-xs font-black flex items-center justify-center gap-2 group-hover:shadow-md transition-all">
+                                    <span>View Details & Apply</span>
                                     <i class="fas fa-arrow-right text-[10px]"></i>
                                 </a>
-                            </div>
+                            @endif
                         </div>
-                    </article>
+                    </div>
                 @endforeach
             </div>
+
+            <!-- Corporate Hiring Partner Callout Bar -->
+            <div class="mt-10 sm:mt-12 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#041536] text-white flex items-center justify-center text-xl sm:text-2xl shrink-0 shadow-md">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-base sm:text-lg font-black text-[#041536]">
+                            Are You Hiring Commercial, Supply Chain, or Tax Professionals?
+                        </h4>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">
+                            Partner with CAB Academy Corporate Placement Cell to access verified, pre-screened alumni and certified practitioners.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 shrink-0 w-full md:w-auto">
+                    <a href="{{ route('contact.index') }}" class="btn-cab-secondary px-6 py-3 rounded-xl text-xs sm:text-sm font-black whitespace-nowrap w-full sm:w-auto text-center shadow-md">
+                        <i class="fas fa-bullhorn mr-1.5"></i>Post an Opportunity
+                    </a>
+                </div>
+            </div>
+
         </div>
     </section>
     @endif
@@ -618,55 +651,110 @@
     </section>
     @endif
 
-    {{-- 8. Student Career & Job Placement Section (Preserving Platform Job Board Feature) --}}
-    @if(\App\Models\Setting::getVal('landing_jobs_enabled', '1') == '1' && isset($jobs) && $jobs->count() > 0)
-        <section class="py-16 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc]">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-slate-200">
-                    <div>
-                        <h2 class="text-2xl sm:text-3xl font-black text-[#051c45] tracking-tight">
-                            {{ \App\Models\Setting::getVal('landing_jobs_title', 'Career & Placement Opportunities') }}
-                        </h2>
-                        <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
-                            {{ \App\Models\Setting::getVal('landing_jobs_subtitle', 'Explore openings posted exclusively for CAB Academy certified professionals') }}
-                        </p>
-                    </div>
-                    <a href="{{ \App\Models\Setting::getVal('landing_jobs_btn_url', route('jobs.index')) }}" class="mt-4 sm:mt-0 text-sm font-bold text-[#c30102] hover:text-[#051c45] transition-colors inline-flex items-center gap-1 group">
-                        <span>{{ \App\Models\Setting::getVal('landing_jobs_btn_text', 'Browse All Openings') }}</span>
-                        <i class="fas fa-chevron-right text-xs group-hover:translate-x-1 transition-transform"></i>
-                    </a>
+    {{-- 8. Executive Insights & Knowledge Hub (Blog Section - Below Features) --}}
+    @if(\App\Models\Setting::getVal('landing_blog_enabled', '1') == '1' && isset($recentBlogs) && $recentBlogs->count() > 0)
+    <section class="py-10 sm:py-16 lg:py-20 bg-gradient-to-b from-[#f8fafc] via-[#f4f7fb] to-[#f8fafc] border-b border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-slate-200/80 gap-3">
+                <div>
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
+                        {{ \App\Models\Setting::getVal('landing_blog_title', 'Knowledge Hub & Publications') }}
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+                        {{ \App\Models\Setting::getVal('landing_blog_subtitle', 'Thought leadership, customs directives, tax reforms, and supply chain insights by CAB Academy Distinguished Faculty.') }}
+                    </p>
                 </div>
+                <a href="{{ \App\Models\Setting::getVal('landing_blog_btn_url', route('blog.index')) }}" class="text-xs sm:text-sm font-bold text-[#c30102] hover:text-[#041536] transition-colors inline-flex items-center gap-1.5 group shrink-0">
+                    <span>{{ \App\Models\Setting::getVal('landing_blog_btn_text', 'View All Publications') }}</span>
+                    <i class="fas fa-arrow-right text-xs group-hover:translate-x-1.5 transition-transform"></i>
+                </a>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    @foreach($jobs as $job)
-                        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between">
+            <!-- 3-Column Blog Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                @php
+                    $defaultBlogImgs = [
+                        'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
+                        'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+                        'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
+                    ];
+                @endphp
+                @foreach($recentBlogs as $blog)
+                    <article class="group bg-white rounded-2xl sm:rounded-3xl shadow-[0_4px_16px_rgba(4,21,54,0.06)] hover:shadow-[0_20px_45px_-10px_rgba(4,21,54,0.16)] border border-slate-200/90 hover:border-[#c30102]/30 overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-1.5">
+                        <!-- Cover Image -->
+                        <div class="relative aspect-video w-full overflow-hidden bg-slate-900">
+                            <a href="{{ route('blog.show', $blog->slug) }}">
+                                @php
+                                    $coverUrl = $blog->featured_image 
+                                        ? (str_starts_with($blog->featured_image, 'http') ? $blog->featured_image : asset($blog->featured_image)) 
+                                        : ($defaultBlogImgs[$loop->index % 3]);
+                                @endphp
+                                <img 
+                                   src="{{ $coverUrl }}" 
+                                   alt="{{ $blog->title }}" 
+                                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95 group-hover:opacity-100"
+                                   loading="lazy"
+                                   onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80';"
+                                >
+                            </a>
+                            <div class="absolute top-3 left-3">
+                                <span class="inline-block px-3 py-1 bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white rounded-lg text-[10px] font-black uppercase tracking-wider shadow-md border border-white/20">
+                                    {{ $blog->category ?? 'Insights' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Article Content -->
+                        <div class="p-4 sm:p-6 flex-1 flex flex-col justify-between">
                             <div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#c30102]/10 text-[#c30102]">
-                                        {{ $job->job_type ?? 'Full-time' }}
-                                    </span>
-                                    <span class="text-xs text-slate-500">
-                                        {{ $job->location ?? 'Dhaka' }}
-                                    </span>
+                                <!-- Meta info: Date & Reading Time -->
+                                <div class="flex items-center gap-2 text-xs text-slate-500 font-medium mb-2">
+                                    <i class="far fa-calendar-alt text-[#c30102]"></i>
+                                    <span>{{ $blog->published_at ? $blog->published_at->format('M d, Y') : date('M d, Y') }}</span>
+                                    <span>&bull;</span>
+                                    <i class="far fa-clock text-emerald-600"></i>
+                                    <span>{{ $blog->read_time ?? '5 min' }}</span>
                                 </div>
-                                <h4 class="text-base font-bold text-[#051c45] mb-1">
-                                    {{ $job->title }}
-                                </h4>
-                                <p class="text-xs text-slate-500 font-semibold mb-3">
-                                    {{ $job->company_name ?? 'Partner Enterprise' }}
-                                </p>
-                                <p class="text-xs text-slate-600 line-clamp-2 mb-4">
-                                    {{ $job->description }}
+
+                                <!-- Title -->
+                                <h3 class="text-sm sm:text-base lg:text-lg font-bold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug mb-2 line-clamp-2">
+                                    <a href="{{ route('blog.show', $blog->slug) }}">
+                                        {{ $blog->title }}
+                                    </a>
+                                </h3>
+
+                                <!-- Excerpt -->
+                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2 sm:line-clamp-3 mb-4 font-normal">
+                                    {{ $blog->excerpt }}
                                 </p>
                             </div>
-                            <a href="{{ route('jobs.index') }}" class="btn-ipdp-primary text-center py-2.5 rounded-xl text-xs font-bold w-full shadow-md">
-                                View Details & Apply
-                            </a>
+
+                            <!-- Author & Action Footer -->
+                            <div class="border-t border-slate-100 pt-3 sm:pt-4 mt-auto flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-xs font-bold text-[#041536]">
+                                        @if($blog->author && $blog->author->profile_picture)
+                                            <img src="{{ asset($blog->author->profile_picture) }}" alt="{{ $blog->author_name }}" class="w-full h-full object-cover">
+                                        @else
+                                            {{ substr($blog->author_name ?? 'F', 0, 1) }}
+                                        @endif
+                                    </div>
+                                    <span class="text-xs font-bold text-[#041536] truncate max-w-[110px] sm:max-w-[130px]">
+                                        {{ $blog->author_name ?? 'Distinguished Faculty' }}
+                                    </span>
+                                </div>
+
+                                <a href="{{ route('blog.show', $blog->slug) }}" class="text-xs font-bold text-[#c30102] group-hover:text-[#041536] flex items-center gap-1 transition-colors">
+                                    <span>Read Brief</span>
+                                    <i class="fas fa-arrow-right text-[10px]"></i>
+                                </a>
+                            </div>
                         </div>
-                    @endforeach
-                </div>
+                    </article>
+                @endforeach
             </div>
-        </section>
+        </div>
+    </section>
     @endif
 
 @endif

@@ -39,6 +39,7 @@ class InstructorController extends Controller
             'expertise' => 'required|string|max:255',
             'avatar' => 'nullable|string|max:500',
             'avatar_file' => 'nullable|image|max:5120',
+            'avatar_base64' => 'nullable|string',
             'bio' => 'nullable|string',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:50',
@@ -49,7 +50,20 @@ class InstructorController extends Controller
         if ($request->hasFile('avatar_file')) {
             $path = $request->file('avatar_file')->store('instructors', 'public');
             $validated['avatar'] = $path;
+        } elseif ($request->filled('avatar_base64')) {
+            $data = $request->input('avatar_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+                $data = substr($data, strpos($data, ',') + 1);
+                $type = strtolower($type[1]);
+                $data = base64_decode($data);
+                if ($data !== false) {
+                    $filename = 'instructor_' . time() . '_' . uniqid() . '.' . $type;
+                    \Illuminate\Support\Facades\Storage::disk('public')->put('instructors/' . $filename, $data);
+                    $validated['avatar'] = 'instructors/' . $filename;
+                }
+            }
         }
+        unset($validated['avatar_base64'], $validated['avatar_file']);
 
         $validated['order'] = $request->input('order', 0);
         $validated['is_active'] = $request->has('is_active');
@@ -78,6 +92,7 @@ class InstructorController extends Controller
             'expertise' => 'required|string|max:255',
             'avatar' => 'nullable|string|max:500',
             'avatar_file' => 'nullable|image|max:5120',
+            'avatar_base64' => 'nullable|string',
             'bio' => 'nullable|string',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:50',
@@ -88,7 +103,20 @@ class InstructorController extends Controller
         if ($request->hasFile('avatar_file')) {
             $path = $request->file('avatar_file')->store('instructors', 'public');
             $validated['avatar'] = $path;
+        } elseif ($request->filled('avatar_base64')) {
+            $data = $request->input('avatar_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+                $data = substr($data, strpos($data, ',') + 1);
+                $type = strtolower($type[1]);
+                $data = base64_decode($data);
+                if ($data !== false) {
+                    $filename = 'instructor_' . time() . '_' . uniqid() . '.' . $type;
+                    \Illuminate\Support\Facades\Storage::disk('public')->put('instructors/' . $filename, $data);
+                    $validated['avatar'] = 'instructors/' . $filename;
+                }
+            }
         }
+        unset($validated['avatar_base64'], $validated['avatar_file']);
 
         $validated['order'] = $request->input('order', 0);
         $validated['is_active'] = $request->has('is_active');

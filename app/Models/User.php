@@ -17,12 +17,37 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, \Laravel\Cashier\Billable, SoftDeletes;
+    /**
+     * Check if user has administrator privileges.
+     */
+    public function isAdmin(): bool
+    {
+        $role = strtolower(trim($this->role ?? ''));
+        $adminRoles = ['admin', 'superadmin', 'super_admin', 'super admin', 'manager'];
+        
+        if (in_array($role, $adminRoles)) {
+            return true;
+        }
+
+        // Official CAB Academy owner & admin emails
+        $adminEmails = [
+            'admin@cab-academy.com',
+            'commercialacademy868@gmail.com',
+            'delwar@cabacademy.com',
+        ];
+
+        return in_array(strtolower(trim($this->email ?? '')), $adminEmails);
+    }
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Check if user is an instructor or elevated educator.
      */
+    public function isInstructor(): bool
+    {
+        $role = strtolower(trim($this->role ?? ''));
+        return $role === 'instructor' || $this->isAdmin();
+    }
+
     public function instructedCourses()
     {
         return $this->hasMany(Course::class, 'instructor_id');

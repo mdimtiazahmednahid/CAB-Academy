@@ -503,9 +503,8 @@
             <h3 class="text-lg font-bold">Course Settings</h3>
             <button onclick="document.getElementById('editCourseModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
-        <form method="POST" action="{{ route('admin.courses.update', $course) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('admin.courses.update', $course) }}">
             @csrf
-            @method('PUT')
             <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Title <span class="text-red-500">*</span></label>
@@ -546,7 +545,12 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <input type="text" name="category" value="{{ $course->category }}" placeholder="e.g. Export - Import" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <input list="category-options-edit" type="text" name="category" value="{{ $course->category }}" placeholder="Choose or type category..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <datalist id="category-options-edit">
+                            @foreach(\App\Models\Category::active()->ordered()->get() as $cat)
+                                <option value="{{ $cat->name }}"></option>
+                            @endforeach
+                        </datalist>
                     </div>
                 </div>
                 <div>
@@ -560,7 +564,20 @@
                             <img src="{{ Storage::url($course->cover_image) }}" alt="Cover" class="w-32 h-20 object-cover rounded">
                         </div>
                     @endif
-                    <input type="file" name="cover_image" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <input type="file" id="course_cover_file_input" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <input type="hidden" name="cover_image_base64" id="course_cover_image_base64">
+                    <script>
+                        document.getElementById('course_cover_file_input')?.addEventListener('change', function(e) {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = function(evt) {
+                                    document.getElementById('course_cover_image_base64').value = evt.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                        });
+                    </script>
                 </div>
                 <div class="flex items-center pt-2">
                     <input type="checkbox" name="is_published" id="is_published" value="1" {{ $course->is_published ? 'checked' : '' }} class="rounded text-primary focus:ring-primary mr-2">
