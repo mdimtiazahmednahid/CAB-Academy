@@ -501,14 +501,21 @@
                                     Open Learning Player
                                 </a>
                             @endif
-                            <a 
-                                href="{{ route('courses.certificate', $course) }}" 
-                                target="_blank"
-                                class="block w-full py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-xl text-center text-xs border border-emerald-200 transition-colors flex items-center justify-center gap-1.5"
-                            >
-                                <i class="fas fa-award text-emerald-600"></i>
-                                <span>Digital Certificate</span>
-                            </a>
+                            @if($course->isCertificateAvailableFor(auth()->user()))
+                                <a 
+                                    href="{{ route('courses.certificate', $course) }}" 
+                                    target="_blank"
+                                    class="block w-full py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-xl text-center text-xs border border-emerald-200 transition-colors flex items-center justify-center gap-1.5"
+                                >
+                                    <i class="fas fa-award text-emerald-600"></i>
+                                    <span>Digital Certificate</span>
+                                </a>
+                            @else
+                                <div class="w-full py-2.5 bg-slate-50 text-slate-400 font-semibold rounded-xl text-center text-xs border border-slate-200 flex items-center justify-center gap-1.5 cursor-not-allowed select-none" title="Certificate pending administrative release upon cohort evaluation">
+                                    <i class="fas fa-lock text-slate-400 text-xs"></i>
+                                    <span>Certificate Pending Admin Release</span>
+                                </div>
+                            @endif
                         </div>
                     @else
                         <form 

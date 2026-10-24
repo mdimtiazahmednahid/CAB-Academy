@@ -24,6 +24,7 @@ class Course extends Model
         'level',
         'category',
         'instructor_id',
+        'certificate_enabled',
         'views'
     ];
 
@@ -31,6 +32,7 @@ class Course extends Model
         'start_date' => 'date',
         'price' => 'decimal:2',
         'is_published' => 'boolean',
+        'certificate_enabled' => 'boolean',
     ];
 
     public function scopePublished($query)
@@ -156,5 +158,40 @@ class Course extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    /**
+     * Determine if a certificate is available/accessible for the given user.
+     * Certificates are only accessible if explicitly released by admin or individually issued.
+     */
+    public function isCertificateAvailableFor(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        // Admin can always preview/view certificates
+        if (in_array($user->role, ['admin', 'super_admin'])) {
+            return true;
+        }
+
+        // Check if an individual certificate was already generated/issued by admin
+        if ($this->certificates()->where('user_id', $user->id)->exists()) {
+            return true;
+        }
+
+        // Course-wide certificate release: requires certificate_enabled = true AND active enrollment/payment
+        if ($this->certificate_enabled) {
+            $isEnrolled = $user->enrolledCourses()->where('course_id', $this->id)->exists();
+            $isVerifiedPaid = $user->payments()->where('course_id', $this->id)->where('status', 'verified')->exists();
+            return $isEnrolled || $isVerifiedPaid;
+        }
+
+        return false;
     }
 }

@@ -34,10 +34,17 @@
                                 <a href="{{ route('courses.show', $course) }}" class="block w-full py-2.5 px-4 bg-indigo-50 text-indigo-700 font-semibold rounded-xl text-center hover:bg-indigo-100 transition-colors shadow-sm text-sm">
                                     Continue Learning
                                 </a>
-                                <a href="{{ route('courses.certificate', $course) }}" target="_blank" class="block w-full py-2 px-4 bg-emerald-50 text-emerald-700 font-semibold rounded-xl text-center hover:bg-emerald-100 transition-colors shadow-sm text-xs flex items-center justify-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
-                                    Digital Certificate
-                                </a>
+                                @if($course->isCertificateAvailableFor(auth()->user()))
+                                    <a href="{{ route('courses.certificate', $course) }}" target="_blank" class="block w-full py-2 px-4 bg-emerald-50 text-emerald-700 font-semibold rounded-xl text-center hover:bg-emerald-100 transition-colors shadow-sm text-xs flex items-center justify-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                                        Digital Certificate
+                                    </a>
+                                @else
+                                    <div class="w-full py-2 px-3 bg-slate-50 text-slate-400 font-medium rounded-xl text-center text-xs flex items-center justify-center gap-1.5 border border-slate-100 cursor-not-allowed select-none" title="Certificate pending administrative release upon cohort evaluation">
+                                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                        <span>Certificate Pending Release</span>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

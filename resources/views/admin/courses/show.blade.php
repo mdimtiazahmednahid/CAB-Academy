@@ -12,6 +12,17 @@
         @else
             <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Draft</span>
         @endif
+        @if($course->certificate_enabled)
+            <span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs font-medium flex items-center gap-1">
+                <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Certificates Released
+            </span>
+        @else
+            <span class="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs font-medium flex items-center gap-1" title="Digital certificates are hidden from students until released">
+                <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                Certificates Locked
+            </span>
+        @endif
     </div>
     <div class="flex gap-2">
         <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm">
@@ -209,6 +220,7 @@
                         <th class="px-6 py-4 font-medium">Student</th>
                         <th class="px-6 py-4 font-medium">Email Status</th>
                         <th class="px-6 py-4 font-medium">Enrolled On</th>
+                        <th class="px-6 py-4 font-medium text-right">Certificate Status & Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -235,10 +247,45 @@
                             <td class="px-6 py-4 text-sm text-gray-500">
                                 {{ $student->pivot->created_at->format('M d, Y') }}
                             </td>
+                            <td class="px-6 py-4 text-right">
+                                @php
+                                    $studentCert = $course->certificates->firstWhere('user_id', $student->id);
+                                @endphp
+                                @if($studentCert)
+                                    <div class="inline-flex items-center gap-2 justify-end">
+                                        <a href="{{ route('courses.certificate', $course) }}?as_user={{ $student->id }}" target="_blank" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded font-mono text-[11px] font-bold transition-colors flex items-center gap-1" title="Click to view & print certificate">
+                                            <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            {{ $studentCert->certificate_number }}
+                                        </a>
+                                        <form method="POST" action="{{ route('admin.courses.certificates.revoke', [$course, $student]) }}" class="inline" onsubmit="return confirm('Revoke certificate for {{ $student->name }}?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded text-xs transition-colors" title="Revoke Certificate">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                @else
+                                    <div class="inline-flex items-center gap-2 justify-end">
+                                        @if($course->certificate_enabled)
+                                            <span class="text-[11px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Cohort Unlocked</span>
+                                        @else
+                                            <span class="text-[11px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">Pending Release</span>
+                                        @endif
+                                        <form method="POST" action="{{ route('admin.courses.certificates.issue', [$course, $student]) }}" class="inline">
+                                            @csrf
+                                            <button type="submit" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+                                                <svg class="w-3 h-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                Issue Cert
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-8 text-center text-gray-500">
+                            <td colspan="4" class="px-6 py-8 text-center text-gray-500">
                                 No students enrolled yet.
                             </td>
                         </tr>
@@ -626,6 +673,15 @@
                         }
                     });
                 </script>
+                <div class="p-3.5 bg-emerald-50/80 rounded-xl border border-emerald-200 flex items-center justify-between">
+                    <div>
+                        <label for="edit_certificate_enabled" class="block text-xs font-bold text-emerald-950">Release Digital Certificates to Students</label>
+                        <p class="text-[11px] text-emerald-800 mt-0.5">When checked, enrolled students who completed the course can view and download their official digital certificate.</p>
+                    </div>
+                    <div class="ml-4">
+                        <input type="checkbox" name="certificate_enabled" id="edit_certificate_enabled" value="1" {{ $course->certificate_enabled ? 'checked' : '' }} class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-gray-300">
+                    </div>
+                </div>
                 <div class="flex items-center pt-2">
                     <input type="checkbox" name="is_published" id="is_published" value="1" {{ $course->is_published ? 'checked' : '' }} class="rounded text-primary focus:ring-primary mr-2">
                     <label for="is_published" class="text-sm font-medium text-gray-700">Publish immediately</label>

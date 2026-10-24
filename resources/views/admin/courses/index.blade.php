@@ -181,7 +181,16 @@
                         }
                     });
                 </script>
-                <div class="flex items-center pt-2">
+                <div class="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200 flex items-center justify-between">
+                    <div>
+                        <label for="create_certificate_enabled" class="block text-xs font-bold text-emerald-950">Release Digital Certificates</label>
+                        <p class="text-[11px] text-emerald-800 mt-0.5">Allow enrolled students to download their certificate.</p>
+                    </div>
+                    <div class="ml-4">
+                        <input type="checkbox" name="certificate_enabled" id="create_certificate_enabled" value="1" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-gray-300">
+                    </div>
+                </div>
+                <div class="flex items-center pt-1">
                     <input type="checkbox" name="is_published" id="is_published" value="1" class="rounded text-primary focus:ring-primary mr-2">
                     <label for="is_published" class="text-sm font-medium text-gray-700">Publish immediately</label>
                 </div>

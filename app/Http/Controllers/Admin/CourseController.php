@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Section;
 use App\Models\Lesson;
 use App\Models\User;
+use App\Models\Certificate;
 use App\Notifications\NewCourseNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -41,10 +42,12 @@ class CourseController extends Controller
             'cover_image_base64' => 'nullable|string',
             'level' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
-            'instructor_id' => 'nullable|exists:users,id'
+            'instructor_id' => 'nullable|exists:users,id',
+            'certificate_enabled' => 'nullable|boolean'
         ]);
         
         $data['is_published'] = $request->has('is_published');
+        $data['certificate_enabled'] = $request->boolean('certificate_enabled');
         $data['price'] = $data['price'] ?? 0.00;
 
         if (auth()->user()->role === 'instructor') {
@@ -92,7 +95,7 @@ class CourseController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $course->load(['sections.lessons', 'students', 'payments.user', 'payments.paymentMethod']);
+        $course->load(['sections.lessons', 'students', 'payments.user', 'payments.paymentMethod', 'certificates']);
         $instructors = \App\Models\User::whereIn('role', ['admin', 'instructor'])->with('instructorProfile')->orderBy('name')->get();
         return view('admin.courses.show', compact('course', 'instructors'));
     }
@@ -158,10 +161,12 @@ class CourseController extends Controller
             'cover_image_base64' => 'nullable|string',
             'level' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
-            'instructor_id' => 'nullable|exists:users,id'
+            'instructor_id' => 'nullable|exists:users,id',
+            'certificate_enabled' => 'nullable|boolean'
         ]);
 
         $data['is_published'] = $request->has('is_published');
+        $data['certificate_enabled'] = $request->boolean('certificate_enabled');
         $data['price'] = $data['price'] ?? 0.00;
 
         if (auth()->user()->role === 'instructor' && !auth()->user()->isAdmin()) {
@@ -255,5 +260,17 @@ class CourseController extends Controller
     {
         $material->delete();
         return back()->with('success', 'Material deleted successfully');
+    }
+
+    public function issueCertificate(Course $course, User $student)
+    {
+        Certificate::generateFor($student, $course);
+        return back()->with('success', "Official digital certificate issued for {$student->name}.");
+    }
+
+    public function revokeCertificate(Course $course, User $student)
+    {
+        Certificate::where('user_id', $student->id)->where('course_id', $course->id)->delete();
+        return back()->with('success', "Certificate revoked for {$student->name}.");
     }
 }

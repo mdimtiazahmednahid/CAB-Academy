@@ -199,6 +199,10 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::post('/courses/{course}/materials', [AdminCourseController::class, 'storeMaterial'])->name('admin.courses.materials.store');
     Route::delete('/courses/{course}/materials/{material}', [AdminCourseController::class, 'destroyMaterial'])->name('admin.courses.materials.destroy');
 
+    // Certificate Issuance & Revocation for Students
+    Route::post('/courses/{course}/students/{student}/certificate', [AdminCourseController::class, 'issueCertificate'])->name('admin.courses.certificates.issue');
+    Route::delete('/courses/{course}/students/{student}/certificate', [AdminCourseController::class, 'revokeCertificate'])->name('admin.courses.certificates.revoke');
+
     // Quizzes
     Route::post('/courses/{course}/quizzes', [AdminQuizController::class, 'store'])->name('admin.courses.quizzes.store');
     Route::match(['put', 'post'], '/courses/{course}/quizzes/{quiz}', [AdminQuizController::class, 'update'])->name('admin.courses.quizzes.update');
