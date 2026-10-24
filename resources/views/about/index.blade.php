@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'About CAB Academy - Institutional Excellence & Trade Leadership')
+@section('meta_description', 'Learn about CAB Academy, Bangladesh\'s premier executive certification institute in commercial banking, supply chain operations, and international trade law.')
+@section('canonical_url', route('about.index'))
 
 @section('content')
 <div class="bg-gradient-to-b from-white via-[#f8fafc] to-[#f2f4f7] py-12 lg:py-16">

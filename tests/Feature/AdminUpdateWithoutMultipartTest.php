@@ -8,6 +8,8 @@ use App\Models\Course;
 use App\Models\Instructor;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdminUpdateWithoutMultipartTest extends TestCase
@@ -208,5 +210,61 @@ class AdminUpdateWithoutMultipartTest extends TestCase
         $response->assertSee('Distinguished Faculty &amp; Industry Fellows', false);
         $response->assertSee('Distinguished Senior Fellow Test');
         $response->assertSee('Executive Director, Port Operations');
+    }
+
+    public function test_admin_can_upload_course_cover_via_multipart_file(): void
+    {
+        Storage::fake('public');
+
+        $course = Course::create([
+            'title' => 'Course For Multipart Test',
+            'price' => 2500,
+        ]);
+
+        $file = UploadedFile::fake()->image('cover_masterclass.jpg', 1200, 800);
+
+        $response = $this->actingAs($this->admin)->post(route('admin.courses.update', $course), [
+            'title' => 'Course For Multipart Test Updated',
+            'price' => 3000,
+            'cover_image' => $file,
+        ]);
+
+        $response->assertSessionHas('success');
+        $course->refresh();
+
+        $this->assertNotNull($course->cover_image);
+        $this->assertStringStartsWith('course_covers/', $course->cover_image);
+        Storage::disk('public')->assertExists($course->cover_image);
+    }
+
+    public function test_admin_can_upload_instructor_avatar_via_multipart_file(): void
+    {
+        Storage::fake('public');
+
+        $instructor = Instructor::create([
+            'name' => 'Faculty Fellow Multipart',
+            'title' => 'Customs Advisor',
+            'expertise' => 'Trade Finance',
+            'is_active' => true,
+            'order' => 1,
+        ]);
+
+        $file = UploadedFile::fake()->image('faculty_headshot.png', 400, 400);
+
+        $response = $this->actingAs($this->admin)->post(route('admin.instructors.update', $instructor), [
+            'name' => 'Faculty Fellow Multipart Updated',
+            'title' => 'Senior Customs Advisor',
+            'expertise' => 'Trade Finance & Compliance',
+            'avatar_file' => $file,
+            'is_active' => '1',
+            'order' => 1,
+        ]);
+
+        $response->assertRedirect(route('admin.instructors.index'));
+        $instructor->refresh();
+
+        $this->assertNotNull($instructor->avatar);
+        $this->assertStringStartsWith('instructors/', $instructor->avatar);
+        Storage::disk('public')->assertExists($instructor->avatar);
     }
 }

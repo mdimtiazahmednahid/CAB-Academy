@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', ($categoryTitle ?? 'Export - Import'))
+@section('meta_description', 'Explore CAB Academy\'s executive training programs in ' . ($categoryTitle ?? 'Commercial Banking and Export-Import') . '. Industry-led practical curriculum with verified professional certification in Dhaka, Bangladesh.')
+@section('canonical_url', request()->url())
 
 @section('content')
 <div>

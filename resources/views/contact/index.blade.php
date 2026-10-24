@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'Contact Us & Corporate Training Hub')
+@section('meta_description', 'Contact CAB Academy campus in Mirpur-Pallabi, Dhaka. Official hotlines, corporate training inquiries, admissions counseling, and WhatsApp support.')
+@section('canonical_url', route('contact.index'))
 
 @section('content')
 <div class="bg-gradient-to-b from-white via-[#f8fafc] to-[#f2f4f7] py-12 lg:py-16">

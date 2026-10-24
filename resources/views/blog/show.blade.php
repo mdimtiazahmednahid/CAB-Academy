@@ -1,6 +1,73 @@
 @extends('layouts.public')
 
 @section('title', $post->title)
+@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($post->meta_description ?: $post->excerpt ?: $post->content), 160))
+@section('canonical_url', route('blog.show', $post->slug))
+@section('og_image', $post->featured_image_url)
+@section('og_title', $post->title . ' - CAB Academy')
+@section('og_type', 'article')
+
+@section('schema')
+@php
+    $blogSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BlogPosting',
+        'headline' => $post->title,
+        'description' => \Illuminate\Support\Str::limit(strip_tags($post->excerpt ?: $post->content), 200),
+        'image' => $post->featured_image_url,
+        'datePublished' => $post->published_at ? $post->published_at->toISOString() : $post->created_at->toISOString(),
+        'dateModified' => $post->updated_at ? $post->updated_at->toISOString() : now()->toISOString(),
+        'author' => [
+            '@type' => 'Person',
+            'name' => $post->author_name ?: 'CAB Academy Editorial Team',
+            'jobTitle' => $post->author_title ?: 'Faculty & Industry Specialist',
+        ],
+        'publisher' => [
+            '@type' => 'EducationalOrganization',
+            'name' => 'CAB Academy',
+            'logo' => [
+                '@type' => 'ImageObject',
+                'url' => asset('images/logo.png'),
+            ],
+        ],
+        'mainEntityOfPage' => [
+            '@type' => 'WebPage',
+            '@id' => route('blog.show', $post->slug),
+        ],
+    ];
+
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            [
+                '@type' => 'ListItem',
+                'position' => 1,
+                'name' => 'Home',
+                'item' => url('/'),
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 2,
+                'name' => 'Blog & Insights',
+                'item' => route('blog.index'),
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 3,
+                'name' => $post->title,
+                'item' => route('blog.show', $post->slug),
+            ],
+        ],
+    ];
+@endphp
+<script type="application/ld+json">
+{!! json_encode($blogSchema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+@endsection
 
 @section('content')
 <div class="bg-[#f2f4f7] py-10">

@@ -1,2 +1,74 @@
 User-agent: *
-Disallow:
+
+# ==============================================================================
+# SENSITIVE & PRIVATE DIRECTORIES (STRICTLY DISALLOWED FROM SEARCH ENGINE INDEXING)
+# ==============================================================================
+# Administrative & Governance Desks
+Disallow: /admin/
+Disallow: /admin
+
+# Authenticated Student Dashboard & User Portals
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /settings
+Disallow: /notifications
+Disallow: /onboarding
+Disallow: /performance
+
+# Authentication, Credentials & Verification Routes
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /password/
+Disallow: /verify-email
+
+# User Interactive Submissions & Personal Data
+Disallow: /feed
+Disallow: /community
+Disallow: /wishlist
+
+# Sensitive Course Curriculum & Learning Assets (Restricted to Enrolled Students)
+Disallow: /courses/*/lessons/
+Disallow: /courses/*/quizzes/
+Disallow: /courses/*/checkout
+Disallow: /courses/*/certificate
+Disallow: /payments/
+
+# Internal Utilities, API & Server Endpoints
+Disallow: /api/
+Disallow: /reset-db
+Disallow: /*.json$
+Disallow: /*?*token=
+Disallow: /*?*auth=
+Disallow: /*?*session=
+
+# ==============================================================================
+# PUBLIC, SEARCH-OPTIMIZED AREAS (EXPLICITLY ALLOWED FOR MAXIMUM CRAWL VELOCITY)
+# ==============================================================================
+Allow: /
+Allow: /catalog
+Allow: /courses
+Allow: /category/
+Allow: /blog
+Allow: /blog/*
+Allow: /instructors
+Allow: /faculty
+Allow: /jobs
+Allow: /careers
+Allow: /about
+Allow: /contact
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /refund-policy
+Allow: /verify-certificate/
+Allow: /build/
+Allow: /images/
+Allow: /storage/
+Allow: /uploads/
+
+# ==============================================================================
+# SITEMAP SPECIFICATION
+# ==============================================================================
+Sitemap: http://127.0.0.1:8001/sitemap.xml
+Sitemap: https://cabacademybd.com/sitemap.xml

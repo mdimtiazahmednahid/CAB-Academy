@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'Privacy Policy - CAB Academy')
+@section('meta_description', 'Privacy Policy and Student Data Protection Charter at CAB Academy. Compliance with data security and personal privacy regulations.')
+@section('canonical_url', route('legal.privacy'))
 
 @section('content')
 <div class="bg-[#f2f4f7] py-12 lg:py-16">

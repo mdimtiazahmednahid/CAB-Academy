@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'Insights & Knowledge Hub')
+@section('meta_description', 'Official CAB Academy Blog & Trade Knowledge Hub. In-depth research papers, LC operational guides, HS code updates, and NBR customs gazettes.')
+@section('canonical_url', route('blog.index'))
 
 @section('content')
 <div>

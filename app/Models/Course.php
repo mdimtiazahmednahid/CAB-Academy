@@ -19,6 +19,8 @@ class Course extends Model
         'duration',
         'start_date',
         'venue',
+        'batch',
+        'show_batch',
         'target_audience',
         'price',
         'level',
@@ -33,6 +35,7 @@ class Course extends Model
         'price' => 'decimal:2',
         'is_published' => 'boolean',
         'certificate_enabled' => 'boolean',
+        'show_batch' => 'boolean',
     ];
 
     public function scopePublished($query)

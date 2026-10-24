@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'Public Credential Verification Registry - CAB Academy')
+@section('meta_description', 'Public Credential Verification Registry at CAB Academy. Verify the authenticity of professional trade certificates and graduate credentials.')
+@section('canonical_url', url()->current())
 
 @section('content')
 <div class="bg-gradient-to-b from-white via-[#f8fafc] to-[#f2f4f7] py-12 lg:py-20">

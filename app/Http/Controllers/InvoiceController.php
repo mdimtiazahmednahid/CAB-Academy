@@ -14,7 +14,7 @@ class InvoiceController extends Controller
     {
         $user = auth()->user();
 
-        if ($payment->user_id !== $user->id && !in_array($user->role, ['admin', 'super_admin'])) {
+        if ($payment->user_id !== $user->id && !$user->isAdmin()) {
             abort(403, 'Unauthorized access to this payment receipt.');
         }
 

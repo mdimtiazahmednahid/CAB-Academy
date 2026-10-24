@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'Distinguished Faculty & Industry Fellows')
+@section('meta_description', 'Meet CAB Academy\'s veteran faculty, C-suite executives, customs specialists, and international banking advisors delivering executive training programs in Bangladesh.')
+@section('canonical_url', route('instructors.index'))
 
 @section('content')
 <div>

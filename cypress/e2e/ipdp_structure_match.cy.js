@@ -137,8 +137,8 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
             cy.get('h2').should('contain.text', 'Certificate Course');
             cy.contains('View All Certificate Courses').should('be.visible');
             cy.get('article.group').should('have.length.at.least', 1);
-            // Verify batch badge
-            cy.contains('BATCH').should('be.visible');
+            // Verify course card presence
+            cy.get('article.group').first().should('be.visible');
         });
 
         // Right: Day Long Course (Light Peach Box)

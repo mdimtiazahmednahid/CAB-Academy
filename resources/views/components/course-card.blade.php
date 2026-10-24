@@ -35,13 +35,15 @@
             </button>
         </div>
 
-        <!-- Batch Scarcity Badge: Top-Right (Minimalist Live Pill) -->
-        <div class="absolute top-2.5 right-2.5 z-10">
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white text-[9px] font-black tracking-wider uppercase shadow-md border border-white/20 backdrop-blur-md">
-                <span class="w-1 h-1 rounded-full bg-white animate-ping"></span>
-                <span>{{ $course->batch ?? ($course->id ? ($course->id * 23 + 12) . 'th BATCH' : '105th BATCH') }}</span>
-            </span>
-        </div>
+        @if(!empty($course->batch) && $course->show_batch)
+            <!-- Batch Scarcity Badge: Top-Right (Shown only when enabled by admin) -->
+            <div class="absolute top-2.5 right-2.5 z-10">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white text-[9px] font-black tracking-wider uppercase shadow-md border border-white/20 backdrop-blur-md">
+                    <span class="w-1 h-1 rounded-full bg-white animate-ping"></span>
+                    <span>{{ $course->batch }}</span>
+                </span>
+            </div>
+        @endif
 
         <!-- Course Price Placement: Bottom-Left on Image with compact glass shield -->
         <div class="absolute left-0 bottom-0 z-10 bg-gradient-to-r from-[#020b18]/95 via-[#041536]/90 to-[#072152]/85 backdrop-blur-md text-white border-t border-r border-white/20 px-2.5 sm:px-3 py-1 rounded-tr-xl shadow-lg flex items-center gap-1.5 pointer-events-none">
@@ -149,7 +151,7 @@
                     title: '{{ addslashes($course->title) }}', 
                     price: '{{ number_format($course->price, 2) }}', 
                     rawPrice: {{ $course->price }}, 
-                    batch: '{{ $course->batch ?? '105th BATCH' }}', 
+                    batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
                     venue: 'Interactive Live Zoom Masterclass' 
                 })"
                 class="btn-ipdp-primary w-full py-3 sm:py-3.5 min-h-[46px] px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase shadow-[0_4px_16px_rgba(195,1,2,0.32)] hover:shadow-[0_8px_24px_rgba(195,1,2,0.48)] flex items-center justify-center gap-2 cursor-pointer group/btn transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center"

@@ -151,4 +151,40 @@ class CertificateAndInvoiceTest extends TestCase
         $response->assertSee('TXN99887766');
         $response->assertSee($course->title);
     }
+
+    public function test_batch_number_is_hidden_by_default_and_only_shown_when_admin_enables_it()
+    {
+        $admin = User::where('role', 'admin')->first();
+        $course = Course::where('is_published', true)->first();
+        $course->update([
+            'batch' => '205th Executive Batch',
+            'show_batch' => false,
+            'certificate_enabled' => true,
+        ]);
+
+        // 1. When show_batch is false, batch is hidden from course show and certificate
+        $showRes = $this->get("/courses/{$course->id}");
+        $showRes->assertDontSee('205th Executive Batch');
+
+        $certRes = $this->actingAs($admin)->get("/courses/{$course->id}/certificate");
+        $certRes->assertDontSee('205th Executive Batch');
+
+        // 2. Admin enables show_batch via course update
+        $updateRes = $this->actingAs($admin)->put("/admin/courses/{$course->id}", [
+            'title' => $course->title,
+            'batch' => '205th Executive Batch',
+            'show_batch' => 1,
+            'certificate_enabled' => 1,
+            'is_published' => 1,
+        ]);
+        $updateRes->assertSessionHas('success');
+        $this->assertTrue((bool)$course->fresh()->show_batch);
+
+        // 3. When show_batch is true, batch is visible on course page and certificate
+        $showResAfter = $this->get("/courses/{$course->id}");
+        $showResAfter->assertSee('205th Executive Batch');
+
+        $certResAfter = $this->actingAs($admin)->get("/courses/{$course->id}/certificate");
+        $certResAfter->assertSee('205th Executive Batch');
+    }
 }

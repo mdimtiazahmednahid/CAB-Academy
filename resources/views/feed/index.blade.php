@@ -2,6 +2,7 @@
 
 @section('title', 'Community Feed & Blogs')
 @section('header_title', 'Feed')
+@section('robots', 'noindex, nofollow, noarchive, nosnippet')
 
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6 pb-12">

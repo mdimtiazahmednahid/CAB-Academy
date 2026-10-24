@@ -23,7 +23,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.instructors.store') }}" method="POST" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-6">
+    <form action="{{ route('admin.instructors.store') }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-6">
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -78,7 +78,7 @@
                 <div class="flex-1 w-full space-y-3">
                     <div>
                         <label class="block text-xs font-semibold text-gray-600 mb-1">Choose Picture from Computer</label>
-                        <input type="file" id="create_avatar_file_input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#041536] file:text-white hover:file:bg-[#c30102] file:cursor-pointer cursor-pointer border border-gray-300 rounded-xl p-1 bg-white">
+                        <input type="file" id="create_avatar_file_input" name="avatar_file" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#041536] file:text-white hover:file:bg-[#c30102] file:cursor-pointer cursor-pointer border border-gray-300 rounded-xl p-1 bg-white">
                         <input type="hidden" name="avatar_base64" id="create_avatar_base64_input">
                     </div>
 

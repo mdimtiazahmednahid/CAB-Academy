@@ -14,7 +14,7 @@
             courseTitle: '',
             coursePrice: '0.00',
             courseRawPrice: 0,
-            courseBatch: '105th BATCH',
+            courseBatch: '',
             courseVenue: 'Mirpur-Pallabi Campus & Online Zoom',
             copied: false,
             
@@ -32,7 +32,7 @@
                 this.courseTitle = data.title;
                 this.coursePrice = data.price;
                 this.courseRawPrice = data.rawPrice || 0;
-                this.courseBatch = data.batch || '105th BATCH';
+                this.courseBatch = data.batch || '';
                 this.courseVenue = data.venue || 'Mirpur-Pallabi Campus & Online Zoom';
                 this.step = 1;
                 this.isSuccess = false;
@@ -157,9 +157,11 @@
             </button>
 
             <div class="flex items-center gap-2 mb-2">
-                <span class="px-2.5 py-0.5 rounded bg-[#c30102] text-white text-[10px] font-black tracking-wider uppercase shadow">
-                    <span x-text="courseBatch"></span>
-                </span>
+                <template x-if="courseBatch">
+                    <span class="px-2.5 py-0.5 rounded bg-[#c30102] text-white text-[10px] font-black tracking-wider uppercase shadow">
+                        <span x-text="courseBatch"></span>
+                    </span>
+                </template>
                 <span class="text-xs text-[#10b981] font-semibold flex items-center gap-1">
                     <i class="fas fa-bolt text-xs"></i> 30-Second Express Enroll
                 </span>
@@ -369,7 +371,7 @@
                 <div class="pt-2 border-t border-gray-100 text-center">
                     <p class="text-[11px] text-gray-500 mb-2">Prefer direct phone or WhatsApp assistance?</p>
                     <a 
-                        :href="'https://wa.me/8801917054664?text=' + encodeURIComponent('Hello CAB Academy, I want to reserve my seat for: ' + courseTitle + ' (' + courseBatch + '). My name is: ' + name)"
+                        :href="'https://wa.me/8801917054664?text=' + encodeURIComponent('Hello CAB Academy, I want to reserve my seat for: ' + courseTitle + (courseBatch ? ' (' + courseBatch + ')' : '') + '. My name is: ' + name)"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="inline-flex items-center justify-center gap-2 text-xs font-bold text-[#10b981] hover:text-[#059669] hover:underline"

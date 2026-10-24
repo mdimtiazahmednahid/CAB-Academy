@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'Terms of Service - CAB Academy')
+@section('meta_description', 'Terms of Service, Enrollment Agreement, and Institutional Policies for students and corporate trainees at CAB Academy.')
+@section('canonical_url', route('legal.terms'))
 
 @section('content')
 <div class="bg-[#f2f4f7] py-12 lg:py-16">

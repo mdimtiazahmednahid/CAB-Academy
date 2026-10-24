@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'Corporate Career & Placement Opportunities | CAB Academy')
+@section('meta_description', 'Discover verified corporate career openings, export-import manager roles, supply chain positions, and executive placements at CAB Academy.')
+@section('canonical_url', route('jobs.index'))
 
 @section('content')
 <div>

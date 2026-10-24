@@ -15,7 +15,7 @@ class CertificateController extends Controller
     public function show(Course $course, Request $request)
     {
         $currentUser = auth()->user();
-        $isActualAdmin = in_array($currentUser->role, ['admin', 'super_admin']);
+        $isActualAdmin = $currentUser->isAdmin();
 
         // Allow administrator to inspect or print certificate for a specific student (?as_user=ID)
         $user = $currentUser;

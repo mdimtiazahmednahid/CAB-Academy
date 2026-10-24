@@ -38,7 +38,7 @@ class InstructorController extends Controller
             'title' => 'required|string|max:255',
             'expertise' => 'required|string|max:255',
             'avatar' => 'nullable|string|max:500',
-            'avatar_file' => 'nullable|image|max:5120',
+            'avatar_file' => 'nullable|image|max:10240',
             'avatar_base64' => 'nullable|string',
             'bio' => 'nullable|string',
             'email' => 'nullable|email|max:255',
@@ -53,6 +53,11 @@ class InstructorController extends Controller
 
         if ($request->hasFile('avatar_file')) {
             $path = $request->file('avatar_file')->store('instructors', 'public');
+            try {
+                if (is_dir(public_path('storage/instructors')) && file_exists(public_path('uploads/' . $path))) {
+                    @copy(public_path('uploads/' . $path), public_path('storage/' . $path));
+                }
+            } catch (\Throwable $e) {}
             $validated['avatar'] = $path;
         } elseif ($request->filled('avatar_base64')) {
             $data = $request->input('avatar_base64');
@@ -146,7 +151,7 @@ class InstructorController extends Controller
             'title' => 'required|string|max:255',
             'expertise' => 'required|string|max:255',
             'avatar' => 'nullable|string|max:500',
-            'avatar_file' => 'nullable|image|max:5120',
+            'avatar_file' => 'nullable|image|max:10240',
             'avatar_base64' => 'nullable|string',
             'bio' => 'nullable|string',
             'email' => 'nullable|email|max:255',
@@ -158,6 +163,11 @@ class InstructorController extends Controller
 
         if ($request->hasFile('avatar_file')) {
             $path = $request->file('avatar_file')->store('instructors', 'public');
+            try {
+                if (is_dir(public_path('storage/instructors')) && file_exists(public_path('uploads/' . $path))) {
+                    @copy(public_path('uploads/' . $path), public_path('storage/' . $path));
+                }
+            } catch (\Throwable $e) {}
             $validated['avatar'] = $path;
         } elseif ($request->filled('avatar_base64')) {
             $data = $request->input('avatar_base64');

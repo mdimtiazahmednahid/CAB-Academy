@@ -8,6 +8,85 @@
     <title>@yield('title', 'Course Catalog') - {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
     <link rel="icon" href="{{ asset('images/logo.png') }}">
 
+    <!-- Canonical URL -->
+    <link rel="canonical" href="@yield('canonical_url', url()->current())">
+
+    <!-- Search Engine Indexing & Crawl Directives -->
+    <meta name="robots" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
+    <meta name="googlebot" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
+    <meta name="bingbot" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
+
+    <!-- Meta Description & Keywords -->
+    <meta name="description" content="@yield('meta_description', 'CAB Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import (EXIM) Procedures, Letter of Credit (LC) Operations, Customs Clearance, and Supply Chain Management in Dhaka.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'Commercial Banking course Dhaka, Export Import training Bangladesh, Letter of Credit LC course Dhaka, Customs clearance training NBR, Supply chain certification Dhaka, professional training Mirpur Pallabi, CAB Academy')">
+    <meta name="author" content="CAB Academy">
+
+    <!-- Geo & Local SEO Tags (Dhaka, Bangladesh) -->
+    <meta name="geo.region" content="BD-13">
+    <meta name="geo.placename" content="Dhaka, Bangladesh">
+    <meta name="geo.position" content="23.8223;90.3654">
+    <meta name="ICBM" content="23.8223, 90.3654">
+
+    <!-- Open Graph (Facebook, LinkedIn, Social Previews) -->
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:site_name" content="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="@yield('og_title', View::hasSection('title') ? View::getSection('title') . ' - CAB Academy' : 'CAB Academy | Commercial Banking & Trade Training')">
+    <meta property="og:description" content="@yield('meta_description', 'CAB Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
+    <meta property="og:url" content="@yield('canonical_url', url()->current())">
+    <meta property="og:image" content="@yield('og_image', asset('images/logo.png'))">
+    <meta property="og:image:alt" content="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} Logo">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('og_title', View::hasSection('title') ? View::getSection('title') . ' - CAB Academy' : 'CAB Academy | Commercial Banking & Trade Training')">
+    <meta name="twitter:description" content="@yield('meta_description', 'CAB Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
+    <meta name="twitter:image" content="@yield('og_image', asset('images/logo.png'))">
+
+    <!-- Schema.org EducationalOrganization JSON-LD -->
+    @php
+        $orgSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'EducationalOrganization',
+            'name' => 'CAB Academy',
+            'alternateName' => 'Commercial Academy Bangladesh',
+            'url' => url('/'),
+            'logo' => asset('images/logo.png'),
+            'image' => asset('images/logo.png'),
+            'description' => "CAB Academy is Bangladesh's premier executive training and professional certification academy for commercial banking, export-import procedures, LC operations, and supply chain management.",
+            'telephone' => '+8801917054664',
+            'email' => 'info@cab-academy.com',
+            'address' => [
+                '@type' => 'PostalAddress',
+                'streetAddress' => 'House 28, Road 2, Block B, Pallabi, Mirpur 12',
+                'addressLocality' => 'Dhaka',
+                'postalCode' => '1216',
+                'addressCountry' => 'BD',
+            ],
+            'geo' => [
+                '@type' => 'GeoCoordinates',
+                'latitude' => 23.8223,
+                'longitude' => 90.3654,
+            ],
+            'sameAs' => [
+                'https://www.facebook.com/cabacademybd',
+                'https://www.linkedin.com/company/cab-academy-bd',
+            ],
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => url('/catalog') . '?q={search_term_string}',
+                ],
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
+    @endphp
+    <script type="application/ld+json">
+    {!! json_encode($orgSchema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    @yield('schema')
+
     <!-- Google Fonts: Inter & Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -434,7 +513,7 @@
         href="https://wa.me/{{ \App\Models\Setting::getVal('contact_whatsapp', '8801917054664') }}" 
         target="_blank" 
         rel="noopener noreferrer" 
-        class="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300"
+        class="fixed bottom-16 sm:bottom-5 right-4 sm:right-5 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300"
         aria-label="Chat on WhatsApp"
         title="Chat on WhatsApp"
     >
@@ -444,7 +523,7 @@
     <!-- Floating Scroll-To-Top Button (Matches Reference Screenshot) -->
     <button 
         onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
-        class="fixed bottom-4 left-4 sm:bottom-5 sm:left-5 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900/80 hover:bg-[#c30102] text-white flex items-center justify-center shadow-lg transition-all duration-300"
+        class="fixed bottom-16 sm:bottom-5 left-4 sm:left-5 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900/80 hover:bg-[#c30102] text-white flex items-center justify-center shadow-lg transition-all duration-300"
         aria-label="Scroll to Top"
         title="Scroll to Top"
     >

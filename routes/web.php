@@ -108,12 +108,16 @@ Route::get('/day-long-course', function () {
     return redirect()->route('catalog.index', ['type' => 'day_long']);
 })->name('catalog.day_long');
 
-// InfinityFree Storage Symlink Workaround: Stream media files dynamically without requiring symlinks
+// InfinityFree Storage & Uploads Workaround: Stream media files dynamically without requiring symlinks
 Route::get('/storage/{path}', function ($path) {
-    // 1. Primary storage path under storage/app/public/
-    $filePath = storage_path("app/public/" . $path);
+    // 1. Check in public/uploads/
+    $filePath = public_path("uploads/" . $path);
     if (!file_exists($filePath) || is_dir($filePath)) {
-        // 2. Fallback checking public/storage/ directory
+        // 2. Primary storage path under storage/app/public/
+        $filePath = storage_path("app/public/" . $path);
+    }
+    if (!file_exists($filePath) || is_dir($filePath)) {
+        // 3. Fallback checking public/storage/ directory
         $filePath = public_path("storage/" . $path);
     }
     if (!file_exists($filePath) || is_dir($filePath)) {
@@ -125,6 +129,181 @@ Route::get('/storage/{path}', function ($path) {
         'Cache-Control' => 'public, max-age=86400',
     ]);
 })->where('path', '.*')->name('storage.stream');
+
+Route::get('/uploads/{path}', function ($path) {
+    $filePath = public_path("uploads/" . $path);
+    if (!file_exists($filePath) || is_dir($filePath)) {
+        $filePath = storage_path("app/public/" . $path);
+    }
+    if (!file_exists($filePath) || is_dir($filePath)) {
+        $filePath = public_path("storage/" . $path);
+    }
+    if (!file_exists($filePath) || is_dir($filePath)) {
+        abort(404);
+    }
+    $mimeType = @mime_content_type($filePath) ?: 'application/octet-stream';
+    return response()->file($filePath, [
+        'Content-Type' => $mimeType,
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('path', '.*')->name('uploads.stream');
+
+// Dynamic Search Engine XML Sitemap (Strictly public, indexable pages only)
+Route::get('/sitemap.xml', function () {
+    $urls = [];
+
+    // 1. Core Landing & Public Discovery Portals (Highest Priority)
+    $urls[] = [
+        'loc' => url('/'),
+        'lastmod' => now()->startOfDay()->toAtomString(),
+        'changefreq' => 'daily',
+        'priority' => '1.0',
+    ];
+    $urls[] = [
+        'loc' => route('catalog.index'),
+        'lastmod' => now()->startOfDay()->toAtomString(),
+        'changefreq' => 'daily',
+        'priority' => '0.9',
+    ];
+    $urls[] = [
+        'loc' => route('courses.index'),
+        'lastmod' => now()->startOfDay()->toAtomString(),
+        'changefreq' => 'daily',
+        'priority' => '0.9',
+    ];
+    $urls[] = [
+        'loc' => route('catalog.certificate'),
+        'lastmod' => now()->startOfWeek()->toAtomString(),
+        'changefreq' => 'weekly',
+        'priority' => '0.8',
+    ];
+    $urls[] = [
+        'loc' => route('catalog.day_long'),
+        'lastmod' => now()->startOfWeek()->toAtomString(),
+        'changefreq' => 'weekly',
+        'priority' => '0.8',
+    ];
+
+    // 2. Published Courses (Only Active, Non-Draft Courses)
+    $courses = \App\Models\Course::where('is_published', true)->get();
+    foreach ($courses as $c) {
+        $urls[] = [
+            'loc' => route('courses.show', $c),
+            'lastmod' => $c->updated_at ? $c->updated_at->toAtomString() : now()->toAtomString(),
+            'changefreq' => 'weekly',
+            'priority' => '0.9',
+        ];
+    }
+
+    // 3. Active Categories
+    $categories = \App\Models\Category::active()->get();
+    if ($categories->isNotEmpty()) {
+        foreach ($categories as $cat) {
+            $urls[] = [
+                'loc' => route('catalog.category', $cat->slug),
+                'lastmod' => $cat->updated_at ? $cat->updated_at->toAtomString() : now()->toAtomString(),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ];
+        }
+    } else {
+        $catNames = \App\Models\Course::where('is_published', true)
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->distinct()
+            ->pluck('category');
+        foreach ($catNames as $cName) {
+            $urls[] = [
+                'loc' => route('catalog.category', \Illuminate\Support\Str::slug($cName)),
+                'lastmod' => now()->startOfWeek()->toAtomString(),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ];
+        }
+    }
+
+    // 4. Executive Faculty & Instructors
+    $urls[] = [
+        'loc' => route('instructors.index'),
+        'lastmod' => now()->startOfMonth()->toAtomString(),
+        'changefreq' => 'monthly',
+        'priority' => '0.7',
+    ];
+    $urls[] = [
+        'loc' => route('faculty.index'),
+        'lastmod' => now()->startOfMonth()->toAtomString(),
+        'changefreq' => 'monthly',
+        'priority' => '0.7',
+    ];
+
+    // 5. Blog & Knowledge Hub Articles (Published Only)
+    $urls[] = [
+        'loc' => route('blog.index'),
+        'lastmod' => now()->startOfDay()->toAtomString(),
+        'changefreq' => 'daily',
+        'priority' => '0.8',
+    ];
+    $blogs = \App\Models\BlogPost::published()->get();
+    foreach ($blogs as $b) {
+        $urls[] = [
+            'loc' => route('blog.show', $b->slug),
+            'lastmod' => $b->updated_at ? $b->updated_at->toAtomString() : now()->toAtomString(),
+            'changefreq' => 'monthly',
+            'priority' => '0.7',
+        ];
+    }
+
+    // 6. Placement & Career Portal
+    $urls[] = [
+        'loc' => route('jobs.index'),
+        'lastmod' => now()->startOfWeek()->toAtomString(),
+        'changefreq' => 'weekly',
+        'priority' => '0.7',
+    ];
+    $urls[] = [
+        'loc' => route('careers.index'),
+        'lastmod' => now()->startOfWeek()->toAtomString(),
+        'changefreq' => 'weekly',
+        'priority' => '0.7',
+    ];
+
+    // 7. Institutional Trust, Legal & Accreditation Pages
+    $urls[] = [
+        'loc' => route('about.index'),
+        'lastmod' => now()->startOfMonth()->toAtomString(),
+        'changefreq' => 'monthly',
+        'priority' => '0.6',
+    ];
+    $urls[] = [
+        'loc' => route('contact.index'),
+        'lastmod' => now()->startOfMonth()->toAtomString(),
+        'changefreq' => 'monthly',
+        'priority' => '0.6',
+    ];
+    $urls[] = [
+        'loc' => route('legal.privacy'),
+        'lastmod' => now()->startOfYear()->toAtomString(),
+        'changefreq' => 'yearly',
+        'priority' => '0.4',
+    ];
+    $urls[] = [
+        'loc' => route('legal.terms'),
+        'lastmod' => now()->startOfYear()->toAtomString(),
+        'changefreq' => 'yearly',
+        'priority' => '0.4',
+    ];
+    $urls[] = [
+        'loc' => route('legal.refund'),
+        'lastmod' => now()->startOfYear()->toAtomString(),
+        'changefreq' => 'yearly',
+        'priority' => '0.4',
+    ];
+
+    return response()
+        ->view('sitemap', compact('urls'))
+        ->header('Content-Type', 'application/xml; charset=utf-8');
+})->name('sitemap.xml');
+
 
 // Public Course Catalog & Category Routes
 Route::get('/catalog', [App\Http\Controllers\CatalogController::class, 'index'])->name('catalog.index');

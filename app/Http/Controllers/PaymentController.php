@@ -76,10 +76,14 @@ class PaymentController extends Controller
                 ['email' => $email],
                 [
                     'name' => $request->name,
+                    'phone' => $request->phone,
                     'password' => Hash::make('cab_' . $request->phone),
                     'role' => 'student',
                 ]
             );
+            if (empty($user->phone) && !empty($request->phone)) {
+                $user->update(['phone' => $request->phone]);
+            }
             Auth::login($user);
         }
 

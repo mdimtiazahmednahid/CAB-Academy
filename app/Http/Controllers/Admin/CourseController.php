@@ -38,16 +38,20 @@ class CourseController extends Controller
             'venue' => 'nullable|string|max:255',
             'target_audience' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
-            'cover_image' => 'nullable|image|max:2048',
+            'cover_image' => 'nullable|image|max:10240',
             'cover_image_base64' => 'nullable|string',
             'level' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
             'instructor_id' => 'nullable|exists:users,id',
-            'certificate_enabled' => 'nullable|boolean'
+            'certificate_enabled' => 'nullable|boolean',
+            'batch' => 'nullable|string|max:100',
+            'show_batch' => 'nullable|boolean'
         ]);
         
         $data['is_published'] = $request->has('is_published');
         $data['certificate_enabled'] = $request->boolean('certificate_enabled');
+        $data['show_batch'] = $request->boolean('show_batch');
+        $data['batch'] = $request->input('batch');
         $data['price'] = $data['price'] ?? 0.00;
 
         if (auth()->user()->role === 'instructor') {
@@ -56,6 +60,11 @@ class CourseController extends Controller
 
         if ($request->hasFile('cover_image')) {
             $data['cover_image'] = $request->file('cover_image')->store('course_covers', 'public');
+            try {
+                if (is_dir(public_path('storage/course_covers')) && file_exists(public_path('uploads/' . $data['cover_image']))) {
+                    @copy(public_path('uploads/' . $data['cover_image']), public_path('storage/' . $data['cover_image']));
+                }
+            } catch (\Throwable $e) {}
         } elseif ($request->filled('cover_image_base64')) {
             $base64 = $request->input('cover_image_base64');
             if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {
@@ -157,16 +166,20 @@ class CourseController extends Controller
             'venue' => 'nullable|string|max:255',
             'target_audience' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
-            'cover_image' => 'nullable|image|max:2048',
+            'cover_image' => 'nullable|image|max:10240',
             'cover_image_base64' => 'nullable|string',
             'level' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
             'instructor_id' => 'nullable|exists:users,id',
-            'certificate_enabled' => 'nullable|boolean'
+            'certificate_enabled' => 'nullable|boolean',
+            'batch' => 'nullable|string|max:100',
+            'show_batch' => 'nullable|boolean'
         ]);
 
         $data['is_published'] = $request->has('is_published');
         $data['certificate_enabled'] = $request->boolean('certificate_enabled');
+        $data['show_batch'] = $request->boolean('show_batch');
+        $data['batch'] = $request->input('batch');
         $data['price'] = $data['price'] ?? 0.00;
 
         if (auth()->user()->role === 'instructor' && !auth()->user()->isAdmin()) {
@@ -175,6 +188,11 @@ class CourseController extends Controller
 
         if ($request->hasFile('cover_image')) {
             $data['cover_image'] = $request->file('cover_image')->store('course_covers', 'public');
+            try {
+                if (is_dir(public_path('storage/course_covers')) && file_exists(public_path('uploads/' . $data['cover_image']))) {
+                    @copy(public_path('uploads/' . $data['cover_image']), public_path('storage/' . $data['cover_image']));
+                }
+            } catch (\Throwable $e) {}
         } elseif ($request->filled('cover_image_base64')) {
             $base64 = $request->input('cover_image_base64');
             if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {

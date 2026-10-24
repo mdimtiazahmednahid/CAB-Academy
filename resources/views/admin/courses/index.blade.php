@@ -89,7 +89,7 @@
             <h3 class="text-lg font-bold">New Course</h3>
             <button onclick="document.getElementById('createModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
-        <form method="POST" action="{{ route('admin.courses') }}">
+        <form method="POST" action="{{ route('admin.courses') }}" enctype="multipart/form-data">
             @csrf
             <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
                 <div>
@@ -122,6 +122,18 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Venue / Format</label>
                         <input type="text" name="venue" placeholder="e.g. Online (Zoom) / Banani" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Batch / Cohort (Optional)</label>
+                        <input type="text" name="batch" placeholder="e.g. 105th Batch" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm">
+                    </div>
+                    <div class="flex items-end pb-1">
+                        <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-lg border border-gray-200 bg-gray-50/70 hover:bg-gray-100 transition-colors w-full">
+                            <input type="checkbox" name="show_batch" value="1" class="rounded text-primary focus:ring-primary">
+                            <span class="text-xs font-semibold text-gray-700">Show Batch Publicly</span>
+                        </label>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -161,7 +173,7 @@
                             <img id="create_course_cover_preview" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80" alt="Preview" class="w-full h-full object-cover">
                         </div>
                         <div class="flex-1">
-                            <input type="file" id="create_course_cover_input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:cursor-pointer cursor-pointer border border-gray-300 rounded-lg p-1 bg-white">
+                            <input type="file" id="create_course_cover_input" name="cover_image" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:cursor-pointer cursor-pointer border border-gray-300 rounded-lg p-1 bg-white">
                             <input type="hidden" name="cover_image_base64" id="create_course_cover_base64">
                             <p class="text-[10px] text-gray-400 mt-1">PNG, JPG, WebP (16:10 or 16:9 ratio recommended)</p>
                         </div>

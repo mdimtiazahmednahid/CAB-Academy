@@ -41,12 +41,14 @@ class FrontendController extends Controller
                 'landing_courses_enabled',
                 'landing_blog_enabled',
                 'landing_counseling_enabled',
+                'landing_faculty_enabled',
                 'landing_features_enabled',
                 'landing_jobs_enabled',
             ];
 
             foreach ($toggleKeys as $toggleKey) {
-                $data[$toggleKey] = $request->has($toggleKey) ? '1' : '0';
+                $val = $request->input($toggleKey);
+                $data[$toggleKey] = ($val === '1' || $val === 1 || $val === true) ? '1' : '0';
             }
         }
 

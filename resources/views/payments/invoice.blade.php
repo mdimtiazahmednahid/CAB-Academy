@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <title>Tuition Receipt & Invoice #INV-CAB-{{ str_pad($payment->id, 5, '0', STR_PAD_LEFT) }} - CAB Academy</title>
     <link rel="icon" href="{{ asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -37,9 +37,9 @@ class AccountingController extends Controller
         $paymentMethodStats = DB::table('payments')
             ->leftJoin('payment_methods', 'payments.payment_method_id', '=', 'payment_methods.id')
             ->select(
-                DB::raw('COALESCE(payment_methods.provider_name, "Campus Cash / Direct") as provider'),
+                DB::raw("COALESCE(payment_methods.provider_name, 'Campus Cash / Direct') as provider"),
                 DB::raw('COUNT(payments.id) as total_count'),
-                DB::raw('SUM(CASE WHEN payments.status = "verified" THEN payments.amount ELSE 0 END) as realized_amount')
+                DB::raw("SUM(CASE WHEN payments.status = 'verified' THEN payments.amount ELSE 0 END) as realized_amount")
             )
             ->groupBy('provider')
             ->get();

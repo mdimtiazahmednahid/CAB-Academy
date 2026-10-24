@@ -1,6 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'Saved Courses & Wishlist - CAB Academy')
+@section('robots', 'noindex, nofollow, noarchive, nosnippet')
 
 @section('content')
 <div class="bg-gradient-to-b from-white via-[#f8fafc] to-[#f2f4f7] py-12 lg:py-16 min-h-[70vh]">

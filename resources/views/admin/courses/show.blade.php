@@ -26,8 +26,8 @@
     </div>
     <div class="flex gap-2">
         <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm">
-            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            <span>⚙️ Course Settings & Cover Picture</span>
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <span>Course Settings</span>
         </button>
         <button onclick="document.getElementById('quizModal').classList.remove('hidden')" class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:opacity-90">
             + Add Quiz
@@ -550,6 +550,7 @@
     }
     function openLessonModal(sectionId) {
         const form = document.getElementById('lessonForm');
+        form.reset();
         // Set the action URL dynamically
         form.action = `/admin/courses/{{ $course->id }}/sections/${sectionId}/lessons`;
         document.getElementById('lessonModal').classList.remove('hidden');
@@ -573,13 +574,23 @@
 </script>
 
 <!-- Edit Course Modal -->
-<div id="editCourseModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+<div id="editCourseModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 {{ $errors->any() ? '' : 'hidden' }}">
     <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold">Course Settings</h3>
             <button onclick="document.getElementById('editCourseModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
-        <form method="POST" action="{{ route('admin.courses.update', $course) }}">
+        @if($errors->any())
+            <div class="mb-4 p-3.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs space-y-1">
+                <div class="font-bold">Please correct the following errors:</div>
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form method="POST" action="{{ route('admin.courses.update', $course) }}" enctype="multipart/form-data">
             @csrf
             <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
                 <div>
@@ -612,6 +623,18 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Venue / Format</label>
                         <input type="text" name="venue" value="{{ $course->venue }}" placeholder="e.g. Online (Zoom) / Banani" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Batch / Cohort (Optional)</label>
+                        <input type="text" name="batch" value="{{ $course->batch }}" placeholder="e.g. 105th Batch" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm">
+                    </div>
+                    <div class="flex items-end pb-1">
+                        <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-lg border border-gray-200 bg-gray-50/70 hover:bg-gray-100 transition-colors w-full">
+                            <input type="checkbox" name="show_batch" value="1" {{ $course->show_batch ? 'checked' : '' }} class="rounded text-primary focus:ring-primary">
+                            <span class="text-xs font-semibold text-gray-700">Show Batch Publicly</span>
+                        </label>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -653,7 +676,7 @@
                             <img id="edit_course_cover_preview" src="{{ $course->cover_image_url }}" alt="Cover" class="w-full h-full object-cover">
                         </div>
                         <div class="flex-1">
-                            <input type="file" id="course_cover_file_input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:cursor-pointer cursor-pointer border border-gray-300 rounded-lg p-1 bg-white">
+                            <input type="file" id="course_cover_file_input" name="cover_image" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:cursor-pointer cursor-pointer border border-gray-300 rounded-lg p-1 bg-white">
                             <input type="hidden" name="cover_image_base64" id="course_cover_image_base64">
                             <p class="text-[10px] text-gray-400 mt-1">PNG, JPG, WebP (16:10 or 16:9 ratio)</p>
                         </div>

@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
-@section('title', 'Home')
+@section('title', 'Executive Training & Professional Certifications')
+@section('meta_description', 'CAB Academy is Bangladesh\'s premier executive certification institute for Commercial Banking, Letter of Credit (LC), Customs Clearance, and Supply Chain Management.')
+@section('canonical_url', url('/'))
 
 @section('content')
 <div>
