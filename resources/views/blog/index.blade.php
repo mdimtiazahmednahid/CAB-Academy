@@ -12,13 +12,8 @@
         <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[#10b981]/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#10b981] text-xs font-black uppercase tracking-wider mb-4 shadow-sm">
-                <i class="fas fa-book-reader text-xs"></i>
-                <span>Executive Research & Regulatory Gazette</span>
-            </div>
-
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3">
-                Insights & Knowledge Hub
+                Insights & Research
             </h1>
             <p class="text-xs sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
                 Industry-standard research, regulatory frameworks, commercial guidelines, and executive insights curated by CAB Academy faculty.
@@ -28,16 +23,6 @@
                 <span class="text-slate-500">/</span>
                 <span class="font-bold text-white underline">Blog & Insights</span>
             </div>
-
-            @if(auth()->check() && auth()->user()->role === 'admin')
-                <div class="mt-6 flex justify-center">
-                    <a href="{{ route('admin.blogs.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 backdrop-blur-md transition-all shadow-sm">
-                        <i class="fas fa-edit text-[#10b981]"></i>
-                        <span>Admin Knowledge Hub Manager</span>
-                        <span class="px-2 py-0.5 rounded-full bg-[#c30102] text-[10px] font-mono">{{ \App\Models\BlogPost::count() }} Total</span>
-                    </a>
-                </div>
-            @endif
         </div>
     </section>
 

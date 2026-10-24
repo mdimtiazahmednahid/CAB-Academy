@@ -50,30 +50,20 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Email Address (Optional)</label>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Email Address</label>
                 <input type="email" name="email" value="{{ old('email') }}" placeholder="instructor@cab-academy.com" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
             </div>
 
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Phone Number (Optional)</label>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Phone Number</label>
                 <input type="text" name="phone" value="{{ old('phone') }}" placeholder="01917-054664" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
             </div>
-        </div>
 
-        <!-- Automatic User Account Provisioning -->
-        <div class="bg-indigo-50/70 p-5 rounded-2xl border border-indigo-100/90 space-y-3">
-            <div class="flex items-center gap-2 text-indigo-900 font-bold text-xs uppercase tracking-wider">
-                <i class="fas fa-user-plus text-indigo-600"></i>
-                <span>Automatic User Account Provisioning</span>
-            </div>
-            <p class="text-xs text-indigo-950/70 leading-relaxed">
-                A unified user account will be automatically created so this faculty member can log in to view enrolled students and sessions.
-            </p>
-            <div class="max-w-md pt-1">
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Initial Login Password (Optional)</label>
-                <input type="password" name="password" placeholder="Default: CabAcademy@2026 if left blank" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536] bg-white">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Password</label>
+                <input type="password" name="password" placeholder="Default: CabAcademy@2026" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
             </div>
         </div>
 

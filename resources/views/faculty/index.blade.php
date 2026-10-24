@@ -12,13 +12,8 @@
         <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[#10b981]/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#10b981] text-xs font-black uppercase tracking-wider mb-4 shadow-sm">
-                <i class="fas fa-user-tie text-xs"></i>
-                <span>Corporate Mentorship & Governance</span>
-            </div>
-
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3">
-                Distinguished Faculty & Fellows
+                Distinguished Faculty
             </h1>
             <p class="text-xs sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
                 Instruction and corporate mentorship led by high-profile trade finance specialists, corporate legal counsels, and senior supply chain directors.

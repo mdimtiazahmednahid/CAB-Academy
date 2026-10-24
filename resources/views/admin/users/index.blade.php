@@ -62,11 +62,6 @@
                                 <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-700' : ($user->role === 'instructor' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700') }}">
                                     {{ ucfirst($user->role) }}
                                 </span>
-                                @if($user->role === 'instructor' && $user->instructorProfile)
-                                    <a href="{{ route('admin.instructors.edit', $user->instructorProfile) }}" class="block text-[11px] text-[#c30102] hover:underline font-bold mt-1">
-                                        Faculty Profile →
-                                    </a>
-                                @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
                                 {{ $user->created_at->format('M d, Y') }}
