@@ -42,9 +42,7 @@
                                 <div class="flex items-center gap-3.5">
                                     <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 shrink-0 bg-slate-100">
                                         @php
-                                            $avatar = $instructor->avatar 
-                                                ? (str_starts_with($instructor->avatar, 'http') || str_starts_with($instructor->avatar, '/') ? asset($instructor->avatar) : asset('storage/' . $instructor->avatar))
-                                                : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
+                                            $avatar = $instructor->avatar_url;
                                         @endphp
                                         <img src="{{ $avatar }}" alt="{{ $instructor->name }}" class="w-full h-full object-cover">
                                     </div>

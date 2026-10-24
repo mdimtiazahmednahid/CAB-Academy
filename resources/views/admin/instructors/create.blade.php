@@ -62,29 +62,50 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Upload Photo</label>
-                <input type="file" id="create_avatar_file_input" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-xl text-sm">
-                <input type="hidden" name="avatar_base64" id="create_avatar_base64_input">
-                <script>
-                    document.getElementById('create_avatar_file_input').addEventListener('change', function(e) {
-                        const file = e.target.files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onload = function(evt) {
-                                document.getElementById('create_avatar_base64_input').value = evt.target.result;
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-                </script>
+        <div class="bg-gray-50/70 p-5 rounded-2xl border border-gray-200/80 space-y-4">
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Instructor Profile Picture</label>
+            <div class="flex flex-col sm:flex-row items-center gap-5">
+                <!-- Avatar Preview -->
+                <div class="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md bg-slate-200 shrink-0 ring-2 ring-gray-200 flex items-center justify-center">
+                    <img id="create_avatar_live_preview" src="https://ui-avatars.com/api/?name=New+Faculty&background=051c45&color=fff" alt="Preview" class="w-full h-full object-cover">
+                </div>
+
+                <div class="flex-1 w-full space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Choose Picture from Computer</label>
+                        <input type="file" id="create_avatar_file_input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#041536] file:text-white hover:file:bg-[#c30102] file:cursor-pointer cursor-pointer border border-gray-300 rounded-xl p-1 bg-white">
+                        <input type="hidden" name="avatar_base64" id="create_avatar_base64_input">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Or Direct Photo URL / Path</label>
+                        <input type="text" name="avatar" id="create_avatar_url_input" value="{{ old('avatar') }}" placeholder="https://images.unsplash.com/... or leave blank" class="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Or Photo URL / Path</label>
-                <input type="text" name="avatar" value="{{ old('avatar') }}" placeholder="https://images.unsplash.com/photo-..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
-            </div>
+            <script>
+                document.getElementById('create_avatar_file_input')?.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(evt) {
+                            document.getElementById('create_avatar_base64_input').value = evt.target.result;
+                            const preview = document.getElementById('create_avatar_live_preview');
+                            if (preview) preview.src = evt.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                document.getElementById('create_avatar_url_input')?.addEventListener('input', function(e) {
+                    const val = e.target.value.trim();
+                    if (val && (val.startsWith('http') || val.startsWith('data:'))) {
+                        const preview = document.getElementById('create_avatar_live_preview');
+                        if (preview) preview.src = val;
+                    }
+                });
+            </script>
         </div>
 
         <div>

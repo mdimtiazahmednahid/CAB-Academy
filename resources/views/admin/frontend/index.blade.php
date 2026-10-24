@@ -38,6 +38,7 @@
           coursesEnabled: {{ ($settings['landing_courses_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
           blogEnabled: {{ ($settings['landing_blog_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
           counselingEnabled: {{ ($settings['landing_counseling_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          facultyEnabled: {{ ($settings['landing_faculty_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
           featuresEnabled: {{ ($settings['landing_features_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
           jobsEnabled: {{ ($settings['landing_jobs_enabled'] ?? '1') == '1' ? 'true' : 'false' }}
       }" 
@@ -111,12 +112,22 @@
                 <span class="w-2 h-2 rounded-full" :class="counselingEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
 
+            <button type="button" @click="activeTab = 'faculty'" 
+                    :class="activeTab === 'faculty' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-user-tie text-sm"></i>
+                    <span>7. Distinguished Faculty</span>
+                </span>
+                <span class="w-2 h-2 rounded-full" :class="facultyEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
+            </button>
+
             <button type="button" @click="activeTab = 'features'" 
                     :class="activeTab === 'features' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-star text-sm"></i>
-                    <span>7. Features (6 Cards)</span>
+                    <span>8. Features (6 Cards)</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="featuresEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
@@ -126,7 +137,7 @@
                     class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-newspaper text-sm"></i>
-                    <span>8. Knowledge Hub</span>
+                    <span>9. Knowledge Hub</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="blogEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
@@ -660,7 +671,51 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- 7. OUR FEATURES (6 CARDS) -->
+            <!-- 7. DISTINGUISHED FACULTY & FELLOWS -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'faculty'" class="space-y-6">
+                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-base">Faculty Showcase Visibility</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Showcase verified executive faculty members dynamically on the home/landing page.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="landing_faculty_enabled" :value="facultyEnabled ? '1' : '0'">
+                        <input type="checkbox" x-model="facultyEnabled" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between border-b pb-4">
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm">Section Headings</h4>
+                            <p class="text-xs text-gray-500">Configure title displayed on the public home page.</p>
+                        </div>
+                        <a href="{{ route('admin.instructors.index') }}" class="px-3.5 py-1.5 bg-[#041536] hover:bg-[#c30102] text-white text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5">
+                            <i class="fas fa-user-plus text-[10px]"></i>
+                            <span>Manage Faculty & Photos →</span>
+                        </a>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Title</label>
+                        <input type="text" name="landing_faculty_title" value="{{ $settings['landing_faculty_title'] ?? 'Distinguished Faculty & Industry Fellows' }}" 
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm font-semibold text-gray-900 focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    </div>
+
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 flex items-start gap-3">
+                        <i class="fas fa-info-circle text-[#041536] mt-0.5 text-sm"></i>
+                        <div>
+                            <span class="font-bold text-gray-900">Dynamic Database Sync:</span>
+                            The landing page automatically showcases all active instructors with their photo, title, and expertise directly from the <a href="{{ route('admin.instructors.index') }}" class="text-[#c30102] font-bold underline hover:text-black">Instructors Directory</a>. Any update to a profile or picture immediately reflects live on the homepage!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 8. OUR FEATURES (6 CARDS) -->
             <!-- ========================================== -->
             <div x-show="activeTab === 'features'" class="space-y-6">
                 

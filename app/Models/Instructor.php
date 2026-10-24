@@ -37,4 +37,16 @@ class Instructor extends Model
     {
         return $this->hasMany(Course::class, 'instructor_id', 'user_id');
     }
+
+    /**
+     * Get fully-qualified avatar image URL with reliable storage prefixing and fallback.
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        $default = 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=051c45&color=fff';
+        if (!$this->avatar) {
+            return $default;
+        }
+        return storage_asset($this->avatar, $default);
+    }
 }

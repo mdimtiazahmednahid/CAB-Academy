@@ -94,4 +94,119 @@ class AdminUpdateWithoutMultipartTest extends TestCase
             'title' => 'Updated Article Title',
         ]);
     }
+
+    public function test_admin_can_create_course_with_base64_cover_image(): void
+    {
+        $dummyImageBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+
+        $response = $this->actingAs($this->admin)->post(route('admin.courses.store'), [
+            'title' => 'Executive Customs Clearance Masterclass',
+            'short_description' => 'Comprehensive customs automation and compliance guide.',
+            'category' => 'customs',
+            'level' => 'Advanced',
+            'price' => 5000,
+            'duration' => '12 Hours',
+            'cover_image_base64' => $dummyImageBase64,
+            'is_published' => '1',
+        ]);
+
+        $response->assertSessionHas('success');
+        $course = Course::where('title', 'Executive Customs Clearance Masterclass')->first();
+        $this->assertNotNull($course);
+        $this->assertNotNull($course->cover_image);
+        $this->assertStringStartsWith('course_covers/', $course->cover_image);
+        $this->assertStringContainsString('/storage/course_covers/', $course->cover_image_url);
+    }
+
+    public function test_admin_can_update_course_with_base64_cover_image_and_instructor(): void
+    {
+        $instructorUser = User::factory()->create([
+            'role' => 'instructor',
+            'name' => 'Dr. Farhana Rahman',
+            'email' => 'farhana@cab-academy.com',
+        ]);
+
+        $course = Course::create([
+            'title' => 'Original Course Title',
+            'slug' => 'original-course-title',
+            'price' => 3000,
+            'is_published' => true,
+        ]);
+
+        $dummyImageBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+
+        $response = $this->actingAs($this->admin)->post(route('admin.courses.update', $course), [
+            'title' => 'Updated Export Logistics Masterclass',
+            'short_description' => 'Updated logistics course syllabus.',
+            'category' => 'export-import',
+            'instructor_id' => $instructorUser->id,
+            'cover_image_base64' => $dummyImageBase64,
+            'is_published' => '1',
+        ]);
+
+        $course->refresh();
+        $this->assertEquals('Updated Export Logistics Masterclass', $course->title);
+        $this->assertEquals($instructorUser->id, $course->instructor_id);
+        $this->assertNotNull($course->cover_image);
+        $this->assertStringStartsWith('course_covers/', $course->cover_image);
+    }
+
+    public function test_admin_instructor_update_syncs_with_linked_user(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'instructor',
+            'name' => 'Original Faculty Name',
+            'email' => 'faculty@cab-academy.com',
+            'profile_picture' => null,
+        ]);
+
+        $instructor = Instructor::create([
+            'user_id' => $user->id,
+            'name' => 'Original Faculty Name',
+            'email' => 'faculty@cab-academy.com',
+            'title' => 'Faculty Fellow',
+            'expertise' => 'Supply Chain Law',
+            'is_active' => true,
+            'order' => 1,
+        ]);
+
+        $dummyAvatarBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+
+        $response = $this->actingAs($this->admin)->post(route('admin.instructors.update', $instructor), [
+            'name' => 'Prof. Tariqul Islam, PhD',
+            'email' => 'faculty@cab-academy.com',
+            'title' => 'Chief Academic Advisor & Senior Fellow',
+            'expertise' => 'International Trade & Port Logistics',
+            'avatar_base64' => $dummyAvatarBase64,
+            'is_active' => '1',
+            'order' => 1,
+        ]);
+
+        $response->assertRedirect(route('admin.instructors.index'));
+        $instructor->refresh();
+        $user->refresh();
+
+        $this->assertEquals('Prof. Tariqul Islam, PhD', $instructor->name);
+        $this->assertEquals('Prof. Tariqul Islam, PhD', $user->name);
+        $this->assertNotNull($instructor->avatar);
+        $this->assertEquals($instructor->avatar, $user->profile_picture);
+        $this->assertStringContainsString('/storage/instructors/', $instructor->avatar_url);
+    }
+
+    public function test_landing_page_renders_dynamic_faculty_section(): void
+    {
+        Instructor::create([
+            'name' => 'Distinguished Senior Fellow Test',
+            'title' => 'Executive Director, Port Operations',
+            'expertise' => 'Customs & Port Logistics',
+            'is_active' => true,
+            'order' => 1,
+        ]);
+
+        $response = $this->get('/');
+        $response->assertStatus(200);
+        $response->assertSee('Distinguished Faculty &amp; Industry Fellows', false);
+        $response->assertSee('Distinguished Senior Fellow Test');
+        $response->assertSee('Executive Director, Port Operations');
+    }
 }

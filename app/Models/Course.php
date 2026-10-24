@@ -43,6 +43,18 @@ class Course extends Model
         return $query->where('category', $category);
     }
 
+    /**
+     * Get fully-qualified cover image URL with reliable storage prefixing and fallback.
+     */
+    public function getCoverImageUrlAttribute(): string
+    {
+        $img = $this->cover_image ?: $this->thumbnail;
+        if (!$img) {
+            return 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';
+        }
+        return storage_asset($img, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80');
+    }
+
     public function instructor()
     {
         return $this->belongsTo(User::class, 'instructor_id');

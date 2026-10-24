@@ -67,7 +67,7 @@
             <!-- Hero Image -->
             @if($post->featured_image)
                 <div class="rounded-2xl overflow-hidden mb-8 shadow-md max-h-[460px]">
-                    <img src="{{ str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+                    <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
                 </div>
             @endif
 

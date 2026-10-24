@@ -139,15 +139,7 @@
                 
                 <!-- Course Banner Image -->
                 <div class="rounded-2xl overflow-hidden shadow-sm border border-[#e3e7f0] bg-white">
-                    @if($course->cover_image)
-                        <img src="{{ asset($course->cover_image) }}" alt="{{ $course->title }}" class="w-full h-80 sm:h-96 object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80';">
-                    @elseif($course->thumbnail)
-                        <img src="{{ $course->thumbnail }}" alt="{{ $course->title }}" class="w-full h-80 sm:h-96 object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80';">
-                    @else
-                        <div class="w-full h-80 bg-gradient-to-br from-[#051c45] via-[#0a2540] to-[#c30102] flex items-center justify-center text-white">
-                            <span class="font-extrabold text-6xl opacity-30">{{ substr($course->title, 0, 1) }}</span>
-                        </div>
-                    @endif
+                    <img src="{{ $course->cover_image_url }}" alt="{{ $course->title }}" class="w-full h-80 sm:h-96 object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80';">
                 </div>
 
                 <!-- Enrolled Progress Bar (If Enrolled) -->
@@ -596,13 +588,13 @@
                     $leadInstructor = $profile ?? $course->instructor ?? \App\Models\Instructor::where('is_active', true)->first();
                     $instructorName = $leadInstructor ? $leadInstructor->name : 'CAB Academy Senior Faculty';
                     $instructorTitle = $leadInstructor ? ($leadInstructor->title ?? 'Executive Master Instructor & Specialist') : 'Senior Faculty & Specialist';
-                    $instructorAvatar = $leadInstructor ? ($leadInstructor->avatar ?? $leadInstructor->profile_picture) : null;
+                    $instructorAvatar = $leadInstructor ? ($leadInstructor->avatar_url ?? $leadInstructor->profile_picture_url ?? null) : null;
                     $instructorBio = $leadInstructor ? ($leadInstructor->bio ?? 'Distinguished Faculty Member with extensive international trade, corporate compliance, and executive advisory experience.') : 'Distinguished Faculty Member with extensive international trade, corporate compliance, and executive advisory experience.';
                 @endphp
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#e3e7f0] text-center">
                     <div class="w-[150px] h-[150px] rounded-full border-4 border-slate-100 shadow-md mx-auto mb-4 overflow-hidden bg-gray-100">
                         @if($instructorAvatar)
-                            <img src="{{ asset($instructorAvatar) }}" alt="{{ $instructorName }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($instructorName) }}&background=051c45&color=fff';">
+                            <img src="{{ $instructorAvatar }}" alt="{{ $instructorName }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($instructorName) }}&background=051c45&color=fff';">
                         @else
                             <div class="w-full h-full bg-[#f2f4f7] text-[#051c45] flex items-center justify-center font-bold text-3xl">
                                 {{ substr($instructorName, 0, 1) }}

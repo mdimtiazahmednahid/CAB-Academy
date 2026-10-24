@@ -28,4 +28,15 @@ class JobPost extends Model
     {
         return $this->hasMany(JobApplication::class);
     }
+
+    /**
+     * Get fully-qualified company logo URL with storage prefixing and fallback.
+     */
+    public function getCompanyLogoUrlAttribute(): ?string
+    {
+        if (!$this->company_logo) {
+            return null;
+        }
+        return storage_asset($this->company_logo);
+    }
 }

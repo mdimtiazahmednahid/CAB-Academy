@@ -52,9 +52,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     @foreach($roster as $f)
                         @php
-                            $avatarUrl = $f->avatar 
-                                ? (str_starts_with($f->avatar, 'http') || str_starts_with($f->avatar, '/') ? asset($f->avatar) : asset('storage/' . $f->avatar))
-                                : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80';
+                            $avatarUrl = $f->avatar_url;
                         @endphp
                         <div class="bg-white rounded-3xl border border-[#e3e7f0] p-6 text-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between hover:border-[#c30102]/30">
                             <div>

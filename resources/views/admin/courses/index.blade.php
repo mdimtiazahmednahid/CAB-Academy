@@ -22,6 +22,7 @@
         <table class="w-full text-left text-sm">
         <thead class="bg-gray-50 border-b border-gray-100 text-gray-500 uppercase text-xs">
             <tr>
+                <th class="px-6 py-4 font-medium">Cover</th>
                 <th class="px-6 py-4 font-medium">Title</th>
                 @if(auth()->user()->role === 'admin')
                     <th class="px-6 py-4 font-medium">Instructor</th>
@@ -35,10 +36,20 @@
         <tbody class="divide-y divide-gray-100">
             @forelse($courses as $c)
             <tr class="hover:bg-gray-50 transition-colors">
-                <td class="px-6 py-4 font-medium text-gray-900">{{ $c->title }}</td>
+                <td class="px-6 py-4">
+                    <div class="w-16 h-11 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 shadow-sm shrink-0">
+                        <img src="{{ $c->cover_image_url }}" alt="{{ $c->title }}" class="w-full h-full object-cover">
+                    </div>
+                </td>
+                <td class="px-6 py-4 font-medium text-gray-900">
+                    <a href="{{ route('admin.courses.show', $c) }}" class="hover:text-primary transition-colors">{{ $c->title }}</a>
+                    @if($c->category)
+                        <div class="text-[11px] text-gray-400 mt-0.5">{{ $c->category }}</div>
+                    @endif
+                </td>
                 @if(auth()->user()->role === 'admin')
                     <td class="px-6 py-4 text-gray-500">
-                        {{ $c->instructor ? $c->instructor->name : 'N/A' }}
+                        {{ $c->instructorProfile ? $c->instructorProfile->name : ($c->instructor ? $c->instructor->name : 'N/A') }}
                     </td>
                 @endif
                 <td class="px-6 py-4 text-gray-500 text-xs">
@@ -58,7 +69,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="4" class="px-6 py-12 text-center text-gray-500">No courses yet. Create one to get started!</td>
+                <td colspan="7" class="px-6 py-12 text-center text-gray-500">No courses yet. Create one to get started!</td>
             </tr>
             @endforelse
         </tbody>
@@ -73,7 +84,7 @@
             <h3 class="text-lg font-bold">New Course</h3>
             <button onclick="document.getElementById('createModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
-        <form method="POST" action="{{ route('admin.courses') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('admin.courses') }}">
             @csrf
             <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
                 <div>
@@ -138,10 +149,33 @@
                     </select>
                 </div>
                 @endif
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Cover Image (Optional)</label>
-                    <input type="file" name="cover_image" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                <div class="bg-gray-50/70 p-4 rounded-xl border border-gray-200">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Course Cover Photo (Picture)</label>
+                    <div class="flex items-center gap-4">
+                        <div class="w-24 h-16 rounded-lg overflow-hidden border border-gray-300 bg-gray-200 shrink-0 shadow-inner flex items-center justify-center">
+                            <img id="create_course_cover_preview" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80" alt="Preview" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <input type="file" id="create_course_cover_input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:cursor-pointer cursor-pointer border border-gray-300 rounded-lg p-1 bg-white">
+                            <input type="hidden" name="cover_image_base64" id="create_course_cover_base64">
+                            <p class="text-[10px] text-gray-400 mt-1">PNG, JPG, WebP (16:10 or 16:9 ratio recommended)</p>
+                        </div>
+                    </div>
                 </div>
+                <script>
+                    document.getElementById('create_course_cover_input')?.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(evt) {
+                                document.getElementById('create_course_cover_base64').value = evt.target.result;
+                                const preview = document.getElementById('create_course_cover_preview');
+                                if (preview) preview.src = evt.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                </script>
                 <div class="flex items-center pt-2">
                     <input type="checkbox" name="is_published" id="is_published" value="1" class="rounded text-primary focus:ring-primary mr-2">
                     <label for="is_published" class="text-sm font-medium text-gray-700">Publish immediately</label>

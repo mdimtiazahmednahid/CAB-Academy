@@ -109,17 +109,22 @@ Route::get('/day-long-course', function () {
 })->name('catalog.day_long');
 
 // InfinityFree Storage Symlink Workaround: Stream media files dynamically without requiring symlinks
-Route::get('/storage/{folder}/{file}', function ($folder, $file) {
-    $filePath = storage_path("app/public/{$folder}/" . $file);
-    if (!file_exists($filePath)) {
+Route::get('/storage/{path}', function ($path) {
+    // 1. Primary storage path under storage/app/public/
+    $filePath = storage_path("app/public/" . $path);
+    if (!file_exists($filePath) || is_dir($filePath)) {
+        // 2. Fallback checking public/storage/ directory
+        $filePath = public_path("storage/" . $path);
+    }
+    if (!file_exists($filePath) || is_dir($filePath)) {
         abort(404);
     }
-    $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+    $mimeType = @mime_content_type($filePath) ?: 'application/octet-stream';
     return response()->file($filePath, [
         'Content-Type' => $mimeType,
         'Cache-Control' => 'public, max-age=86400',
     ]);
-})->where('file', '.*')->name('storage.stream');
+})->where('path', '.*')->name('storage.stream');
 
 // Public Course Catalog & Category Routes
 Route::get('/catalog', [App\Http\Controllers\CatalogController::class, 'index'])->name('catalog.index');
@@ -178,7 +183,7 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
     // Courses
     Route::get('/courses', [AdminCourseController::class, 'index'])->name('admin.courses');
-    Route::post('/courses', [AdminCourseController::class, 'store']);
+    Route::post('/courses', [AdminCourseController::class, 'store'])->name('admin.courses.store');
     Route::get('/courses/{course}', [AdminCourseController::class, 'show'])->name('admin.courses.show');
     Route::match(['put', 'post'], '/courses/{course}', [AdminCourseController::class, 'update'])->name('admin.courses.update');
     Route::delete('/courses/{course}', [AdminCourseController::class, 'destroy'])->name('admin.courses.destroy');

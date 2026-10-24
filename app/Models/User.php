@@ -53,6 +53,23 @@ class User extends Authenticatable
         return $this->hasMany(Course::class, 'instructor_id');
     }
 
+    public function instructorProfile()
+    {
+        return $this->hasOne(Instructor::class, 'user_id');
+    }
+
+    /**
+     * Get fully-qualified profile picture URL with storage prefixing and fallback.
+     */
+    public function getProfilePictureUrlAttribute(): string
+    {
+        $default = 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=051c45&color=fff';
+        if (!$this->profile_picture) {
+            return $default;
+        }
+        return storage_asset($this->profile_picture, $default);
+    }
+
     public function completedLessons()
     {
         return $this->belongsToMany(Lesson::class)->withTimestamps();

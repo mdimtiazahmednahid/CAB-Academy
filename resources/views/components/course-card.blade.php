@@ -9,7 +9,7 @@
     <div class="relative aspect-square aspect-[16/10] h-40 sm:h-44 lg:h-48 w-full bg-slate-900/5 overflow-visible">
         <a href="{{ route('courses.show', $course) }}" class="block w-full h-full overflow-hidden relative">
             @php
-                $imgSrc = $course->cover_image ? asset($course->cover_image) : ($course->thumbnail ?: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80');
+                $imgSrc = $course->cover_image_url;
             @endphp
             <img 
                 src="{{ $imgSrc }}" 
@@ -57,20 +57,26 @@
         </div>
 
         <!-- Instructor Avatar Placement: Compact Right Corner Badge (-bottom-10 hook preserved for Cypress) -->
-        @if($course->instructor)
+        @php
+            $profile = $course->instructorProfile;
+            $leadInst = $profile ?? $course->instructor;
+            $instName = $leadInst ? $leadInst->name : 'CAB Faculty';
+            $instAvatar = $profile && $profile->avatar ? $profile->avatar_url : ($course->instructor && $course->instructor->profile_picture ? $course->instructor->profile_picture_url : null);
+        @endphp
+        @if($leadInst)
             <div class="absolute -bottom-10 right-3 z-20 flex items-end justify-end pointer-events-auto">
-                <a href="{{ route('courses.show', $course) }}" title="{{ $course->instructor->name }}" class="block relative group/avatar translate-y-5 sm:translate-y-4">
+                <a href="{{ route('courses.show', $course) }}" title="{{ $instName }}" class="block relative group/avatar translate-y-5 sm:translate-y-4">
                     <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-md overflow-hidden bg-white ring-2 ring-slate-100 group-hover:ring-[#c30102]/40 group-hover:scale-105 transition-all duration-300">
-                        @if($course->instructor->profile_picture)
+                        @if($instAvatar)
                             <img 
-                                src="{{ asset($course->instructor->profile_picture) }}" 
-                                alt="{{ $course->instructor->name }}" 
+                                src="{{ $instAvatar }}" 
+                                alt="{{ $instName }}" 
                                 class="w-full h-full object-cover object-top rounded-full"
-                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';"
+                                onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($instName) }}&background=051c45&color=fff';"
                             >
                         @else
                             <div class="w-full h-full rounded-full bg-gradient-to-br from-[#041536] to-[#020b18] flex items-center justify-center text-white font-black text-xs">
-                                {{ substr($course->instructor->name, 0, 1) }}
+                                {{ substr($instName, 0, 1) }}
                             </div>
                         @endif
                     </div>

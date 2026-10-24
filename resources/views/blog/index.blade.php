@@ -91,9 +91,7 @@
                             <!-- Featured Image -->
                             <div class="relative aspect-video overflow-hidden bg-gray-100">
                                 @php
-                                    $blogImg = $post->featured_image 
-                                        ? (str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset($post->featured_image)) 
-                                        : 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80';
+                                    $blogImg = $post->featured_image_url;
                                 @endphp
                                 <img 
                                     src="{{ $blogImg }}" 

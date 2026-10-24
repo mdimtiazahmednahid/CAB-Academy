@@ -569,7 +569,67 @@
     </section>
     @endif
 
-    {{-- 7. Our Features Section (Distinguished Faculty & Fellows) --}}
+    {{-- 7. Distinguished Faculty & Industry Fellows Section --}}
+    @if(\App\Models\Setting::getVal('landing_faculty_enabled', '1') == '1')
+    @php
+        $landingInstructors = \App\Models\Instructor::where('is_active', true)->orderBy('order', 'asc')->take(4)->get();
+    @endphp
+    @if($landingInstructors->isNotEmpty())
+    <section id="faculty" class="py-12 sm:py-16 lg:py-20 bg-white border-b border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-slate-200/80 gap-3">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[#c30102] text-[10px] font-black uppercase tracking-wider mb-2">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Corporate Mentorship & Faculty</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
+                        {{ \App\Models\Setting::getVal('landing_faculty_title', 'Distinguished Faculty & Industry Fellows') }}
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+                        Direct executive mentorship guided by high-profile corporate leaders, senior chartered accountants, NBR tax advocates, and logistics directors.
+                    </p>
+                </div>
+                <a href="{{ route('instructors.index') }}" class="text-xs sm:text-sm font-bold text-[#c30102] hover:text-[#041536] transition-colors inline-flex items-center gap-1.5 group shrink-0">
+                    <span>View All Faculty Profiles</span>
+                    <i class="fas fa-arrow-right text-xs group-hover:translate-x-1.5 transition-transform"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                @foreach($landingInstructors as $inst)
+                    <div class="bg-slate-50/60 rounded-3xl border border-slate-200/80 p-5 sm:p-6 text-center shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group flex flex-col justify-between hover:border-[#c30102]/30 hover:bg-white">
+                        <div>
+                            <div class="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full overflow-hidden mb-4 border-4 border-white shadow-md bg-white ring-2 ring-slate-200 group-hover:ring-[#c30102]/40 transition-all duration-300">
+                                <img src="{{ $inst->avatar_url }}" alt="{{ $inst->name }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($inst->name) }}&background=051c45&color=fff';">
+                            </div>
+                            <h3 class="text-sm sm:text-base font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-tight mb-1">
+                                {{ $inst->name }}
+                            </h3>
+                            <p class="text-[11px] sm:text-xs text-[#c30102] font-bold line-clamp-1 mb-2">
+                                {{ $inst->title }}
+                            </p>
+                            <span class="inline-block bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full mb-3">
+                                {{ $inst->expertise }}
+                            </span>
+                            @if($inst->bio)
+                                <p class="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-4 font-normal">
+                                    {{ $inst->bio }}
+                                </p>
+                            @endif
+                        </div>
+                        <a href="{{ route('catalog.index') }}" class="py-2 px-3 bg-white hover:bg-[#041536] text-[#041536] hover:text-white border border-slate-200 rounded-xl text-xs font-bold transition-all text-center shadow-xs">
+                            Explore Sessions →
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+    @endif
+
+    {{-- 8. Our Features Section --}}
     @if(\App\Models\Setting::getVal('landing_features_enabled', '1') == '1')
     <section id="features" class="py-10 sm:py-16 lg:py-20 bg-slate-50/70 border-b border-slate-200/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -685,9 +745,7 @@
                         <div class="relative aspect-video w-full overflow-hidden bg-slate-900">
                             <a href="{{ route('blog.show', $blog->slug) }}">
                                 @php
-                                    $coverUrl = $blog->featured_image 
-                                        ? (str_starts_with($blog->featured_image, 'http') ? $blog->featured_image : asset($blog->featured_image)) 
-                                        : ($defaultBlogImgs[$loop->index % 3]);
+                                    $coverUrl = $blog->featured_image_url;
                                 @endphp
                                 <img 
                                    src="{{ $coverUrl }}" 

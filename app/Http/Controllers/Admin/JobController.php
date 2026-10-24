@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Notifications\NewJobNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 
 class JobController extends Controller
 {

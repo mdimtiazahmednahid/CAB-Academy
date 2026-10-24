@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Notifications\NewCourseNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
@@ -37,6 +38,7 @@ class CourseController extends Controller
             'target_audience' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
             'cover_image' => 'nullable|image|max:2048',
+            'cover_image_base64' => 'nullable|string',
             'level' => 'nullable|string|max:100',
             'category' => 'nullable|string|max:100',
             'instructor_id' => 'nullable|exists:users,id'
@@ -51,7 +53,23 @@ class CourseController extends Controller
 
         if ($request->hasFile('cover_image')) {
             $data['cover_image'] = $request->file('cover_image')->store('course_covers', 'public');
+        } elseif ($request->filled('cover_image_base64')) {
+            $base64 = $request->input('cover_image_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {
+                $base64 = substr($base64, strpos($base64, ',') + 1);
+                $type = strtolower($type[1]);
+                $decoded = base64_decode($base64);
+                if ($decoded !== false) {
+                    $filename = 'course_' . time() . '_' . uniqid() . '.' . $type;
+                    Storage::disk('public')->put('course_covers/' . $filename, $decoded);
+                    if (is_dir(public_path('storage/course_covers'))) {
+                        @file_put_contents(public_path('storage/course_covers/' . $filename), $decoded);
+                    }
+                    $data['cover_image'] = 'course_covers/' . $filename;
+                }
+            }
         }
+        unset($data['cover_image_base64']);
 
         $course = Course::create($data);
 
@@ -75,7 +93,8 @@ class CourseController extends Controller
         }
 
         $course->load(['sections.lessons', 'students', 'payments.user', 'payments.paymentMethod']);
-        return view('admin.courses.show', compact('course'));
+        $instructors = \App\Models\User::whereIn('role', ['admin', 'instructor'])->get();
+        return view('admin.courses.show', compact('course', 'instructors'));
     }
 
     public function storeSection(Request $request, Course $course)
@@ -160,6 +179,9 @@ class CourseController extends Controller
                 if ($decoded !== false) {
                     $filename = 'course_' . time() . '_' . uniqid() . '.' . $type;
                     Storage::disk('public')->put('course_covers/' . $filename, $decoded);
+                    if (is_dir(public_path('storage/course_covers'))) {
+                        @file_put_contents(public_path('storage/course_covers/' . $filename), $decoded);
+                    }
                     $data['cover_image'] = 'course_covers/' . $filename;
                 }
             }

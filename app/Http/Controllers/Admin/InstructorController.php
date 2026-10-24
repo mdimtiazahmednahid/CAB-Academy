@@ -59,6 +59,9 @@ class InstructorController extends Controller
                 if ($data !== false) {
                     $filename = 'instructor_' . time() . '_' . uniqid() . '.' . $type;
                     \Illuminate\Support\Facades\Storage::disk('public')->put('instructors/' . $filename, $data);
+                    if (is_dir(public_path('storage/instructors'))) {
+                        @file_put_contents(public_path('storage/instructors/' . $filename), $data);
+                    }
                     $validated['avatar'] = 'instructors/' . $filename;
                 }
             }
@@ -68,7 +71,26 @@ class InstructorController extends Controller
         $validated['order'] = $request->input('order', 0);
         $validated['is_active'] = $request->has('is_active');
 
-        Instructor::create($validated);
+        $instructor = Instructor::create($validated);
+
+        // Keep linked user record in sync
+        $user = null;
+        if ($instructor->user_id) {
+            $user = \App\Models\User::find($instructor->user_id);
+        } elseif (!empty($instructor->email)) {
+            $user = \App\Models\User::where('email', $instructor->email)->first();
+            if ($user) {
+                $instructor->user_id = $user->id;
+                $instructor->saveQuietly();
+            }
+        }
+        if ($user) {
+            $user->name = $instructor->name;
+            if ($instructor->avatar) {
+                $user->profile_picture = $instructor->avatar;
+            }
+            $user->save();
+        }
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile created successfully.');
     }
@@ -112,6 +134,9 @@ class InstructorController extends Controller
                 if ($data !== false) {
                     $filename = 'instructor_' . time() . '_' . uniqid() . '.' . $type;
                     \Illuminate\Support\Facades\Storage::disk('public')->put('instructors/' . $filename, $data);
+                    if (is_dir(public_path('storage/instructors'))) {
+                        @file_put_contents(public_path('storage/instructors/' . $filename), $data);
+                    }
                     $validated['avatar'] = 'instructors/' . $filename;
                 }
             }
@@ -122,6 +147,25 @@ class InstructorController extends Controller
         $validated['is_active'] = $request->has('is_active');
 
         $instructor->update($validated);
+
+        // Keep linked user record in sync
+        $user = null;
+        if ($instructor->user_id) {
+            $user = \App\Models\User::find($instructor->user_id);
+        } elseif (!empty($instructor->email)) {
+            $user = \App\Models\User::where('email', $instructor->email)->first();
+            if ($user) {
+                $instructor->user_id = $user->id;
+                $instructor->saveQuietly();
+            }
+        }
+        if ($user) {
+            $user->name = $instructor->name;
+            if ($instructor->avatar) {
+                $user->profile_picture = $instructor->avatar;
+            }
+            $user->save();
+        }
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile updated successfully.');
     }

@@ -14,8 +14,9 @@
         @endif
     </div>
     <div class="flex gap-2">
-        <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">
-            Settings
+        <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <span>⚙️ Course Settings & Cover Picture</span>
         </button>
         <button onclick="document.getElementById('quizModal').classList.remove('hidden')" class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:opacity-90">
             + Add Quiz
@@ -31,6 +32,34 @@
         {{ session('success') }}
     </div>
 @endif
+
+<!-- Course Banner & Cover Photo Spotlight Card -->
+<div class="mb-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-4 w-full sm:w-auto">
+        <div class="relative w-24 h-16 sm:w-32 sm:h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-100 shadow-inner shrink-0">
+            <img src="{{ $course->cover_image_url }}" alt="{{ $course->title }}" class="w-full h-full object-cover">
+        </div>
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] font-black uppercase tracking-wider text-gray-400">Course Picture</span>
+                @if($course->cover_image)
+                    <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[10px] font-bold">Custom Photo Active</span>
+                @else
+                    <span class="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded text-[10px] font-bold">Default Photo Active</span>
+                @endif
+            </div>
+            <h3 class="text-sm font-bold text-gray-900 mt-1 truncate">{{ $course->title }}</h3>
+            <p class="text-xs text-gray-500 mt-0.5">
+                Instructor: <span class="font-medium text-gray-700">{{ $course->instructorProfile ? $course->instructorProfile->name : ($course->instructor ? $course->instructor->name : 'Unassigned') }}</span>
+                • Fee: <span class="font-medium text-gray-700">৳{{ number_format($course->price, 2) }}</span>
+            </p>
+        </div>
+    </div>
+    <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition-all w-full sm:w-auto flex items-center justify-center gap-1.5 shrink-0 shadow-sm">
+        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <span>Upload / Change Picture</span>
+    </button>
+</div>
 
 <div class="space-y-6">
     @forelse($course->sections as $section)
@@ -557,28 +586,46 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Who Should Attend / Target Audience (Optional)</label>
                     <textarea name="target_audience" rows="2" placeholder="e.g. Commercial Executives, Importers, Exporters, Entrepreneurs..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm">{{ $course->target_audience }}</textarea>
                 </div>
+                @if(auth()->user()->role === 'admin' && isset($instructors))
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Cover Image (Optional)</label>
-                    @if($course->cover_image)
-                        <div class="mb-2">
-                            <img src="{{ Storage::url($course->cover_image) }}" alt="Cover" class="w-32 h-20 object-cover rounded">
-                        </div>
-                    @endif
-                    <input type="file" id="course_cover_file_input" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
-                    <input type="hidden" name="cover_image_base64" id="course_cover_image_base64">
-                    <script>
-                        document.getElementById('course_cover_file_input')?.addEventListener('change', function(e) {
-                            const file = e.target.files[0];
-                            if (file) {
-                                const reader = new FileReader();
-                                reader.onload = function(evt) {
-                                    document.getElementById('course_cover_image_base64').value = evt.target.result;
-                                };
-                                reader.readAsDataURL(file);
-                            }
-                        });
-                    </script>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Assigned Instructor</label>
+                    <select name="instructor_id" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm">
+                        <option value="">-- No Instructor Assigned --</option>
+                        @foreach($instructors as $instructor)
+                            <option value="{{ $instructor->id }}" {{ $course->instructor_id == $instructor->id ? 'selected' : '' }}>
+                                {{ $instructor->name }} ({{ ucfirst($instructor->role) }})
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
+                @endif
+                <div class="bg-gray-50/70 p-4 rounded-xl border border-gray-200">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Course Cover Photo (Picture)</label>
+                    <div class="flex items-center gap-4">
+                        <div class="w-24 h-16 rounded-lg overflow-hidden border border-gray-300 bg-gray-200 shrink-0 shadow-inner flex items-center justify-center">
+                            <img id="edit_course_cover_preview" src="{{ $course->cover_image_url }}" alt="Cover" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <input type="file" id="course_cover_file_input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:cursor-pointer cursor-pointer border border-gray-300 rounded-lg p-1 bg-white">
+                            <input type="hidden" name="cover_image_base64" id="course_cover_image_base64">
+                            <p class="text-[10px] text-gray-400 mt-1">PNG, JPG, WebP (16:10 or 16:9 ratio)</p>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    document.getElementById('course_cover_file_input')?.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(evt) {
+                                document.getElementById('course_cover_image_base64').value = evt.target.result;
+                                const preview = document.getElementById('edit_course_cover_preview');
+                                if (preview) preview.src = evt.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                </script>
                 <div class="flex items-center pt-2">
                     <input type="checkbox" name="is_published" id="is_published" value="1" {{ $course->is_published ? 'checked' : '' }} class="rounded text-primary focus:ring-primary mr-2">
                     <label for="is_published" class="text-sm font-medium text-gray-700">Publish immediately</label>
