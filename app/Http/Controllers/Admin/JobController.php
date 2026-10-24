@@ -28,14 +28,31 @@ class JobController extends Controller
             'description' => 'required|string',
             'apply_link' => 'nullable|string|max:255',
             'is_active' => 'boolean',
-            'company_logo' => 'nullable|image|max:2048'
+            'company_logo' => 'nullable|image|max:2048',
+            'company_logo_base64' => 'nullable|string',
         ]);
         
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('company_logo')) {
             $data['company_logo'] = $request->file('company_logo')->store('company_logos', 'public');
+        } elseif ($request->filled('company_logo_base64')) {
+            $base64 = $request->input('company_logo_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {
+                $base64 = substr($base64, strpos($base64, ',') + 1);
+                $type = strtolower($type[1]);
+                $decoded = base64_decode($base64);
+                if ($decoded !== false) {
+                    $filename = 'logo_' . time() . '_' . uniqid() . '.' . $type;
+                    Storage::disk('public')->put('company_logos/' . $filename, $decoded);
+                    if (is_dir(public_path('storage/company_logos'))) {
+                        @file_put_contents(public_path('storage/company_logos/' . $filename), $decoded);
+                    }
+                    $data['company_logo'] = 'company_logos/' . $filename;
+                }
+            }
         }
+        unset($data['company_logo_base64']);
 
         $job = JobPost::create($data);
 
@@ -79,6 +96,9 @@ class JobController extends Controller
                 if ($decoded !== false) {
                     $filename = 'logo_' . time() . '_' . uniqid() . '.' . $type;
                     Storage::disk('public')->put('company_logos/' . $filename, $decoded);
+                    if (is_dir(public_path('storage/company_logos'))) {
+                        @file_put_contents(public_path('storage/company_logos/' . $filename), $decoded);
+                    }
                     $data['company_logo'] = 'company_logos/' . $filename;
                 }
             }

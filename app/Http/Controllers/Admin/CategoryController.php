@@ -68,13 +68,21 @@ class CategoryController extends Controller
         $data['order'] = $data['order'] ?? 0;
         $data['is_active'] = $request->has('is_active');
 
+        $oldName = $category->name;
         $category->update($data);
+
+        // Propagate category name change to all corresponding courses
+        if ($oldName !== $category->name) {
+            \App\Models\Course::where('category', $oldName)->update(['category' => $category->name]);
+        }
 
         return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully!');
     }
 
     public function destroy(Category $category)
     {
+        // Unlink deleted category from corresponding courses
+        \App\Models\Course::where('category', $category->name)->update(['category' => null]);
         $category->delete();
         return redirect()->route('admin.categories.index')->with('success', 'Category removed successfully!');
     }

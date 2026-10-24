@@ -66,14 +66,23 @@
             <label for="is_active" class="text-xs font-bold uppercase tracking-wider text-gray-700">Active (Visible in Homepage Pills & Catalog)</label>
         </div>
 
-        <div class="pt-4 border-t border-gray-100 flex items-center gap-3">
-            <button type="submit" class="px-6 py-2.5 bg-[#c30102] hover:bg-[#a50102] text-white text-sm font-bold rounded-xl shadow-lg shadow-red-900/20 active:scale-95 transition-all">
-                Update Category
+        <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+            <button type="button" onclick="if(confirm('Are you sure you want to delete this category?')) { document.getElementById('deleteCategoryForm').submit(); }" class="px-4 py-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs font-bold rounded-xl transition-all">
+                <i class="fas fa-trash-alt mr-1.5"></i> Delete Category
             </button>
-            <a href="{{ route('admin.categories.index') }}" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-xl transition-all">
-                Cancel
-            </a>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('admin.categories.index') }}" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-xl transition-all">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2.5 bg-[#c30102] hover:bg-[#a50102] text-white text-sm font-bold rounded-xl shadow-lg shadow-red-900/20 active:scale-95 transition-all">
+                    Update Category
+                </button>
+            </div>
         </div>
+    </form>
+    <form id="deleteCategoryForm" action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
     </form>
 </div>
 @endsection

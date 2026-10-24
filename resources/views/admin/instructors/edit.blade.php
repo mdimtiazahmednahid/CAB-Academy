@@ -122,14 +122,23 @@
             </label>
         </div>
 
-        <div class="pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
-            <a href="{{ route('admin.instructors.index') }}" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-colors">
-                Cancel
-            </a>
-            <button type="submit" class="px-6 py-2.5 bg-[#041536] hover:bg-[#c30102] text-white text-xs font-bold rounded-xl transition-all shadow-sm">
-                Update Instructor
+        <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+            <button type="button" onclick="if(confirm('Are you sure you want to permanently remove this instructor from the platform?')) { document.getElementById('deleteInstructorForm').submit(); }" class="px-4 py-2.5 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 text-xs font-bold rounded-xl transition-all">
+                <i class="fas fa-trash-alt mr-1.5"></i> Delete Instructor
             </button>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('admin.instructors.index') }}" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2.5 bg-[#041536] hover:bg-[#c30102] text-white text-xs font-bold rounded-xl transition-all shadow-sm">
+                    Update Instructor
+                </button>
+            </div>
         </div>
+    </form>
+    <form id="deleteInstructorForm" action="{{ route('admin.instructors.destroy', $instructor) }}" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
     </form>
 </div>
 @endsection

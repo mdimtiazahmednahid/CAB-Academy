@@ -62,9 +62,14 @@
                         <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Draft</span>
                     @endif
                 </td>
-                <td class="px-6 py-4 text-gray-500">{{ $c->created_at->format('M d, Y') }}</td>
-                <td class="px-6 py-4 text-right">
-                    <a href="{{ route('admin.courses.show', $c) }}" class="text-primary hover:underline font-medium">Manage →</a>
+                <td class="px-6 py-4 text-gray-500 text-xs">{{ $c->created_at->format('M d, Y') }}</td>
+                <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
+                    <a href="{{ route('admin.courses.show', $c) }}" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-primary hover:text-white border border-primary/30 hover:bg-primary rounded-lg transition-colors">Manage →</a>
+                    <form action="{{ route('admin.courses.destroy', $c) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this course? It will be moved to the Trash.');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-red-600 hover:text-white border border-red-200 hover:bg-red-600 rounded-lg transition-colors">Delete</button>
+                    </form>
                 </td>
             </tr>
             @empty

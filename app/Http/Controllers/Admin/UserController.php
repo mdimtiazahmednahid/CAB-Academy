@@ -125,6 +125,15 @@ class UserController extends Controller
         $user->fill($data);
         $user->save();
 
+        // Keep linked instructor profile in sync with updated user details
+        if ($instructor = \App\Models\Instructor::where('user_id', $user->id)->first()) {
+            $instructor->name = $user->name;
+            if ($user->profile_picture) {
+                $instructor->avatar = $user->profile_picture;
+            }
+            $instructor->save();
+        }
+
         return back()->with('success', 'User updated successfully.');
     }
 
@@ -133,6 +142,18 @@ class UserController extends Controller
         if ($user->id === auth()->id()) {
             return back()->withErrors(['error' => 'You cannot delete yourself.']);
         }
+
+        // Dissociate instructor profile if linked
+        if ($instructor = \App\Models\Instructor::where('user_id', $user->id)->first()) {
+            $instructor->user_id = null;
+            $instructor->save();
+        }
+
+        // Detach enrollments safely
+        $user->enrolledCourses()->detach();
+
+        // Nullify instructor foreign key on authored courses
+        \App\Models\Course::where('instructor_id', $user->id)->update(['instructor_id' => null]);
         
         $user->delete();
         

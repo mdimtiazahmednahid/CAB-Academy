@@ -46,6 +46,7 @@ class PaymentMethodController extends Controller
 
     public function destroy(PaymentMethod $paymentMethod)
     {
+        \App\Models\Payment::where('payment_method_id', $paymentMethod->id)->update(['payment_method_id' => null]);
         $paymentMethod->delete();
         return back()->with('success', 'Payment method deleted successfully.');
     }

@@ -62,7 +62,10 @@ class BlogController extends Controller
                 if ($data !== false) {
                     $filename = 'blog_' . time() . '_' . uniqid() . '.' . $type;
                     Storage::disk('public')->put('blogs/' . $filename, $data);
-                    $validated['featured_image'] = Storage::url('blogs/' . $filename);
+                    if (is_dir(public_path('storage/blogs'))) {
+                        @file_put_contents(public_path('storage/blogs/' . $filename), $data);
+                    }
+                    $validated['featured_image'] = 'blogs/' . $filename;
                 }
             }
         }
@@ -120,7 +123,10 @@ class BlogController extends Controller
                 if ($data !== false) {
                     $filename = 'blog_' . time() . '_' . uniqid() . '.' . $type;
                     Storage::disk('public')->put('blogs/' . $filename, $data);
-                    $validated['featured_image'] = Storage::url('blogs/' . $filename);
+                    if (is_dir(public_path('storage/blogs'))) {
+                        @file_put_contents(public_path('storage/blogs/' . $filename), $data);
+                    }
+                    $validated['featured_image'] = 'blogs/' . $filename;
                 }
             }
         }

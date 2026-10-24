@@ -175,6 +175,9 @@ class InstructorController extends Controller
      */
     public function destroy(Instructor $instructor)
     {
+        if ($instructor->user_id) {
+            \App\Models\Course::where('instructor_id', $instructor->user_id)->update(['instructor_id' => null]);
+        }
         $instructor->delete();
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile removed successfully.');

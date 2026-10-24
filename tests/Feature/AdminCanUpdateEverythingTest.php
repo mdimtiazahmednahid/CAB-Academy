@@ -466,4 +466,168 @@ class AdminCanUpdateEverythingTest extends TestCase
         $forceRes->assertSessionHas('success');
         $this->assertDatabaseMissing('courses', ['id' => $course->id]);
     }
+
+    /** 17. Course Deletion (Soft Delete & Catalog Removal) */
+    public function test_admin_can_delete_course_and_it_disappears_from_catalog()
+    {
+        $course = Course::create([
+            'title' => 'Course To Be Deleted',
+            'price' => 5000,
+            'is_published' => true,
+        ]);
+
+        $res = $this->actingAs($this->admin)->delete("/admin/courses/{$course->id}");
+        $res->assertRedirect(route('admin.courses'));
+        $res->assertSessionHas('success');
+
+        // Verify soft-deleted
+        $this->assertNotNull($course->fresh()->deleted_at);
+        $this->assertFalse(Course::published()->where('id', $course->id)->exists());
+    }
+
+    /** 18. Category Update Propagates to Courses & Category Deletion Nullifies Safely */
+    public function test_category_update_and_delete_propagates_to_courses()
+    {
+        $cat = Category::create([
+            'name' => 'Customs & Port',
+            'slug' => 'customs-port',
+            'icon' => 'fa-ship',
+        ]);
+
+        $course = Course::create([
+            'title' => 'Customs Clearance Diploma',
+            'category' => 'Customs & Port',
+            'price' => 4500,
+            'is_published' => true,
+        ]);
+
+        // 1. Update Category name - courses must update
+        $updateRes = $this->actingAs($this->admin)->put("/admin/categories/{$cat->id}", [
+            'name' => 'Customs, Bond & Seaport Logistics',
+            'slug' => 'customs-bond-seaport',
+            'icon' => 'fa-anchor',
+            'is_active' => '1',
+        ]);
+        $updateRes->assertSessionHas('success');
+        $this->assertEquals('Customs, Bond & Seaport Logistics', $course->fresh()->category);
+
+        // 2. Delete Category - course category gracefully nullified
+        $deleteRes = $this->actingAs($this->admin)->delete("/admin/categories/{$cat->id}");
+        $deleteRes->assertSessionHas('success');
+        $this->assertNull($course->fresh()->category);
+        $this->assertDatabaseMissing('categories', ['id' => $cat->id]);
+    }
+
+    /** 19. Instructor Deletion Safely Unlinks From Assigned Courses */
+    public function test_instructor_deletion_unassigns_from_courses()
+    {
+        $instUser = User::create([
+            'name' => 'Senior Fellow',
+            'email' => 'fellow@cab-academy.com',
+            'password' => bcrypt('password'),
+            'role' => 'instructor',
+        ]);
+
+        $instructor = Instructor::create([
+            'user_id' => $instUser->id,
+            'name' => 'Senior Fellow',
+            'title' => 'Director of Port Operations',
+            'expertise' => 'Logistics Law',
+            'is_active' => true,
+            'order' => 1,
+        ]);
+
+        $course = Course::create([
+            'title' => 'Port Operations Masterclass',
+            'instructor_id' => $instUser->id,
+            'price' => 4000,
+        ]);
+
+        $res = $this->actingAs($this->admin)->delete("/admin/instructors/{$instructor->id}");
+        $res->assertSessionHas('success');
+        $this->assertSoftDeleted('instructors', ['id' => $instructor->id]);
+        $this->assertNull($course->fresh()->instructor_id);
+    }
+
+    /** 20. User Deletion Safely Cleans Up Enrollments and Authored Courses */
+    public function test_user_deletion_cleans_up_relations_gracefully()
+    {
+        $student = User::create([
+            'name' => 'Enrolled Student',
+            'email' => 'student@test.com',
+            'password' => bcrypt('password'),
+            'role' => 'student',
+        ]);
+
+        $course = Course::create(['title' => 'Test Course', 'price' => 2000]);
+        $student->enrolledCourses()->attach($course->id);
+
+        $res = $this->actingAs($this->admin)->delete("/admin/users/{$student->id}");
+        $res->assertSessionHas('success');
+        $this->assertSoftDeleted('users', ['id' => $student->id]);
+        $this->assertDatabaseMissing('course_user', ['user_id' => $student->id]);
+    }
+
+    /** 21. Blog Post Deletion */
+    public function test_admin_can_delete_blog_post()
+    {
+        $blog = BlogPost::create([
+            'title' => 'Article to Delete',
+            'slug' => 'article-to-delete',
+            'category' => 'Customs',
+            'excerpt' => 'Excerpt',
+            'content' => 'Content',
+            'author_name' => 'Director',
+            'is_published' => true,
+        ]);
+
+        $res = $this->actingAs($this->admin)->delete("/admin/blogs/{$blog->id}");
+        $res->assertSessionHas('success');
+        $this->assertNotNull($blog->fresh()->deleted_at);
+        $this->assertFalse(BlogPost::published()->where('id', $blog->id)->exists());
+    }
+
+    /** 22. Job Post Deletion */
+    public function test_admin_can_delete_job_post()
+    {
+        $job = JobPost::create([
+            'title' => 'Job to Delete',
+            'company' => 'Freight Ltd.',
+            'description' => 'Requirements',
+            'is_active' => true,
+        ]);
+
+        $res = $this->actingAs($this->admin)->delete("/admin/jobs/{$job->id}");
+        $res->assertSessionHas('success');
+        $this->assertSoftDeleted('job_posts', ['id' => $job->id]);
+    }
+
+    /** 23. Payment Method Deletion Safely Nullifies Existing Payments */
+    public function test_payment_method_deletion_safely_nullifies_existing_payments()
+    {
+        $pm = PaymentMethod::create([
+            'provider_name' => 'Rocket Merchant',
+            'account_number' => '01917-054664-8',
+            'account_type' => 'Merchant',
+            'is_active' => true,
+        ]);
+
+        $student = User::create(['name' => 'Payer', 'email' => 'payer@test.com', 'password' => bcrypt('password'), 'role' => 'student']);
+        $course = Course::create(['title' => 'Tuition Course', 'price' => 3000]);
+
+        $payment = Payment::create([
+            'user_id' => $student->id,
+            'course_id' => $course->id,
+            'payment_method_id' => $pm->id,
+            'amount' => 3000,
+            'sender_number' => '01711111111',
+            'transaction_id' => 'TRXROCKET',
+            'status' => 'verified',
+        ]);
+
+        $res = $this->actingAs($this->admin)->delete("/admin/payment-methods/{$pm->id}");
+        $res->assertSessionHas('success');
+        $this->assertSoftDeleted('payment_methods', ['id' => $pm->id]);
+        $this->assertNull($payment->fresh()->payment_method_id);
+    }
 }
