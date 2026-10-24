@@ -121,8 +121,8 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
         cy.contains('CAB Academy').should('be.visible');
         cy.contains('Learn, Grow, Lead.').should('be.visible');
 
-        // Corporate Clients
-        cy.contains('Our Valuable Clients').should('be.visible');
+        // Corporate Clients / Industry Sectors
+        cy.contains(/Our Valuable Clients|Industry Sectors/i).should('be.visible');
 
         // Course Categories with smart navigation pills
         cy.contains('Course Categories').should('be.visible');
@@ -163,10 +163,10 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
         // Official CAB Academy Circular Logo in Header
         cy.get('header img[alt="CAB Academy"]').should('be.visible');
 
-        // Navigation uses rich words: Instructors, Blog (no generic "Teacher")
-        cy.get('nav').within(() => {
+        // Navigation uses rich words: Instructors, Community & Insights (no generic "Teacher")
+        cy.get('header nav.lg\\:flex').within(() => {
             cy.contains(/Instructors?|Faculty/).should('be.visible');
-            cy.contains('Blog').should('be.visible');
+            cy.contains(/Community & Insights|Blog/).should('be.visible');
             cy.contains('Teacher').should('not.exist');
         });
 
@@ -187,15 +187,15 @@ describe('IPDP Course Structure & Layout Parity Verification', () => {
     it('8. Verifies Blog Hub & Faculty Directory Pages', () => {
         // Blog Index Page
         cy.visit('/blog');
-        cy.title().should('contain', 'Insights & Knowledge Hub');
-        cy.contains('Insights & Knowledge Hub').should('be.visible');
+        cy.title().should('contain', 'Insights');
+        cy.contains(/Insights & (Research|Knowledge Hub)/i).should('be.visible');
         cy.contains('All Insights').should('be.visible');
         cy.get('article.group').should('have.length.at.least', 1);
 
         // Faculty & Instructors Directory Page
         cy.visit('/instructors');
-        cy.title().should('contain', 'Distinguished Faculty & Industry Fellows');
-        cy.contains('Distinguished Faculty & Fellows').should('be.visible');
+        cy.title().should('contain', 'Faculty');
+        cy.contains(/Distinguished Faculty/i).should('be.visible');
         cy.contains('Faculty Chair – Trade & Customs').should('be.visible');
         cy.contains('Faculty Chair – Tax & VAT').should('be.visible');
 

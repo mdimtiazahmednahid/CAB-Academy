@@ -8,9 +8,6 @@
         <div class="bg-white rounded-3xl p-8 sm:p-12 border border-[#e3e7f0] shadow-sm">
             
             <div class="border-b border-gray-100 pb-6 mb-8">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-[#c30102] bg-[#c30102]/10 border border-[#c30102]/20 uppercase tracking-wider block w-fit mb-2">
-                    <i class="fas fa-file-contract text-xs"></i> Legal & Compliance
-                </span>
                 <h1 class="text-3xl font-black text-[#0f131f] tracking-tight">Terms of Service</h1>
                 <p class="text-xs text-gray-500 mt-2">Effective Date: October 2026 | Last Updated: October 2026</p>
             </div>

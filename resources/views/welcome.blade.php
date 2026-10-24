@@ -398,11 +398,6 @@
             <!-- Header Bar -->
             <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-slate-200/80 gap-4">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2 border border-emerald-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <i class="fas fa-briefcase text-xs"></i>
-                        <span>Corporate Placement Cell</span>
-                    </div>
                     <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
                         {{ \App\Models\Setting::getVal('landing_jobs_title', 'Career & Placement Opportunities') }}
                     </h2>
@@ -579,10 +574,6 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-slate-200/80 gap-3">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-[#c30102] text-[10px] font-black uppercase tracking-wider mb-2">
-                        <i class="fas fa-user-tie"></i>
-                        <span>Corporate Mentorship & Faculty</span>
-                    </div>
                     <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
                         {{ \App\Models\Setting::getVal('landing_faculty_title', 'Distinguished Faculty & Industry Fellows') }}
                     </h2>

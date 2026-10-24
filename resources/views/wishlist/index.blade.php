@@ -9,9 +9,6 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-[#e3e7f0]">
             <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#c30102]/10 text-[#c30102] border border-[#c30102]/20 mb-2">
-                    <i class="fas fa-heart text-xs"></i> Student Wishlist
-                </span>
                 <h1 class="text-3xl sm:text-4xl font-black text-[#0f131f] tracking-tight">
                     Saved Programs & Courses
                 </h1>

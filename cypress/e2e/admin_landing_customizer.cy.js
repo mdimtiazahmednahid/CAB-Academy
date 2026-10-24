@@ -21,15 +21,16 @@ describe('Superadmin Landing Page Customizer E2E Verification', () => {
         cy.contains('Landing Page Customizer').should('be.visible');
         cy.contains('8 Dynamic Sections').should('be.visible');
 
-        // Verify all 8 section tabs in the directory
+        // Verify section tabs in the directory
         cy.contains('1. Executive Hero').should('be.visible');
         cy.contains('2. Valuable Clients').should('be.visible');
         cy.contains('3. Sticky Categories').should('be.visible');
         cy.contains('4. Course Showcase').should('be.visible');
-        cy.contains('5. Knowledge Hub').should('be.visible');
+        cy.contains('5. Career & Jobs').should('be.visible');
         cy.contains('6. Counseling Hotline').should('be.visible');
-        cy.contains('7. Features (6 Cards)').should('be.visible');
-        cy.contains('8. Career & Jobs').should('be.visible');
+        cy.contains('7. Distinguished Faculty').should('be.visible');
+        cy.contains('8. Features (6 Cards)').should('be.visible');
+        cy.contains('9. Knowledge Hub').should('be.visible');
 
         // Interactive Tab Switching:
         // Tab 2: Valuable Clients
@@ -47,14 +48,14 @@ describe('Superadmin Landing Page Customizer E2E Verification', () => {
         cy.contains('Left Container: Certificate Course Track').should('be.visible');
         cy.contains('Right Container: Day Long Course Track').should('be.visible');
 
-        // Tab 7: Features
-        cy.contains('7. Features (6 Cards)').click();
+        // Tab 8: Features
+        cy.contains('8. Features (6 Cards)').click();
         cy.contains('Features Section Visibility').should('be.visible');
         cy.contains('Feature Card 1').should('be.visible');
         cy.contains('Feature Card 6').should('be.visible');
 
-        // Tab 8: Career & Jobs
-        cy.contains('8. Career & Jobs').click();
+        // Tab 5: Career & Jobs
+        cy.contains('5. Career & Jobs').click();
         cy.contains('Career Opportunities Section Visibility').should('be.visible');
 
         cy.screenshot('admin_landing_customizer');

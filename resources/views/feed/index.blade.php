@@ -9,10 +9,6 @@
     <!-- 1. Header Banner -->
     <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#e3e7f0] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#c30102]/10 text-[#c30102] text-xs font-black uppercase tracking-wider mb-2">
-                <i class="fas fa-users"></i>
-                <span>Open Community & Knowledge Hub</span>
-            </div>
             <h1 class="text-2xl sm:text-3xl font-black text-[#0f131f] tracking-tight">
                 Community Feed
             </h1>

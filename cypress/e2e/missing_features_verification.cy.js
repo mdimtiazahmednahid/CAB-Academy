@@ -32,15 +32,15 @@ describe('Missing Features & Institutional Trust Suite Verification', () => {
 
   it('4. Verifies Legal Suite (Privacy, Terms, Refund)', () => {
     cy.visit('/privacy-policy');
-    cy.contains('Privacy Policy').should('be.visible');
+    cy.get('h1').contains('Privacy Policy').should('be.visible');
     cy.contains('Mirpur-Pallabi, Dhaka, Bangladesh, 1216').should('be.visible');
 
     cy.visit('/terms-of-service');
-    cy.contains('Terms of Service').should('be.visible');
+    cy.get('h1').contains('Terms of Service').should('be.visible');
     cy.contains('CAB Academy').should('be.visible');
 
     cy.visit('/refund-policy');
-    cy.contains('Refund & Cancellation Policy').should('be.visible');
+    cy.get('h1').contains('Refund & Cancellation Policy').should('be.visible');
     cy.contains('commercialacademy868@gmail.com').should('be.visible');
   });
 
