@@ -45,7 +45,11 @@ class InstructorController extends Controller
             'phone' => 'nullable|string|max:50',
             'order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
+            'password' => 'nullable|string|min:6',
         ]);
+
+        $initialPassword = $request->input('password');
+        unset($validated['password']);
 
         if ($request->hasFile('avatar_file')) {
             $path = $request->file('avatar_file')->store('instructors', 'public');
@@ -86,10 +90,16 @@ class InstructorController extends Controller
         }
         if ($user) {
             $user->name = $instructor->name;
+            if (!empty($instructor->email)) {
+                $user->email = $instructor->email;
+            }
             if ($instructor->avatar) {
                 $user->profile_picture = $instructor->avatar;
             }
-            $user->save();
+            if (!empty($initialPassword)) {
+                $user->password = bcrypt($initialPassword);
+            }
+            $user->saveQuietly();
         }
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile created successfully.');
@@ -120,6 +130,7 @@ class InstructorController extends Controller
             'phone' => 'nullable|string|max:50',
             'order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
+            'password' => 'nullable|string|min:6',
         ]);
 
         if ($request->hasFile('avatar_file')) {
@@ -143,6 +154,9 @@ class InstructorController extends Controller
         }
         unset($validated['avatar_base64'], $validated['avatar_file']);
 
+        $newPassword = $request->input('password');
+        unset($validated['password']);
+
         $validated['order'] = $request->input('order', 0);
         $validated['is_active'] = $request->has('is_active');
 
@@ -161,10 +175,16 @@ class InstructorController extends Controller
         }
         if ($user) {
             $user->name = $instructor->name;
+            if (!empty($instructor->email)) {
+                $user->email = $instructor->email;
+            }
             if ($instructor->avatar) {
                 $user->profile_picture = $instructor->avatar;
             }
-            $user->save();
+            if (!empty($newPassword)) {
+                $user->password = bcrypt($newPassword);
+            }
+            $user->saveQuietly();
         }
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile updated successfully.');

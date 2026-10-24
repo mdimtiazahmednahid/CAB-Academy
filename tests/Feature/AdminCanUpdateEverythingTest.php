@@ -630,4 +630,111 @@ class AdminCanUpdateEverythingTest extends TestCase
         $this->assertSoftDeleted('payment_methods', ['id' => $pm->id]);
         $this->assertNull($payment->fresh()->payment_method_id);
     }
+
+    /** 24. Unified System: Creating Instructor Auto-Provisions & Links User Login Account */
+    public function test_creating_instructor_auto_provisions_and_links_user_login_account()
+    {
+        $response = $this->actingAs($this->admin)->post('/admin/instructors', [
+            'name' => 'Dr. Farhan Customs',
+            'title' => 'Distinguished Customs Law Fellow',
+            'expertise' => 'Harmonized Tariff Schedule & Sea Customs',
+            'email' => 'farhan.customs@cab-academy.com',
+            'password' => 'FacultySecret123',
+            'phone' => '01711223344',
+            'is_active' => '1',
+        ]);
+
+        $response->assertSessionHas('success');
+
+        $instructor = Instructor::where('email', 'farhan.customs@cab-academy.com')->first();
+        $this->assertNotNull($instructor);
+        $this->assertNotNull($instructor->user_id);
+
+        $user = User::find($instructor->user_id);
+        $this->assertNotNull($user);
+        $this->assertEquals('Dr. Farhan Customs', $user->name);
+        $this->assertEquals('farhan.customs@cab-academy.com', $user->email);
+        $this->assertEquals('instructor', $user->role);
+        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('FacultySecret123', $user->password));
+    }
+
+    /** 25. Unified System: Registering/Creating User with Role Instructor Auto-Provisions Faculty Profile */
+    public function test_creating_user_with_instructor_role_auto_provisions_faculty_profile()
+    {
+        $user = User::create([
+            'name' => 'Prof. Shamim Supply Chain',
+            'email' => 'shamim.scm@cab-academy.com',
+            'password' => bcrypt('password123'),
+            'role' => 'instructor',
+            'phone' => '01888999000',
+        ]);
+
+        $instructor = Instructor::where('user_id', $user->id)->first();
+        $this->assertNotNull($instructor);
+        $this->assertEquals('Prof. Shamim Supply Chain', $instructor->name);
+        $this->assertEquals('shamim.scm@cab-academy.com', $instructor->email);
+        $this->assertTrue($instructor->is_active);
+    }
+
+    /** 26. Unified System: Announcement Broadcasting can Post to Community Feed */
+    public function test_announcement_broadcasting_can_post_to_community_feed()
+    {
+        $res = $this->actingAs($this->admin)->post('/admin/announcements', [
+            'title' => 'Special WTO Trade Advisory',
+            'type' => 'important',
+            'audience' => 'all',
+            'message' => 'New customs valuation rules applicable starting next month.',
+            'is_active' => '1',
+            'post_to_feed' => '1',
+        ]);
+
+        $res->assertSessionHas('success');
+
+        $post = CommunityPost::where('title', 'Special WTO Trade Advisory')->first();
+        $this->assertNotNull($post);
+        $this->assertTrue((bool)$post->is_pinned);
+        $this->assertStringContainsString('customs valuation rules', $post->content);
+    }
+
+    /** 27. Unified System: Payment Verification Auto-Enrolls Student and Rejection Revokes Enrollment */
+    public function test_payment_verification_auto_enrolls_and_rejection_revokes_enrollment()
+    {
+        $student = User::create([
+            'name' => 'Enrolling Student',
+            'email' => 'student.enrolled@cab-academy.com',
+            'password' => bcrypt('password'),
+            'role' => 'student',
+        ]);
+
+        $course = Course::create([
+            'title' => 'Commercial Banking Masterclass',
+            'price' => 5000,
+        ]);
+
+        $payment = Payment::create([
+            'user_id' => $student->id,
+            'course_id' => $course->id,
+            'amount' => 5000,
+            'sender_number' => '01700000000',
+            'transaction_id' => 'TRXAUTOPAY1',
+            'status' => 'pending',
+        ]);
+
+        // Student is not enrolled yet
+        $this->assertFalse($student->enrolledCourses()->where('course_id', $course->id)->exists());
+
+        // Verify payment
+        $verifyRes = $this->actingAs($this->admin)->put("/admin/payments/{$payment->id}/status", [
+            'status' => 'verified',
+        ]);
+        $verifyRes->assertSessionHas('success');
+        $this->assertTrue($student->enrolledCourses()->where('course_id', $course->id)->exists());
+
+        // Reject payment -> should detach enrollment
+        $rejectRes = $this->actingAs($this->admin)->put("/admin/payments/{$payment->id}/status", [
+            'status' => 'rejected',
+        ]);
+        $rejectRes->assertSessionHas('success');
+        $this->assertFalse($student->enrolledCourses()->where('course_id', $course->id)->exists());
+    }
 }

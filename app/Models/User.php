@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'preferences', 'profile_picture', 'cover_photo'])]
+#[Fillable(['name', 'email', 'password', 'role', 'phone', 'preferences', 'profile_picture', 'cover_photo'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -46,6 +46,44 @@ class User extends Authenticatable
     {
         $role = strtolower(trim($this->role ?? ''));
         return $role === 'instructor' || $this->isAdmin();
+    }
+
+    protected static function booted(): void
+    {
+        static::saved(function ($user) {
+            if ($user->role === 'instructor') {
+                Instructor::withoutEvents(function () use ($user) {
+                    $instructor = Instructor::where('user_id', $user->id)->first();
+                    if (!$instructor && !empty($user->email)) {
+                        $instructor = Instructor::where('email', $user->email)->first();
+                    }
+                    if (!$instructor) {
+                        $instructor = new Instructor();
+                        $instructor->user_id = $user->id;
+                        $instructor->name = $user->name;
+                        $instructor->email = $user->email;
+                        $instructor->title = 'Corporate Faculty Fellow';
+                        $instructor->expertise = 'International Trade & Industry Masterclasses';
+                        $instructor->phone = $user->phone ?? null;
+                        $instructor->is_active = true;
+                        $instructor->order = 99;
+                    } else {
+                        $instructor->user_id = $user->id;
+                        $instructor->name = $user->name;
+                        if (!empty($user->email) && empty($instructor->email)) {
+                            $instructor->email = $user->email;
+                        }
+                        if (!empty($user->phone) && empty($instructor->phone)) {
+                            $instructor->phone = $user->phone;
+                        }
+                    }
+                    if ($user->profile_picture) {
+                        $instructor->avatar = $user->profile_picture;
+                    }
+                    $instructor->saveQuietly();
+                });
+            }
+        });
     }
 
     public function instructedCourses()

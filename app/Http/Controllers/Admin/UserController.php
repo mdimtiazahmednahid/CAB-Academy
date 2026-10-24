@@ -27,6 +27,7 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'nullable|string|max:50',
             'password' => 'required|string|min:8',
             'role' => 'required|in:admin,instructor,student',
             'profile_picture' => 'nullable|image|max:5120',
@@ -72,6 +73,7 @@ class UserController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:50',
             'password' => 'nullable|string|min:8',
             'role' => 'required|in:admin,instructor,student',
             'profile_picture' => 'nullable|image|max:5120',
@@ -128,10 +130,16 @@ class UserController extends Controller
         // Keep linked instructor profile in sync with updated user details
         if ($instructor = \App\Models\Instructor::where('user_id', $user->id)->first()) {
             $instructor->name = $user->name;
+            if ($user->email) {
+                $instructor->email = $user->email;
+            }
+            if ($user->phone) {
+                $instructor->phone = $user->phone;
+            }
             if ($user->profile_picture) {
                 $instructor->avatar = $user->profile_picture;
             }
-            $instructor->save();
+            $instructor->saveQuietly();
         }
 
         return back()->with('success', 'User updated successfully.');
@@ -143,10 +151,10 @@ class UserController extends Controller
             return back()->withErrors(['error' => 'You cannot delete yourself.']);
         }
 
-        // Dissociate instructor profile if linked
+        // Soft delete instructor profile if linked
         if ($instructor = \App\Models\Instructor::where('user_id', $user->id)->first()) {
-            $instructor->user_id = null;
-            $instructor->save();
+            $instructor->is_active = false;
+            $instructor->delete();
         }
 
         // Detach enrollments safely

@@ -585,7 +585,7 @@
                 <!-- 2. Instructor Card (.course-teacher-image: 150px circle) -->
                 @php
                     $profile = $course->instructorProfile;
-                    $leadInstructor = $profile ?? $course->instructor ?? \App\Models\Instructor::where('is_active', true)->first();
+                    $leadInstructor = $course->lead_faculty ?? $profile ?? $course->instructor ?? \App\Models\Instructor::where('is_active', true)->first();
                     $instructorName = $leadInstructor ? $leadInstructor->name : 'CAB Academy Senior Faculty';
                     $instructorTitle = $leadInstructor ? ($leadInstructor->title ?? 'Executive Master Instructor & Specialist') : 'Senior Faculty & Specialist';
                     $instructorAvatar = $leadInstructor ? ($leadInstructor->avatar_url ?? $leadInstructor->profile_picture_url ?? null) : null;

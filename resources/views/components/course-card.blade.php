@@ -58,10 +58,9 @@
 
         <!-- Instructor Avatar Placement: Compact Right Corner Badge (-bottom-10 hook preserved for Cypress) -->
         @php
-            $profile = $course->instructorProfile;
-            $leadInst = $profile ?? $course->instructor;
+            $leadInst = $course->lead_faculty ?? $course->instructorProfile ?? $course->instructor;
             $instName = $leadInst ? $leadInst->name : 'CAB Faculty';
-            $instAvatar = $profile && $profile->avatar ? $profile->avatar_url : ($course->instructor && $course->instructor->profile_picture ? $course->instructor->profile_picture_url : null);
+            $instAvatar = $leadInst ? ($leadInst->avatar_url ?? $leadInst->profile_picture_url ?? null) : null;
         @endphp
         @if($leadInst)
             <div class="absolute -bottom-10 right-3 z-20 flex items-end justify-end pointer-events-auto">

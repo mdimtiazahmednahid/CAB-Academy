@@ -65,6 +65,23 @@ class Course extends Model
         return $this->hasOne(Instructor::class, 'user_id', 'instructor_id');
     }
 
+    /**
+     * Bulletproof Lead Faculty resolver handling both User ID and Instructor ID foreign keys.
+     */
+    public function getLeadFacultyAttribute()
+    {
+        if (!$this->instructor_id) {
+            return null;
+        }
+        if ($this->instructor && $this->instructor->instructorProfile) {
+            return $this->instructor->instructorProfile;
+        }
+        if ($inst = Instructor::find($this->instructor_id)) {
+            return $inst;
+        }
+        return $this->instructor;
+    }
+
     public function sections()
     {
         return $this->hasMany(Section::class)->orderBy('order');

@@ -20,20 +20,28 @@ class PaymentController extends Controller
             'status' => 'required|in:pending,processing,verified,rejected'
         ]);
 
-        if ($payment->status === 'verified' && $validated['status'] !== 'verified') {
-            // Technically we could un-enroll them if the admin un-verifies, but let's keep it simple
-            // We just update the status
-        }
-
-        $payment->update(['status' => $validated['status']]);
-
-        // If changed to verified, enroll the user in the course
         if ($validated['status'] === 'verified') {
-            if (!$payment->user->enrolledCourses()->where('course_id', $payment->course_id)->exists()) {
+            $payment->update([
+                'status' => 'verified',
+                'verified_at' => now(),
+                'verified_by' => auth()->id(),
+            ]);
+
+            // Enroll the user in the course
+            if ($payment->user && !$payment->user->enrolledCourses()->where('course_id', $payment->course_id)->exists()) {
                 $payment->user->enrolledCourses()->attach($payment->course_id);
             }
+        } elseif ($validated['status'] === 'rejected') {
+            $payment->update(['status' => 'rejected']);
+
+            // Safely detach enrollment if previously verified
+            if ($payment->user) {
+                $payment->user->enrolledCourses()->detach($payment->course_id);
+            }
+        } else {
+            $payment->update(['status' => $validated['status']]);
         }
 
-        return back()->with('success', "Payment status updated to {$validated['status']}.");
+        return back()->with('success', "Payment status updated to " . ucfirst($validated['status']) . ".");
     }
 }

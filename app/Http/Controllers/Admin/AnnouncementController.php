@@ -48,7 +48,23 @@ class AnnouncementController extends Controller
             $request->url
         ));
 
+        // If requested, also broadcast and pin to Community Feed (/feed)
+        if ($request->has('post_to_feed')) {
+            \App\Models\CommunityPost::create([
+                'user_id' => auth()->id(),
+                'author_name' => 'CAB Academy Directorate',
+                'author_title' => 'Official Academic Notice',
+                'author_avatar' => '/images/logo.png',
+                'category' => 'Official Insights',
+                'title' => $request->title,
+                'content' => $request->message,
+                'is_pinned' => true,
+                'likes_count' => 0,
+                'comments_count' => 0,
+            ]);
+        }
+
         return redirect()->route('admin.announcements.create')
-            ->with('success', 'Announcement sent to ' . $users->count() . ' users.');
+            ->with('success', 'Announcement sent to ' . $users->count() . ' users and broadcasted across platform.');
     }
 }

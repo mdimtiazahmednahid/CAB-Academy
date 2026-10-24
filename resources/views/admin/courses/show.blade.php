@@ -593,7 +593,7 @@
                         <option value="">-- No Instructor Assigned --</option>
                         @foreach($instructors as $instructor)
                             <option value="{{ $instructor->id }}" {{ $course->instructor_id == $instructor->id ? 'selected' : '' }}>
-                                {{ $instructor->name }} ({{ ucfirst($instructor->role) }})
+                                {{ $instructor->name }} @if($instructor->instructorProfile)— {{ $instructor->instructorProfile->title }}@endif ({{ ucfirst($instructor->role) }})
                             </option>
                         @endforeach
                     </select>

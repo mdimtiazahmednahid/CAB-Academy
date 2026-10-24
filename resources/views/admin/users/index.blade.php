@@ -59,9 +59,14 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-medium {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700' }}">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-700' : ($user->role === 'instructor' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700') }}">
                                     {{ ucfirst($user->role) }}
                                 </span>
+                                @if($user->role === 'instructor' && $user->instructorProfile)
+                                    <a href="{{ route('admin.instructors.edit', $user->instructorProfile) }}" class="block text-[11px] text-[#c30102] hover:underline font-bold mt-1">
+                                        Faculty Profile →
+                                    </a>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
                                 {{ $user->created_at->format('M d, Y') }}
@@ -69,7 +74,7 @@
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-3">
                                     <a href="{{ route('admin.users.show', $user) }}" class="text-primary hover:text-primary-dark font-medium text-sm transition-colors">View Progress</a>
-                                    <button onclick='openEditUserModal({{ $user->id }}, @json($user->name), @json($user->email), @json($user->role))' class="text-gray-500 hover:text-gray-900 font-medium text-sm transition-colors">Edit</button>
+                                    <button onclick='openEditUserModal({{ $user->id }}, @json($user->name), @json($user->email), @json($user->role), @json($user->phone ?? ""))' class="text-gray-500 hover:text-gray-900 font-medium text-sm transition-colors">Edit</button>
                                     @if($user->id !== auth()->id())
                                         <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Are you sure you want to delete this user? This cannot be undone.');" class="inline">
                                             @csrf
@@ -117,6 +122,10 @@
                     <input type="email" name="email" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number (Optional)</label>
+                    <input type="tel" name="phone" placeholder="017xxxxxxxx" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Password <span class="text-red-500">*</span></label>
                     <input type="password" name="password" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
@@ -159,6 +168,10 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
                     <input type="email" name="email" id="edit_email" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <input type="tel" name="phone" id="edit_phone" placeholder="017xxxxxxxx" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
@@ -213,10 +226,11 @@
 </div>
 
 <script>
-    function openEditUserModal(id, name, email, role) {
+    function openEditUserModal(id, name, email, role, phone) {
         document.getElementById('edit_name').value = name;
         document.getElementById('edit_email').value = email;
         document.getElementById('edit_role').value = role;
+        document.getElementById('edit_phone').value = phone || '';
         
         document.getElementById('editUserForm').action = `/admin/users/${id}`;
         document.getElementById('editUserModal').classList.remove('hidden');

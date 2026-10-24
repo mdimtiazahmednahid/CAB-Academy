@@ -41,6 +41,11 @@
         </select>
     </div>
 
+    <div class="flex items-center gap-2.5 p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
+        <input type="checkbox" id="post_to_feed" name="post_to_feed" value="1" checked class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary">
+        <label for="post_to_feed" class="text-xs font-bold text-gray-800 cursor-pointer">Also publish & pin as Official Notice on Community Feed (/feed)</label>
+    </div>
+
     <button type="submit" class="w-full bg-primary hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
         Send Announcement

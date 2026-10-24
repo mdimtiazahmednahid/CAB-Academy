@@ -21,7 +21,7 @@ class CourseController extends Controller
             $query->where('instructor_id', auth()->id());
         }
         $courses = $query->get();
-        $instructors = \App\Models\User::whereIn('role', ['admin', 'instructor'])->get();
+        $instructors = \App\Models\User::whereIn('role', ['admin', 'instructor'])->with('instructorProfile')->orderBy('name')->get();
         return view('admin.courses.index', compact('courses', 'instructors'));
     }
 
@@ -93,7 +93,7 @@ class CourseController extends Controller
         }
 
         $course->load(['sections.lessons', 'students', 'payments.user', 'payments.paymentMethod']);
-        $instructors = \App\Models\User::whereIn('role', ['admin', 'instructor'])->get();
+        $instructors = \App\Models\User::whereIn('role', ['admin', 'instructor'])->with('instructorProfile')->orderBy('name')->get();
         return view('admin.courses.show', compact('course', 'instructors'));
     }
 

@@ -149,7 +149,7 @@
                     <select name="instructor_id" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                         <option value="">-- Assign Instructor --</option>
                         @foreach($instructors as $instructor)
-                            <option value="{{ $instructor->id }}">{{ $instructor->name }} ({{ ucfirst($instructor->role) }})</option>
+                            <option value="{{ $instructor->id }}">{{ $instructor->name }} @if($instructor->instructorProfile)— {{ $instructor->instructorProfile->title }}@endif ({{ ucfirst($instructor->role) }})</option>
                         @endforeach
                     </select>
                 </div>

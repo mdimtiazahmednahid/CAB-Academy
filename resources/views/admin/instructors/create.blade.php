@@ -62,6 +62,21 @@
             </div>
         </div>
 
+        <!-- Automatic User Account Provisioning -->
+        <div class="bg-indigo-50/70 p-5 rounded-2xl border border-indigo-100/90 space-y-3">
+            <div class="flex items-center gap-2 text-indigo-900 font-bold text-xs uppercase tracking-wider">
+                <i class="fas fa-user-plus text-indigo-600"></i>
+                <span>Automatic User Account Provisioning</span>
+            </div>
+            <p class="text-xs text-indigo-950/70 leading-relaxed">
+                A unified user account will be automatically created so this faculty member can log in to view enrolled students and sessions.
+            </p>
+            <div class="max-w-md pt-1">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Initial Login Password (Optional)</label>
+                <input type="password" name="password" placeholder="Default: CabAcademy@2026 if left blank" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536] bg-white">
+            </div>
+        </div>
+
         <div class="bg-gray-50/70 p-5 rounded-2xl border border-gray-200/80 space-y-4">
             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Instructor Profile Picture</label>
             <div class="flex flex-col sm:flex-row items-center gap-5">
