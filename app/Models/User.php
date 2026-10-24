@@ -70,17 +70,29 @@ class User extends Authenticatable
                     } else {
                         $instructor->user_id = $user->id;
                         $instructor->name = $user->name;
-                        if (!empty($user->email) && empty($instructor->email)) {
+                        if (!empty($user->email)) {
                             $instructor->email = $user->email;
                         }
-                        if (!empty($user->phone) && empty($instructor->phone)) {
+                        if (!empty($user->phone)) {
                             $instructor->phone = $user->phone;
                         }
+                        $instructor->is_active = true;
                     }
                     if ($user->profile_picture) {
                         $instructor->avatar = $user->profile_picture;
+                    } elseif ($instructor->avatar && !$user->profile_picture) {
+                        $user->profile_picture = $instructor->avatar;
                     }
                     $instructor->saveQuietly();
+                });
+            } else {
+                // If user role was changed away from instructor, cleanly deactivate linked instructor profile
+                Instructor::withoutEvents(function () use ($user) {
+                    $instructor = Instructor::where('user_id', $user->id)->first();
+                    if ($instructor) {
+                        $instructor->is_active = false;
+                        $instructor->saveQuietly();
+                    }
                 });
             }
         });
@@ -97,15 +109,27 @@ class User extends Authenticatable
     }
 
     /**
-     * Get fully-qualified profile picture URL with storage prefixing and fallback.
+     * Get fully-qualified profile picture URL with fallback to instructor avatar and UI Avatars.
      */
     public function getProfilePictureUrlAttribute(): string
     {
+        $pic = $this->profile_picture ?: ($this->instructorProfile?->avatar ?? null);
         $default = 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=051c45&color=fff';
-        if (!$this->profile_picture) {
+        if (!$pic) {
             return $default;
         }
-        return storage_asset($this->profile_picture, $default);
+        return storage_asset($pic, $default);
+    }
+
+    /**
+     * Get fully-qualified cover photo URL with storage prefixing.
+     */
+    public function getCoverPhotoUrlAttribute(): ?string
+    {
+        if (!$this->cover_photo) {
+            return null;
+        }
+        return storage_asset($this->cover_photo);
     }
 
     public function completedLessons()

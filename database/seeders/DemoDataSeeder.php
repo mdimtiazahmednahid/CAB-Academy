@@ -169,82 +169,87 @@ class DemoDataSeeder extends Seeder
             ]);
         }
 
-        // 2. Create Faculty User Account (Institutional Role - No Personal / Real Names)
-        $instructor = User::withTrashed()->where('email', 'faculty@cab-academy.com')->first();
-        if ($instructor) {
-            $instructor->restore();
-            $instructor->update([
-                'name' => 'Faculty Chair - Trade & Commercial Operations',
-                'role' => 'instructor',
-                'profile_picture' => null
-            ]);
-        } else {
-            $instructor = User::create([
-                'email' => 'faculty@cab-academy.com',
-                'name' => 'Faculty Chair - Trade & Commercial Operations',
-                'password' => bcrypt('password'),
-                'role' => 'instructor',
-                'profile_picture' => null
-            ]);
-        }
-
-        // Clean up any old instructor records with personal names
-        Instructor::query()->forceDelete();
-
-        // Seed Executive Faculty Roster (Strictly Institutional Roles - No Personal/Real/IPDP Names)
-        $instructorRoster = [
+        // 2. Create Faculty User Accounts & Instructor Profiles (Strictly Institutional Roles)
+        $facultyDefinitions = [
             [
+                'email' => 'trade.faculty@cab-academy.com',
                 'name' => 'Faculty Chair – Trade & Customs',
                 'title' => 'Executive Fellow in Trade Finance & Customs Clearance',
                 'expertise' => 'Banking, L/C, Customs & Shipping Procedure',
                 'avatar' => null,
                 'bio' => 'Senior academic advisory board with extensive commercial experience guiding international trade, customs regulations, and banking documentation.',
-                'email' => 'trade.faculty@cab-academy.com',
                 'phone' => '01917-054664',
                 'order' => 1,
-                'is_active' => true,
-                'user_id' => $instructor->id,
             ],
             [
+                'email' => 'scm.faculty@cab-academy.com',
                 'name' => 'Faculty Chair – Supply Chain',
                 'title' => 'Executive Fellow in SCM Strategy & Procurement',
                 'expertise' => 'Supply Chain Strategy & Sourcing Excellence',
                 'avatar' => null,
                 'bio' => 'Operations faculty specializing in strategic sourcing, warehouse safety stock modeling, freight optimization, and global logistics.',
-                'email' => 'scm.faculty@cab-academy.com',
                 'phone' => '01917-054664',
                 'order' => 2,
-                'is_active' => true,
-                'user_id' => null,
             ],
             [
+                'email' => 'tax.faculty@cab-academy.com',
                 'name' => 'Faculty Chair – Tax & VAT',
                 'title' => 'Executive Fellow in Corporate Tax & NBR Compliance',
                 'expertise' => 'VAT, Corporate Taxation & Financial Audits',
                 'avatar' => null,
                 'bio' => 'Advisory faculty specializing in corporate tax assessment, monthly VAT returns, withholding tax certificates, and statutory audit compliance.',
-                'email' => 'tax.faculty@cab-academy.com',
                 'phone' => '01917-054664',
                 'order' => 3,
-                'is_active' => true,
-                'user_id' => null,
             ],
             [
+                'email' => 'law.faculty@cab-academy.com',
                 'name' => 'Faculty Chair – Law & Governance',
                 'title' => 'Executive Fellow in Corporate Law & Labor Relations',
                 'expertise' => 'Labor Laws, Compliance & Organizational Governance',
                 'avatar' => null,
                 'bio' => 'Corporate legal faculty specializing in company law, statutory filings, employment regulations, domestic inquiries, and workplace compliance.',
-                'email' => 'law.faculty@cab-academy.com',
                 'phone' => '01917-054664',
                 'order' => 4,
-                'is_active' => true,
-                'user_id' => null,
             ],
         ];
 
-        foreach ($instructorRoster as $inst) {
-            Instructor::create($inst);
+        $facultyUsers = [];
+        foreach ($facultyDefinitions as $f) {
+            $user = User::withTrashed()->where('email', $f['email'])->first();
+            if ($user) {
+                $user->restore();
+                $user->update([
+                    'name' => $f['name'],
+                    'role' => 'instructor',
+                    'phone' => $f['phone'],
+                    'email_verified_at' => now(),
+                ]);
+            } else {
+                $user = User::create([
+                    'name' => $f['name'],
+                    'email' => $f['email'],
+                    'password' => bcrypt('password'),
+                    'role' => 'instructor',
+                    'phone' => $f['phone'],
+                    'email_verified_at' => now(),
+                ]);
+            }
+            $facultyUsers[$f['email']] = $user;
+
+            Instructor::updateOrCreate(
+                ['email' => $f['email']],
+                [
+                    'user_id' => $user->id,
+                    'name' => $f['name'],
+                    'title' => $f['title'],
+                    'expertise' => $f['expertise'],
+                    'avatar' => $f['avatar'],
+                    'bio' => $f['bio'],
+                    'phone' => $f['phone'],
+                    'order' => $f['order'],
+                    'is_active' => true,
+                ]
+            );
         }
 
         // Purge any legacy user with real/personal names from earlier seeders
@@ -277,6 +282,8 @@ class DemoDataSeeder extends Seeder
                 'venue' => 'Mirpur-Pallabi Campus & Online Live via Zoom',
                 'target_audience' => 'Importers, Exporters, Supply Chain Executives, Commercial Managers, C&F Agents, Bank Trade Officers, and New Entrepreneurs.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'trade.faculty@cab-academy.com',
             ],
             [
                 'title' => 'Certificate Course in Supply Chain Management & Strategic Sourcing',
@@ -291,6 +298,8 @@ class DemoDataSeeder extends Seeder
                 'venue' => 'Online Live Interactive (Zoom)',
                 'target_audience' => 'Procurement heads, supply chain managers, warehouse leads, logistics officers, and plant managers.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'scm.faculty@cab-academy.com',
             ],
             [
                 'title' => 'Certificate Course in Financial Accounting, VAT & Corporate Tax Management',
@@ -305,6 +314,8 @@ class DemoDataSeeder extends Seeder
                 'venue' => 'Mirpur-Pallabi Campus / Zoom',
                 'target_audience' => 'Accountants, finance managers, tax advisors, auditors, and startup founders.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'tax.faculty@cab-academy.com',
             ],
             [
                 'title' => 'Certificate Course in Corporate Governance, Company Law & Secretarial Practice',
@@ -319,6 +330,8 @@ class DemoDataSeeder extends Seeder
                 'venue' => 'Mirpur-Pallabi Campus & Zoom',
                 'target_audience' => 'Company secretaries, corporate advocates, compliance managers, and executive directors.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1453733197783-64768dd7467b?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1453733197783-64768dd7467b?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'law.faculty@cab-academy.com',
             ],
 
             // 4 Day Long Masterclasses
@@ -335,6 +348,8 @@ class DemoDataSeeder extends Seeder
                 'venue' => 'Mirpur-Pallabi Campus & Online Live',
                 'target_audience' => 'Commercial officers, clearing agents, logistics personnel, and business owners.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'trade.faculty@cab-academy.com',
             ],
             [
                 'title' => 'Labor Law, HR Compliance & Industrial Disputes Masterclass (Day-Long)',
@@ -349,6 +364,8 @@ class DemoDataSeeder extends Seeder
                 'venue' => 'Mirpur-Pallabi Training Room',
                 'target_audience' => 'HR executives, admin managers, factory HR personnel, and managing directors.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'law.faculty@cab-academy.com',
             ],
             [
                 'title' => 'Civil Construction Project Planning, BOQ & Cost Estimation (Day-Long)',
@@ -363,6 +380,8 @@ class DemoDataSeeder extends Seeder
                 'venue' => 'Classroom Mirpur-Pallabi Campus',
                 'target_audience' => 'Civil engineers, site supervisors, project directors, and real estate developers.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'scm.faculty@cab-academy.com',
             ],
             [
                 'title' => 'Fire Safety, Disaster Management & Factory Compliance Masterclass (Day-Long)',
@@ -377,6 +396,8 @@ class DemoDataSeeder extends Seeder
                 'venue' => 'Mirpur-Pallabi Campus',
                 'target_audience' => 'EHS managers, safety officers, factory compliance heads, and facility managers.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'scm.faculty@cab-academy.com',
             ],
         ];
 
@@ -384,12 +405,15 @@ class DemoDataSeeder extends Seeder
         Course::whereNotIn('title', array_column($courses, 'title'))->delete();
 
         foreach ($courses as $courseData) {
+            $instEmail = $courseData['instructor_email'] ?? 'trade.faculty@cab-academy.com';
+            unset($courseData['instructor_email']);
+            $assignedInstructorUser = $facultyUsers[$instEmail] ?? $facultyUsers['trade.faculty@cab-academy.com'];
+            $courseData['instructor_id'] = $assignedInstructorUser->id;
+            $courseData['views'] = rand(150, 950);
+
             $course = Course::updateOrCreate(
                 ['title' => $courseData['title']],
-                array_merge($courseData, [
-                    'instructor_id' => $instructor->id,
-                    'views' => rand(150, 950)
-                ])
+                $courseData
             );
 
             // Create Sections & Lessons if none exist

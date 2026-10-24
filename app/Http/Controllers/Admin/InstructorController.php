@@ -75,7 +75,24 @@ class InstructorController extends Controller
         $validated['order'] = $request->input('order', 0);
         $validated['is_active'] = $request->has('is_active');
 
-        $instructor = Instructor::create($validated);
+        // Check if an instructor with this email or linked user already exists to prevent conflicting duplicates
+        $existingInstructor = null;
+        if (!empty($validated['email'])) {
+            $existingInstructor = Instructor::where('email', $validated['email'])->first();
+        }
+        if (!$existingInstructor && !empty($validated['email'])) {
+            $existingUser = \App\Models\User::where('email', $validated['email'])->first();
+            if ($existingUser) {
+                $existingInstructor = Instructor::where('user_id', $existingUser->id)->first();
+            }
+        }
+
+        if ($existingInstructor) {
+            $existingInstructor->update($validated);
+            $instructor = $existingInstructor;
+        } else {
+            $instructor = Instructor::create($validated);
+        }
 
         // Keep linked user record in sync
         $user = null;
@@ -96,8 +113,14 @@ class InstructorController extends Controller
             if ($instructor->avatar) {
                 $user->profile_picture = $instructor->avatar;
             }
+            if (!empty($instructor->phone)) {
+                $user->phone = $instructor->phone;
+            }
             if (!empty($initialPassword)) {
                 $user->password = bcrypt($initialPassword);
+            }
+            if ($user->role !== 'admin') {
+                $user->role = 'instructor';
             }
             $user->saveQuietly();
         }
@@ -197,6 +220,11 @@ class InstructorController extends Controller
     {
         if ($instructor->user_id) {
             \App\Models\Course::where('instructor_id', $instructor->user_id)->update(['instructor_id' => null]);
+            $user = \App\Models\User::find($instructor->user_id);
+            if ($user && $user->role === 'instructor') {
+                $user->role = 'student';
+                $user->saveQuietly();
+            }
         }
         $instructor->delete();
 

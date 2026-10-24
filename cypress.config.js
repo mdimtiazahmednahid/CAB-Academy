@@ -1,6 +1,6 @@
 export default {
   e2e: {
-    baseUrl: 'http://127.0.0.1:8000',
+    baseUrl: 'http://127.0.0.1:8001',
     viewportWidth: 1280,
     viewportHeight: 800,
     video: false,

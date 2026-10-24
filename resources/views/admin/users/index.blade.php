@@ -45,8 +45,8 @@
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
-                                    @if($user->profile_picture)
-                                        <img src="{{ Storage::url($user->profile_picture) }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover mr-4 shrink-0 border border-gray-200">
+                                    @if($user->profile_picture || ($user->instructorProfile && $user->instructorProfile->avatar))
+                                        <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover mr-4 shrink-0 border border-gray-200">
                                     @else
                                         <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mr-4 shrink-0">
                                             {{ substr($user->name, 0, 1) }}

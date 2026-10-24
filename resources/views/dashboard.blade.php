@@ -20,8 +20,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($enrolledCourses as $course)
                     <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden group hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col">
-                        @if($course->thumbnail)
-                            <img src="{{ Storage::url($course->thumbnail) }}" alt="{{ $course->title }}" class="w-full h-48 object-cover">
+                        @if($course->cover_image_url)
+                            <img src="{{ $course->cover_image_url }}" alt="{{ $course->title }}" class="w-full h-48 object-cover">
                         @else
                             <div class="w-full h-48 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-4xl shadow-inner">
                                 {{ substr($course->title, 0, 1) }}

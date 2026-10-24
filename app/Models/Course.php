@@ -43,16 +43,67 @@ class Course extends Model
         return $query->where('category', $category);
     }
 
+    public function setThumbnailAttribute($value)
+    {
+        $this->attributes['thumbnail'] = $value;
+        $this->attributes['cover_image'] = $value;
+    }
+
+    public function setCoverImageAttribute($value)
+    {
+        $this->attributes['cover_image'] = $value;
+        $this->attributes['thumbnail'] = $value;
+    }
+
+    public function getThumbnailAttribute($value)
+    {
+        return $value ?: ($this->attributes['cover_image'] ?? null);
+    }
+
+    public function getCoverImageAttribute($value)
+    {
+        return $value ?: ($this->attributes['thumbnail'] ?? null);
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function ($course) {
+            // Guarantee single source of truth between cover_image and thumbnail
+            $img = $course->cover_image ?: $course->thumbnail;
+            if (!empty($img)) {
+                $course->attributes['cover_image'] = $img;
+                $course->attributes['thumbnail'] = $img;
+            }
+
+            // Ensure instructor_id points to users.id even if an instructors.id was passed
+            if (!empty($course->instructor_id)) {
+                $inst = Instructor::find($course->instructor_id);
+                if ($inst && $inst->user_id) {
+                    $course->instructor_id = $inst->user_id;
+                }
+            }
+        });
+    }
+
     /**
      * Get fully-qualified cover image URL with reliable storage prefixing and fallback.
      */
     public function getCoverImageUrlAttribute(): string
     {
         $img = $this->cover_image ?: $this->thumbnail;
+        $default = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';
         if (!$img) {
-            return 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';
+            return $default;
         }
-        return storage_asset($img, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80');
+        return storage_asset($img, $default);
+    }
+
+    /**
+     * Alias for cover_image_url ensuring 100% parity across all views.
+     */
+    public function getThumbnailUrlAttribute(): string
+    {
+        return $this->cover_image_url;
     }
 
     public function instructor()

@@ -46,8 +46,8 @@
                 <!-- User Avatar -->
                 <div class="w-11 h-11 rounded-full bg-[#f2f4f7] border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center font-bold text-sm text-[#051c45]">
                     @auth
-                        @if(auth()->user()->profile_picture)
-                            <img src="{{ asset(auth()->user()->profile_picture) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
+                        @if(auth()->user()->profile_picture || (auth()->user()->instructorProfile && auth()->user()->instructorProfile->avatar))
+                            <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                         @else
                             {{ substr(auth()->user()->name, 0, 1) }}
                         @endif
@@ -219,7 +219,7 @@
                         <!-- Avatar -->
                         <div class="w-12 h-12 rounded-full bg-[#051c45]/10 border-2 border-white shadow-sm overflow-hidden shrink-0 flex items-center justify-center font-bold text-base text-[#051c45]">
                             @if($post->author_avatar)
-                                <img src="{{ asset($post->author_avatar) }}" alt="{{ $post->author_name }}" class="w-full h-full object-cover">
+                                <img src="{{ storage_asset($post->author_avatar) }}" alt="{{ $post->author_name }}" class="w-full h-full object-cover">
                             @else
                                 {{ substr($post->author_name, 0, 1) }}
                             @endif
@@ -367,7 +367,7 @@
                             <div class="flex items-start gap-2.5">
                                 <div class="w-8 h-8 rounded-full bg-[#051c45]/10 border border-[#051c45]/20 overflow-hidden shrink-0 flex items-center justify-center font-bold text-xs text-[#051c45]">
                                     @if($comment->author_avatar)
-                                        <img src="{{ asset($comment->author_avatar) }}" alt="{{ $comment->author_name }}" class="w-full h-full object-cover">
+                                        <img src="{{ storage_asset($comment->author_avatar) }}" alt="{{ $comment->author_name }}" class="w-full h-full object-cover">
                                     @else
                                         {{ substr($comment->author_name, 0, 1) }}
                                     @endif

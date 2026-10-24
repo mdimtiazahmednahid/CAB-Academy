@@ -139,7 +139,7 @@
                 
                 <!-- Course Banner Image -->
                 <div class="rounded-2xl overflow-hidden shadow-sm border border-[#e3e7f0] bg-white">
-                    <img src="{{ $course->cover_image_url }}" alt="{{ $course->title }}" class="w-full h-80 sm:h-96 object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80';">
+                    <img src="{{ $course->cover_image_url }}" alt="{{ $course->title }}" class="w-full h-80 sm:h-96 object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80';">
                 </div>
 
                 <!-- Enrolled Progress Bar (If Enrolled) -->

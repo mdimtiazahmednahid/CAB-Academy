@@ -47,9 +47,9 @@
         <div class="space-y-4">
             <div>
                 <x-input-label for="profile_picture_input" :value="__('Profile Picture')" />
-                @if($user->profile_picture)
+                @if($user->profile_picture || ($user->instructorProfile && $user->instructorProfile->avatar))
                     <div class="mt-2 mb-2">
-                        <img src="{{ Storage::url($user->profile_picture) }}" alt="Profile" class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover shadow-sm border border-gray-200">
+                        <img src="{{ $user->profile_picture_url }}" alt="Profile" class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover shadow-sm border border-gray-200">
                     </div>
                 @endif
                 <input type="file" id="profile_picture_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
@@ -61,7 +61,7 @@
                 <x-input-label for="cover_photo_input" :value="__('Cover Photo')" />
                 @if($user->cover_photo)
                     <div class="mt-2 mb-2 w-full max-w-2xl">
-                        <img src="{{ Storage::url($user->cover_photo) }}" alt="Cover" class="w-full h-32 md:h-48 rounded-lg object-cover shadow-sm border border-gray-200">
+                        <img src="{{ $user->cover_photo_url }}" alt="Cover" class="w-full h-32 md:h-48 rounded-lg object-cover shadow-sm border border-gray-200">
                     </div>
                 @endif
                 <input type="file" id="cover_photo_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />

@@ -782,8 +782,8 @@
                             <div class="border-t border-slate-100 pt-3 sm:pt-4 mt-auto flex items-center justify-between">
                                 <div class="flex items-center gap-2">
                                     <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-xs font-bold text-[#041536]">
-                                        @if($blog->author && $blog->author->profile_picture)
-                                            <img src="{{ asset($blog->author->profile_picture) }}" alt="{{ $blog->author_name }}" class="w-full h-full object-cover">
+                                        @if($blog->author && ($blog->author->profile_picture || ($blog->author->instructorProfile && $blog->author->instructorProfile->avatar)))
+                                            <img src="{{ $blog->author->profile_picture_url }}" alt="{{ $blog->author_name }}" class="w-full h-full object-cover">
                                         @else
                                             {{ substr($blog->author_name ?? 'F', 0, 1) }}
                                         @endif

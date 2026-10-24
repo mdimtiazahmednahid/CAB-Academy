@@ -15,8 +15,8 @@ if (!function_exists('storage_asset')) {
         }
         $trimmed = ltrim($path, '/');
         if (str_starts_with($trimmed, 'storage/')) {
-            return asset($trimmed);
+            return '/' . $trimmed;
         }
-        return asset('storage/' . $trimmed);
+        return '/storage/' . $trimmed;
     }
 }

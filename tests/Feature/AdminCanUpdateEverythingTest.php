@@ -737,4 +737,104 @@ class AdminCanUpdateEverythingTest extends TestCase
         $rejectRes->assertSessionHas('success');
         $this->assertFalse($student->enrolledCourses()->where('course_id', $course->id)->exists());
     }
+
+    public function test_course_photo_single_source_of_truth_syncs_cover_and_thumbnail()
+    {
+        $course = Course::create([
+            'title' => 'Single Source Photo Course',
+            'thumbnail' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80',
+            'price' => 5000,
+        ]);
+
+        $this->assertEquals($course->thumbnail, $course->cover_image);
+        $this->assertEquals($course->cover_image_url, $course->thumbnail_url);
+
+        // Update cover_image directly
+        $course->update(['cover_image' => 'course_covers/new_custom_photo.jpg']);
+        $course->refresh();
+
+        $this->assertEquals('course_covers/new_custom_photo.jpg', $course->thumbnail);
+        $this->assertEquals('course_covers/new_custom_photo.jpg', $course->cover_image);
+        $this->assertEquals('/storage/course_covers/new_custom_photo.jpg', $course->cover_image_url);
+        $this->assertEquals('/storage/course_covers/new_custom_photo.jpg', $course->thumbnail_url);
+    }
+
+    public function test_instructor_and_user_creation_do_not_conflict_and_prevent_duplicates()
+    {
+        // 1. Create User first with role instructor
+        $resUser = $this->actingAs($this->admin)->post('/admin/users', [
+            'name' => 'Prof. Alex Rahman',
+            'email' => 'alex.rahman@cab-academy.com',
+            'password' => 'SecurePass123!',
+            'role' => 'instructor',
+            'phone' => '01711-223344',
+        ]);
+        $resUser->assertRedirect('/admin/users');
+
+        $user = User::where('email', 'alex.rahman@cab-academy.com')->first();
+        $this->assertNotNull($user);
+        $this->assertEquals('instructor', $user->role);
+        $this->assertEquals(1, Instructor::where('email', 'alex.rahman@cab-academy.com')->count());
+
+        // 2. Now submit POST /admin/instructors with the same email
+        $resInst = $this->actingAs($this->admin)->post('/admin/instructors', [
+            'name' => 'Prof. Alex Rahman, PhD',
+            'title' => 'Senior Trade Economics Fellow',
+            'expertise' => 'Global Logistics & Customs Tariffs',
+            'email' => 'alex.rahman@cab-academy.com',
+            'phone' => '01711-223344',
+            'bio' => 'Distinguished fellow with 20+ years of advisory experience.',
+            'is_active' => '1',
+            'order' => 5,
+        ]);
+        $resInst->assertRedirect(route('admin.instructors.index'));
+
+        // Crucial data integrity assertion: strictly 1 row in instructors, NO duplicates
+        $this->assertEquals(1, Instructor::where('email', 'alex.rahman@cab-academy.com')->count());
+        $instructor = Instructor::where('email', 'alex.rahman@cab-academy.com')->first();
+        $this->assertEquals($user->id, $instructor->user_id);
+        $this->assertEquals('Prof. Alex Rahman, PhD', $instructor->name);
+        $this->assertEquals('Senior Trade Economics Fellow', $instructor->title);
+
+        // 3. Changing user role away from instructor deactivates the profile
+        $resUpdateUser = $this->actingAs($this->admin)->put("/admin/users/{$user->id}", [
+            'name' => 'Alex Rahman',
+            'email' => 'alex.rahman@cab-academy.com',
+            'role' => 'student',
+        ]);
+        $resUpdateUser->assertSessionHas('success');
+        $this->assertFalse((bool)$instructor->fresh()->is_active);
+
+        // 4. Changing user role back to instructor reactivates the profile
+        $resReactivate = $this->actingAs($this->admin)->put("/admin/users/{$user->id}", [
+            'name' => 'Alex Rahman',
+            'email' => 'alex.rahman@cab-academy.com',
+            'role' => 'instructor',
+        ]);
+        $resReactivate->assertSessionHas('success');
+        $this->assertTrue((bool)$instructor->fresh()->is_active);
+
+        // 5. Deleting instructor demotes user to student
+        $resDelInst = $this->actingAs($this->admin)->delete("/admin/instructors/{$instructor->id}");
+        $resDelInst->assertRedirect(route('admin.instructors.index'));
+        $this->assertEquals('student', $user->fresh()->role);
+    }
+
+    public function test_avatar_and_profile_picture_fallback_bidirectional()
+    {
+        $user = User::create([
+            'name' => 'Dual Avatar User',
+            'email' => 'dual.avatar@cab-academy.com',
+            'password' => bcrypt('password'),
+            'role' => 'instructor',
+            'profile_picture' => null,
+        ]);
+
+        $instructor = Instructor::where('user_id', $user->id)->first();
+        $instructor->update(['avatar' => 'instructors/faculty_avatar_sample.png']);
+
+        // User profile picture URL should cleanly fall back to instructor avatar
+        $this->assertEquals('/storage/instructors/faculty_avatar_sample.png', $user->fresh()->profile_picture_url);
+        $this->assertEquals('/storage/instructors/faculty_avatar_sample.png', $instructor->fresh()->avatar_url);
+    }
 }
