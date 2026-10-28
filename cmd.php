@@ -30,6 +30,27 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     $baseDir = dirname(__DIR__);
 }
 
+// Auto-heal missing storage and cache directories to prevent 'View path not found' or session errors
+$requiredDirs = [
+    $baseDir . '/storage',
+    $baseDir . '/storage/app',
+    $baseDir . '/storage/app/public',
+    $baseDir . '/storage/framework',
+    $baseDir . '/storage/framework/cache',
+    $baseDir . '/storage/framework/cache/data',
+    $baseDir . '/storage/framework/sessions',
+    $baseDir . '/storage/framework/views',
+    $baseDir . '/storage/framework/testing',
+    $baseDir . '/storage/logs',
+    $baseDir . '/bootstrap/cache',
+];
+foreach ($requiredDirs as $dir) {
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0777, true);
+    }
+    @chmod($dir, 0777);
+}
+
 // Define default master PIN
 $masterPin = 'cab2026';
 
@@ -279,9 +300,112 @@ if ($rawCommand !== '') {
         }
         $executionStatus = 'success';
     }
-    // 4. In-Memory Artisan Command Execution
+    // 4. Storage & Directory Fixer
+    elseif (in_array($cleanCommand, ['fix:storage', 'storage:fix', 'fix:dirs', 'dirs:fix'])) {
+        $created = [];
+        foreach ($requiredDirs as $dir) {
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0777, true);
+                $created[] = str_replace($baseDir . '/', '', $dir);
+            }
+            @chmod($dir, 0777);
+        }
+        $commandOutput = "✓ Storage directories verified and permissions set to 0777!\n";
+        if (!empty($created)) {
+            $commandOutput .= "Created missing directories:\n - " . implode("\n - ", $created) . "\n";
+        } else {
+            $commandOutput .= "All required framework directories already exist.\n";
+        }
+        $executionStatus = 'success';
+    }
+    // 5. Shared-Hosting Safe Framework & Environment Info (Bypasses proc_open limitation)
+    elseif ($cleanCommand === 'about') {
+        $appEnv = $envVars['APP_ENV'] ?? 'production';
+        $appDebug = ($envVars['APP_DEBUG'] ?? 'false') === 'true' ? 'ENABLED' : 'OFF';
+        $appUrl = $envVars['APP_URL'] ?? 'https://cabacademy.bd';
+        $dbConn = $envVars['DB_CONNECTION'] ?? 'mysql';
+        $dbHost = $envVars['DB_HOST'] ?? 'sql202.infinityfree.com';
+        $dbName = $envVars['DB_DATABASE'] ?? 'if0_42678796_cab';
+        $sessDriver = $envVars['SESSION_DRIVER'] ?? 'file';
+        $queueConn = $envVars['QUEUE_CONNECTION'] ?? 'sync';
+        $cacheStore = $envVars['CACHE_STORE'] ?? 'file';
+        $symlinkOk = function_exists('symlink') ? 'ENABLED' : 'DISABLED (InfinityFree Limitation)';
+        $procOpenOk = function_exists('proc_open') ? 'ENABLED' : 'DISABLED (InfinityFree Limitation)';
+
+        $commandOutput = "CAB Academy & Laravel Framework Overview\n";
+        $commandOutput .= "==================================================\n";
+        $commandOutput .= sprintf("%-22s: %s\n", "Application Name", "CAB Academy");
+        $commandOutput .= sprintf("%-22s: %s\n", "Laravel Version", "11.45.1");
+        $commandOutput .= sprintf("%-22s: %s\n", "PHP Version", PHP_VERSION);
+        $commandOutput .= sprintf("%-22s: %s\n", "Composer Runtime", "Shared Hosting (proc_open disabled)");
+        $commandOutput .= sprintf("%-22s: %s\n", "Environment", $appEnv);
+        $commandOutput .= sprintf("%-22s: %s\n", "Debug Mode", $appDebug);
+        $commandOutput .= sprintf("%-22s: %s\n", "URL", $appUrl);
+        $commandOutput .= sprintf("%-22s: %s\n", "Database Driver", $dbConn);
+        $commandOutput .= sprintf("%-22s: %s\n", "Database Target", "{$dbHost} ({$dbName})");
+        $commandOutput .= sprintf("%-22s: %s\n", "Session Driver", $sessDriver);
+        $commandOutput .= sprintf("%-22s: %s\n", "Queue Connection", $queueConn);
+        $commandOutput .= sprintf("%-22s: %s\n", "Cache Store", $cacheStore);
+        $commandOutput .= sprintf("%-22s: %s\n", "symlink()", $symlinkOk);
+        $commandOutput .= sprintf("%-22s: %s\n", "proc_open()", $procOpenOk);
+
+        $commandOutput .= "\nStorage & Cache Directory Status:\n";
+        foreach ($requiredDirs as $dir) {
+            $short = str_replace($baseDir . '/', '', $dir);
+            $status = is_dir($dir) ? (is_writable($dir) ? 'WRITABLE ✓' : 'EXISTS (READ-ONLY) ⚠') : 'MISSING ✗';
+            $commandOutput .= sprintf(" - %-30s: %s\n", $short, $status);
+        }
+        $executionStatus = 'success';
+    }
+    // 6. Instructor & User Duplicate Email Resolver
+    elseif (in_array($cleanCommand, ['instructors:fix', 'fix:instructors', 'fix:users'])) {
+        try {
+            $autoloadFile = $baseDir . '/vendor/autoload.php';
+            require_once $autoloadFile;
+            $app = require_once $baseDir . '/bootstrap/app.php';
+            $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+            $kernel->bootstrap();
+
+            $output = "CAB Academy Instructor & User Account Integrity Check\n";
+            $output .= "========================================================\n";
+            $instructors = \App\Models\Instructor::all();
+            $repaired = 0;
+
+            foreach ($instructors as $inst) {
+                if (!empty($inst->email)) {
+                    $matchingUser = \App\Models\User::where('email', $inst->email)->first();
+                    if ($matchingUser && $inst->user_id !== $matchingUser->id) {
+                        $oldId = $inst->user_id;
+                        $inst->user_id = $matchingUser->id;
+                        $inst->saveQuietly();
+                        $output .= " ✓ Relinked instructor '{$inst->name}' ({$inst->email}) from user #{$oldId} to user #{$matchingUser->id} ({$matchingUser->name})\n";
+                        $repaired++;
+                    }
+                }
+            }
+
+            if ($repaired === 0) {
+                $output .= " All instructor profiles and user accounts are cleanly mapped with zero collisions.\n";
+            } else {
+                $output .= "\n Successfully resolved {$repaired} instructor-user account conflict(s)!\n";
+            }
+            $commandOutput = $output;
+            $executionStatus = 'success';
+        } catch (\Throwable $e) {
+            $commandOutput = "Error repairing instructors: " . $e->getMessage() . "\n" . $e->getTraceAsString();
+            $executionStatus = 'error';
+        }
+    }
+    // 7. In-Memory Artisan Command Execution
     else {
         try {
+            // Ensure framework directories exist before Artisan executes commands like optimize:clear or view:clear
+            foreach ($requiredDirs as $dir) {
+                if (!is_dir($dir)) {
+                    @mkdir($dir, 0777, true);
+                }
+            }
+
             $autoloadFile = $baseDir . '/vendor/autoload.php';
             if (!file_exists($autoloadFile)) {
                 throw new \Exception("vendor/autoload.php not found at: {$autoloadFile}. Please make sure the vendor/ folder is uploaded.");
@@ -499,6 +623,18 @@ ob_end_clean();
                                 <p class="text-[11px] text-emerald-700 mt-0.5">Ensures admin@cab-academy.com and academy directors have full administrator rights</p>
                             </div>
                             <i class="fas fa-chevron-right text-xs text-emerald-400 group-hover:text-emerald-700 group-hover:translate-x-1 transition-all"></i>
+                        </button>
+
+                        <button onclick="runCommand('instructors:fix')" class="w-full p-3.5 text-left rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-all flex items-center justify-between group">
+                            <div>
+                                <div class="text-xs font-bold text-purple-900 flex items-center gap-2">
+                                    <i class="fas fa-users-cog text-purple-600"></i>
+                                    <span>Fix Instructor Accounts & Duplicate Emails (Fix 1062)</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-200 text-purple-900 font-mono">instructors:fix</span>
+                                </div>
+                                <p class="text-[11px] text-purple-700 mt-0.5">Resolves duplicate email collisions by safely relinking faculty to their user accounts</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs text-purple-400 group-hover:text-purple-700 group-hover:translate-x-1 transition-all"></i>
                         </button>
 
                         <button onclick="confirmFresh()" class="w-full p-3.5 text-left rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 transition-all flex items-center justify-between group">

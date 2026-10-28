@@ -28,7 +28,7 @@
     </div>
 @endif
 
-<form action="{{ route('admin.frontend.store') }}" method="POST" 
+<form action="{{ route('admin.frontend.store') }}" method="POST" enctype="multipart/form-data" 
       x-data="{ 
           activeTab: 'hero',
           mode: '{{ $settings['landing_page_mode'] ?? 'default' }}',
@@ -169,6 +169,18 @@
                     <i class="fas fa-balance-scale text-sm"></i>
                     <span>11. Legal & Policies</span>
                 </span>
+            </button>
+
+            <div class="px-3 pt-3 pb-1 text-xs font-bold uppercase tracking-wider text-gray-400 border-t border-gray-100">Site Directory</div>
+
+            <button type="button" @click="activeTab = 'pages'" 
+                    :class="activeTab === 'pages' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-sitemap text-sm"></i>
+                    <span>All Site Pages Directory</span>
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-blue-100 text-blue-800">20+</span>
             </button>
 
             <div class="pt-2 border-t border-gray-100">
@@ -1041,6 +1053,129 @@
                             <textarea name="policy_refund_content" rows="6" 
                                       placeholder="Leave blank to use default corporate refund policy..." 
                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536] font-mono">{{ $settings['policy_refund_content'] ?? '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ALL SITE PAGES & ROUTES DIRECTORY -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'pages'" class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-blue-100 text-blue-800">Master Index</span>
+                                <span class="text-xs text-gray-500 font-semibold">20+ Standardized Site Routes</span>
+                            </div>
+                            <h3 class="text-xl font-black text-gray-900">All Site Pages & Live Verification Directory</h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Audit, inspect, and open every public portal, student learning module, and compliance policy live in real-time.</p>
+                        </div>
+                        <a href="{{ route('sitemap.xml') }}" target="_blank" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold inline-flex items-center gap-1.5 transition-colors self-start sm:self-auto">
+                            <i class="fas fa-sitemap text-xs"></i>
+                            <span>View XML Sitemap</span>
+                        </a>
+                    </div>
+
+                    <!-- 1. Public Front-Facing Pages -->
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#041536] mb-3 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span>1. Public Discovery & Catalog Pages (Indexable)</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @php
+                                $allPublicPages = [
+                                    ['name' => 'Home Landing Page', 'url' => url('/'), 'route' => '/', 'badge' => 'Homepage'],
+                                    ['name' => 'Course Catalog', 'url' => route('catalog.index'), 'route' => '/catalog', 'badge' => 'Core Catalog'],
+                                    ['name' => 'Certificate Programs Filter', 'url' => route('catalog.certificate'), 'route' => '/certificate-course', 'badge' => 'Filtered Track'],
+                                    ['name' => 'Day Long Masterclasses Filter', 'url' => route('catalog.day_long'), 'route' => '/day-long-course', 'badge' => 'Filtered Track'],
+                                    ['name' => 'Export – Import Category Portal', 'url' => route('catalog.category', 'export-import'), 'route' => '/category/export-import', 'badge' => 'Category'],
+                                    ['name' => 'Executive Instructors & Faculty', 'url' => route('instructors.index'), 'route' => '/instructors', 'badge' => 'Directory'],
+                                    ['name' => 'Career & Placement Opportunities', 'url' => route('jobs.index'), 'route' => '/jobs', 'badge' => 'Careers'],
+                                    ['name' => 'Community Discussion Feed', 'url' => route('feed.index'), 'route' => '/feed', 'badge' => 'Community'],
+                                    ['name' => 'Knowledge Hub & Publications', 'url' => route('blog.index'), 'route' => '/blog', 'badge' => 'Publications'],
+                                    ['name' => 'Public Certificate Registry', 'url' => route('certificate.verify'), 'route' => '/verify-certificate', 'badge' => 'Verification'],
+                                    ['name' => 'Student Wishlist & Saved Courses', 'url' => route('wishlist.index'), 'route' => '/wishlist', 'badge' => 'Wishlist'],
+                                    ['name' => 'Institutional About Us', 'url' => route('about.index'), 'route' => '/about', 'badge' => 'About'],
+                                    ['name' => 'Campus Coordinates & Contact', 'url' => route('contact.index'), 'route' => '/contact', 'badge' => 'Contact'],
+                                ];
+                            @endphp
+                            @foreach($allPublicPages as $p)
+                                <div class="p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200/80 flex items-center justify-between gap-3 transition-colors">
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-bold text-gray-900 truncate">{{ $p['name'] }}</span>
+                                            <span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-white text-slate-600 border border-slate-200 shrink-0">{{ $p['badge'] }}</span>
+                                        </div>
+                                        <span class="text-[11px] font-mono text-slate-500 block truncate">{{ $p['route'] }}</span>
+                                    </div>
+                                    <a href="{{ $p['url'] }}" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#041536] hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 shadow-sm shrink-0 transition-all">
+                                        <span>Open</span>
+                                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- 2. Legal Compliance Suite -->
+                    <div class="pt-4 border-t border-gray-100">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#041536] mb-3 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            <span>2. Institutional Trust & Legal Compliance Pages</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            @php
+                                $allLegalPages = [
+                                    ['name' => 'Privacy Policy', 'url' => route('legal.privacy'), 'route' => '/privacy-policy'],
+                                    ['name' => 'Terms of Service', 'url' => route('legal.terms'), 'route' => '/terms-of-service'],
+                                    ['name' => 'Refund & Cancellation Policy', 'url' => route('legal.refund'), 'route' => '/refund-policy'],
+                                ];
+                            @endphp
+                            @foreach($allLegalPages as $lp)
+                                <div class="p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200/80 flex items-center justify-between gap-3 transition-colors">
+                                    <div class="min-w-0">
+                                        <span class="text-xs font-bold text-gray-900 block truncate">{{ $lp['name'] }}</span>
+                                        <span class="text-[11px] font-mono text-slate-500 block truncate">{{ $lp['route'] }}</span>
+                                    </div>
+                                    <a href="{{ $lp['url'] }}" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#041536] hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 shadow-sm shrink-0 transition-all">
+                                        <span>Open</span>
+                                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- 3. Student Authenticated Learning Suite -->
+                    <div class="pt-4 border-t border-gray-100">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#041536] mb-3 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                            <span>3. Student Authenticated Learning Suite</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            @php
+                                $allStudentPages = [
+                                    ['name' => 'Student Dashboard', 'url' => route('dashboard'), 'route' => '/dashboard', 'desc' => 'Enrolled courses & payments overview'],
+                                    ['name' => 'Performance & Career Applications', 'url' => route('performance.index'), 'route' => '/performance', 'desc' => 'Job applications & completion metrics'],
+                                    ['name' => 'Account Profile & Settings', 'url' => route('profile.edit'), 'route' => '/profile', 'desc' => 'User credentials & avatar management'],
+                                    ['name' => 'Notification Preferences', 'url' => route('notifications.index'), 'route' => '/notifications', 'desc' => 'System alerts & announcements'],
+                                ];
+                            @endphp
+                            @foreach($allStudentPages as $sp)
+                                <div class="p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200/80 flex items-center justify-between gap-3 transition-colors">
+                                    <div class="min-w-0">
+                                        <span class="text-xs font-bold text-gray-900 block truncate">{{ $sp['name'] }}</span>
+                                        <span class="text-[11px] font-mono text-slate-500 block truncate">{{ $sp['route'] }} • {{ $sp['desc'] }}</span>
+                                    </div>
+                                    <a href="{{ $sp['url'] }}" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#041536] hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 shadow-sm shrink-0 transition-all">
+                                        <span>Open</span>
+                                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>

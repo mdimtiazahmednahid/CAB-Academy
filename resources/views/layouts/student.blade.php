@@ -54,7 +54,7 @@
         <!-- Logo -->
         <div class="p-4 lg:p-6 border-b border-gray-100 flex items-center justify-center lg:justify-start gap-3 h-16">
             <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" class="h-8 w-8 rounded-full object-contain bg-white border border-gray-100">
+                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" class="h-8 w-8 rounded-full object-contain bg-white border border-gray-100" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <span class="hidden lg:block font-black text-lg tracking-tight text-[#0a2540] uppercase truncate">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
             </a>
         </div>

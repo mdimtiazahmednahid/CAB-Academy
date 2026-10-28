@@ -33,6 +33,35 @@ class CourseController extends Controller
         return view('courses.show', compact('course', 'completedLessonIds', 'isEnrolled'));
     }
 
+    /**
+     * Social Short Link Resolver (/c/{course})
+     * Serves high-fidelity Open Graph / Twitter Card preview for Facebook, WhatsApp, and social crawlers,
+     * and seamlessly redirects human visitors to the full course page.
+     */
+    public function shortLink(Request $request, $identifier)
+    {
+        $course = null;
+        if (is_numeric($identifier)) {
+            $course = Course::where('is_published', true)->find($identifier);
+        }
+        if (!$course) {
+            $course = Course::where('is_published', true)->where('id', $identifier)->first();
+        }
+        if (!$course) {
+            $course = Course::where('is_published', true)->get()->first(function ($c) use ($identifier) {
+                return \Illuminate\Support\Str::slug($c->title) === $identifier;
+            });
+        }
+
+        abort_if(!$course, 404);
+
+        if ($request->has('direct') || $request->has('redirect')) {
+            return redirect()->route('courses.show', $course);
+        }
+
+        return response()->view('courses.share_preview', compact('course'));
+    }
+
     public function enroll(Request $request, Course $course)
     {
         abort_if(!$course->is_published, 404);

@@ -111,7 +111,8 @@
                             <div class="flex items-start justify-between gap-3 mb-4">
                                 <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#041536]/10 to-[#041536]/5 text-[#041536] border border-slate-200/60 flex items-center justify-center text-lg font-black group-hover:scale-105 transition-transform shrink-0 shadow-sm">
                                     @if(!empty($job->company_logo))
-                                        <img src="{{ Storage::url($job->company_logo) }}" alt="{{ $job->company ?? 'Company' }}" class="w-full h-full object-cover rounded-2xl">
+                                        <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company ?? 'Company' }}" class="w-full h-full object-cover rounded-2xl" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                        <span style="display:none;">{{ substr($job->company ?? 'CAB', 0, 2) }}</span>
                                     @else
                                         <span>{{ substr($job->company ?? 'CAB', 0, 2) }}</span>
                                     @endif

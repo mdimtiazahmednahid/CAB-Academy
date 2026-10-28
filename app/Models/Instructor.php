@@ -60,15 +60,32 @@ class Instructor extends Model
         });
 
         static::saved(function ($instructor) {
-            if ($instructor->user_id && ($user = User::find($instructor->user_id))) {
+            $user = null;
+            if ($instructor->user_id) {
+                $user = User::find($instructor->user_id);
+            }
+
+            // If instructor email points to an existing user, cleanly relink to prevent duplicate key crashes
+            if (!empty($instructor->email)) {
+                $userWithEmail = User::where('email', $instructor->email)->first();
+                if ($userWithEmail && (!$user || $user->id !== $userWithEmail->id)) {
+                    $instructor->user_id = $userWithEmail->id;
+                    $user = $userWithEmail;
+                }
+            }
+
+            if ($user) {
                 $dirty = false;
                 if ($user->name !== $instructor->name) {
                     $user->name = $instructor->name;
                     $dirty = true;
                 }
                 if ($instructor->email && $user->email !== $instructor->email) {
-                    $user->email = $instructor->email;
-                    $dirty = true;
+                    $otherUser = User::where('email', $instructor->email)->where('id', '!=', $user->id)->first();
+                    if (!$otherUser) {
+                        $user->email = $instructor->email;
+                        $dirty = true;
+                    }
                 }
                 if ($instructor->avatar && $user->profile_picture !== $instructor->avatar) {
                     $user->profile_picture = $instructor->avatar;
@@ -83,7 +100,11 @@ class Instructor extends Model
                     $dirty = true;
                 }
                 if ($dirty) {
-                    $user->saveQuietly();
+                    try {
+                        $user->saveQuietly();
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::warning("Could not sync user profile from instructor: " . $e->getMessage());
+                    }
                 }
             }
         });

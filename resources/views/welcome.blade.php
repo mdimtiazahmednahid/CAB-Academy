@@ -145,11 +145,13 @@
                     <div class="p-2 sm:p-3 bg-white hover:bg-white rounded-xl sm:rounded-2xl border border-slate-200/80 hover:border-slate-300 shadow-[0_2px_8px_rgba(4,21,54,0.04)] hover:shadow-[0_12px_24px_-6px_rgba(4,21,54,0.1)] hover:border-[#041536]/20 transition-all duration-300 group flex items-center justify-center h-16 sm:h-20">
                         @if(!empty($client['logo']))
                             <img 
-                                src="{{ $client['logo'] }}" 
+                                src="{{ storage_asset($client['logo']) }}" 
                                 alt="{{ $client['name'] }}" 
                                 class="max-h-8 sm:max-h-12 max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
                                 loading="lazy"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
                             >
+                            <span style="display:none;" class="text-xs sm:text-sm font-bold text-slate-700 tracking-tight text-center">{{ $client['name'] }}</span>
                         @else
                             <span class="text-xs sm:text-sm font-bold text-slate-700 tracking-tight text-center">{{ $client['name'] }}</span>
                         @endif
@@ -280,110 +282,124 @@
         </section>
         @endif
 
-        {{-- 4. Course Showcase: Certificate Course & Day Long Course Connected by 'View All Courses' Bracket --}}
+        {{-- 4. Course Showcase: Clean 10ms-Style Unified Course Grid with Dynamic Track Tabs --}}
         @if(\App\Models\Setting::getVal('landing_courses_enabled', '1') == '1')
-        <section class="py-6 sm:py-10 lg:py-12 bg-gradient-to-b from-[#f8fafc] via-[#edf2f7] to-[#f8fafc] border-b border-slate-200/80">
-            <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <section class="py-10 sm:py-14 lg:py-16 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9]/70 to-[#ffffff] border-b border-slate-200/80" x-data="{ activeCourseTab: 'all' }">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 
-                <!-- Central 'View All Courses' Gateway Action -->
-                <div class="mb-6 sm:mb-8 flex items-center justify-center">
-                    <a href="{{ \App\Models\Setting::getVal('landing_courses_bracket_url', route('catalog.index')) }}" 
-                       class="px-7 py-3 sm:px-9 sm:py-3.5 bg-white hover:bg-[#041536] rounded-2xl shadow-[0_4px_20px_rgba(4,21,54,0.07),0_0_0_1px_rgba(4,21,54,0.06)] hover:shadow-[0_12px_30px_rgba(4,21,54,0.2)] border border-slate-200/90 hover:border-[#041536] text-xs sm:text-sm font-black text-[#041536] hover:text-white transition-all duration-300 flex items-center gap-2.5 group hover:scale-[1.02] active:scale-95">
-                        <span class="tracking-tight">{{ \App\Models\Setting::getVal('landing_courses_bracket_text', 'View All Courses') }}</span>
-                        <span class="w-6 h-6 rounded-lg bg-[#c30102] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
-                            <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                <!-- 10ms-Style Clean Section Masthead -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#051c45]/10 text-[#051c45] text-[10px] font-black uppercase tracking-widest border border-[#051c45]/15">
+                                <i class="fas fa-graduation-cap text-[#c30102]"></i>
+                                <span>{{ \App\Models\Setting::getVal('landing_courses_badge', 'Professional Masterclasses') }}</span>
+                            </span>
+                            <span class="text-xs text-slate-400 font-semibold">• Live Online Zoom & Campus</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-[#041536] tracking-tight">
+                            {{ \App\Models\Setting::getVal('landing_courses_title', 'Industry Masterclasses & Courses') }}
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-1.5 font-normal max-w-2xl leading-relaxed">
+                            {{ \App\Models\Setting::getVal('landing_courses_subtitle', 'Practical, verified executive courses designed to accelerate your corporate career in customs, VAT, banking, supply chain, and international trade.') }}
+                        </p>
+                    </div>
+
+                    <!-- Clean 'Browse All Courses' Action Link -->
+                    <div class="shrink-0 flex items-center gap-3">
+                        <a href="{{ \App\Models\Setting::getVal('landing_courses_bracket_url', route('catalog.index')) }}" 
+                           class="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-[#051c45] text-[#051c45] hover:text-white rounded-xl border border-slate-200 text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all duration-200 group">
+                            <span>{{ \App\Models\Setting::getVal('landing_courses_bracket_text', 'Browse All Courses') }}</span>
+                            <i class="fas fa-arrow-right text-xs text-[#c30102] group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 10ms-Style Fluid Track Filter Tab Pills -->
+                <div class="mb-8 flex items-center gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-none">
+                    <button type="button" 
+                            @click="activeCourseTab = 'all'"
+                            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2"
+                            :class="activeCourseTab === 'all' 
+                                ? 'bg-[#051c45] text-white shadow-md ring-2 ring-[#051c45]/20' 
+                                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200'">
+                        <i class="fas fa-th-large text-xs" :class="activeCourseTab === 'all' ? 'text-emerald-400' : 'text-slate-400'"></i>
+                        <span>All Programs</span>
+                        <span class="px-1.5 py-0.5 rounded-md text-[10px] font-black"
+                              :class="activeCourseTab === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'">
+                            {{ $courses->count() }}
                         </span>
+                    </button>
+
+                    <button type="button" 
+                            @click="activeCourseTab = 'certificate'"
+                            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2"
+                            :class="activeCourseTab === 'certificate' 
+                                ? 'bg-[#051c45] text-white shadow-md ring-2 ring-[#051c45]/20' 
+                                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200'">
+                        <i class="fas fa-certificate text-xs" :class="activeCourseTab === 'certificate' ? 'text-emerald-400' : 'text-slate-400'"></i>
+                        <span>{{ \App\Models\Setting::getVal('landing_cert_title', 'Certificate Courses') }}</span>
+                        <span class="px-1.5 py-0.5 rounded-md text-[10px] font-black"
+                              :class="activeCourseTab === 'certificate' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'">
+                            {{ $certificateCourses->count() }}
+                        </span>
+                    </button>
+
+                    <button type="button" 
+                            @click="activeCourseTab = 'day_long'"
+                            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2"
+                            :class="activeCourseTab === 'day_long' 
+                                ? 'bg-[#051c45] text-white shadow-md ring-2 ring-[#051c45]/20' 
+                                : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200'">
+                        <i class="fas fa-bolt text-xs" :class="activeCourseTab === 'day_long' ? 'text-[#c30102]' : 'text-slate-400'"></i>
+                        <span>{{ \App\Models\Setting::getVal('landing_daylong_title', 'Day Long Courses') }}</span>
+                        <span class="px-1.5 py-0.5 rounded-md text-[10px] font-black"
+                              :class="activeCourseTab === 'day_long' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'">
+                            {{ $dayLongCourses->count() }}
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Unified 4-Column Clean Course Grid (Preserves .bg-[#f0f8ec] for Cypress test hook) -->
+                <div class="bg-[#f0f8ec] bg-opacity-25 rounded-3xl p-3 sm:p-5 border border-emerald-500/15">
+                    
+                    <!-- TAB 1: ALL COURSES (Default) -->
+                    <div x-show="activeCourseTab === 'all'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                            @foreach($courses->take(8) as $course)
+                                <x-course-card :course="$course" />
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: CERTIFICATE COURSES -->
+                    <div x-show="activeCourseTab === 'certificate'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                            @foreach($certificateCourses as $course)
+                                <x-course-card :course="$course" />
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: DAY LONG COURSES -->
+                    <div x-show="activeCourseTab === 'day_long'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                            @foreach($dayLongCourses as $course)
+                                <x-course-card :course="$course" />
+                            @endforeach
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Bottom Gateway Action Button -->
+                <div class="mt-8 sm:mt-10 text-center">
+                    <a href="{{ route('catalog.index') }}" class="btn-ipdp-secondary inline-flex items-center justify-center gap-2.5 px-8 py-3.5 min-h-[46px] rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-105 transition-all">
+                        <span>View All {{ $courses->count() }} Courses & Masterclasses</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
                     </a>
                 </div>
 
-                <!-- Dual Side-By-Side Course Containers -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
-                    
-                    <!-- Left Container: Certificate Course Track -->
-                    <div class="bg-[#f0f8ec] bg-gradient-to-b from-[#f2f9ee]/95 via-[#f0f8ec] to-[#e4f4dc] relative rounded-3xl p-4 sm:p-6 lg:p-7 border border-emerald-500/25 shadow-[0_14px_35px_-8px_rgba(16,185,129,0.14)] overflow-hidden flex flex-col justify-between ring-1 ring-emerald-500/10">
-                        <!-- Ambient Depth Glow -->
-                        <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none"></div>
-
-                        <div class="relative z-10">
-                            <!-- Container Executive Banner -->
-                            <div class="bg-white/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-emerald-500/20 shadow-xs mb-5 sm:mb-6">
-                                <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600/10 text-emerald-800 text-[10px] font-black uppercase tracking-widest border border-emerald-500/25">
-                                        <i class="fas fa-certificate text-emerald-600"></i>
-                                        <span>{{ \App\Models\Setting::getVal('landing_cert_badge', 'Executive Master Track') }}</span>
-                                    </span>
-                                    <span class="text-[11px] font-bold text-emerald-800/80 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200/50">
-                                        4–8 Weeks Mastery
-                                    </span>
-                                </div>
-                                <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
-                                    {{ \App\Models\Setting::getVal('landing_cert_title', 'Certificate Course') }}
-                                </h2>
-                                <p class="text-xs text-slate-600 mt-1 font-normal leading-relaxed">
-                                    Comprehensive multi-module industry masterclasses with live Zoom sessions, practical case analysis, and verifiable institutional credentials.
-                                </p>
-                            </div>
-
-                            <!-- 2-Column Course Grid Inside Box -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-5">
-                                @foreach($certificateCourses as $course)
-                                    <x-course-card :course="$course" />
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <!-- Bottom Action Button -->
-                        <div class="text-center mt-6 sm:mt-8 relative z-10">
-                            <a href="{{ \App\Models\Setting::getVal('landing_cert_btn_url', route('catalog.certificate')) }}" class="btn-ipdp-secondary inline-flex items-center justify-center gap-2 px-8 py-3.5 min-h-[46px] rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
-                                <span>{{ \App\Models\Setting::getVal('landing_cert_btn_text', 'View All Certificate Courses') }}</span>
-                                <i class="fas fa-arrow-right text-xs"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Right Container: Day Long Course Track -->
-                    <div class="bg-[#fef4f0] bg-gradient-to-b from-[#fff7f5]/95 via-[#fef4f0] to-[#fae6de] relative rounded-3xl p-4 sm:p-6 lg:p-7 border border-[#c30102]/20 shadow-[0_14px_35px_-8px_rgba(195,1,2,0.12)] overflow-hidden flex flex-col justify-between ring-1 ring-[#c30102]/10">
-                        <!-- Ambient Depth Glow -->
-                        <div class="absolute -top-24 -right-24 w-72 h-72 bg-[#c30102]/10 rounded-full blur-3xl pointer-events-none"></div>
-
-                        <div class="relative z-10">
-                            <!-- Container Executive Banner -->
-                            <div class="bg-white/80 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-[#c30102]/20 shadow-xs mb-5 sm:mb-6">
-                                <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#c30102]/10 text-[#c30102] text-[10px] font-black uppercase tracking-widest border border-[#c30102]/25">
-                                        <i class="fas fa-bolt text-[#c30102]"></i>
-                                        <span>{{ \App\Models\Setting::getVal('landing_daylong_badge', '1-Day Accelerator') }}</span>
-                                    </span>
-                                    <span class="text-[11px] font-bold text-[#c30102]/90 bg-red-50 px-2.5 py-0.5 rounded-md border border-red-200/50">
-                                        1-Day Intensive
-                                    </span>
-                                </div>
-                                <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight">
-                                    {{ \App\Models\Setting::getVal('landing_daylong_title', 'Day Long Course') }}
-                                </h2>
-                                <p class="text-xs text-slate-600 mt-1 font-normal leading-relaxed">
-                                    High-impact full-day accelerator masterclasses focusing on urgent customs SRO updates, corporate VAT audits, supply chain, and labor law.
-                                </p>
-                            </div>
-
-                            <!-- 2-Column Course Grid Inside Box -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-5">
-                                @foreach($dayLongCourses as $course)
-                                    <x-course-card :course="$course" />
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <!-- Bottom Action Button -->
-                        <div class="text-center mt-6 sm:mt-8 relative z-10">
-                            <a href="{{ \App\Models\Setting::getVal('landing_daylong_btn_url', route('catalog.day_long')) }}" class="btn-ipdp-primary inline-flex items-center justify-center gap-2 px-8 py-3.5 min-h-[46px] rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-md hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
-                                <span>{{ \App\Models\Setting::getVal('landing_daylong_btn_text', 'View All Day Long Courses') }}</span>
-                                <i class="fas fa-arrow-right text-xs"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
             </div>
         </section>
         @endif
@@ -428,7 +444,8 @@
                             <div class="flex items-start justify-between gap-3 mb-4">
                                 <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#041536]/10 to-[#041536]/5 text-[#041536] border border-slate-200/60 flex items-center justify-center text-lg font-black group-hover:scale-105 transition-transform shrink-0 shadow-sm">
                                     @if(!empty($job->company_logo))
-                                        <img src="{{ Storage::url($job->company_logo) }}" alt="{{ $job->company ?? 'Company' }}" class="w-full h-full object-cover rounded-2xl">
+                                        <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company ?? 'Company' }}" class="w-full h-full object-cover rounded-2xl" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                        <span style="display:none;">{{ substr($job->company ?? 'CAB', 0, 2) }}</span>
                                     @else
                                         <span>{{ substr($job->company ?? 'CAB', 0, 2) }}</span>
                                     @endif
@@ -785,7 +802,7 @@
                                 <div class="flex items-center gap-2">
                                     <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-xs font-bold text-[#041536]">
                                         @if($blog->author && ($blog->author->profile_picture || ($blog->author->instructorProfile && $blog->author->instructorProfile->avatar)))
-                                            <img src="{{ $blog->author->profile_picture_url }}" alt="{{ $blog->author_name }}" class="w-full h-full object-cover">
+                                            <img src="{{ $blog->author->profile_picture_url }}" alt="{{ $blog->author_name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($blog->author_name ?? 'Faculty') }}&background=051c45&color=fff';">
                                         @else
                                             {{ substr($blog->author_name ?? 'F', 0, 1) }}
                                         @endif

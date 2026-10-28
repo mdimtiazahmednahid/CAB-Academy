@@ -23,8 +23,8 @@
             <div class="absolute inset-0 bg-gradient-to-t from-[#020b18]/85 via-black/15 to-transparent pointer-events-none transition-opacity duration-300"></div>
         </a>
 
-        <!-- Wishlist Heart Button: Top-Left with Frosted Glass -->
-        <div class="absolute top-2.5 left-2.5 z-20">
+        <!-- Action Buttons: Top-Left with Frosted Glass (Wishlist + Facebook Share) -->
+        <div class="absolute top-2.5 left-2.5 z-20 flex items-center gap-1.5">
             <button 
                 type="button"
                 onclick="toggleWishlist({{ $course->id }}, this)"
@@ -32,6 +32,14 @@
                 title="Save to Wishlist"
             >
                 <i class="{{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'fas text-[#c30102]' : 'far' }} fa-heart text-[11px]"></i>
+            </button>
+            <button 
+                type="button"
+                onclick="window.open('{{ $course->facebook_share_url }}', 'fbshare', 'width=640,height=560,menubar=no,toolbar=no');"
+                class="w-8 h-8 rounded-full bg-slate-900/40 backdrop-blur-md border border-white/20 text-white hover:bg-[#1877F2] hover:border-[#1877F2] hover:text-white hover:scale-110 shadow flex items-center justify-center transition-all cursor-pointer"
+                title="Share on Facebook"
+            >
+                <i class="fab fa-facebook-f text-[10px]"></i>
             </button>
         </div>
 
@@ -152,7 +160,8 @@
                     price: '{{ number_format($course->price, 2) }}', 
                     rawPrice: {{ $course->price }}, 
                     batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                    venue: 'Interactive Live Zoom Masterclass' 
+                    venue: 'Interactive Live Zoom Masterclass',
+                    fields: {{ json_encode($course->effective_enrollment_fields) }}
                 })"
                 class="btn-ipdp-primary w-full py-3 sm:py-3.5 min-h-[46px] px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase shadow-[0_4px_16px_rgba(195,1,2,0.32)] hover:shadow-[0_8px_24px_rgba(195,1,2,0.48)] flex items-center justify-center gap-2 cursor-pointer group/btn transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center"
             >

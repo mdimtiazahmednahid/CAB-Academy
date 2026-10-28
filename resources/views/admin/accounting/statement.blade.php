@@ -32,7 +32,7 @@
         <!-- Statement Masthead -->
         <div class="flex items-start justify-between border-b-2 border-[#051c45] pb-6 mb-6">
             <div class="flex items-center gap-4">
-                <img src="{{ asset('images/logo.png') }}" alt="CAB Academy Crest" class="w-16 h-16 object-contain rounded-xl p-1 border border-slate-200">
+                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} Crest" class="w-16 h-16 object-contain rounded-xl p-1 border border-slate-200" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div>
                     <h1 class="text-2xl font-black text-[#051c45] tracking-tight uppercase">Commercial Academy Bangladesh</h1>
                     <p class="text-xs text-slate-500 font-semibold">Institutional Financial Ledger & Tuition Realization Audit</p>

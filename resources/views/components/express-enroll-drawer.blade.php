@@ -26,6 +26,10 @@
             senderNumber: '',
             transactionId: '',
             payOffline: false,
+            fields: [],
+            customFields: {},
+            isEmailEnabled: true,
+            isEmailRequired: true,
 
             open(data) {
                 this.courseId = data.id;
@@ -34,6 +38,31 @@
                 this.courseRawPrice = data.rawPrice || 0;
                 this.courseBatch = data.batch || '';
                 this.courseVenue = data.venue || 'Mirpur-Pallabi Campus & Online Zoom';
+                
+                // Parse dynamic form fields configured for this course
+                this.fields = Array.isArray(data.fields) && data.fields.length > 0 ? data.fields : [];
+                
+                // Determine email requirement from configured course fields
+                const emailField = this.fields.find(f => f.name === 'email');
+                if (emailField) {
+                    this.isEmailEnabled = emailField.is_enabled !== false;
+                    this.isEmailRequired = !!emailField.is_required;
+                } else if (this.fields.length > 0) {
+                    this.isEmailEnabled = false;
+                    this.isEmailRequired = false;
+                } else {
+                    this.isEmailEnabled = true;
+                    this.isEmailRequired = true;
+                }
+
+                // Initialize custom fields state
+                this.customFields = {};
+                this.fields.forEach(f => {
+                    if (!['name', 'phone', 'email', 'training_mode'].includes(f.name)) {
+                        this.customFields[f.name] = '';
+                    }
+                });
+
                 this.step = 1;
                 this.isSuccess = false;
                 this.errorMessage = '';
@@ -60,6 +89,26 @@
                     this.errorMessage = 'Please enter a valid 11-digit mobile number (e.g., 01917054664).';
                     return;
                 }
+
+                // Validate email if enabled and required
+                if (this.isEmailEnabled && this.isEmailRequired) {
+                    if (!this.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim())) {
+                        this.errorMessage = 'Please enter a valid email address.';
+                        return;
+                    }
+                }
+
+                // Validate custom fields marked required
+                for (const f of this.fields) {
+                    if (!['name', 'phone', 'email', 'training_mode'].includes(f.name) && f.is_enabled && f.is_required) {
+                        const val = this.customFields[f.name];
+                        if (!val || !val.toString().trim()) {
+                            this.errorMessage = 'Please provide ' + (f.label || f.name) + '.';
+                            return;
+                        }
+                    }
+                }
+
                 if (this.courseRawPrice > 0 && !this.payOffline && !this.transactionId.trim()) {
                     this.errorMessage = 'Please enter the payment TrxID or select Pay at Campus / Reserve.';
                     return;
@@ -80,8 +129,9 @@
                         body: JSON.stringify({
                             name: this.name,
                             phone: cleanPhone,
-                            email: this.email,
+                            email: this.isEmailEnabled ? this.email : '',
                             training_mode: this.trainingMode,
+                            custom_fields: this.customFields,
                             payment_method_id: this.payOffline ? null : this.paymentMethodId,
                             sender_number: this.senderNumber || cleanPhone,
                             transaction_id: this.payOffline ? 'RESERVED-OFFLINE' : this.transactionId
@@ -205,6 +255,14 @@
                         <span class="text-gray-500">Format:</span>
                         <span class="font-bold text-[#0f131f]" x-text="trainingMode === 'in_person' ? 'Mirpur Campus (In-Person)' : 'Online Live (Zoom)'"></span>
                     </div>
+                    <template x-for="(val, key) in customFields" :key="key">
+                        <template x-if="val && val.toString().trim()">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500 capitalize" x-text="key.replace('_', ' ') + ':'"></span>
+                                <span class="font-bold text-[#0f131f]" x-text="val"></span>
+                            </div>
+                        </template>
+                    </template>
                     <template x-if="successData.transaction_id">
                         <div class="flex justify-between border-t border-gray-200 pt-2">
                             <span class="text-gray-500">Reference TrxID:</span>
@@ -254,7 +312,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
+                        <div :class="isEmailEnabled ? '' : 'sm:col-span-2'">
                             <label class="block text-xs font-semibold text-[#35415b] mb-1">Mobile (11 Digits) *</label>
                             <input 
                                 type="tel" 
@@ -264,16 +322,50 @@
                                 required
                             >
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-[#35415b] mb-1">Email (Optional)</label>
-                            <input 
-                                type="email" 
-                                x-model="email"
-                                placeholder="name@company.com" 
-                                class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs text-[#0f131f] focus:ring-2 focus:ring-[#051c45] focus:bg-white focus:outline-none"
-                            >
-                        </div>
+                        <template x-if="isEmailEnabled">
+                            <div>
+                                <label class="block text-xs font-semibold text-[#35415b] mb-1">
+                                    <span>Email Address</span>
+                                    <span x-show="isEmailRequired" class="text-red-500 font-bold">*</span>
+                                    <span x-show="!isEmailRequired" class="text-gray-400 font-normal text-[10px]">(Optional)</span>
+                                </label>
+                                <input 
+                                    type="email" 
+                                    x-model="email"
+                                    placeholder="name@company.com" 
+                                    class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs text-[#0f131f] focus:ring-2 focus:ring-[#051c45] focus:bg-white focus:outline-none"
+                                    :required="isEmailRequired"
+                                >
+                            </div>
+                        </template>
                     </div>
+
+                    <!-- Dynamic Custom Fields Configured for this Course -->
+                    <template x-for="field in fields.filter(f => !['name', 'phone', 'email', 'training_mode'].includes(f.name) && (f.is_enabled !== false))" :key="field.name">
+                        <div class="pt-1">
+                            <label class="block text-xs font-semibold text-[#35415b] mb-1">
+                                <span x-text="field.label || field.name"></span>
+                                <span x-show="field.is_required" class="text-red-500 font-bold">*</span>
+                                <span x-show="!field.is_required" class="text-gray-400 font-normal text-[10px]">(Optional)</span>
+                            </label>
+                            <template x-if="field.type === 'textarea'">
+                                <textarea 
+                                    x-model="customFields[field.name]"
+                                    :placeholder="field.placeholder || ''"
+                                    rows="2"
+                                    class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-[#0f131f] focus:ring-2 focus:ring-[#051c45] focus:bg-white focus:outline-none"
+                                ></textarea>
+                            </template>
+                            <template x-if="field.type !== 'textarea'">
+                                <input 
+                                    :type="field.type || 'text'" 
+                                    x-model="customFields[field.name]"
+                                    :placeholder="field.placeholder || ''"
+                                    class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs text-[#0f131f] focus:ring-2 focus:ring-[#051c45] focus:bg-white focus:outline-none"
+                                >
+                            </template>
+                        </div>
+                    </template>
 
                     <!-- Training Format Radio Selection -->
                     <div>

@@ -14,7 +14,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Shared-hosting compatibility: Gracefully handle disabled proc_open in Composer/Process calls
+        if (!function_exists('proc_open')) {
+            $this->app->singleton('composer', function ($app) {
+                return new class($app['files'], $app->basePath()) extends \Illuminate\Support\Composer {
+                    public function getVersion()
+                    {
+                        return 'Shared Hosting (proc_open disabled)';
+                    }
+                };
+            });
+        }
     }
 
     /**

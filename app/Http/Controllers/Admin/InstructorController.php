@@ -99,21 +99,28 @@ class InstructorController extends Controller
             $instructor = Instructor::create($validated);
         }
 
-        // Keep linked user record in sync
+        // Keep linked user record in sync safely
         $user = null;
-        if ($instructor->user_id) {
-            $user = \App\Models\User::find($instructor->user_id);
-        } elseif (!empty($instructor->email)) {
-            $user = \App\Models\User::where('email', $instructor->email)->first();
-            if ($user) {
-                $instructor->user_id = $user->id;
+        if (!empty($instructor->email)) {
+            $userWithEmail = \App\Models\User::where('email', $instructor->email)->first();
+            if ($userWithEmail) {
+                $instructor->user_id = $userWithEmail->id;
                 $instructor->saveQuietly();
+                $user = $userWithEmail;
             }
         }
+
+        if (!$user && $instructor->user_id) {
+            $user = \App\Models\User::find($instructor->user_id);
+        }
+
         if ($user) {
             $user->name = $instructor->name;
-            if (!empty($instructor->email)) {
-                $user->email = $instructor->email;
+            if (!empty($instructor->email) && $user->email !== $instructor->email) {
+                $otherUser = \App\Models\User::where('email', $instructor->email)->where('id', '!=', $user->id)->first();
+                if (!$otherUser) {
+                    $user->email = $instructor->email;
+                }
             }
             if ($instructor->avatar) {
                 $user->profile_picture = $instructor->avatar;
@@ -127,7 +134,11 @@ class InstructorController extends Controller
             if ($user->role !== 'admin') {
                 $user->role = 'instructor';
             }
-            $user->saveQuietly();
+            try {
+                $user->saveQuietly();
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning("Could not sync user profile in InstructorController@store: " . $e->getMessage());
+            }
         }
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile created successfully.');
@@ -195,21 +206,28 @@ class InstructorController extends Controller
 
         $instructor->update($validated);
 
-        // Keep linked user record in sync
+        // Keep linked user record in sync safely
         $user = null;
-        if ($instructor->user_id) {
-            $user = \App\Models\User::find($instructor->user_id);
-        } elseif (!empty($instructor->email)) {
-            $user = \App\Models\User::where('email', $instructor->email)->first();
-            if ($user) {
-                $instructor->user_id = $user->id;
+        if (!empty($instructor->email)) {
+            $userWithEmail = \App\Models\User::where('email', $instructor->email)->first();
+            if ($userWithEmail && (!$instructor->user_id || $instructor->user_id !== $userWithEmail->id)) {
+                $instructor->user_id = $userWithEmail->id;
                 $instructor->saveQuietly();
+                $user = $userWithEmail;
             }
         }
+
+        if (!$user && $instructor->user_id) {
+            $user = \App\Models\User::find($instructor->user_id);
+        }
+
         if ($user) {
             $user->name = $instructor->name;
-            if (!empty($instructor->email)) {
-                $user->email = $instructor->email;
+            if (!empty($instructor->email) && $user->email !== $instructor->email) {
+                $otherUser = \App\Models\User::where('email', $instructor->email)->where('id', '!=', $user->id)->first();
+                if (!$otherUser) {
+                    $user->email = $instructor->email;
+                }
             }
             if ($instructor->avatar) {
                 $user->profile_picture = $instructor->avatar;
@@ -217,7 +235,11 @@ class InstructorController extends Controller
             if (!empty($newPassword)) {
                 $user->password = bcrypt($newPassword);
             }
-            $user->saveQuietly();
+            try {
+                $user->saveQuietly();
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning("Could not sync user profile in InstructorController@update: " . $e->getMessage());
+            }
         }
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile updated successfully.');

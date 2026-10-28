@@ -17,6 +17,7 @@ class Payment extends Model
         'payment_type',
         'status',
         'notes',
+        'form_data',
         'verified_at',
         'verified_by',
     ];
@@ -24,6 +25,7 @@ class Payment extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'verified_at' => 'datetime',
+        'form_data' => 'array',
     ];
 
     protected static function boot()

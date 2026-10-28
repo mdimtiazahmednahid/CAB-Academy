@@ -52,11 +52,14 @@ class CertificateController extends Controller
     /**
      * Public credential verification registry endpoint.
      */
-    public function verify($certificate_number)
+    public function verify($certificate_number = null)
     {
-        $certificate = Certificate::where('certificate_number', $certificate_number)
-            ->with(['user', 'course'])
-            ->first();
+        $certificate = null;
+        if (!empty($certificate_number) && strtolower($certificate_number) !== 'demo') {
+            $certificate = Certificate::where('certificate_number', $certificate_number)
+                ->with(['user', 'course'])
+                ->first();
+        }
 
         return view('certificates.verify', compact('certificate', 'certificate_number'));
     }

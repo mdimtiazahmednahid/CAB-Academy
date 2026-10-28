@@ -38,7 +38,7 @@
             <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-4">
                     <div class="w-16 h-11 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 shadow-sm shrink-0">
-                        <img src="{{ $c->cover_image_url }}" alt="{{ $c->title }}" class="w-full h-full object-cover">
+                        <img src="{{ $c->cover_image_url }}" alt="{{ $c->title }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';">
                     </div>
                 </td>
                 <td class="px-6 py-4 font-medium text-gray-900">
@@ -193,6 +193,16 @@
                         }
                     });
                 </script>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Registration Form Template</label>
+                    <select name="enrollment_template" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-xs">
+                        <option value="standard">Standard Professional (Name + Phone + Email Required)</option>
+                        <option value="quick_lead">Quick Lead (Name + Phone Only - Email Disabled/Not Required)</option>
+                        <option value="corporate">Executive & Corporate (Name + Phone + Email + Company + Role)</option>
+                        <option value="comprehensive">Comprehensive Application (Full Fields + Questions)</option>
+                    </select>
+                    <p class="text-[10px] text-gray-400 mt-1">Choose the registration form preset. You can further customize fields anytime.</p>
+                </div>
                 <div class="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200 flex items-center justify-between">
                     <div>
                         <label for="create_certificate_enabled" class="block text-xs font-bold text-emerald-950">Release Digital Certificates</label>

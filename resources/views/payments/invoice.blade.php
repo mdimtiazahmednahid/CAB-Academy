@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <title>Tuition Receipt & Invoice #INV-CAB-{{ str_pad($payment->id, 5, '0', STR_PAD_LEFT) }} - CAB Academy</title>
-    <link rel="icon" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-8 border-b-2 border-gray-100 gap-6">
             <div class="flex items-center gap-4">
-                <img src="{{ asset('images/logo.png') }}" alt="CAB Academy" class="w-16 h-16 object-contain rounded-2xl bg-white border border-gray-100 p-1 shadow-sm">
+                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}" class="w-16 h-16 object-contain rounded-2xl bg-white border border-gray-100 p-1 shadow-sm" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div>
                     <h1 class="text-2xl font-black text-[#051c45] uppercase tracking-tight">Commercial Academy Bangladesh</h1>
                     <span class="text-xs font-bold text-[#c30102] uppercase tracking-widest block">CAB Academy • Official Tuition Invoice</span>

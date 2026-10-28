@@ -44,7 +44,7 @@
                                         @php
                                             $avatar = $instructor->avatar_url;
                                         @endphp
-                                        <img src="{{ $avatar }}" alt="{{ $instructor->name }}" class="w-full h-full object-cover">
+                                        <img src="{{ $avatar }}" alt="{{ $instructor->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($instructor->name) }}&background=051c45&color=fff';">
                                     </div>
                                     <div>
                                         <div class="font-bold text-gray-900 text-sm leading-tight">{{ $instructor->name }}</div>

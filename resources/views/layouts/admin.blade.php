@@ -27,7 +27,7 @@
     <!-- Mobile Top Bar -->
     <header class="md:hidden flex items-center justify-between p-4 bg-gray-900 text-white shadow-sm z-10 sticky top-0">
         <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-            <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" class="h-8 w-8 rounded-full object-contain bg-white border border-gray-100">
+            <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" class="h-8 w-8 rounded-full object-contain bg-white border border-gray-100" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
             <h1 class="font-bold text-lg tracking-tight uppercase truncate">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</h1>
         </a>
         <!-- Mobile Menu Button (Alpine could be used here to toggle sidebar) -->
@@ -40,7 +40,7 @@
     <aside class="hidden md:flex flex-col w-64 h-screen fixed top-0 left-0 bg-gray-900 text-white border-r border-gray-800 z-20">
         <div class="p-6 border-b border-gray-800 flex items-center gap-3">
             <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" class="h-8 w-8 rounded-full object-contain bg-white border border-gray-100">
+                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" class="h-8 w-8 rounded-full object-contain bg-white border border-gray-100" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <span class="font-bold text-lg tracking-tight uppercase truncate">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
             </a>
         </div>

@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Course Catalog') - {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
-    <link rel="icon" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="@yield('canonical_url', url()->current())">
@@ -34,25 +34,36 @@
     <meta property="og:title" content="@yield('og_title', View::hasSection('title') ? View::getSection('title') . ' - CAB Academy' : 'CAB Academy | Commercial Banking & Trade Training')">
     <meta property="og:description" content="@yield('meta_description', 'CAB Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
     <meta property="og:url" content="@yield('canonical_url', url()->current())">
-    <meta property="og:image" content="@yield('og_image', asset('images/logo.png'))">
-    <meta property="og:image:alt" content="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} Logo">
+    @php
+        $rawOgImg = trim(View::getSection('og_image') ?: (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')));
+        $fullOgImg = (str_starts_with($rawOgImg, 'http://') || str_starts_with($rawOgImg, 'https://')) ? $rawOgImg : url($rawOgImg);
+    @endphp
+    <meta property="og:image" content="{{ $fullOgImg }}">
+    <meta property="og:image:secure_url" content="{{ $fullOgImg }}">
+    <meta property="og:image:width" content="@yield('og_image_width', '1200')">
+    <meta property="og:image:height" content="@yield('og_image_height', '630')">
+    <meta property="og:image:alt" content="@yield('og_image_alt', \App\Models\Setting::getVal('site_name', 'CAB Academy'))">
+    <meta property="og:image:type" content="image/jpeg">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('og_title', View::hasSection('title') ? View::getSection('title') . ' - CAB Academy' : 'CAB Academy | Commercial Banking & Trade Training')">
     <meta name="twitter:description" content="@yield('meta_description', 'CAB Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
-    <meta name="twitter:image" content="@yield('og_image', asset('images/logo.png'))">
+    <meta name="twitter:image" content="{{ $fullOgImg }}">
+    <meta name="twitter:image:alt" content="@yield('og_image_alt', \App\Models\Setting::getVal('site_name', 'CAB Academy'))">
 
     <!-- Schema.org EducationalOrganization JSON-LD -->
     @php
+        $siteLogoUrl = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png');
+        $siteNameVal = \App\Models\Setting::getVal('site_name', 'CAB Academy');
         $orgSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'EducationalOrganization',
-            'name' => 'CAB Academy',
+            'name' => $siteNameVal,
             'alternateName' => 'Commercial Academy Bangladesh',
             'url' => url('/'),
-            'logo' => asset('images/logo.png'),
-            'image' => asset('images/logo.png'),
+            'logo' => $siteLogoUrl,
+            'image' => $siteLogoUrl,
             'description' => "CAB Academy is Bangladesh's premier executive training and professional certification academy for commercial banking, export-import procedures, LC operations, and supply chain management.",
             'telephone' => '+8801917054664',
             'email' => 'info@cab-academy.com',
@@ -98,7 +109,7 @@
 
     <style>
         :root {
-            --color-content-primary: #c30102;
+            --color-content-primary: {{ \App\Models\Setting::getVal('primary_color', '#c30102') }};
             --color-content-secondary: #041536;
             --color-content-accent: #10b981;
             --color-content-bg-alt: #f8fafc;
@@ -197,11 +208,14 @@
                 <!-- CAB Academy Brand Logo -->
                 <a href="{{ url('/') }}" class="flex items-center gap-2 sm:gap-3 shrink-0 group">
                     <div class="relative">
-                        <img class="h-10 w-10 sm:h-12 sm:w-12 xl:h-13 xl:w-13 object-contain rounded-full shadow-sm bg-white border border-slate-100 ring-2 ring-slate-100 group-hover:ring-[#c30102]/30 group-hover:scale-105 transition-all duration-300" src="{{ asset('images/logo.png') }}" alt="CAB Academy">
+                        <img class="h-10 w-10 sm:h-12 sm:w-12 xl:h-13 xl:w-13 object-contain rounded-full shadow-sm bg-white border border-slate-100 ring-2 ring-slate-100 group-hover:ring-[#c30102]/30 group-hover:scale-105 transition-all duration-300" 
+                             src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" 
+                             alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}"
+                             onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-base sm:text-lg xl:text-xl font-black tracking-tight text-[#041536] uppercase leading-none">CAB Academy</span>
-                        <span class="text-[8px] sm:text-[9.5px] tracking-widest uppercase font-black text-[#c30102] mt-0.5">Learn, Grow, Lead.</span>
+                        <span class="text-base sm:text-lg xl:text-xl font-black tracking-tight text-[#041536] uppercase leading-none">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
+                        <span class="text-[8px] sm:text-[9.5px] tracking-widest uppercase font-black text-[#c30102] mt-0.5">{{ \App\Models\Setting::getVal('site_tagline', \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) }}</span>
                     </div>
                 </a>
 
@@ -233,16 +247,56 @@
                                 <i class="fas fa-layer-group text-xs text-[#c30102]"></i>
                                 <span>All Courses</span>
                             </a>
-                            <a href="{{ route('catalog.certificate') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
-                                <i class="fas fa-award text-xs text-[#051c45]"></i>
-                                <span>Certificate Programs (4)</span>
+                            @php
+                                $publicCertCount = 0;
+                                $publicDayLongCount = 0;
+                                try {
+                                    $publicCertCount = \App\Models\Course::where('is_published', true)->where(function($q) {
+                                        $q->where('level', 'Certificate')->orWhere('title', 'like', '%Certificate%');
+                                    })->count();
+                                    $publicDayLongCount = \App\Models\Course::where('is_published', true)->where(function($q) {
+                                        $q->where('level', 'Day Long')
+                                          ->orWhere('duration', 'like', '%Day%')
+                                          ->orWhere('title', 'like', '%Day-Long%')
+                                          ->orWhere('title', 'like', '%Day Long%')
+                                          ->orWhere('title', 'like', '%Masterclass%');
+                                    })->count();
+                                } catch (\Throwable $e) {
+                                    $publicCertCount = 0;
+                                    $publicDayLongCount = 0;
+                                }
+                            @endphp
+                            <a href="{{ route('catalog.certificate') }}" class="flex items-center justify-between gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                                <span class="flex items-center gap-2.5">
+                                    <i class="fas fa-award text-xs text-[#051c45]"></i>
+                                    <span>Certificate Programs</span>
+                                </span>
+                                @if($publicCertCount > 0)
+                                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-slate-100 text-slate-700">{{ $publicCertCount }}</span>
+                                @endif
                             </a>
-                            <a href="{{ route('catalog.day_long') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
-                                <i class="fas fa-calendar-day text-xs text-[#10b981]"></i>
-                                <span>Day Long Masterclasses (4)</span>
+                            <a href="{{ route('catalog.day_long') }}" class="flex items-center justify-between gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                                <span class="flex items-center gap-2.5">
+                                    <i class="fas fa-calendar-day text-xs text-[#10b981]"></i>
+                                    <span>Day Long Masterclasses</span>
+                                </span>
+                                @if($publicDayLongCount > 0)
+                                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-slate-100 text-slate-700">{{ $publicDayLongCount }}</span>
+                                @endif
                             </a>
                             @php
-                                $publicNavCategories = \App\Models\Category::active()->ordered()->take(4)->get();
+                                $publicNavCategories = collect();
+                                try {
+                                    $publicNavCategories = \App\Models\Category::active()->ordered()->take(5)->get();
+                                    if ($publicNavCategories->isEmpty()) {
+                                        $fallbackCatNames = \App\Models\Course::where('is_published', true)->whereNotNull('category')->where('category', '!=', '')->distinct()->pluck('category')->take(5);
+                                        $publicNavCategories = $fallbackCatNames->map(function($name) {
+                                            return (object)['name' => $name, 'slug' => \Illuminate\Support\Str::slug($name), 'icon' => 'fa-tag'];
+                                        });
+                                    }
+                                } catch (\Throwable $e) {
+                                    $publicNavCategories = collect();
+                                }
                             @endphp
                             @if($publicNavCategories->isNotEmpty())
                                 <div class="border-t border-slate-100 my-1"></div>
@@ -303,7 +357,7 @@
                                 <i class="fas fa-book-reader text-xs text-[#c30102]"></i>
                                 <span>Knowledge Hub & Blogs</span>
                             </a>
-                            <a href="{{ route('certificate.verify', 'demo') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                            <a href="{{ route('certificate.verify') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
                                 <i class="fas fa-shield-alt text-xs text-[#10b981]"></i>
                                 <span>Verify Certificate</span>
                             </a>
@@ -384,18 +438,43 @@
                         </form>
                         <a href="{{ url('/') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Home</a>
                         <a href="{{ route('catalog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Course Catalog</a>
-                        <a href="{{ route('catalog.certificate') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100 text-xs pl-2 text-slate-600">↳ Certificate Programs (4)</a>
-                        <a href="{{ route('catalog.day_long') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100 text-xs pl-2 text-slate-600">↳ Day Long Masterclasses (4)</a>
+                        <a href="{{ route('catalog.certificate') }}" class="flex items-center justify-between py-2 hover:text-[#c30102] border-b border-slate-100 text-xs pl-2 text-slate-600">
+                            <span>↳ Certificate Programs</span>
+                            @if(isset($publicCertCount) && $publicCertCount > 0)
+                                <span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-100 text-slate-700">{{ $publicCertCount }}</span>
+                            @endif
+                        </a>
+                        <a href="{{ route('catalog.day_long') }}" class="flex items-center justify-between py-2 hover:text-[#c30102] border-b border-slate-100 text-xs pl-2 text-slate-600">
+                            <span>↳ Day Long Masterclasses</span>
+                            @if(isset($publicDayLongCount) && $publicDayLongCount > 0)
+                                <span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-100 text-slate-700">{{ $publicDayLongCount }}</span>
+                            @endif
+                        </a>
                         <a href="{{ route('instructors.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Instructors</a>
                         <a href="{{ route('blog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Blog & Insights</a>
                         <a href="{{ route('feed.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Community Feed</a>
-                        @foreach(\App\Models\Category::active()->ordered()->take(3)->get() as $mCat)
-                            <a href="{{ route('catalog.category', $mCat->slug) }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">{{ $mCat->name }}</a>
-                        @endforeach
+                        @if(isset($publicNavCategories) && $publicNavCategories->isNotEmpty())
+                            @foreach($publicNavCategories->take(3) as $mCat)
+                                <a href="{{ route('catalog.category', $mCat->slug) }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">{{ $mCat->name }}</a>
+                            @endforeach
+                        @endif
                         <a href="{{ route('about.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">About Us</a>
-                        <a href="{{ route('jobs.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Careers</a>
+                        <a href="{{ route('jobs.index') }}" class="flex items-center justify-between py-2 hover:text-[#c30102] border-b border-slate-100">
+                            <span>Careers & Jobs</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[9px] bg-emerald-500 text-white font-black uppercase tracking-wider">Hiring</span>
+                        </a>
+                        <a href="{{ route('certificate.verify') }}" class="flex items-center justify-between py-2 hover:text-[#c30102] border-b border-slate-100">
+                            <span>Verify Certificate</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700">Official</span>
+                        </a>
                         <a href="{{ route('wishlist.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">My Wishlist</a>
-                        <a href="{{ route('contact.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Contact</a>
+                        <a href="{{ route('contact.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Contact & Support</a>
+                        <div class="pt-2 pb-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Institutional Policies</div>
+                        <div class="grid grid-cols-3 gap-2 pb-2 border-b border-slate-100 text-[11px]">
+                            <a href="{{ route('legal.privacy') }}" class="text-slate-600 hover:text-[#c30102]">Privacy</a>
+                            <a href="{{ route('legal.terms') }}" class="text-slate-600 hover:text-[#c30102]">Terms</a>
+                            <a href="{{ route('legal.refund') }}" class="text-slate-600 hover:text-[#c30102]">Refund</a>
+                        </div>
                         <div class="pt-3">
                             @auth
                                 <a href="{{ route('dashboard') }}" class="block w-full text-center py-2.5 btn-ipdp-primary rounded-xl font-bold">Dashboard</a>
@@ -424,14 +503,17 @@
                 <!-- Col 1: About Institute -->
                 <div>
                     <div class="flex items-center gap-3 mb-4">
-                        <img class="h-11 w-11 object-contain rounded-full bg-white p-0.5 shadow-md" src="{{ asset('images/logo.png') }}" alt="CAB Academy">
+                        <img class="h-11 w-11 object-contain rounded-full bg-white p-0.5 shadow-md" 
+                             src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" 
+                             alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}"
+                             onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                         <div>
-                            <h3 class="text-white font-black text-lg leading-tight uppercase tracking-tight">CAB Academy</h3>
-                            <span class="text-[10px] text-[#c30102] font-black tracking-widest uppercase block">Learn, Grow, Lead.</span>
+                            <h3 class="text-white font-black text-lg leading-tight uppercase tracking-tight">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</h3>
+                            <span class="text-[10px] text-[#c30102] font-black tracking-widest uppercase block">{{ \App\Models\Setting::getVal('site_tagline', \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) }}</span>
                         </div>
                     </div>
                     <p class="leading-relaxed mb-6 text-xs sm:text-sm text-slate-300">
-                        CAB Academy is a specialized professional training institute delivering practical, industry-standard certification programs in Export-Import, Supply Chain, VAT & Tax, and Corporate Leadership.
+                        {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} is a specialized professional training institute delivering practical, industry-standard certification programs in Export-Import, Supply Chain, VAT & Tax, and Corporate Leadership.
                     </p>
                     <div class="flex items-center gap-3">
                         <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#c30102] transition-colors">
@@ -451,14 +533,15 @@
                     <h4 class="text-white font-bold text-base mb-4 tracking-wide uppercase text-xs">Useful Links</h4>
                     <ul class="space-y-2 text-xs sm:text-sm">
                         <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a></li>
-                        <li><a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Course</a></li>
+                        <li><a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Course Catalog</a></li>
                         <li><a href="{{ route('instructors.index') }}" class="hover:text-white transition-colors">Instructors</a></li>
                         <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Blog & Insights</a></li>
                         <li><a href="{{ route('feed.index') }}" class="hover:text-white transition-colors">Community Feed</a></li>
-                        <li><a href="{{ route('catalog.category', 'export-import') }}" class="hover:text-white transition-colors">Export – Import</a></li>
+                        <li><a href="{{ route('certificate.verify') }}" class="hover:text-white transition-colors text-emerald-400 font-semibold flex items-center gap-1.5"><i class="fas fa-shield-alt text-[11px]"></i><span>Verify Certificate</span></a></li>
                         <li><a href="{{ route('about.index') }}" class="hover:text-white transition-colors">About Us</a></li>
                         <li><a href="{{ route('contact.index') }}" class="hover:text-white transition-colors">Contact & Admissions</a></li>
-                        <li><a href="{{ route('jobs.index') }}" class="hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="{{ route('jobs.index') }}" class="hover:text-white transition-colors">Careers & Jobs</a></li>
+                        <li><a href="{{ route('legal.privacy') }}" class="hover:text-white transition-colors text-slate-400">Privacy Policy</a></li>
                     </ul>
                 </div>
 
@@ -584,7 +667,42 @@
                     }
                 });
             })
-            .catch(err => console.error('Wishlist error:', err));
+        };
+
+        window.copyShortLink = function(url, btn) {
+            function showSuccess() {
+                if (!btn) return;
+                const origHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check text-[10px]"></i><span>Copied!</span>';
+                btn.classList.add('bg-emerald-600', 'text-white');
+                setTimeout(() => {
+                    btn.innerHTML = origHTML;
+                    btn.classList.remove('bg-emerald-600');
+                }, 2200);
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(showSuccess).catch(() => fallback(url));
+            } else {
+                fallback(url);
+            }
+
+            function fallback(text) {
+                const ta = document.createElement("textarea");
+                ta.value = text;
+                ta.style.position = "fixed";
+                ta.style.left = "-9999px";
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    showSuccess();
+                } catch (e) {
+                    prompt('Copy this short link:', text);
+                }
+                document.body.removeChild(ta);
+            }
         };
     </script>
 

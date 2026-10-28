@@ -27,7 +27,7 @@
             'name' => 'CAB Academy',
             'logo' => [
                 '@type' => 'ImageObject',
-                'url' => asset('images/logo.png'),
+                'url' => \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png'),
             ],
         ],
         'mainEntityOfPage' => [
@@ -121,9 +121,10 @@
             <!-- Author Card -->
             <div class="flex items-center gap-4 py-4 px-5 rounded-2xl bg-[#f8fafc] border border-slate-100 mb-8">
                 <img 
-                    src="{{ $post->author_avatar ?: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" 
+                    src="{{ storage_asset($post->author_avatar) ?: 'https://ui-avatars.com/api/?name=' . urlencode($post->author_name) . '&background=051c45&color=fff' }}" 
                     alt="{{ $post->author_name }}" 
                     class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+                    onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($post->author_name) }}&background=051c45&color=fff';"
                 >
                 <div>
                     <span class="text-sm font-bold text-[#0f131f] block">{{ $post->author_name }}</span>
@@ -134,7 +135,7 @@
             <!-- Hero Image -->
             @if($post->featured_image)
                 <div class="rounded-2xl overflow-hidden mb-8 shadow-md max-h-[460px]">
-                    <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+                    <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80';">
                 </div>
             @endif
 

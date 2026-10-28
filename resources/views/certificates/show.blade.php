@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
     <title>Certificate of Completion - {{ $course->title }} - CAB Academy</title>
-    <link rel="icon" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Great+Vibes&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -154,7 +154,7 @@
             <!-- Header: Institute Crest & Logo -->
             <div class="text-center mb-3 sm:mb-5 print-header">
                 <div class="inline-flex items-center justify-center gap-2 mb-1 sm:mb-2">
-                    <img src="{{ asset('images/logo.png') }}" alt="CAB Academy Crest" class="w-12 h-12 sm:w-16 sm:h-16 object-contain">
+                    <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} Crest" class="w-12 h-12 sm:w-16 sm:h-16 object-contain" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 </div>
                 <h1 class="font-cinzel text-xl sm:text-3xl lg:text-4xl font-black tracking-widest text-[#051c45] uppercase">
                     Commercial Academy Bangladesh

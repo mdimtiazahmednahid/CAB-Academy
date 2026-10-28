@@ -1,10 +1,14 @@
 @extends('layouts.public')
 
 @section('title', $course->title . ' - CAB Academy')
-@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($course->short_description ?: $course->description ?: 'Enroll in ' . $course->title . ' at CAB Academy Dhaka. Professional certification, live masterclasses, and career training.'), 160))
+@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($course->short_description ?: $course->description ?: 'Enroll in ' . $course->title . ' at CAB Academy Dhaka. Professional certification, live masterclasses, and career training.'), 200))
 @section('canonical_url', route('courses.show', $course))
-@section('og_image', $course->cover_image_url)
+@section('og_image', $course->og_image_url)
 @section('og_title', $course->title . ' - CAB Academy')
+@section('og_type', 'website')
+@section('og_image_width', '1200')
+@section('og_image_height', '630')
+@section('og_image_alt', $course->title)
 
 @section('schema')
 @php
@@ -121,7 +125,7 @@
 @section('content')
 <div class="bg-[#f8fafc] min-h-screen pb-16">
 
-    <!-- 1. Minimalist Executive Hero Header -->
+    <!-- 1. Executive Hero Banner Header with Clickable Thumbnail & Direct Action Buttons -->
     <header class="bg-gradient-to-b from-[#051c45] via-[#082252] to-[#0a275e] text-white pt-6 pb-10 border-b border-slate-800/40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumbs -->
@@ -139,44 +143,156 @@
                 <span class="text-slate-300 truncate max-w-xs">{{ $course->title }}</span>
             </nav>
 
-            <div class="max-w-3xl space-y-3">
-                <div class="flex items-center gap-2 flex-wrap text-xs">
-                    <span class="px-2.5 py-0.5 bg-white/10 text-white border border-white/20 rounded-md font-semibold uppercase tracking-wider text-[11px]">
-                        {{ $course->category ?? 'Course' }}
-                    </span>
-                    @if(!empty($course->batch) && $course->show_batch)
-                        <span class="px-2.5 py-0.5 bg-[#c30102] text-white rounded-md font-bold uppercase tracking-wider text-[11px]">
-                            {{ $course->batch }}
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Left Details & Action Gateway (7 Columns on Desktop) -->
+                <div class="lg:col-span-7 space-y-3.5">
+                    <div class="flex items-center gap-2 flex-wrap text-xs">
+                        <span class="px-2.5 py-0.5 bg-white/10 text-white border border-white/20 rounded-md font-semibold uppercase tracking-wider text-[11px]">
+                            {{ $course->category ?? 'Course' }}
                         </span>
+                        @if(!empty($course->batch) && $course->show_batch)
+                            <span class="px-2.5 py-0.5 bg-[#c30102] text-white rounded-md font-bold uppercase tracking-wider text-[11px]">
+                                {{ $course->batch }}
+                            </span>
+                        @endif
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span>Live Zoom & Campus</span>
+                        </span>
+                    </div>
+
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
+                        {{ $course->title }}
+                    </h1>
+
+                    @if($course->short_description || $course->description)
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
+                            {{ $course->short_description ?? \Illuminate\Support\Str::limit($course->description, 160) }}
+                        </p>
                     @endif
+
+                    <!-- Inline Quick Meta (Starts, Duration, Format) -->
+                    <div class="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-1">
+                        <span class="flex items-center gap-1.5">
+                            <i class="far fa-calendar-alt text-[#c30102]"></i>
+                            <span>Starts: <strong>{{ $course->start_date ? $course->start_date->format('d M, Y') : ($course->duration ?? 'Upcoming') }}</strong></span>
+                        </span>
+                        <span>&bull;</span>
+                        <span class="flex items-center gap-1.5">
+                            <i class="far fa-clock text-amber-400"></i>
+                            <span>Schedule: <strong>{{ $course->duration ?? '8 Weeks' }}</strong></span>
+                        </span>
+                        <span>&bull;</span>
+                        <span class="flex items-center gap-1.5">
+                            <i class="fas fa-video text-cyan-400"></i>
+                            <span>Format: <strong>{{ $course->venue ?? 'Online (Zoom)' }}</strong></span>
+                        </span>
+                    </div>
+
+                    <!-- Direct Action Buttons in Hero -->
+                    <div class="pt-2 flex flex-wrap items-center gap-2.5">
+                        <button 
+                            type="button"
+                            onclick="openEnrollDrawer({ 
+                                id: {{ $course->id }}, 
+                                title: '{{ addslashes($course->title) }}', 
+                                price: '{{ number_format($course->price, 2) }}', 
+                                rawPrice: {{ $course->price }}, 
+                                batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
+                                venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
+                                fields: {{ json_encode($course->effective_enrollment_fields) }}
+                            })"
+                            class="px-5 py-3 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-sm tracking-wide uppercase shadow-[0_4px_20px_rgba(195,1,2,0.4)] flex items-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer"
+                        >
+                            <i class="fas fa-bolt text-amber-300 text-xs"></i>
+                            <span>Enroll Now (30 Sec)</span>
+                            <i class="fas fa-arrow-right text-[10px]"></i>
+                        </button>
+
+                        <a 
+                            href="{{ $course->counselor_whatsapp_url }}" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            class="px-4 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs sm:text-sm tracking-wide shadow flex items-center gap-2 transition-all active:scale-95"
+                        >
+                            <i class="fab fa-whatsapp text-sm"></i>
+                            <span>WhatsApp Counselor</span>
+                        </a>
+
+                        <a 
+                            href="{{ $course->facebook_share_url }}" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            onclick="window.open(this.href, 'fbshare', 'width=640,height=560,menubar=no,toolbar=no'); return false;"
+                            class="inline-flex items-center gap-1.5 px-3 py-3 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
+                            title="Share on Facebook"
+                        >
+                            <i class="fab fa-facebook-f text-[11px]"></i>
+                            <span class="hidden sm:inline">Share</span>
+                        </a>
+
+                        <button 
+                            type="button" 
+                            onclick="copyShortLink('{{ $course->short_url }}', this)" 
+                            class="inline-flex items-center gap-1.5 px-3 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-xl text-xs font-semibold transition-all active:scale-95 cursor-pointer"
+                            title="Copy short link"
+                        >
+                            <i class="far fa-copy text-[11px] text-amber-300"></i>
+                            <span class="hidden sm:inline">Copy Link</span>
+                        </button>
+                    </div>
                 </div>
 
-                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
-                    {{ $course->title }}
-                </h1>
+                <!-- Right Hero Banner Showcase (Clickable High-Res Thumbnail Banner - 5 Columns on Desktop) -->
+                <div class="lg:col-span-5">
+                    <div class="relative w-full aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-white/20 group/herobanner bg-slate-900">
+                        <a 
+                            href="javascript:void(0)" 
+                            onclick="openEnrollDrawer({ 
+                                id: {{ $course->id }}, 
+                                title: '{{ addslashes($course->title) }}', 
+                                price: '{{ number_format($course->price, 2) }}', 
+                                rawPrice: {{ $course->price }}, 
+                                batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
+                                venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
+                                fields: {{ json_encode($course->effective_enrollment_fields) }}
+                            })" 
+                            title="Click to Express Enroll in {{ $course->title }}"
+                            class="block w-full h-full relative cursor-pointer"
+                        >
+                            <img 
+                                src="{{ $course->cover_image_url }}" 
+                                alt="{{ $course->title }}" 
+                                class="w-full h-full object-cover group-hover/herobanner:scale-105 transition-transform duration-700 ease-out"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&h=630&q=85';"
+                            >
+                            
+                            <!-- Vignette Gradient -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#020b18]/90 via-black/20 to-transparent"></div>
 
-                @if($course->short_description || $course->description)
-                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
-                        {{ $course->short_description ?? \Illuminate\Support\Str::limit($course->description, 160) }}
-                    </p>
-                @endif
+                            <!-- Bottom Price Tag on Hero Image -->
+                            <div class="absolute bottom-3 left-3 z-20">
+                                <div class="bg-gradient-to-r from-[#020b18]/95 via-[#041536]/90 to-[#072152]/85 backdrop-blur-md border border-white/20 px-3 py-1 rounded-xl shadow-lg flex items-center gap-1.5">
+                                    <span class="text-[9px] text-slate-300 font-bold uppercase">Price TK:</span>
+                                    <span class="font-black text-xs sm:text-sm text-white tracking-tight">
+                                        {{ $course->price > 0 ? '৳' . number_format($course->price, 2) : 'Free Access' }}
+                                    </span>
+                                </div>
+                            </div>
 
-                <!-- Inline Quick Meta (Starts, Duration, Format) -->
-                <div class="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-1">
-                    <span class="flex items-center gap-1.5">
-                        <i class="far fa-calendar-alt text-[#c30102]"></i>
-                        <span>Starts: <strong>{{ $course->start_date ? $course->start_date->format('d M, Y') : ($course->duration ?? 'Upcoming') }}</strong></span>
-                    </span>
-                    <span>&bull;</span>
-                    <span class="flex items-center gap-1.5">
-                        <i class="far fa-clock text-amber-400"></i>
-                        <span>Schedule: <strong>{{ $course->duration ?? '8 Weeks' }}</strong></span>
-                    </span>
-                    <span>&bull;</span>
-                    <span class="flex items-center gap-1.5">
-                        <i class="fas fa-video text-cyan-400"></i>
-                        <span>Format: <strong>{{ $course->venue ?? 'Online (Zoom)' }}</strong></span>
-                    </span>
+                            <!-- Center Hover Overlay Pill -->
+                            <div class="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/herobanner:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
+                                <span class="px-4 py-2 rounded-full bg-[#c30102] text-white font-extrabold text-xs shadow-xl flex items-center gap-1.5 transform group-hover/herobanner:scale-105 transition-transform">
+                                    <i class="fas fa-bolt text-amber-300 text-xs"></i>
+                                    <span>Click to Express Enroll (30 Sec)</span>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="text-center pt-2 text-[11px] text-slate-300 flex items-center justify-center gap-1.5">
+                        <i class="fas fa-hand-pointer text-amber-300 text-[10px] animate-bounce"></i>
+                        <span>Click thumbnail banner to enroll in 30 seconds</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -533,7 +649,8 @@
                                         price: '{{ number_format($course->price, 2) }}', 
                                         rawPrice: {{ $course->price }}, 
                                         batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                                        venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}' 
+                                        venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
+                                        fields: {{ json_encode($course->effective_enrollment_fields) }}
                                     })"
                                     class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
                                 >
@@ -575,6 +692,82 @@
                                 @endif
                             </div>
                         @endif
+
+                        <!-- Social Sharing & Facebook Short Link Module -->
+                        <div class="pt-4 border-t border-slate-100">
+                            <div class="flex items-center justify-between mb-2.5">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Share Program</span>
+                                <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                                    <i class="fas fa-bolt text-[9px] mr-0.5"></i> Fast Short Link
+                                </span>
+                            </div>
+
+                            <!-- Facebook Share Button -->
+                            <a 
+                                href="{{ $course->facebook_share_url }}" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                onclick="window.open(this.href, 'fbshare', 'width=640,height=560,menubar=no,toolbar=no'); return false;"
+                                class="w-full py-2.5 px-3 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2 mb-2.5 active:scale-95 cursor-pointer"
+                            >
+                                <i class="fab fa-facebook-f text-sm"></i>
+                                <span>Share to Facebook Feed</span>
+                            </a>
+
+                            <!-- Short Link Input + Copy Button -->
+                            <div class="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden p-1">
+                                <i class="fas fa-link text-slate-400 text-xs pl-2 pr-1.5 shrink-0"></i>
+                                <input 
+                                    type="text" 
+                                    readonly 
+                                    value="{{ $course->short_url }}" 
+                                    class="w-full bg-transparent text-xs text-slate-700 font-mono font-semibold py-1 focus:outline-none select-all truncate"
+                                    id="sidebarShortLinkInput"
+                                >
+                                <button 
+                                    type="button" 
+                                    onclick="copyShortLink('{{ $course->short_url }}', this)" 
+                                    class="px-3 py-1.5 bg-[#051c45] hover:bg-[#082860] text-white text-[11px] font-bold rounded-lg shrink-0 transition-all flex items-center gap-1 active:scale-95 cursor-pointer"
+                                >
+                                    <i class="far fa-copy text-[10px]"></i>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+
+                            <!-- Multi-Channel Quick Share Icons -->
+                            <div class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-slate-100/80">
+                                <span class="text-[10px] text-slate-400 font-medium">Or share via:</span>
+                                <div class="flex items-center gap-1.5">
+                                    <a 
+                                        href="{{ $course->whatsapp_share_url }}" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        class="w-7 h-7 rounded-lg bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white flex items-center justify-center text-xs transition-all"
+                                        title="Share on WhatsApp"
+                                    >
+                                        <i class="fab fa-whatsapp"></i>
+                                    </a>
+                                    <a 
+                                        href="{{ $course->linkedin_share_url }}" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        class="w-7 h-7 rounded-lg bg-[#0A66C2]/10 hover:bg-[#0A66C2] text-[#0A66C2] hover:text-white flex items-center justify-center text-xs transition-all"
+                                        title="Share on LinkedIn"
+                                    >
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                                    <a 
+                                        href="https://twitter.com/intent/tweet?text={{ urlencode($course->title) }}&url={{ urlencode($course->short_url) }}" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        class="w-7 h-7 rounded-lg bg-slate-900/10 hover:bg-slate-900 text-slate-900 hover:text-white flex items-center justify-center text-xs transition-all"
+                                        title="Share on X / Twitter"
+                                    >
+                                        <i class="fab fa-x-twitter"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Simple Inclusions List -->
                         <div class="pt-3 border-t border-slate-100 space-y-2 text-xs text-slate-600">
@@ -620,7 +813,8 @@
                     price: '{{ number_format($course->price, 2) }}', 
                     rawPrice: {{ $course->price }}, 
                     batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                    venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}' 
+                    venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
+                    fields: {{ json_encode($course->effective_enrollment_fields) }}
                 })"
                 class="block w-full py-2.5 px-4 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-full shadow-xl text-center text-xs tracking-wide flex items-center justify-center gap-1.5"
             >
@@ -630,5 +824,26 @@
         @endif
     </div>
 
+    <!-- Auto-Enroll Trigger for Shared Links (?enroll=true or #enroll) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('enroll') === 'true' || window.location.hash === '#enroll') {
+                setTimeout(function () {
+                    if (typeof openEnrollDrawer === 'function') {
+                        openEnrollDrawer({ 
+                            id: {{ $course->id }}, 
+                            title: '{{ addslashes($course->title) }}', 
+                            price: '{{ number_format($course->price, 2) }}', 
+                            rawPrice: {{ $course->price }}, 
+                            batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
+                            venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
+                            fields: {{ json_encode($course->effective_enrollment_fields) }}
+                        });
+                    }
+                }, 350);
+            }
+        });
+    </script>
 </div>
 @endsection

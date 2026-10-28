@@ -45,3 +45,30 @@ Artisan::command('admin:fix-roles', function () {
     return 0;
 })->purpose('Normalize administrator accounts and repair any 403 authorization discrepancies');
 
+Artisan::command('instructors:fix', function () {
+    $this->info("Checking and resolving instructor-user account associations...");
+    $instructors = \App\Models\Instructor::all();
+    $repaired = 0;
+
+    foreach ($instructors as $inst) {
+        if (!empty($inst->email)) {
+            $matchingUser = \App\Models\User::where('email', $inst->email)->first();
+            if ($matchingUser && $inst->user_id !== $matchingUser->id) {
+                $oldId = $inst->user_id;
+                $inst->user_id = $matchingUser->id;
+                $inst->saveQuietly();
+                $this->line(" • Relinked '{$inst->name}' ({$inst->email}) from user #{$oldId} to user #{$matchingUser->id} ({$matchingUser->name})");
+                $repaired++;
+            }
+        }
+    }
+
+    if ($repaired === 0) {
+        $this->info("All instructor profiles and user accounts are cleanly mapped with zero collisions.");
+    } else {
+        $this->info("Successfully resolved {$repaired} instructor-user account conflict(s)!");
+    }
+    return 0;
+})->purpose('Resolve duplicate email collisions and synchronize instructor profile user IDs');
+
+

@@ -37,8 +37,10 @@
                     <td class="p-4 font-medium text-gray-900">{{ $job->title }}</td>
                     <td class="p-4 text-gray-500">
                         <div class="flex items-center gap-3">
-                            @if($job->company_logo)
-                                <img src="{{ Storage::url($job->company_logo) }}" alt="{{ $job->company }}" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0">
+                                <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company }}" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div style="display:none;" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
+                                    <span class="text-xs font-bold text-gray-500">{{ substr($job->company, 0, 1) }}</span>
+                                </div>
                             @else
                                 <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
                                     <span class="text-xs font-bold text-gray-500">{{ substr($job->company, 0, 1) }}</span>

@@ -74,7 +74,7 @@
                     </div>
                 </div>
             </div>
-        @else
+        @elseif(!empty($certificate_number) && strtolower($certificate_number) !== 'demo')
             <!-- Not Found Card -->
             <div class="bg-white rounded-3xl p-8 sm:p-10 border border-red-200 shadow-xl text-center">
                 <div class="w-16 h-16 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto text-2xl mb-4">
@@ -87,7 +87,7 @@
 
                 <!-- Search Form -->
                 <div class="mt-8 max-w-md mx-auto">
-                    <form action="#" onsubmit="event.preventDefault(); window.location.href='/verify-certificate/' + document.getElementById('searchCert').value.trim();" class="flex gap-2">
+                    <form action="#" onsubmit="event.preventDefault(); var val = document.getElementById('searchCert').value.trim(); if(val) window.location.href='{{ url('/verify-certificate') }}/' + encodeURIComponent(val);" class="flex gap-2">
                         <input 
                             type="text" 
                             id="searchCert" 
@@ -97,6 +97,33 @@
                         >
                         <button type="submit" class="btn-ipdp-primary px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm">
                             Validate
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @else
+            <!-- Initial Search Card -->
+            <div class="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-xl text-center">
+                <div class="w-16 h-16 rounded-2xl bg-[#051c45]/10 text-[#051c45] flex items-center justify-center mx-auto text-2xl mb-4">
+                    <i class="fas fa-award text-[#051c45]"></i>
+                </div>
+                <h2 class="text-2xl font-black text-[#0f131f]">Authenticate Official Credential</h2>
+                <p class="text-sm text-gray-600 mt-2 max-w-md mx-auto leading-relaxed">
+                    Enter the unique certificate identification number issued by Commercial Academy Bangladesh to verify graduate authenticity and accreditation status.
+                </p>
+
+                <!-- Search Form -->
+                <div class="mt-8 max-w-md mx-auto">
+                    <form action="#" onsubmit="event.preventDefault(); var val = document.getElementById('searchCertInit').value.trim(); if(val) window.location.href='{{ url('/verify-certificate') }}/' + encodeURIComponent(val);" class="flex gap-2">
+                        <input 
+                            type="text" 
+                            id="searchCertInit" 
+                            placeholder="Enter Serial Number (e.g. CAB-2026-XXXXXXXX)" 
+                            required
+                            class="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#c30102]"
+                        >
+                        <button type="submit" class="btn-ipdp-primary px-6 py-3 rounded-xl text-xs font-bold shadow-sm whitespace-nowrap">
+                            Verify Credential
                         </button>
                     </form>
                 </div>

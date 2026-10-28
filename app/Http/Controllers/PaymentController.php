@@ -56,19 +56,78 @@ class PaymentController extends Controller
     {
         abort_if(!$course->is_published, 404);
 
-        $request->validate([
+        // Autofill email and phone from authenticated user if omitted in request
+        if (Auth::check()) {
+            if (empty($request->email) && !empty(Auth::user()->email)) {
+                $request->merge(['email' => Auth::user()->email]);
+            }
+            if (empty($request->name) && !empty(Auth::user()->name)) {
+                $request->merge(['name' => Auth::user()->name]);
+            }
+        }
+
+        // Build dynamic validation rules based on course enrollment fields
+        $rules = [
             'name' => 'required|string|max:120',
             'phone' => ['required', 'string', 'max:15', 'regex:/^01[3-9]\d{8}$/'],
-            'email' => 'nullable|email|max:150',
             'training_mode' => 'nullable|string|in:in_person,online_zoom',
             'payment_method_id' => 'nullable|exists:payment_methods,id',
             'transaction_id' => 'nullable|string|max:100',
             'sender_number' => 'nullable|string|max:15',
-        ], [
-            'phone.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01917054664).'
-        ]);
+            'custom_fields' => 'nullable|array',
+        ];
 
-        // Resolve or create user
+        $messages = [
+            'phone.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01917054664).'
+        ];
+
+        // Dynamic email validation: check if email is required by this course
+        if ($course->isEmailRequired()) {
+            $rules['email'] = 'required|email|max:150';
+            $messages['email.required'] = 'Email address is required for this course.';
+        } else {
+            $rules['email'] = 'nullable|email|max:150';
+        }
+
+        // Validate custom fields if configured
+        $configuredFields = $course->effective_enrollment_fields;
+        foreach ($configuredFields as $field) {
+            $fName = $field['name'] ?? '';
+            if (in_array($fName, ['name', 'phone', 'email', 'training_mode']) || empty($fName)) {
+                continue;
+            }
+            if (!empty($field['is_enabled']) && !empty($field['is_required'])) {
+                $rules['custom_fields.' . $fName] = 'required|string|max:500';
+                $messages['custom_fields.' . $fName . '.required'] = 'Please enter your ' . ($field['label'] ?? $fName) . '.';
+            } else {
+                $rules['custom_fields.' . $fName] = 'nullable|string|max:1000';
+            }
+        }
+
+        $request->validate($rules, $messages);
+
+        // Compile all dynamic form responses
+        $formData = [
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'training_mode' => $request->training_mode ?? 'online_zoom',
+        ];
+
+        if ($request->has('custom_fields') && is_array($request->input('custom_fields'))) {
+            foreach ($request->input('custom_fields') as $k => $v) {
+                if ($v !== null && trim((string)$v) !== '') {
+                    $formData[$k] = trim((string)$v);
+                }
+            }
+        }
+        foreach (['organization', 'designation', 'city', 'comments'] as $directField) {
+            if ($request->filled($directField) && !isset($formData[$directField])) {
+                $formData[$directField] = trim((string)$request->input($directField));
+            }
+        }
+
+        // Resolve or create student user (fallback to auto-generated email if not provided)
         $user = Auth::user();
         if (!$user) {
             $email = $request->email ?: ('student_' . preg_replace('/[^0-9]/', '', $request->phone) . '@cabacademy.com');
@@ -87,11 +146,37 @@ class PaymentController extends Controller
             Auth::login($user);
         }
 
+        // Prepare human-readable summary notes for academic counselors
+        $notes = 'Mode: ' . ($request->training_mode === 'in_person' ? 'Campus' : 'Online Zoom');
+        $extraParts = [];
+        foreach ($formData as $k => $v) {
+            if (!in_array($k, ['name', 'phone', 'email', 'training_mode'])) {
+                $extraParts[] = ucfirst(str_replace('_', ' ', $k)) . ': ' . $v;
+            }
+        }
+        if (!empty($extraParts)) {
+            $notes .= ' | ' . implode(', ', $extraParts);
+        }
+
         // If free course
         if ($course->price <= 0) {
             if (!$user->enrolledCourses()->where('course_id', $course->id)->exists()) {
                 $user->enrolledCourses()->attach($course->id);
             }
+
+            // Create zero-amount verified registration record to persist form responses
+            Payment::create([
+                'user_id' => $user->id,
+                'course_id' => $course->id,
+                'payment_method_id' => null,
+                'amount' => 0.00,
+                'sender_number' => $request->sender_number ?: $request->phone,
+                'transaction_id' => 'FREE-ENROLL-' . strtoupper(Str::random(6)),
+                'status' => 'verified',
+                'notes' => $notes,
+                'form_data' => $formData,
+                'verified_at' => now(),
+            ]);
 
             if ($request->wantsJson()) {
                 return response()->json([
@@ -105,7 +190,7 @@ class PaymentController extends Controller
             return redirect()->route('courses.show', $course)->with('success', 'You have been enrolled in the course!');
         }
 
-        // Paid course: Record payment / reservation
+        // Paid course: Record payment / reservation with dynamic form data
         $payment = Payment::create([
             'user_id' => $user->id,
             'course_id' => $course->id,
@@ -114,6 +199,8 @@ class PaymentController extends Controller
             'sender_number' => $request->sender_number ?: $request->phone,
             'transaction_id' => $request->transaction_id ?: ('RES-' . strtoupper(Str::random(8))),
             'status' => 'pending',
+            'notes' => $notes,
+            'form_data' => $formData,
         ]);
 
         $message = 'Enrollment request received! Your seat has been reserved. Our academic counselors will verify your payment details shortly.';

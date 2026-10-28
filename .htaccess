@@ -5,20 +5,28 @@
 
     RewriteEngine On
 
+    # Block access to hidden files and folders (.env, .git, etc.)
+    RewriteCond %{REQUEST_URI} (^|/)\. [NC]
+    RewriteRule ^ - [F,L]
+
+    # Block direct web access to sensitive internal Laravel folders
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor)(/|$) - [F,L]
+    RewriteRule ^storage/(framework|logs)(/|$) - [F,L]
+
+    # Block sensitive root files
+    RewriteRule ^(composer|package)\.(json|lock)$ - [F,L]
+    RewriteRule \.(env|sqlite|log)$ - [F,L]
+
     # Prevent loop if already under public/
     RewriteCond %{REQUEST_URI} ^/public/
     RewriteRule ^ - [L]
 
-    # Serve physical file or folder directly if it exists in root (e.g. cmd.php, favicon.ico)
+    # If physical file or directory exists in root (e.g. migrate.php, cmd.php, favicon.ico), serve it
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # If physical file or folder exists inside public/, serve it directly (e.g. build/assets, images)
-    RewriteCond %{DOCUMENT_ROOT}/public/$1 -f [OR]
-    RewriteCond %{DOCUMENT_ROOT}/public/$1 -d
+    # Rewrite all remaining requests into public directory
     RewriteRule ^(.*)$ public/$1 [L]
-
-    # Route all other dynamic application requests to public/index.php
-    RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>
+

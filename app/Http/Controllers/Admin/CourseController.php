@@ -45,7 +45,10 @@ class CourseController extends Controller
             'instructor_id' => 'nullable|exists:users,id',
             'certificate_enabled' => 'nullable|boolean',
             'batch' => 'nullable|string|max:100',
-            'show_batch' => 'nullable|boolean'
+            'show_batch' => 'nullable|boolean',
+            'enrollment_fields' => 'nullable',
+            'enrollment_fields_json' => 'nullable|string',
+            'enrollment_template' => 'nullable|string',
         ]);
         
         $data['is_published'] = $request->has('is_published');
@@ -53,6 +56,9 @@ class CourseController extends Controller
         $data['show_batch'] = $request->boolean('show_batch');
         $data['batch'] = $request->input('batch');
         $data['price'] = $data['price'] ?? 0.00;
+
+        // Process dynamic enrollment form fields if provided
+        $data['enrollment_fields'] = $this->parseEnrollmentFields($request);
 
         if (auth()->user()->role === 'instructor') {
             $data['instructor_id'] = auth()->id();
@@ -173,7 +179,10 @@ class CourseController extends Controller
             'instructor_id' => 'nullable|exists:users,id',
             'certificate_enabled' => 'nullable|boolean',
             'batch' => 'nullable|string|max:100',
-            'show_batch' => 'nullable|boolean'
+            'show_batch' => 'nullable|boolean',
+            'enrollment_fields' => 'nullable',
+            'enrollment_fields_json' => 'nullable|string',
+            'enrollment_template' => 'nullable|string',
         ]);
 
         $data['is_published'] = $request->has('is_published');
@@ -181,6 +190,11 @@ class CourseController extends Controller
         $data['show_batch'] = $request->boolean('show_batch');
         $data['batch'] = $request->input('batch');
         $data['price'] = $data['price'] ?? 0.00;
+
+        // Process dynamic enrollment form fields if provided in request
+        if ($request->has('enrollment_fields') || $request->filled('enrollment_fields_json') || $request->filled('enrollment_template')) {
+            $data['enrollment_fields'] = $this->parseEnrollmentFields($request);
+        }
 
         if (auth()->user()->role === 'instructor' && !auth()->user()->isAdmin()) {
             $data['instructor_id'] = auth()->id();
@@ -291,4 +305,93 @@ class CourseController extends Controller
         Certificate::where('user_id', $student->id)->where('course_id', $course->id)->delete();
         return back()->with('success', "Certificate revoked for {$student->name}.");
     }
+
+    /**
+     * Dedicated action to update course dynamic enrollment form fields and presets.
+     */
+    public function updateEnrollmentForm(Request $request, Course $course)
+    {
+        if (!auth()->user()->isAdmin() && auth()->user()->role === 'instructor' && $course->instructor_id && $course->instructor_id !== auth()->id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $fields = $this->parseEnrollmentFields($request);
+        $course->update([
+            'enrollment_fields' => $fields
+        ]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Course registration form updated successfully.',
+                'fields' => $course->fresh()->effective_enrollment_fields
+            ]);
+        }
+
+        return back()->with('success', 'Course registration form updated successfully.');
+    }
+
+    /**
+     * Parse and sanitize dynamic registration/enrollment form fields from request.
+     */
+    protected function parseEnrollmentFields(Request $request): ?array
+    {
+        $rawFields = null;
+
+        if ($request->filled('enrollment_template')) {
+            $tplKey = $request->input('enrollment_template');
+            $templates = Course::getBuiltinTemplates();
+            if (isset($templates[$tplKey])) {
+                $rawFields = $templates[$tplKey]['fields'];
+            }
+        }
+
+        if ($request->filled('enrollment_fields_json')) {
+            $decoded = json_decode($request->input('enrollment_fields_json'), true);
+            if (is_array($decoded)) {
+                $rawFields = $decoded;
+            }
+        } elseif ($request->has('enrollment_fields')) {
+            $input = $request->input('enrollment_fields');
+            if (is_string($input)) {
+                $decoded = json_decode($input, true);
+                if (is_array($decoded)) {
+                    $rawFields = $decoded;
+                }
+            } elseif (is_array($input)) {
+                $rawFields = $input;
+            }
+        }
+
+        if ($rawFields === null) {
+            return null;
+        }
+
+        $sanitized = [];
+        foreach ($rawFields as $field) {
+            if (!is_array($field)) continue;
+            $name = trim($field['name'] ?? '');
+            if ($name === '') continue;
+
+            $name = strtolower(preg_replace('/[^a-zA-Z0-9_]/', '_', $name));
+            $label = trim($field['label'] ?? ucfirst(str_replace('_', ' ', $name)));
+            $type = in_array($field['type'] ?? '', ['text', 'email', 'tel', 'select', 'textarea', 'number']) 
+                ? $field['type'] 
+                : 'text';
+
+            $sanitized[] = [
+                'name' => $name,
+                'label' => $label,
+                'type' => $type,
+                'is_required' => !empty($field['is_required']),
+                'is_enabled' => isset($field['is_enabled']) ? !empty($field['is_enabled']) : true,
+                'is_system' => !empty($field['is_system']),
+                'placeholder' => trim($field['placeholder'] ?? ''),
+                'options' => $field['options'] ?? null,
+            ];
+        }
+
+        return $sanitized;
+    }
 }
+

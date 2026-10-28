@@ -50,7 +50,7 @@
                 <div class="relative z-10 w-full max-w-lg px-12">
                     <div class="mb-10">
                         <a href="{{ url('/') }}" class="inline-flex items-center gap-3.5 group">
-                            <img class="h-14 w-14 rounded-full bg-white p-1 object-contain shadow-lg group-hover:scale-105 transition-transform" src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy">
+                            <img class="h-14 w-14 rounded-full bg-white p-1 object-contain shadow-lg group-hover:scale-105 transition-transform" src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="CAB Academy" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                             <div class="flex flex-col">
                                 <span class="text-2xl font-black text-white tracking-tight uppercase leading-none">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
                                 <span class="text-[10px] text-[#c30102] font-black uppercase tracking-widest mt-1">Learn, Grow, Lead.</span>
@@ -86,16 +86,10 @@
                 <div class="w-full flex-1 flex flex-col justify-center max-w-md my-8">
                     <!-- Mobile Logo -->
                     <div class="mb-8 lg:hidden">
-                        <a href="/" class="flex items-center gap-2">
-                            @php $logo = \App\Models\Setting::getVal('site_logo'); @endphp
-                            @if($logo)
-                                <img class="h-8 w-auto" src="{{ $logo }}" alt="Logo">
-                            @else
-                                <div class="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center font-bold text-lg shadow-sm">
-                                    {{ substr(\App\Models\Setting::getVal('site_name', 'CAB'), 0, 1) }}
-                                </div>
-                                <span class="font-bold text-lg tracking-tight text-gray-900">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
-                            @endif
+                        <a href="{{ url('/') }}" class="flex items-center gap-2">
+                            @php $logo = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png'); @endphp
+                            <img class="h-8 w-auto object-contain" src="{{ $logo }}" alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                            <span class="font-bold text-lg tracking-tight text-gray-900 uppercase">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</span>
                         </a>
                     </div>
                     

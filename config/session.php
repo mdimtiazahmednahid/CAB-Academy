@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    'driver' => env('SESSION_DRIVER', 'file'),
 
     /*
     |--------------------------------------------------------------------------
@@ -60,7 +60,13 @@ return [
     |
     */
 
-    'files' => storage_path('framework/sessions'),
+    'files' => (function () {
+        $path = storage_path('framework/sessions');
+        if (!is_dir($path)) {
+            @mkdir($path, 0777, true);
+        }
+        return $path;
+    })(),
 
     /*
     |--------------------------------------------------------------------------

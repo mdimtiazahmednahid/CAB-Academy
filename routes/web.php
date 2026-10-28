@@ -15,51 +15,59 @@ Route::get('/reset-db', function () {
 });
 
 Route::get('/', function () {
-    $courses = \App\Models\Course::where('is_published', true)->latest()->get();
-    
-    $certCount = (int) \App\Models\Setting::getVal('landing_cert_count', 4);
-    if ($certCount < 1) $certCount = 4;
-    $dayLongCount = (int) \App\Models\Setting::getVal('landing_daylong_count', 4);
-    if ($dayLongCount < 1) $dayLongCount = 4;
-    $blogCount = (int) \App\Models\Setting::getVal('landing_blog_count', 3);
-    if ($blogCount < 1) $blogCount = 3;
+    try {
+        $courses = \App\Models\Course::where('is_published', true)->latest()->get();
+        
+        $certCount = (int) \App\Models\Setting::getVal('landing_cert_count', 4);
+        if ($certCount < 1) $certCount = 4;
+        $dayLongCount = (int) \App\Models\Setting::getVal('landing_daylong_count', 4);
+        if ($dayLongCount < 1) $dayLongCount = 4;
+        $blogCount = (int) \App\Models\Setting::getVal('landing_blog_count', 3);
+        if ($blogCount < 1) $blogCount = 3;
 
-    // Certificate Courses Section
-    $certificateCourses = \App\Models\Course::where('is_published', true)
-        ->where(function($q) {
-            $q->where('level', 'Certificate')
-              ->orWhere('title', 'like', '%Certificate%');
-        })
-        ->orderBy('id', 'asc')
-        ->take($certCount)
-        ->get();
+        // Certificate Courses Section
+        $certificateCourses = \App\Models\Course::where('is_published', true)
+            ->where(function($q) {
+                $q->where('level', 'Certificate')
+                  ->orWhere('title', 'like', '%Certificate%');
+            })
+            ->orderBy('id', 'asc')
+            ->take($certCount)
+            ->get();
 
-    if ($certificateCourses->count() < 2) {
-        $certificateCourses = $courses->take($certCount);
+        if ($certificateCourses->count() < 2) {
+            $certificateCourses = $courses->take($certCount);
+        }
+
+        // Day Long Courses Section (strictly non-overlapping with Certificate programs)
+        $certIds = $certificateCourses->pluck('id')->toArray();
+        $dayLongCourses = \App\Models\Course::where('is_published', true)
+            ->whereNotIn('id', $certIds)
+            ->where(function($q) {
+                $q->where('level', 'Day Long')
+                  ->orWhere('duration', 'like', '%Day%')
+                  ->orWhere('title', 'like', '%Day-Long%')
+                  ->orWhere('title', 'like', '%Day Long%')
+                  ->orWhere('title', 'like', '%Masterclass%');
+            })
+            ->orderBy('id', 'asc')
+            ->take($dayLongCount)
+            ->get();
+
+        if ($dayLongCourses->count() < 2) {
+            $dayLongCourses = $courses->whereNotIn('id', $certIds)->take($dayLongCount);
+        }
+
+        $jobs = \App\Models\JobPost::where('is_active', true)->latest()->take(3)->get();
+        $recentBlogs = \App\Models\BlogPost::published()->latest('published_at')->take($blogCount)->get();
+        return view('welcome', compact('courses', 'certificateCourses', 'dayLongCourses', 'jobs', 'recentBlogs'));
+    } catch (\Throwable $e) {
+        return response()->view('errors.database', [
+            'exception' => $e,
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+        ], 500);
     }
-
-    // Day Long Courses Section (strictly non-overlapping with Certificate programs)
-    $certIds = $certificateCourses->pluck('id')->toArray();
-    $dayLongCourses = \App\Models\Course::where('is_published', true)
-        ->whereNotIn('id', $certIds)
-        ->where(function($q) {
-            $q->where('level', 'Day Long')
-              ->orWhere('duration', 'like', '%Day%')
-              ->orWhere('title', 'like', '%Day-Long%')
-              ->orWhere('title', 'like', '%Day Long%')
-              ->orWhere('title', 'like', '%Masterclass%');
-        })
-        ->orderBy('id', 'asc')
-        ->take($dayLongCount)
-        ->get();
-
-    if ($dayLongCourses->count() < 2) {
-        $dayLongCourses = $courses->whereNotIn('id', $certIds)->take($dayLongCount);
-    }
-
-    $jobs = \App\Models\JobPost::where('is_active', true)->latest()->take(3)->get();
-    $recentBlogs = \App\Models\BlogPost::published()->latest('published_at')->take($blogCount)->get();
-    return view('welcome', compact('courses', 'certificateCourses', 'dayLongCourses', 'jobs', 'recentBlogs'));
 });
 
 // Community Feed & Blogs (Minimal Community Like Facebook)
@@ -89,7 +97,7 @@ Route::get('/wishlist', [App\Http\Controllers\WishlistController::class, 'index'
 Route::post('/wishlist/{course}/toggle', [App\Http\Controllers\WishlistController::class, 'toggle'])->name('wishlist.toggle');
 
 // Public Verifiable Certificate Registry
-Route::get('/verify-certificate/{certificate_number}', [App\Http\Controllers\CertificateController::class, 'verify'])->name('certificate.verify');
+Route::get('/verify-certificate/{certificate_number?}', [App\Http\Controllers\CertificateController::class, 'verify'])->name('certificate.verify');
 
 // Executive Instructors & Faculty Directory
 Route::get('/instructors', [App\Http\Controllers\InstructorController::class, 'index'])->name('instructors.index');
@@ -313,6 +321,9 @@ Route::get('/export-import', function () {
     return redirect()->route('catalog.category', ['category' => 'export-import']);
 });
 
+// Ultra-Short Course Sharing Route (/c/{course}) for Facebook and Social Media Previews
+Route::get('/c/{course}', [App\Http\Controllers\CourseController::class, 'shortLink'])->name('courses.short');
+
 // Public Course Overview & Enrollment Initiator
 Route::get('/courses/{course}', [App\Http\Controllers\CourseController::class, 'show'])->name('courses.show');
 Route::post('/courses/{course}/enroll', [App\Http\Controllers\CourseController::class, 'enroll'])->name('courses.enroll');
@@ -365,6 +376,7 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::post('/courses', [AdminCourseController::class, 'store'])->name('admin.courses.store');
     Route::get('/courses/{course}', [AdminCourseController::class, 'show'])->name('admin.courses.show');
     Route::match(['put', 'post'], '/courses/{course}', [AdminCourseController::class, 'update'])->name('admin.courses.update');
+    Route::post('/courses/{course}/enrollment-form', [AdminCourseController::class, 'updateEnrollmentForm'])->name('admin.courses.update_enrollment_form');
     Route::delete('/courses/{course}', [AdminCourseController::class, 'destroy'])->name('admin.courses.destroy');
     
     Route::post('/courses/{course}/sections', [AdminCourseController::class, 'storeSection'])->name('admin.courses.sections.store');

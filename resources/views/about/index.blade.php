@@ -35,10 +35,10 @@
                     <div class="absolute -inset-2 bg-gradient-to-r from-[#c30102] to-[#051c45] rounded-3xl blur-xl opacity-20 transform -rotate-1"></div>
                     <div class="relative bg-white rounded-3xl p-8 border border-[#e3e7f0] shadow-xl space-y-6">
                         <div class="flex items-center gap-4">
-                            <img src="{{ asset('images/logo.png') }}" alt="CAB Academy Crest" class="w-16 h-16 rounded-2xl p-1 bg-white border border-gray-100 shadow-sm object-contain">
+                            <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} Crest" class="w-16 h-16 rounded-2xl p-1 bg-white border border-gray-100 shadow-sm object-contain" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                             <div>
-                                <h3 class="text-xl font-black text-[#0f131f] uppercase tracking-tight">CAB Academy</h3>
-                                <span class="text-xs font-black text-[#c30102] uppercase tracking-widest">Learn, Grow, Lead.</span>
+                                <h3 class="text-xl font-black text-[#0f131f] uppercase tracking-tight">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</h3>
+                                <span class="text-xs font-black text-[#c30102] uppercase tracking-widest">{{ \App\Models\Setting::getVal('site_tagline', 'Learn, Grow, Lead.') }}</span>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100 text-center">

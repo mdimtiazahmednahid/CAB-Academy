@@ -27,6 +27,7 @@ class Course extends Model
         'category',
         'instructor_id',
         'certificate_enabled',
+        'enrollment_fields',
         'views'
     ];
 
@@ -36,6 +37,7 @@ class Course extends Model
         'is_published' => 'boolean',
         'certificate_enabled' => 'boolean',
         'show_batch' => 'boolean',
+        'enrollment_fields' => 'array',
     ];
 
     public function scopePublished($query)
@@ -109,6 +111,80 @@ class Course extends Model
     public function getThumbnailUrlAttribute(): string
     {
         return $this->cover_image_url;
+    }
+
+    /**
+     * Concise, social-optimized short link for this course (e.g. https://cabacademy.bd/c/5).
+     */
+    public function getShortUrlAttribute(): string
+    {
+        return url('/c/' . $this->id);
+    }
+
+    /**
+     * Pre-formatted one-click Facebook Sharer dialog URL.
+     */
+    public function getFacebookShareUrlAttribute(): string
+    {
+        return 'https://www.facebook.com/sharer/sharer.php?u=' . urlencode($this->short_url);
+    }
+
+    /**
+     * Pre-formatted WhatsApp share link with course title and short URL.
+     */
+    public function getWhatsappShareUrlAttribute(): string
+    {
+        $text = $this->title . " - Join this program at CAB Academy:\n" . $this->short_url;
+        return 'https://api.whatsapp.com/send?text=' . urlencode($text);
+    }
+
+    /**
+     * High-resolution, fully-qualified Open Graph banner image URL (1200x630 optimal for Facebook/Twitter/LinkedIn cards).
+     */
+    public function getOgImageUrlAttribute(): string
+    {
+        $img = $this->cover_image ?: $this->thumbnail;
+        $default = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&h=630&q=85';
+        if (!$img) {
+            return $default;
+        }
+
+        $url = storage_asset($img, $default);
+
+        // Ensure 100% absolute URL for social crawlers (Facebook, WhatsApp, LinkedIn, Twitter)
+        if (!str_starts_with($url, 'http://') && !str_starts_with($url, 'https://')) {
+            $url = url($url);
+        }
+
+        // If Unsplash, ensure 1200x630 resolution for pristine social cards
+        if (str_contains($url, 'images.unsplash.com')) {
+            $url = preg_replace('/w=\d+/', 'w=1200', $url);
+            if (!str_contains($url, 'h=')) {
+                $url .= '&h=630';
+            } else {
+                $url = preg_replace('/h=\d+/', 'h=630', $url);
+            }
+        }
+
+        return $url;
+    }
+
+    /**
+     * Pre-formatted WhatsApp Academic Counselor direct message URL.
+     */
+    public function getCounselorWhatsappUrlAttribute(): string
+    {
+        $phone = '8801917054664';
+        $message = "Assalamu Alaikum CAB Academy! I would like to inquire/enroll in *{$this->title}* (Fee: ৳" . number_format($this->price, 0) . "). Please share batch details and enrollment procedure: " . $this->short_url;
+        return 'https://wa.me/' . $phone . '?text=' . urlencode($message);
+    }
+
+    /**
+     * Pre-formatted LinkedIn share dialog URL.
+     */
+    public function getLinkedinShareUrlAttribute(): string
+    {
+        return 'https://www.linkedin.com/sharing/share-offsite/?url=' . urlencode($this->short_url);
     }
 
     public function instructor()
@@ -196,5 +272,117 @@ class Course extends Model
         }
 
         return false;
+    }
+
+    /**
+     * Built-in rapid enrollment form templates.
+     */
+    public static function getBuiltinTemplates(): array
+    {
+        return [
+            'standard' => [
+                'key' => 'standard',
+                'name' => 'Standard Professional',
+                'badge' => 'Default',
+                'description' => 'Name, Phone, and Required Email. Optimal for LMS access, notifications, and verifiable digital certificates.',
+                'fields' => [
+                    ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
+                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '01917054664'],
+                    ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'name@company.com'],
+                    ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
+                ],
+            ],
+            'quick_lead' => [
+                'key' => 'quick_lead',
+                'name' => 'Quick Lead (No Email Required)',
+                'badge' => 'Highest Velocity',
+                'description' => 'Fastest conversion: Name + Phone only. Email is not required or asked for. Perfect for urgent workshops.',
+                'fields' => [
+                    ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
+                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '01917054664'],
+                    ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => false, 'is_enabled' => false, 'is_system' => true, 'placeholder' => 'name@company.com'],
+                    ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
+                ],
+            ],
+            'corporate' => [
+                'key' => 'corporate',
+                'name' => 'Corporate & Executive',
+                'badge' => 'B2B & Executive',
+                'description' => 'Name, Phone, Email, Organization / Company, and Designation for executive billing.',
+                'fields' => [
+                    ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
+                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '01917054664'],
+                    ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'name@company.com'],
+                    ['name' => 'organization', 'label' => 'Organization / Company', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Apex Footwear Ltd.'],
+                    ['name' => 'designation', 'label' => 'Designation / Title', 'type' => 'text', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Senior Commercial Manager'],
+                    ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
+                ],
+            ],
+            'comprehensive' => [
+                'key' => 'comprehensive',
+                'name' => 'Comprehensive Application',
+                'badge' => 'Full Dossier',
+                'description' => 'In-depth application: Name, Phone, Email, Organization, Designation, City, and Expectations.',
+                'fields' => [
+                    ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
+                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '01917054664'],
+                    ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'name@company.com'],
+                    ['name' => 'organization', 'label' => 'Organization / Company', 'type' => 'text', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Beximco Group'],
+                    ['name' => 'designation', 'label' => 'Designation / Role', 'type' => 'text', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Supply Chain Officer'],
+                    ['name' => 'city', 'label' => 'City / District', 'type' => 'text', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Dhaka / Chattogram'],
+                    ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
+                    ['name' => 'comments', 'label' => 'Expectations / Queries', 'type' => 'textarea', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'Any specific customs or tax topics you want covered?'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Get effective registration/enrollment fields for this course.
+     * Guaranteed array of fields with name, label, type, is_required, is_enabled, placeholder, options.
+     */
+    public function getEffectiveEnrollmentFieldsAttribute(): array
+    {
+        $fields = $this->enrollment_fields;
+        if (is_array($fields) && !empty($fields)) {
+            return $fields;
+        }
+
+        // Fallback to Standard Professional template
+        return self::getBuiltinTemplates()['standard']['fields'];
+    }
+
+    /**
+     * Alias for effective_enrollment_fields.
+     */
+    public function getEffectiveRegistrationFieldsAttribute(): array
+    {
+        return $this->effective_enrollment_fields;
+    }
+
+    /**
+     * Determine if email is required for enrolling in this course.
+     */
+    public function isEmailRequired(): bool
+    {
+        foreach ($this->effective_enrollment_fields as $field) {
+            if (($field['name'] ?? '') === 'email') {
+                return !empty($field['is_enabled']) && !empty($field['is_required']);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Determine if email field is enabled / displayed for this course.
+     */
+    public function isEmailEnabled(): bool
+    {
+        foreach ($this->effective_enrollment_fields as $field) {
+            if (($field['name'] ?? '') === 'email') {
+                return !empty($field['is_enabled']);
+            }
+        }
+        return true;
     }
 }

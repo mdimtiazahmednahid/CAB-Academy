@@ -69,6 +69,5 @@ Allow: /uploads/
 
 # ==============================================================================
 # SITEMAP SPECIFICATION
-# ==============================================================================
-Sitemap: http://127.0.0.1:8001/sitemap.xml
+Sitemap: https://cabacademy.bd/sitemap.xml
 Sitemap: https://cabacademybd.com/sitemap.xml

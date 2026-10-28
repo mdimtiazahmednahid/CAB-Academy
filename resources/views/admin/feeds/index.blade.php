@@ -125,7 +125,7 @@
                         <tr class="hover:bg-gray-50/80 transition-colors {{ $post->is_pinned ? 'bg-amber-50/30' : '' }}">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
-                                    <img src="{{ $post->author_avatar ?? asset('images/logo.png') }}" class="w-9 h-9 rounded-full object-cover border border-gray-200">
+                                    <img src="{{ storage_asset($post->author_avatar) ?: (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')) }}" alt="{{ $post->author_name }}" class="w-9 h-9 rounded-full object-cover border border-gray-200" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                                     <div>
                                         <div class="font-bold text-gray-900 flex items-center gap-1.5">
                                             <span>{{ $post->author_name }}</span>

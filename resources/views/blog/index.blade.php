@@ -84,6 +84,7 @@
                                     src="{{ $blogImg }}" 
                                     alt="{{ $post->title }}" 
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80';"
                                 >
                                 <span class="absolute top-3 left-3 bg-[#c30102] text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
                                     {{ $post->category }}
@@ -114,9 +115,10 @@
                         <div class="px-6 py-4 border-t border-slate-100 bg-[#f8fafc] flex items-center justify-between">
                             <div class="flex items-center gap-2.5">
                                 <img 
-                                    src="{{ $post->author_avatar ?: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80' }}" 
+                                    src="{{ storage_asset($post->author_avatar) ?: 'https://ui-avatars.com/api/?name=' . urlencode($post->author_name) . '&background=051c45&color=fff' }}" 
                                     alt="{{ $post->author_name }}" 
                                     class="w-8 h-8 rounded-full object-cover border border-gray-200"
+                                    onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($post->author_name) }}&background=051c45&color=fff';"
                                 >
                                 <div class="leading-tight">
                                     <span class="text-xs font-bold text-[#0f131f] block">{{ $post->author_name }}</span>

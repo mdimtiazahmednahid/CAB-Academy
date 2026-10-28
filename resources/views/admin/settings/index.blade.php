@@ -12,7 +12,7 @@
     </div>
 @endif
 
-<form action="{{ route('admin.settings.store') }}" method="POST" class="space-y-8 max-w-2xl relative pb-24 md:pb-0">
+<form action="{{ route('admin.settings.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8 max-w-2xl relative pb-24 md:pb-0">
     @csrf
 
     <!-- Branding Section -->
@@ -24,20 +24,31 @@
             <div class="focus-ring-primary rounded-lg">
                 <label for="site_name" class="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
                 <input type="text" id="site_name" name="site_name" 
-                       value="{{ $settings['site_name']->value ?? 'EdTech Platform' }}"
+                       value="{{ $settings['site_name']->value ?? 'CAB Academy' }}"
+                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+            </div>
+
+            <!-- Site Tagline / Slogan -->
+            <div class="focus-ring-primary rounded-lg">
+                <label for="site_tagline" class="block text-sm font-medium text-gray-700 mb-1">Site Tagline / Subtitle</label>
+                <input type="text" id="site_tagline" name="site_tagline" 
+                       value="{{ $settings['site_tagline']->value ?? 'Learn, Grow, Lead.' }}"
+                       placeholder="e.g. Learn, Grow, Lead."
                        class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
             </div>
 
             <!-- Logo Upload -->
             <div class="focus-ring-primary rounded-lg">
                 <label for="logo_input" class="block text-sm font-medium text-gray-700 mb-2">Site Logo</label>
-                @if(isset($settings['site_logo']) && $settings['site_logo']->value)
-                    <div class="mb-3 p-3 bg-gray-50 rounded-lg inline-block border border-gray-100">
-                        <img src="{{ $settings['site_logo']->value }}" alt="Current Logo" class="h-12 w-auto object-contain">
-                    </div>
-                @endif
-                <input type="file" id="logo_input" accept="image/*"
-                       class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-primary hover:file:bg-green-100 transition-colors cursor-pointer">
+                @php
+                    $currentLogo = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png');
+                @endphp
+                <div class="mb-3 p-3 bg-gray-50 rounded-lg inline-flex items-center gap-3 border border-gray-100">
+                    <img id="current_logo_img" src="{{ $currentLogo }}" alt="Current Logo" class="h-12 w-auto object-contain" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                    <span class="text-xs text-gray-400 font-mono">Active Logo Preview</span>
+                </div>
+                <input type="file" id="logo_input" name="logo" accept="image/*"
+                       class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-[#c30102] hover:file:bg-red-100 transition-colors cursor-pointer">
                 <input type="hidden" name="logo_base64" id="logo_base64">
                 <script>
                     document.getElementById('logo_input')?.addEventListener('change', function(e) {
@@ -46,6 +57,10 @@
                             const reader = new FileReader();
                             reader.onload = function(evt) {
                                 document.getElementById('logo_base64').value = evt.target.result;
+                                const preview = document.getElementById('current_logo_img');
+                                if (preview) {
+                                    preview.src = evt.target.result;
+                                }
                             };
                             reader.readAsDataURL(file);
                         }
@@ -58,11 +73,11 @@
                 <label for="primary_color" class="block text-sm font-medium text-gray-700 mb-1">Primary Color (Hex)</label>
                 <div class="flex items-center gap-3">
                     <input type="color" id="primary_color_picker" 
-                           value="{{ $settings['primary_color']->value ?? '#1F6F54' }}"
+                           value="{{ $settings['primary_color']->value ?? '#c30102' }}"
                            oninput="document.getElementById('primary_color').value = this.value"
                            class="h-12 w-12 rounded cursor-pointer border-0 p-0">
                     <input type="text" id="primary_color" name="primary_color" 
-                           value="{{ $settings['primary_color']->value ?? '#1F6F54' }}"
+                           value="{{ $settings['primary_color']->value ?? '#c30102' }}"
                            oninput="document.getElementById('primary_color_picker').value = this.value"
                            class="flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base font-mono">
                 </div>

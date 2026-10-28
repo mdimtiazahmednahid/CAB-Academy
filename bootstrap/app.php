@@ -18,4 +18,32 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        $exceptions->render(function (\Illuminate\Database\QueryException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'error' => 'Database Query Error',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+            return response()->view('errors.database', [
+                'exception' => $e,
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ], 500);
+        });
+
+        $exceptions->render(function (\PDOException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'error' => 'Database Connection Error',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+            return response()->view('errors.database', [
+                'exception' => $e,
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ], 500);
+        });
     })->create();

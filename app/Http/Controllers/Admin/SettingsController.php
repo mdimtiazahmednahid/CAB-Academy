@@ -18,7 +18,7 @@ class SettingsController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->except(['_token', 'logo', 'has_registration_fields']);
+        $data = $request->except(['_token', 'logo', 'logo_base64', 'has_registration_fields']);
 
         if ($request->has('has_registration_fields')) {
             $registrationFields = $request->input('registration_fields', []);
@@ -52,24 +52,58 @@ class SettingsController extends Controller
         }
 
         if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('logos', 'public');
-            $url = Storage::url($path);
+            $file = $request->file('logo');
+            $filename = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            $dirs = [
+                public_path('uploads/logos'),
+                public_path('storage/logos'),
+                storage_path('app/public/logos'),
+            ];
+            foreach ($dirs as $dir) {
+                if (!is_dir($dir)) {
+                    @mkdir($dir, 0775, true);
+                }
+            }
+
+            $destPath = public_path('uploads/logos/' . $filename);
+            $file->move(public_path('uploads/logos'), $filename);
+
+            @copy($destPath, public_path('storage/logos/' . $filename));
+            @copy($destPath, storage_path('app/public/logos/' . $filename));
+
             Setting::updateOrCreate(
                 ['key' => 'site_logo'],
-                ['value' => $url, 'type' => 'image']
+                ['value' => 'uploads/logos/' . $filename, 'type' => 'image']
             );
         } elseif ($request->filled('logo_base64')) {
-            $data = $request->input('logo_base64');
-            if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
-                $data = substr($data, strpos($data, ',') + 1);
+            $base64Data = $request->input('logo_base64');
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64Data, $type)) {
+                $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
                 $type = strtolower($type[1]);
-                $data = base64_decode($data);
-                if ($data !== false) {
+                $binaryData = base64_decode($base64Data);
+                if ($binaryData !== false) {
                     $filename = 'logo_' . time() . '.' . $type;
-                    Storage::disk('public')->put('logos/' . $filename, $data);
+                    
+                    $dirs = [
+                        public_path('uploads/logos'),
+                        public_path('storage/logos'),
+                        storage_path('app/public/logos'),
+                    ];
+                    foreach ($dirs as $dir) {
+                        if (!is_dir($dir)) {
+                            @mkdir($dir, 0775, true);
+                        }
+                    }
+
+                    $destPath = public_path('uploads/logos/' . $filename);
+                    @file_put_contents($destPath, $binaryData);
+                    @file_put_contents(public_path('storage/logos/' . $filename), $binaryData);
+                    @file_put_contents(storage_path('app/public/logos/' . $filename), $binaryData);
+
                     Setting::updateOrCreate(
                         ['key' => 'site_logo'],
-                        ['value' => Storage::url('logos/' . $filename), 'type' => 'image']
+                        ['value' => 'uploads/logos/' . $filename, 'type' => 'image']
                     );
                 }
             }
