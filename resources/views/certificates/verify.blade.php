@@ -17,7 +17,7 @@
                 Certificate Verification Engine
             </h1>
             <p class="mt-2 text-sm text-[#727f9f]">
-                Authenticating professional qualifications issued by Commercial Academy Bangladesh (CAB Academy).
+                Authenticating professional qualifications issued by {{ \App\Models\Setting::getVal('certificate_institution_name', 'Commercial Academy Bangladesh') }} ({{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}).
             </p>
         </div>
 
@@ -69,8 +69,8 @@
                     </div>
 
                     <div class="pt-4 flex flex-wrap gap-4 items-center justify-between text-xs text-gray-500">
-                        <span>Issuing Body: <strong>Commercial Academy Bangladesh</strong></span>
-                        <span>Campus: <strong>Mirpur-Pallabi, Dhaka-1216</strong></span>
+                        <span>Issuing Body: <strong>{{ \App\Models\Setting::getVal('certificate_institution_name', 'Commercial Academy Bangladesh') }}</strong></span>
+                        <span>Campus: <strong>{{ \App\Models\Setting::getVal('certificate_campus_address', 'Mirpur-Pallabi Campus • Dhaka, Bangladesh') }}</strong></span>
                     </div>
                 </div>
             </div>
@@ -109,7 +109,7 @@
                 </div>
                 <h2 class="text-2xl font-black text-[#0f131f]">Authenticate Official Credential</h2>
                 <p class="text-sm text-gray-600 mt-2 max-w-md mx-auto leading-relaxed">
-                    Enter the unique certificate identification number issued by Commercial Academy Bangladesh to verify graduate authenticity and accreditation status.
+                    Enter the unique certificate identification number issued by {{ \App\Models\Setting::getVal('certificate_institution_name', 'Commercial Academy Bangladesh') }} to verify graduate authenticity and accreditation status.
                 </p>
 
                 <!-- Search Form -->

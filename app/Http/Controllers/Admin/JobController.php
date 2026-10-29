@@ -23,6 +23,7 @@ class JobController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'company' => 'required|string|max:255',
+            'job_type' => 'nullable|string|max:50',
             'location' => 'nullable|string|max:255',
             'salary_range' => 'nullable|string|max:255',
             'description' => 'required|string',
@@ -32,6 +33,7 @@ class JobController extends Controller
             'company_logo_base64' => 'nullable|string',
         ]);
         
+        $data['job_type'] = $request->input('job_type', 'Full-time') ?: 'Full-time';
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('company_logo')) {
@@ -74,6 +76,7 @@ class JobController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'company' => 'required|string|max:255',
+            'job_type' => 'nullable|string|max:50',
             'location' => 'nullable|string|max:255',
             'salary_range' => 'nullable|string|max:255',
             'description' => 'required|string',
@@ -83,6 +86,7 @@ class JobController extends Controller
             'company_logo_base64' => 'nullable|string',
         ]);
         
+        $data['job_type'] = $request->input('job_type', $job->job_type ?? 'Full-time') ?: 'Full-time';
         $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('company_logo')) {
@@ -132,5 +136,22 @@ class JobController extends Controller
     {
         $job->delete();
         return back()->with('success', 'Job deleted successfully!');
+    }
+
+    public function updateApplicationStatus(Request $request, \App\Models\JobApplication $application)
+    {
+        $data = $request->validate([
+            'status' => 'required|in:pending,reviewed,accepted,rejected',
+        ]);
+
+        $application->update(['status' => $data['status']]);
+
+        return back()->with('success', 'Applicant status updated successfully.');
+    }
+
+    public function destroyApplication(\App\Models\JobApplication $application)
+    {
+        $application->delete();
+        return back()->with('success', 'Candidate application removed.');
     }
 }

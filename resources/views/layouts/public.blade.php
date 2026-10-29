@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -36,20 +36,30 @@
     <meta property="og:url" content="@yield('canonical_url', url()->current())">
     @php
         $rawOgImg = trim(View::getSection('og_image') ?: (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')));
+        while (str_contains($rawOgImg, '&amp;')) {
+            $rawOgImg = html_entity_decode($rawOgImg, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
         $fullOgImg = (str_starts_with($rawOgImg, 'http://') || str_starts_with($rawOgImg, 'https://')) ? $rawOgImg : url($rawOgImg);
+        $secureOgImg = str_starts_with($fullOgImg, 'https://') ? $fullOgImg : (str_starts_with($fullOgImg, 'http://') ? 'https://' . substr($fullOgImg, 7) : $fullOgImg);
+        $ogExt = strtolower(pathinfo(parse_url($fullOgImg, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
+        $ogMime = match($ogExt) {
+            'png' => 'image/png',
+            'webp' => 'image/webp',
+            default => 'image/jpeg',
+        };
     @endphp
-    <meta property="og:image" content="{{ $fullOgImg }}">
-    <meta property="og:image:secure_url" content="{{ $fullOgImg }}">
+    <meta property="og:image" content="{!! $fullOgImg !!}">
+    <meta property="og:image:secure_url" content="{!! $secureOgImg !!}">
+    <meta property="og:image:type" content="{{ $ogMime }}">
     <meta property="og:image:width" content="@yield('og_image_width', '1200')">
     <meta property="og:image:height" content="@yield('og_image_height', '630')">
     <meta property="og:image:alt" content="@yield('og_image_alt', \App\Models\Setting::getVal('site_name', 'CAB Academy'))">
-    <meta property="og:image:type" content="image/jpeg">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('og_title', View::hasSection('title') ? View::getSection('title') . ' - CAB Academy' : 'CAB Academy | Commercial Banking & Trade Training')">
     <meta name="twitter:description" content="@yield('meta_description', 'CAB Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
-    <meta name="twitter:image" content="{{ $fullOgImg }}">
+    <meta name="twitter:image" content="{!! $fullOgImg !!}">
     <meta name="twitter:image:alt" content="@yield('og_image_alt', \App\Models\Setting::getVal('site_name', 'CAB Academy'))">
 
     <!-- Schema.org EducationalOrganization JSON-LD -->

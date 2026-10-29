@@ -262,6 +262,7 @@ class DemoDataSeeder extends Seeder
                 'name' => 'Executive Learner',
                 'password' => bcrypt('password'),
                 'role' => 'student',
+                'email_verified_at' => now(),
                 'preferences' => ['level' => 'Certificate', 'subjects' => ['Export – Import'], 'goals' => ['Certification']]
             ]
         );

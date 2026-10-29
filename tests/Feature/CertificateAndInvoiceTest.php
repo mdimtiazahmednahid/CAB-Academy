@@ -187,4 +187,109 @@ class CertificateAndInvoiceTest extends TestCase
         $certResAfter = $this->actingAs($admin)->get("/courses/{$course->id}/certificate");
         $certResAfter->assertSee('205th Executive Batch');
     }
+
+    public function test_certificate_defaults_to_commercial_academy_bangladesh()
+    {
+        $admin = User::where('role', 'admin')->first();
+        $course = Course::where('is_published', true)->first();
+
+        $response = $this->actingAs($admin)->get("/courses/{$course->id}/certificate");
+        $response->assertStatus(200);
+        $response->assertSee('Commercial Academy Bangladesh');
+        $response->assertSee('CAB Academy • Learn, Grow, Lead.');
+    }
+
+    public function test_admin_can_access_certificate_customizer_hub_and_update_institution_name_and_template()
+    {
+        $admin = User::where('role', 'admin')->first();
+        $course = Course::where('is_published', true)->first();
+
+        // 1. Admin accesses certificate customizer hub
+        $hubRes = $this->actingAs($admin)->get('/admin/certificates');
+        $hubRes->assertStatus(200);
+        $hubRes->assertSee('Template Customizer');
+        $hubRes->assertSee('Commercial Academy Bangladesh');
+
+        // 2. Admin customizes institution name, template, title, and signatories
+        $postRes = $this->actingAs($admin)->post('/admin/certificates/settings', [
+            'certificate_institution_name' => 'Commercial Academy Bangladesh (Executive Division)',
+            'certificate_tagline' => 'Excellence in International Trade & Supply Chain',
+            'certificate_campus_address' => 'Mirpur Diplomatic Zone, Dhaka',
+            'certificate_title' => 'Executive Fellowship in Commercial Operations',
+            'certificate_conferment_text' => 'Proudly awarded and conferred upon',
+            'certificate_completion_text' => 'having demonstrated remarkable mastery in international logistics and commerce.',
+            'certificate_faculty_endorsement' => 'Under royal charter and board faculty auspices.',
+            'certificate_primary_signatory_name' => 'Dr. Kazi Mostafa',
+            'certificate_primary_signatory_title' => 'Director General of Academics',
+            'certificate_primary_signatory_board' => 'National Commercial Governing Board',
+            'certificate_show_secondary_signature' => '1',
+            'certificate_secondary_signatory_name' => 'Engr. Saiful Islam',
+            'certificate_secondary_signatory_title' => 'Senior Vice President of Logistics',
+            'certificate_seal_text' => 'EXECUTIVE SEAL • HONORS',
+            'certificate_template' => 'modern_emerald',
+        ]);
+
+        $postRes->assertRedirect();
+        $postRes->assertSessionHas('success');
+
+        // Verify settings persisted in Setting model
+        $this->assertEquals('Commercial Academy Bangladesh (Executive Division)', \App\Models\Setting::getVal('certificate_institution_name'));
+        $this->assertEquals('modern_emerald', \App\Models\Setting::getVal('certificate_template'));
+
+        // 3. View certificate and assert the customized name and template are applied
+        $certRes = $this->actingAs($admin)->get("/courses/{$course->id}/certificate");
+        $certRes->assertStatus(200);
+        $certRes->assertSee('Commercial Academy Bangladesh (Executive Division)');
+        $certRes->assertSee('Excellence in International Trade & Supply Chain');
+        $certRes->assertSee('Executive Fellowship in Commercial Operations');
+        $certRes->assertSee('Dr. Kazi Mostafa');
+        $certRes->assertSee('Engr. Saiful Islam');
+        $certRes->assertSee('EXECUTIVE SEAL');
+
+        // 4. View verification page and assert dynamic institution name
+        $user = User::factory()->create();
+        $cert = Certificate::generateFor($user, $course);
+        $verifyRes = $this->get("/verify-certificate/{$cert->certificate_number}");
+        $verifyRes->assertStatus(200);
+        $verifyRes->assertSee('Commercial Academy Bangladesh (Executive Division)');
+    }
+
+    public function test_admin_can_preview_different_templates_on_the_fly()
+    {
+        $admin = User::where('role', 'admin')->first();
+
+        // 1. Preview default or requested template
+        $resNavy = $this->actingAs($admin)->get('/admin/certificates/preview?template=classic_navy');
+        $resNavy->assertStatus(200);
+        $resNavy->assertSee('border-[#051c45]');
+
+        $resEmerald = $this->actingAs($admin)->get('/admin/certificates/preview?template=modern_emerald');
+        $resEmerald->assertStatus(200);
+        $resEmerald->assertSee('border-[#064e3b]');
+
+        $resCrimson = $this->actingAs($admin)->get('/admin/certificates/preview?template=crimson_prestige');
+        $resCrimson->assertStatus(200);
+        $resCrimson->assertSee('border-[#880102]');
+
+        $resMinimal = $this->actingAs($admin)->get('/admin/certificates/preview?template=minimalist_corporate');
+        $resMinimal->assertStatus(200);
+        $resMinimal->assertSee('border-slate-900');
+    }
+
+    public function test_admin_can_revoke_issued_certificate_from_registry()
+    {
+        $admin = User::where('role', 'admin')->first();
+        $student = User::factory()->create();
+        $course = Course::where('is_published', true)->first();
+
+        $certificate = Certificate::generateFor($student, $course);
+        $this->assertDatabaseHas('certificates', ['id' => $certificate->id]);
+
+        $deleteRes = $this->actingAs($admin)->delete("/admin/certificates/{$certificate->id}");
+        $deleteRes->assertRedirect();
+        $deleteRes->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('certificates', ['id' => $certificate->id]);
+    }
 }
+

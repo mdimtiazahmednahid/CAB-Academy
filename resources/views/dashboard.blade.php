@@ -166,6 +166,7 @@
                 <a href="{{ route('jobs.index') }}" class="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden flex flex-col p-6 hover:shadow-[0_4px_25px_rgba(0,0,0,0.06)] transition-all duration-300 active:scale-[0.98] group">
                     <div class="flex justify-between items-start mb-4">
                         <div class="flex items-center gap-4">
+                            @if($job->company_logo)
                                 <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company }}" class="w-12 h-12 rounded-xl object-cover border border-gray-100 shadow-sm shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div style="display:none;" class="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 shadow-sm">
                                     <span class="text-lg font-bold text-gray-400">{{ substr($job->company, 0, 1) }}</span>

@@ -441,6 +441,12 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class)->except(['update'])->names('admin.categories');
     Route::match(['put', 'post'], '/categories/{category}', [App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update');
 
+    // Certificates Management Hub & Template Customizer
+    Route::get('/certificates', [App\Http\Controllers\Admin\CertificateController::class, 'index'])->name('admin.certificates.index');
+    Route::post('/certificates/settings', [App\Http\Controllers\Admin\CertificateController::class, 'updateSettings'])->name('admin.certificates.settings.update');
+    Route::get('/certificates/preview', [App\Http\Controllers\Admin\CertificateController::class, 'preview'])->name('admin.certificates.preview');
+    Route::delete('/certificates/{certificate}', [App\Http\Controllers\Admin\CertificateController::class, 'destroy'])->name('admin.certificates.destroy');
+
     Route::middleware([\App\Http\Middleware\IsStrictAdmin::class])->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');
         Route::post('/settings', [SettingsController::class, 'store'])->name('admin.settings.store');
@@ -465,6 +471,8 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
         Route::get('/jobs/{job}', [App\Http\Controllers\Admin\JobController::class, 'show'])->name('admin.jobs.show');
         Route::match(['put', 'post'], '/jobs/{job}', [App\Http\Controllers\Admin\JobController::class, 'update'])->name('admin.jobs.update');
         Route::delete('/jobs/{job}', [App\Http\Controllers\Admin\JobController::class, 'destroy'])->name('admin.jobs.destroy');
+        Route::post('/jobs/applications/{application}/status', [App\Http\Controllers\Admin\JobController::class, 'updateApplicationStatus'])->name('admin.jobs.applications.status');
+        Route::delete('/jobs/applications/{application}', [App\Http\Controllers\Admin\JobController::class, 'destroyApplication'])->name('admin.jobs.applications.destroy');
         // Trash / Recycle Bin
         Route::get('/trash', [App\Http\Controllers\Admin\TrashController::class, 'index'])->name('admin.trash.index');
         Route::post('/trash/{type}/{id}/restore', [App\Http\Controllers\Admin\TrashController::class, 'restore'])->name('admin.trash.restore');

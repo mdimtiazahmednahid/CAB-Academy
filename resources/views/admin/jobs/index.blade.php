@@ -1,207 +1,332 @@
 @extends('layouts.admin')
 
-@section('header_title', 'Job Posts')
+@section('header_title', 'Corporate Job Posts')
 
 @section('content')
-<div class="mb-6 flex justify-between items-center">
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">Manage Jobs</h1>
-        <p class="text-gray-500 text-sm">Create and manage job postings for students.</p>
+        <h1 class="text-xl sm:text-2xl font-black text-gray-900 mb-1">Manage Jobs</h1>
+        <p class="text-gray-500 text-xs sm:text-sm">Manage executive and commercial placement postings for CAB Academy alumni & students.</p>
     </div>
-    <button onclick="document.getElementById('createModal').classList.remove('hidden')" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:opacity-90 transition-opacity">
-        + Post Job
+    <button onclick="document.getElementById('createModal').classList.remove('hidden')" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl font-bold text-xs sm:text-sm hover:opacity-90 transition-all shadow-sm shrink-0 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        <span>Post New Job</span>
     </button>
 </div>
 
 @if(session('success'))
-    <div class="p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200">
-        {{ session('success') }}
+    <div class="p-4 mb-6 text-sm text-green-800 rounded-xl bg-green-50 border border-green-200 flex items-center gap-2.5">
+        <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span>{{ session('success') }}</span>
     </div>
 @endif
 
-<div class="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden">
+<div class="bg-white rounded-2xl sm:rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full text-left border-collapse min-w-[700px]">
             <thead>
-            <tr class="bg-gray-50 border-b border-gray-100">
-                <th class="p-4 font-semibold text-gray-900">Job Title</th>
-                <th class="p-4 font-semibold text-gray-900">Company</th>
-                <th class="p-4 font-semibold text-gray-900">Location</th>
-                <th class="p-4 font-semibold text-gray-900">Status</th>
-                <th class="p-4 font-semibold text-gray-900 text-right">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($jobs as $job)
-                <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                    <td class="p-4 font-medium text-gray-900">{{ $job->title }}</td>
-                    <td class="p-4 text-gray-500">
-                        <div class="flex items-center gap-3">
-                                <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company }}" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <div style="display:none;" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
-                                    <span class="text-xs font-bold text-gray-500">{{ substr($job->company, 0, 1) }}</span>
-                                </div>
+                <tr class="bg-gray-50/80 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-700">
+                    <th class="p-3.5 sm:p-4 font-bold">Job Title & Type</th>
+                    <th class="p-3.5 sm:p-4 font-bold">Company</th>
+                    <th class="p-3.5 sm:p-4 font-bold">Location & Salary</th>
+                    <th class="p-3.5 sm:p-4 font-bold">Status</th>
+                    <th class="p-3.5 sm:p-4 font-bold text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-xs sm:text-sm divide-y divide-gray-50">
+                @forelse($jobs as $job)
+                    <tr class="hover:bg-gray-50/50 transition-colors">
+                        <td class="p-3.5 sm:p-4">
+                            <div class="font-bold text-gray-900">{{ $job->title }}</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                    {{ $job->job_type ?? 'Full-time' }}
+                                </span>
+                                @if($job->apply_link)
+                                    <span class="inline-flex items-center text-[10px] text-gray-400 gap-1" title="External link">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        External
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center text-[10px] text-emerald-600 font-semibold gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Direct Portal
+                                    </span>
+                                @endif
+                            </div>
+                        </td>
+                        <td class="p-3.5 sm:p-4 text-gray-600">
+                            <div class="flex items-center gap-2.5">
+                                @if($job->company_logo)
+                                    <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company }}" class="w-8 h-8 rounded-xl object-cover border border-gray-200 shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div style="display:none;" class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
+                                        <span class="text-xs font-bold text-gray-500">{{ substr($job->company, 0, 2) }}</span>
+                                    </div>
+                                @else
+                                    <div class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
+                                        <span class="text-xs font-bold text-gray-500">{{ substr($job->company, 0, 2) }}</span>
+                                    </div>
+                                @endif
+                                <span class="font-medium text-gray-800 truncate max-w-[150px] sm:max-w-xs">{{ $job->company }}</span>
+                            </div>
+                        </td>
+                        <td class="p-3.5 sm:p-4">
+                            <div class="text-gray-700 font-medium">{{ $job->location ?? 'Remote' }}</div>
+                            <div class="text-gray-400 text-xs">{{ $job->salary_range ?? 'Negotiable' }}</div>
+                        </td>
+                        <td class="p-3.5 sm:p-4 whitespace-nowrap">
+                            @if($job->is_active)
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-600 mr-1.5"></span>Active
+                                </span>
                             @else
-                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
-                                    <span class="text-xs font-bold text-gray-500">{{ substr($job->company, 0, 1) }}</span>
-                                </div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5"></span>Inactive
+                                </span>
                             @endif
-                            <span>{{ $job->company }}</span>
-                        </div>
-                    </td>
-                    <td class="p-4 text-gray-500">{{ $job->location ?? 'Remote' }}</td>
-                    <td class="p-4">
-                        @if($job->is_active)
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Active</span>
-                        @else
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Inactive</span>
-                        @endif
-                    </td>
-                    <td class="p-4 text-right whitespace-nowrap">
-                        <a href="{{ route('admin.jobs.show', $job) }}" class="text-primary hover:text-green-700 font-medium text-sm mr-3">View Applicants</a>
-                        <button onclick='openEditJobModal({{ $job->id }}, @json($job->title), @json($job->company), @json($job->location ?? ""), @json($job->salary_range ?? ""), @json($job->apply_link ?? ""), @json($job->description), {{ $job->is_active ? "true" : "false" }})' class="text-gray-500 hover:text-gray-900 font-medium text-sm mr-3">Edit</button>
-                        <form method="POST" action="{{ route('admin.jobs.destroy', $job) }}" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" onclick="return confirm('Are you sure?')" class="text-red-600 hover:text-red-900 font-medium text-sm">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5" class="p-8 text-center text-gray-500">No jobs posted yet.</td>
-                </tr>
-            @endforelse
+                        </td>
+                        <td class="p-3.5 sm:p-4 text-right whitespace-nowrap">
+                            <div class="flex items-center justify-end gap-1.5">
+                                <a href="{{ route('admin.jobs.show', $job) }}" class="text-primary hover:text-green-700 font-bold text-xs bg-primary/10 hover:bg-primary/20 px-2.5 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1">
+                                    <span>Applicants</span>
+                                    <span class="bg-primary text-white text-[10px] px-1.5 py-0.2 rounded-full font-black">{{ $job->applications->count() }}</span>
+                                </a>
+                                
+                                <button type="button" 
+                                    data-job="{{ json_encode([
+                                        'id' => $job->id,
+                                        'title' => $job->title,
+                                        'company' => $job->company,
+                                        'job_type' => $job->job_type ?? 'Full-time',
+                                        'location' => $job->location ?? '',
+                                        'salary_range' => $job->salary_range ?? '',
+                                        'apply_link' => $job->apply_link ?? '',
+                                        'description' => $job->description,
+                                        'is_active' => (bool)$job->is_active
+                                    ]) }}"
+                                    onclick="openEditJobModal(this)" 
+                                    class="text-gray-600 hover:text-gray-900 font-medium text-xs bg-gray-100 hover:bg-gray-200 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer">
+                                    Edit
+                                </button>
+
+                                <form method="POST" action="{{ route('admin.jobs.destroy', $job) }}" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this job posting?')" class="text-red-600 hover:text-red-800 font-medium text-xs hover:bg-red-50 px-2 py-1.5 rounded-lg transition-colors cursor-pointer">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="p-12 text-center text-gray-500">
+                            <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-3 text-xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div class="font-bold text-gray-700">No jobs posted yet</div>
+                            <div class="text-xs text-gray-400 mt-1">Click "+ Post New Job" to create your first placement role.</div>
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
 </div>
 
 <!-- Create Modal -->
-<div id="createModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold">New Job Post</h3>
-            <button onclick="document.getElementById('createModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
+<div id="createModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6 hidden overflow-y-auto">
+    <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl my-auto">
+        <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+            <h3 class="text-base sm:text-lg font-bold text-gray-900">New Corporate Job Post</h3>
+            <button type="button" onclick="document.getElementById('createModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold p-1 cursor-pointer leading-none">&times;</button>
         </div>
         <form method="POST" action="{{ route('admin.jobs.store') }}" enctype="multipart/form-data">
             @csrf
-            <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+            <div class="space-y-3.5 max-h-[72vh] overflow-y-auto pr-1">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Job Title <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Job Title <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" required placeholder="e.g. Commercial Executive (Export & L/C)" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Company <span class="text-red-500">*</span></label>
-                    <input type="text" name="company" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Logo (Optional)</label>
-                    <input type="file" name="company_logo" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                        <input type="text" name="location" placeholder="e.g. Remote, NY" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Company <span class="text-red-500">*</span></label>
+                        <input type="text" name="company" required placeholder="e.g. Square Group" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Salary Range</label>
-                        <input type="text" name="salary_range" placeholder="e.g. ৳50k - ৳70k" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Job Type</label>
+                        <select name="job_type" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Remote">Remote / Hybrid</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Internship">Internship</option>
+                        </select>
                     </div>
                 </div>
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Application Link (URL) (Optional)</label>
-                    <input type="url" name="apply_link" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Company Logo (Optional)</label>
+                    <input type="file" name="company_logo" accept="image/*" class="w-full text-xs rounded-xl border border-gray-300 p-1.5 focus:border-primary focus:ring-primary">
                 </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Location</label>
+                        <input type="text" name="location" placeholder="e.g. Dhaka (Mirpur)" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
+                    </div>
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Salary Range</label>
+                        <input type="text" name="salary_range" placeholder="e.g. ৳50,000 - ৳70,000" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
+                    </div>
+                </div>
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Job Description <span class="text-red-500">*</span></label>
-                    <textarea name="description" rows="4" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary"></textarea>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Application URL (Optional - leave empty for direct candidate uploads)</label>
+                    <input type="url" name="apply_link" placeholder="https://..." class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
                 </div>
-                <div class="flex items-center">
-                    <input type="checkbox" name="is_active" id="is_active" value="1" checked class="rounded text-primary focus:ring-primary mr-2">
-                    <label for="is_active" class="text-sm font-medium text-gray-700">Publish immediately</label>
+
+                <div>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Job Description & Requirements <span class="text-red-500">*</span></label>
+                    <textarea name="description" rows="4" required class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary p-3" placeholder="Key responsibilities, required experience in L/C, customs clearance, VAT..."></textarea>
                 </div>
-                <button type="submit" class="w-full px-4 py-2 bg-primary text-white rounded-lg font-medium hover:opacity-90">Post Job</button>
+
+                <div class="flex items-center pt-1">
+                    <input type="checkbox" name="is_active" id="is_active" value="1" checked class="rounded text-primary focus:ring-primary mr-2 cursor-pointer">
+                    <label for="is_active" class="text-xs sm:text-sm font-medium text-gray-700 cursor-pointer">Publish immediately to students & career portal</label>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-2.5 bg-primary text-white rounded-xl font-bold text-xs sm:text-sm hover:opacity-90 shadow-md transition-all cursor-pointer">Post Job</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
 <!-- Edit Modal -->
-<div id="editJobModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold">Edit Job Post</h3>
-            <button onclick="document.getElementById('editJobModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
+<div id="editJobModal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6 hidden overflow-y-auto">
+    <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-lg shadow-2xl my-auto">
+        <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+            <h3 class="text-base sm:text-lg font-bold text-gray-900">Edit Corporate Job Post</h3>
+            <button type="button" onclick="document.getElementById('editJobModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl font-bold p-1 cursor-pointer leading-none">&times;</button>
         </div>
-        <form method="POST" id="editJobForm" action="">
+        <form method="POST" id="editJobForm" action="" enctype="multipart/form-data">
             @csrf
-            <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+            @method('PUT')
+            <div class="space-y-3.5 max-h-[72vh] overflow-y-auto pr-1">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Job Title <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" id="edit_title" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Job Title <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" id="edit_title" required class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Company <span class="text-red-500">*</span></label>
-                    <input type="text" name="company" id="edit_company" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Company <span class="text-red-500">*</span></label>
+                        <input type="text" name="company" id="edit_company" required class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
+                    </div>
+                    <div>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Job Type</label>
+                        <select name="job_type" id="edit_job_type" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
+                            <option value="Full-time">Full-time</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Remote">Remote / Hybrid</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Internship">Internship</option>
+                        </select>
+                    </div>
                 </div>
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Logo (Optional)</label>
-                    <input type="file" id="edit_job_logo_file" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Update Company Logo (Optional)</label>
+                    <input type="file" id="edit_job_logo_file" accept="image/*" class="w-full text-xs rounded-xl border border-gray-300 p-1.5 focus:border-primary focus:ring-primary">
                     <input type="hidden" name="company_logo_base64" id="edit_company_logo_base64">
-                    <script>
-                        document.getElementById('edit_job_logo_file')?.addEventListener('change', function(e) {
-                            const file = e.target.files[0];
-                            if (file) {
-                                const reader = new FileReader();
-                                reader.onload = function(evt) {
-                                    document.getElementById('edit_company_logo_base64').value = evt.target.result;
-                                };
-                                reader.readAsDataURL(file);
-                            }
-                        });
-                    </script>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                        <input type="text" name="location" id="edit_location" placeholder="e.g. Remote, NY" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Location</label>
+                        <input type="text" name="location" id="edit_location" placeholder="e.g. Remote, NY" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Salary Range</label>
-                        <input type="text" name="salary_range" id="edit_salary" placeholder="e.g. ৳50k - ৳70k" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Salary Range</label>
+                        <input type="text" name="salary_range" id="edit_salary" placeholder="e.g. ৳50k - ৳70k" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
                     </div>
                 </div>
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Application Link (URL) (Optional)</label>
-                    <input type="url" name="apply_link" id="edit_apply_link" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Application URL (Optional)</label>
+                    <input type="url" name="apply_link" id="edit_apply_link" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
                 </div>
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Job Description <span class="text-red-500">*</span></label>
-                    <textarea name="description" id="edit_description" rows="4" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary"></textarea>
+                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Job Description <span class="text-red-500">*</span></label>
+                    <textarea name="description" id="edit_description" rows="4" required class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary p-3"></textarea>
                 </div>
-                <div class="flex items-center">
-                    <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded text-primary focus:ring-primary mr-2">
-                    <label for="edit_is_active" class="text-sm font-medium text-gray-700">Publish immediately</label>
+
+                <div class="flex items-center pt-1">
+                    <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="rounded text-primary focus:ring-primary mr-2 cursor-pointer">
+                    <label for="edit_is_active" class="text-xs sm:text-sm font-medium text-gray-700 cursor-pointer">Published / Active</label>
                 </div>
-                <button type="submit" class="w-full px-4 py-2 bg-primary text-white rounded-lg font-medium hover:opacity-90">Save Changes</button>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-2.5 bg-primary text-white rounded-xl font-bold text-xs sm:text-sm hover:opacity-90 shadow-md transition-all cursor-pointer">Save Changes</button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    function openEditJobModal(id, title, company, location, salary, apply_link, description, is_active) {
-        document.getElementById('edit_title').value = title;
-        document.getElementById('edit_company').value = company;
-        document.getElementById('edit_location').value = location;
-        document.getElementById('edit_salary').value = salary;
-        document.getElementById('edit_apply_link').value = apply_link;
-        document.getElementById('edit_description').value = description;
-        document.getElementById('edit_is_active').checked = is_active;
-        
-        document.getElementById('editJobForm').action = `/admin/jobs/${id}`;
-        document.getElementById('editJobModal').classList.remove('hidden');
+    document.getElementById('edit_job_logo_file')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                document.getElementById('edit_company_logo_base64').value = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function openEditJobModal(buttonEl) {
+        try {
+            const raw = buttonEl.getAttribute('data-job');
+            const job = JSON.parse(raw);
+            document.getElementById('edit_title').value = job.title || '';
+            document.getElementById('edit_company').value = job.company || '';
+            document.getElementById('edit_job_type').value = job.job_type || 'Full-time';
+            document.getElementById('edit_location').value = job.location || '';
+            document.getElementById('edit_salary').value = job.salary_range || '';
+            document.getElementById('edit_apply_link').value = job.apply_link || '';
+            document.getElementById('edit_description').value = job.description || '';
+            document.getElementById('edit_is_active').checked = !!job.is_active;
+            
+            document.getElementById('editJobForm').action = `/admin/jobs/${job.id}`;
+            document.getElementById('editJobModal').classList.remove('hidden');
+        } catch (err) {
+            console.error('Failed to parse job data for edit:', err);
+        }
     }
+
+    // Close modals on backdrop click
+    ['createModal', 'editJobModal'].forEach(id => {
+        const modal = document.getElementById(id);
+        modal?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.getElementById('createModal')?.classList.add('hidden');
+            document.getElementById('editJobModal')?.classList.add('hidden');
+        }
+    });
 </script>
 @endsection

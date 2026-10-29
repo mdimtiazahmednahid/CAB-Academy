@@ -418,7 +418,38 @@ class AdminCanUpdateEverythingTest extends TestCase
         $this->assertEquals('Certificate', $user->fresh()->preferences['level']);
     }
 
-    /** 15. Job Post Updates */
+    /** 15. Job Post Index & Updates */
+    public function test_admin_can_view_job_posts_index_page()
+    {
+        $jobWithLogo = JobPost::create([
+            'title' => 'Export Documentation Specialist',
+            'company' => 'Apex Footwear Ltd.',
+            'company_logo' => 'company_logos/apex.png',
+            'location' => 'Dhaka',
+            'salary_range' => '৳40,000 - ৳55,000',
+            'description' => 'Hands-on export L/C documentation.',
+            'is_active' => true,
+        ]);
+
+        $jobWithoutLogo = JobPost::create([
+            'title' => 'Commercial Officer',
+            'company' => 'Beximco Group',
+            'company_logo' => null,
+            'location' => 'Gazipur',
+            'salary_range' => '৳35,000 - ৳45,000',
+            'description' => 'Commercial customs and bonded warehouse.',
+            'is_active' => false,
+        ]);
+
+        $response = $this->actingAs($this->admin)->get('/admin/jobs');
+        $response->assertStatus(200);
+        $response->assertSee('Manage Jobs');
+        $response->assertSee('Export Documentation Specialist');
+        $response->assertSee('Apex Footwear Ltd.');
+        $response->assertSee('Commercial Officer');
+        $response->assertSee('Beximco Group');
+    }
+
     public function test_admin_can_update_job_post()
     {
         $job = JobPost::create([
@@ -447,6 +478,88 @@ class AdminCanUpdateEverythingTest extends TestCase
             'title' => 'Commercial Operations Specialist',
             'is_active' => true,
         ]);
+    }
+
+    public function test_admin_can_view_job_show_and_update_application_status()
+    {
+        $job = JobPost::create([
+            'title' => 'Senior L/C Officer',
+            'company' => 'Axiom Trade',
+            'job_type' => 'Full-time',
+            'description' => 'Detailed trade and logistics.',
+            'is_active' => true,
+        ]);
+
+        $candidate = User::factory()->create([
+            'name' => 'Rahim Candidate',
+            'email' => 'rahim.candidate@example.com',
+            'phone' => '01811223344',
+        ]);
+
+        $application = \App\Models\JobApplication::create([
+            'user_id' => $candidate->id,
+            'job_post_id' => $job->id,
+            'resume_path' => 'resumes/rahim_cv.pdf',
+            'cover_letter' => 'Over 5 years in bonded warehouse operations.',
+            'status' => 'pending',
+        ]);
+
+        // 1. Admin views job details page
+        $showResponse = $this->actingAs($this->admin)->get("/admin/jobs/{$job->id}");
+        $showResponse->assertStatus(200);
+        $showResponse->assertSee('Rahim Candidate');
+        $showResponse->assertSee('rahim.candidate@example.com');
+        $showResponse->assertSee('Senior L/C Officer');
+
+        // 2. Admin updates status to accepted
+        $statusResponse = $this->actingAs($this->admin)->post("/admin/jobs/applications/{$application->id}/status", [
+            'status' => 'accepted',
+        ]);
+        $statusResponse->assertSessionHas('success');
+        $this->assertDatabaseHas('job_applications', [
+            'id' => $application->id,
+            'status' => 'accepted',
+        ]);
+
+        // 3. Admin deletes candidate application
+        $deleteResponse = $this->actingAs($this->admin)->delete("/admin/jobs/applications/{$application->id}");
+        $deleteResponse->assertSessionHas('success');
+        $this->assertDatabaseMissing('job_applications', [
+            'id' => $application->id,
+        ]);
+    }
+
+    public function test_public_jobs_page_filters_by_type_and_search()
+    {
+        JobPost::create([
+            'title' => 'Remote Customs Analyst',
+            'company' => 'FreightLink Ltd.',
+            'job_type' => 'Remote',
+            'location' => 'Remote / Worldwide',
+            'description' => 'Remote tariff valuation specialist.',
+            'is_active' => true,
+        ]);
+
+        JobPost::create([
+            'title' => 'On-site Commercial Manager',
+            'company' => 'Port Authority Corp',
+            'job_type' => 'Full-time',
+            'location' => 'Chittagong Port',
+            'description' => 'Port shipping clearing manager.',
+            'is_active' => true,
+        ]);
+
+        // Query by type=Remote
+        $responseRemote = $this->get('/jobs?type=Remote');
+        $responseRemote->assertStatus(200);
+        $responseRemote->assertSee('Remote Customs Analyst');
+        $responseRemote->assertDontSee('On-site Commercial Manager');
+
+        // Query by search=Chittagong
+        $responseSearch = $this->get('/jobs?search=Chittagong');
+        $responseSearch->assertStatus(200);
+        $responseSearch->assertSee('On-site Commercial Manager');
+        $responseSearch->assertDontSee('Remote Customs Analyst');
     }
 
     /** 16. Recycle Bin / Trash (Restore & Purge) */

@@ -12,7 +12,11 @@ class JobController extends Controller
         $query = JobPost::where('is_active', true)->latest();
 
         if ($request->filled('type') && $request->type !== 'all') {
-            $query->where('job_type', $request->type);
+            $type = $request->type;
+            $query->where(function ($q) use ($type) {
+                $q->where('job_type', $type)
+                  ->orWhere('job_type', 'like', "%{$type}%");
+            });
         }
 
         if ($request->filled('search')) {

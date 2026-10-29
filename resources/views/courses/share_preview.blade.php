@@ -4,6 +4,16 @@
     $siteLogoUrl = (str_starts_with($siteLogo, 'http://') || str_starts_with($siteLogo, 'https://')) ? $siteLogo : url($siteLogo);
     $cleanDesc = \Illuminate\Support\Str::limit(strip_tags($course->short_description ?: $course->description ?: 'Enroll in ' . $course->title . ' at CAB Academy Dhaka. Executive certification, practical industry training, and career advancement.'), 220);
     $imageUrl = $course->og_image_url;
+    while (str_contains($imageUrl, '&amp;')) {
+        $imageUrl = html_entity_decode($imageUrl, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+    $secureImageUrl = str_starts_with($imageUrl, 'https://') ? $imageUrl : (str_starts_with($imageUrl, 'http://') ? 'https://' . substr($imageUrl, 7) : $imageUrl);
+    $ext = strtolower(pathinfo(parse_url($imageUrl, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
+    $ogMime = match($ext) {
+        'png' => 'image/png',
+        'webp' => 'image/webp',
+        default => 'image/jpeg',
+    };
     $targetUrl = route('courses.show', $course);
     $shortUrl = $course->short_url;
     $enrollUrl = route('courses.show', $course) . '?enroll=true';
@@ -29,9 +39,9 @@
     <meta property="og:url" content="{{ $shortUrl }}">
     <meta property="og:title" content="{{ $course->title }} - {{ $siteName }}">
     <meta property="og:description" content="{{ $cleanDesc }}">
-    <meta property="og:image" content="{{ $imageUrl }}">
-    <meta property="og:image:secure_url" content="{{ $imageUrl }}">
-    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image" content="{!! $imageUrl !!}">
+    <meta property="og:image:secure_url" content="{!! $secureImageUrl !!}">
+    <meta property="og:image:type" content="{{ $ogMime }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ $course->title }}">
@@ -42,7 +52,7 @@
     <meta name="twitter:url" content="{{ $shortUrl }}">
     <meta name="twitter:title" content="{{ $course->title }} - {{ $siteName }}">
     <meta name="twitter:description" content="{{ $cleanDesc }}">
-    <meta name="twitter:image" content="{{ $imageUrl }}">
+    <meta name="twitter:image" content="{!! $imageUrl !!}">
     <meta name="twitter:image:alt" content="{{ $course->title }}">
 
     <!-- Google Fonts & FontAwesome -->
