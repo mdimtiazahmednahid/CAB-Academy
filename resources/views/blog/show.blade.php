@@ -1,6 +1,7 @@
-@extends('layouts.public')
+@extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
 
 @section('title', $post->title)
+@section('header_title', 'Article & Insights')
 @section('meta_description', \Illuminate\Support\Str::limit(strip_tags($post->meta_description ?: $post->excerpt ?: $post->content), 160))
 @section('canonical_url', route('blog.show', $post->slug))
 @section('og_image', $post->featured_image_url)

@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -39,15 +40,21 @@ class PaymentController extends Controller
             'sender_number.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01712345678).'
         ]);
 
-        Payment::create([
-            'user_id' => $request->user()->id,
-            'course_id' => $course->id,
-            'payment_method_id' => $request->payment_method_id,
-            'amount' => $course->price,
-            'sender_number' => $request->sender_number,
-            'transaction_id' => $request->transaction_id,
-            'status' => 'pending',
-        ]);
+        DB::transaction(function () use ($request, $course) {
+            Payment::updateOrCreate(
+                [
+                    'user_id' => $request->user()->id,
+                    'course_id' => $course->id,
+                    'status' => 'pending',
+                ],
+                [
+                    'payment_method_id' => $request->payment_method_id,
+                    'amount' => $course->price,
+                    'sender_number' => $request->sender_number,
+                    'transaction_id' => $request->transaction_id,
+                ]
+            );
+        });
 
         return redirect()->route('dashboard')->with('success', 'Your payment has been submitted and is pending verification. You will be enrolled once approved.');
     }
@@ -56,7 +63,9 @@ class PaymentController extends Controller
     {
         abort_if(!$course->is_published, 404);
 
-        // Autofill email and phone from authenticated user if omitted in request
+        \App\Support\DatabaseSchemaRepair::ensureSchema();
+
+        // Autofill name, email, and phone from authenticated user if omitted in request
         if (Auth::check()) {
             if (empty($request->email) && !empty(Auth::user()->email)) {
                 $request->merge(['email' => Auth::user()->email]);
@@ -64,21 +73,43 @@ class PaymentController extends Controller
             if (empty($request->name) && !empty(Auth::user()->name)) {
                 $request->merge(['name' => Auth::user()->name]);
             }
+            if (empty($request->phone)) {
+                $fallbackPhone = !empty(Auth::user()->phone) ? Auth::user()->phone : $request->sender_number;
+                if (!empty($fallbackPhone)) {
+                    $request->merge(['phone' => preg_replace('/[^0-9]/', '', (string) $fallbackPhone)]);
+                }
+            }
         }
 
-        // Build dynamic validation rules based on course enrollment fields
+        if (empty($request->sender_number) && !empty($request->phone)) {
+            $request->merge(['sender_number' => preg_replace('/[^0-9]/', '', (string) $request->phone)]);
+        }
+
+        $isPaidCourse = (float) $course->price > 0;
+
+        // Build dynamic validation rules based on course enrollment fields & price
         $rules = [
             'name' => 'required|string|max:120',
             'phone' => ['required', 'string', 'max:15', 'regex:/^01[3-9]\d{8}$/'],
+            'password' => 'nullable|string|min:4|max:100',
             'training_mode' => 'nullable|string|in:in_person,online_zoom',
-            'payment_method_id' => 'nullable|exists:payment_methods,id',
-            'transaction_id' => 'nullable|string|max:100',
-            'sender_number' => 'nullable|string|max:15',
+            'payment_method_id' => 'nullable|integer',
+            'transaction_id' => $isPaidCourse
+                ? ['required', 'string', 'min:4', 'max:100', 'not_in:RESERVED-OFFLINE,reserved-offline,FREE,free']
+                : 'nullable|string|max:100',
+            'sender_number' => $isPaidCourse
+                ? ['required', 'string', 'max:15', 'regex:/^01[3-9]\d{8}$/']
+                : 'nullable|string|max:15',
             'custom_fields' => 'nullable|array',
         ];
 
         $messages = [
-            'phone.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01917054664).'
+            'phone.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01917054664).',
+            'sender_number.required' => 'Sender mobile number is required to verify your payment.',
+            'sender_number.regex' => 'Please enter a valid 11-digit Bangladeshi sender mobile number (e.g., 01917054664).',
+            'transaction_id.required' => 'Payment Transaction ID (TrxID) is required to enroll in a paid course.',
+            'transaction_id.not_in' => 'Offline reservation without payment is disabled. Please enter your valid payment Transaction ID (TrxID).',
+            'password.min' => 'Your login password / PIN must be at least 4 digits or characters.',
         ];
 
         // Dynamic email validation: check if email is required by this course
@@ -106,12 +137,21 @@ class PaymentController extends Controller
 
         $request->validate($rules, $messages);
 
+        // Enforce course attendance mode when course is strictly Online or strictly In-Person
+        $effectiveTrainingMode = $request->training_mode ?? 'online_zoom';
+        if ($course->isOnlineOnly()) {
+            $effectiveTrainingMode = 'online_zoom';
+        } elseif ($course->isCampusOnly()) {
+            $effectiveTrainingMode = 'in_person';
+        }
+        $request->merge(['training_mode' => $effectiveTrainingMode]);
+
         // Compile all dynamic form responses
         $formData = [
             'name' => $request->name,
             'phone' => $request->phone,
             'email' => $request->email,
-            'training_mode' => $request->training_mode ?? 'online_zoom',
+            'training_mode' => $effectiveTrainingMode,
         ];
 
         if ($request->has('custom_fields') && is_array($request->input('custom_fields'))) {
@@ -129,21 +169,75 @@ class PaymentController extends Controller
 
         // Resolve or create student user (fallback to auto-generated email if not provided)
         $user = Auth::user();
+        $cleanPhone = preg_replace('/[^0-9]/', '', (string) $request->phone);
+        $rawPassword = $request->filled('password')
+            ? (string) $request->password
+            : substr($cleanPhone, -4);
+
         if (!$user) {
-            $email = $request->email ?: ('student_' . preg_replace('/[^0-9]/', '', $request->phone) . '@cabacademy.com');
-            $user = User::firstOrCreate(
-                ['email' => $email],
-                [
+            $email = strtolower(trim($request->email ?: ('student_' . $cleanPhone . '@cabacademy.com')));
+            // Check by email first, or by phone if email was not explicitly matched
+            $user = User::where('email', $email)->orWhere('phone', $cleanPhone)->first();
+            if (!$user) {
+                $user = User::create([
                     'name' => $request->name,
-                    'phone' => $request->phone,
-                    'password' => Hash::make('cab_' . $request->phone),
+                    'email' => $email,
+                    'phone' => $cleanPhone,
+                    'password' => Hash::make($rawPassword),
                     'role' => 'student',
-                ]
-            );
-            if (empty($user->phone) && !empty($request->phone)) {
-                $user->update(['phone' => $request->phone]);
+                    'email_verified_at' => now(),
+                    'preferences' => [
+                        'level' => 'Executive & Corporate Professional',
+                        'subjects' => [$course->category ?: 'Export-Import & L/C Operations'],
+                        'goals' => ['Earn Verified Executive Certification'],
+                    ],
+                ]);
+            } else {
+                $updates = [];
+                if (empty($user->phone) && !empty($cleanPhone)) {
+                    $updates['phone'] = $cleanPhone;
+                }
+                if ($user->preferences === null) {
+                    $updates['preferences'] = [
+                        'level' => 'Executive & Corporate Professional',
+                        'subjects' => [$course->category ?: 'Export-Import & L/C Operations'],
+                        'goals' => ['Earn Verified Executive Certification'],
+                    ];
+                }
+                if (!empty($updates)) {
+                    $user->update($updates);
+                }
             }
-            Auth::login($user);
+
+            // Security: Auto-authenticate newly created student accounts, OR existing non-admin students who provided their matching password
+            if (!$user->isAdmin()) {
+                if ($user->wasRecentlyCreated) {
+                    Auth::login($user);
+                } elseif ($request->filled('password') && Hash::check($request->password, $user->password)) {
+                    Auth::login($user);
+                } elseif ($request->filled('password') && str_starts_with((string) $user->email, 'student_') && (string) $user->phone === $cleanPhone) {
+                    // Allow auto-generated student account re-enrolling with same phone to set/update their PIN
+                    $user->password = Hash::make($rawPassword);
+                    $user->saveQuietly();
+                    Auth::login($user);
+                }
+            }
+        } else {
+            // Authenticated user: sync phone number & preferences if missing on profile
+            $updates = [];
+            if (empty($user->phone) && !empty($cleanPhone)) {
+                $updates['phone'] = $cleanPhone;
+            }
+            if ($user->preferences === null) {
+                $updates['preferences'] = [
+                    'level' => 'Executive & Corporate Professional',
+                    'subjects' => [$course->category ?: 'Export-Import & L/C Operations'],
+                    'goals' => ['Earn Verified Executive Certification'],
+                ];
+            }
+            if (!empty($updates)) {
+                $user->update($updates);
+            }
         }
 
         // Prepare human-readable summary notes for academic counselors
@@ -160,28 +254,33 @@ class PaymentController extends Controller
 
         // If free course
         if ($course->price <= 0) {
-            if (!$user->enrolledCourses()->where('course_id', $course->id)->exists()) {
-                $user->enrolledCourses()->attach($course->id);
-            }
+            DB::transaction(function () use ($user, $course, $request, $notes, $formData) {
+                $user->enrolledCourses()->syncWithoutDetaching([$course->id]);
 
-            // Create zero-amount verified registration record to persist form responses
-            Payment::create([
-                'user_id' => $user->id,
-                'course_id' => $course->id,
-                'payment_method_id' => null,
-                'amount' => 0.00,
-                'sender_number' => $request->sender_number ?: $request->phone,
-                'transaction_id' => 'FREE-ENROLL-' . strtoupper(Str::random(6)),
-                'status' => 'verified',
-                'notes' => $notes,
-                'form_data' => $formData,
-                'verified_at' => now(),
-            ]);
+                // Create or update zero-amount verified registration record to persist form responses
+                Payment::updateOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'course_id' => $course->id,
+                        'amount' => 0.00,
+                    ],
+                    [
+                        'payment_method_id' => null,
+                        'sender_number' => $request->sender_number ?: $request->phone,
+                        'transaction_id' => 'FREE-ENROLL-' . strtoupper(Str::random(6)),
+                        'status' => 'verified',
+                        'notes' => $notes,
+                        'form_data' => $formData,
+                        'verified_at' => now(),
+                    ]
+                );
+            });
 
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => true,
                     'status' => 'enrolled',
+                    'login_id' => $cleanPhone . ($request->email ? ' / ' . $request->email : ''),
                     'message' => 'Congratulations! You have been successfully enrolled in ' . $course->title . '.',
                     'redirect_url' => route('courses.show', $course),
                 ]);
@@ -190,18 +289,28 @@ class PaymentController extends Controller
             return redirect()->route('courses.show', $course)->with('success', 'You have been enrolled in the course!');
         }
 
-        // Paid course: Record payment / reservation with dynamic form data
-        $payment = Payment::create([
-            'user_id' => $user->id,
-            'course_id' => $course->id,
-            'payment_method_id' => $request->payment_method_id,
-            'amount' => $course->price,
-            'sender_number' => $request->sender_number ?: $request->phone,
-            'transaction_id' => $request->transaction_id ?: ('RES-' . strtoupper(Str::random(8))),
-            'status' => 'pending',
-            'notes' => $notes,
-            'form_data' => $formData,
-        ]);
+        // Paid course: Record payment / reservation with dynamic form data (reusing any existing pending record for this course)
+        $resolvedPaymentMethodId = ($request->payment_method_id && PaymentMethod::where('id', $request->payment_method_id)->exists())
+            ? $request->payment_method_id
+            : PaymentMethod::where('is_active', true)->value('id');
+
+        $payment = DB::transaction(function () use ($user, $course, $request, $notes, $formData, $resolvedPaymentMethodId) {
+            return Payment::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'course_id' => $course->id,
+                    'status' => 'pending',
+                ],
+                [
+                    'payment_method_id' => $resolvedPaymentMethodId,
+                    'amount' => $course->price,
+                    'sender_number' => $request->sender_number ?: $request->phone,
+                    'transaction_id' => trim((string) $request->transaction_id),
+                    'notes' => $notes,
+                    'form_data' => $formData,
+                ]
+            );
+        });
 
         $message = 'Enrollment request received! Your seat has been reserved. Our academic counselors will verify your payment details shortly.';
 
@@ -211,6 +320,7 @@ class PaymentController extends Controller
                 'status' => 'pending',
                 'order_id' => $payment->id,
                 'transaction_id' => $payment->transaction_id,
+                'login_id' => $cleanPhone . ($request->email ? ' / ' . $request->email : ''),
                 'message' => $message,
                 'redirect_url' => route('dashboard'),
             ]);

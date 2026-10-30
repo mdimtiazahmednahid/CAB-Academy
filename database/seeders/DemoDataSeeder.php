@@ -236,7 +236,7 @@ class DemoDataSeeder extends Seeder
             }
             $facultyUsers[$f['email']] = $user;
 
-            Instructor::updateOrCreate(
+            $inst = Instructor::withTrashed()->updateOrCreate(
                 ['email' => $f['email']],
                 [
                     'user_id' => $user->id,
@@ -250,6 +250,9 @@ class DemoDataSeeder extends Seeder
                     'is_active' => true,
                 ]
             );
+            if ($inst->trashed()) {
+                $inst->restore();
+            }
         }
 
         // Purge any legacy user with real/personal names from earlier seeders
@@ -280,7 +283,7 @@ class DemoDataSeeder extends Seeder
                 'category' => 'Export – Import',
                 'duration' => '8 Weeks (Every Friday)',
                 'start_date' => now()->addDays(3),
-                'venue' => 'Mirpur-Pallabi Campus & Online Live via Zoom',
+                'venue' => 'Online Live Interactive (Zoom)',
                 'target_audience' => 'Importers, Exporters, Supply Chain Executives, Commercial Managers, C&F Agents, Bank Trade Officers, and New Entrepreneurs.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80',
                 'cover_image' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80',
@@ -312,7 +315,7 @@ class DemoDataSeeder extends Seeder
                 'category' => 'Accounting',
                 'duration' => '8 Sessions (Fridays)',
                 'start_date' => now()->addDays(12),
-                'venue' => 'Mirpur-Pallabi Campus / Zoom',
+                'venue' => 'Online Live Interactive (Zoom)',
                 'target_audience' => 'Accountants, finance managers, tax advisors, auditors, and startup founders.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
                 'cover_image' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
@@ -328,7 +331,7 @@ class DemoDataSeeder extends Seeder
                 'category' => 'Law & Compliance',
                 'duration' => '6 Weeks (Fridays)',
                 'start_date' => now()->addDays(16),
-                'venue' => 'Mirpur-Pallabi Campus & Zoom',
+                'venue' => 'Online Live Interactive (Zoom)',
                 'target_audience' => 'Company secretaries, corporate advocates, compliance managers, and executive directors.',
                 'thumbnail' => 'https://images.unsplash.com/photo-1453733197783-64768dd7467b?auto=format&fit=crop&w=800&q=80',
                 'cover_image' => 'https://images.unsplash.com/photo-1453733197783-64768dd7467b?auto=format&fit=crop&w=800&q=80',
@@ -412,10 +415,13 @@ class DemoDataSeeder extends Seeder
             $courseData['instructor_id'] = $assignedInstructorUser->id;
             $courseData['views'] = rand(150, 950);
 
-            $course = Course::updateOrCreate(
+            $course = Course::withTrashed()->updateOrCreate(
                 ['title' => $courseData['title']],
                 $courseData
             );
+            if ($course->trashed()) {
+                $course->restore();
+            }
 
             // Create Sections & Lessons if none exist
             if ($course->sections()->count() == 0) {
@@ -534,7 +540,7 @@ class DemoDataSeeder extends Seeder
         // 9. Default Global Settings
         Setting::updateOrCreate(['key' => 'site_name'], ['value' => 'CAB Academy']);
         Setting::updateOrCreate(['key' => 'site_logo'], ['value' => '/images/logo.png']);
-        Setting::updateOrCreate(['key' => 'primary_color'], ['value' => '#1F6F54']);
+        Setting::updateOrCreate(['key' => 'primary_color'], ['value' => '#051c45']);
         Setting::updateOrCreate(['key' => 'contact_email'], ['value' => 'commercialacademy868@gmail.com']);
         Setting::updateOrCreate(['key' => 'contact_phone'], ['value' => '01917-054664']);
         Setting::updateOrCreate(['key' => 'contact_address'], ['value' => 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216']);

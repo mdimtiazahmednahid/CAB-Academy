@@ -3,19 +3,48 @@
 @section('header_title', 'User Management')
 
 @section('content')
-<div class="space-y-6">
+@php
+    $totalUsersCount = \App\Models\User::count();
+    $studentsCount = \App\Models\User::where('role', 'student')->count();
+    $instructorsCount = \App\Models\User::where('role', 'instructor')->count();
+    $adminsCount = \App\Models\User::where('role', 'admin')->count();
+@endphp
+<div class="space-y-6" x-data="{ roleFilter: 'all' }">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 class="text-2xl font-bold text-gray-900">Users</h1>
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-[#051c45] tracking-tight">Users</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Manage student accounts, faculty credentials, and platform administrators.</p>
+        </div>
         
         <div class="flex w-full sm:w-auto gap-2">
             <form method="GET" action="{{ route('admin.users') }}" class="w-full sm:w-auto relative">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or email..." class="w-full sm:w-64 pl-10 pr-4 py-2 rounded-xl border-gray-300 focus:border-primary focus:ring-primary text-sm">
-                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or email..." class="w-full sm:w-64 pl-9 pr-4 py-2 rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </form>
-            <button onclick="document.getElementById('createUserModal').classList.remove('hidden')" class="shrink-0 px-4 py-2 bg-primary text-white rounded-xl font-medium hover:opacity-90 transition-opacity whitespace-nowrap">
+            <button onclick="document.getElementById('createUserModal').classList.remove('hidden')" class="shrink-0 px-4 py-2 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors whitespace-nowrap shadow-xs">
                 + Add User
             </button>
         </div>
+    </div>
+
+    <!-- Role KPI Strip -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <button type="button" @click="roleFilter = 'all'" class="text-left bg-white p-4 rounded-2xl border transition-all shadow-xs" :class="roleFilter === 'all' ? 'border-[#051c45] ring-2 ring-[#051c45]/10' : 'border-slate-200/80'">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">All Accounts</div>
+            <div class="text-2xl font-black text-[#051c45] mt-1">{{ number_format($totalUsersCount) }}</div>
+        </button>
+        <button type="button" @click="roleFilter = 'student'" class="text-left bg-white p-4 rounded-2xl border transition-all shadow-xs" :class="roleFilter === 'student' ? 'border-[#051c45] ring-2 ring-[#051c45]/10' : 'border-slate-200/80'">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Students</div>
+            <div class="text-2xl font-black text-emerald-600 mt-1">{{ number_format($studentsCount) }}</div>
+        </button>
+        <button type="button" @click="roleFilter = 'instructor'" class="text-left bg-white p-4 rounded-2xl border transition-all shadow-xs" :class="roleFilter === 'instructor' ? 'border-[#051c45] ring-2 ring-[#051c45]/10' : 'border-slate-200/80'">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Instructors</div>
+            <div class="text-2xl font-black text-[#051c45] mt-1">{{ number_format($instructorsCount) }}</div>
+        </button>
+        <button type="button" @click="roleFilter = 'admin'" class="text-left bg-white p-4 rounded-2xl border transition-all shadow-xs" :class="roleFilter === 'admin' ? 'border-[#051c45] ring-2 ring-[#051c45]/10' : 'border-slate-200/80'">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Administrators</div>
+            <div class="text-2xl font-black text-[#c30102] mt-1">{{ number_format($adminsCount) }}</div>
+        </button>
     </div>
 
     @if(session('success'))
@@ -42,24 +71,24 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($users as $user)
-                        <tr class="hover:bg-gray-50 transition-colors">
+                        <tr class="hover:bg-slate-50/80 transition-colors" x-show="roleFilter === 'all' || roleFilter === '{{ $user->role }}'">
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
                                     @if($user->profile_picture || ($user->instructorProfile && $user->instructorProfile->avatar))
                                         <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover mr-4 shrink-0 border border-gray-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=051c45&color=fff';">
                                     @else
-                                        <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mr-4 shrink-0">
+                                        <div class="w-10 h-10 rounded-full bg-[#051c45]/10 text-[#051c45] flex items-center justify-center font-bold mr-4 shrink-0">
                                             {{ substr($user->name, 0, 1) }}
                                         </div>
                                     @endif
                                     <div>
-                                        <div class="font-medium text-gray-900">{{ $user->name }}</div>
-                                        <div class="text-sm text-gray-500">{{ $user->email }}</div>
+                                        <div class="font-bold text-slate-900">{{ $user->name }}</div>
+                                        <div class="text-xs text-slate-500">{{ $user->email }} @if($user->phone) &bull; <span class="font-mono">{{ $user->phone }}</span> @endif</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-700' : ($user->role === 'instructor' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700') }}">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $user->role === 'admin' ? 'bg-[#051c45] text-white' : ($user->role === 'instructor' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-700') }}">
                                     {{ ucfirst($user->role) }}
                                 </span>
                             </td>

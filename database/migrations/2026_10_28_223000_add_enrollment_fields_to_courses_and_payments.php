@@ -15,7 +15,7 @@ return new class extends Migration
         if (Schema::hasTable('courses')) {
             Schema::table('courses', function (Blueprint $table) {
                 if (!Schema::hasColumn('courses', 'enrollment_fields')) {
-                    $table->json('enrollment_fields')->nullable()->after('certificate_enabled');
+                    $table->json('enrollment_fields')->nullable();
                 }
             });
         }
@@ -24,7 +24,7 @@ return new class extends Migration
         if (Schema::hasTable('payments')) {
             Schema::table('payments', function (Blueprint $table) {
                 if (!Schema::hasColumn('payments', 'form_data')) {
-                    $table->json('form_data')->nullable()->after('notes');
+                    $table->json('form_data')->nullable();
                 }
             });
         }

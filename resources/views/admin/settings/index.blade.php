@@ -1,54 +1,112 @@
 @extends('layouts.admin')
 
+@section('header_title', 'Global Platform & Typography Settings')
+
 @section('content')
-<div class="mb-6 md:mb-8">
-    <h2 class="text-2xl md:text-3xl font-bold">Global Settings</h2>
-    <p class="text-gray-500 mt-1 text-sm md:text-base">Customize the appearance and behavior of the platform.</p>
+<div class="mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-[#051c45] tracking-tight">Global Platform Settings</h2>
+        <p class="text-slate-500 mt-1 text-xs md:text-sm">Configure institutional identity, fluid typography, auto-responsive brand scaling, and contact parameters.</p>
+    </div>
+    <a href="{{ route('admin.frontend.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold shadow-xs transition-colors">
+        <i class="fas fa-wand-magic-sparkles text-emerald-400"></i>
+        <span>Open Frontend & Page CMS</span>
+    </a>
 </div>
 
 @if(session('success'))
-    <div class="mb-6 p-4 bg-green-50 text-green-800 rounded-lg border border-green-200 text-sm font-medium">
-        {{ session('success') }}
+    <div class="mb-6 p-4 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200 text-sm font-bold flex items-center gap-2">
+        <i class="fas fa-circle-check text-emerald-600"></i>
+        <span>{{ session('success') }}</span>
     </div>
 @endif
 
-<form action="{{ route('admin.settings.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8 max-w-2xl relative pb-24 md:pb-0">
+@php
+    $initSiteName = $settings['site_name']->value ?? 'CAB Academy';
+    $initShortName = $settings['site_short_name']->value ?? '';
+    $initMinFont = (int) ($settings['ui_min_font_size']->value ?? 14);
+    $initFontScale = $settings['ui_font_scale']->value ?? 'default';
+    $initBrandMode = $settings['brand_name_size_mode']->value ?? 'auto';
+@endphp
+
+<form action="{{ route('admin.settings.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8 max-w-4xl relative pb-24 md:pb-8"
+      x-data="{
+          previewSiteName: @js($initSiteName),
+          previewShortName: @js($initShortName),
+          minFontSize: {{ $initMinFont }},
+          fontScale: @js($initFontScale),
+          brandMode: @js($initBrandMode),
+          get previewHeaderSize() {
+              const len = (this.previewSiteName || '').length;
+              if (this.brandMode === 'compact') return '13px';
+              if (this.brandMode === 'large') return '20px';
+              if (this.brandMode === 'standard') return '17px';
+              if (len > 30) return '12.5px';
+              if (len > 20) return '14.5px';
+              return '18px';
+          }
+      }">
     @csrf
 
-    <!-- Branding Section -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
-        <h3 class="text-lg font-semibold mb-4 border-b border-gray-50 pb-2">Branding</h3>
+    <!-- 1. Branding & Institutional Identity Section -->
+    <div class="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-5 md:p-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-5">
+            <div>
+                <h3 class="text-base md:text-lg font-extrabold text-[#051c45]">Institutional Branding & Identity</h3>
+                <p class="text-xs text-slate-500">Supports both compact acronyms (e.g., <span class="font-semibold text-slate-700">ACS Academy</span>) and full titles (e.g., <span class="font-semibold text-slate-700">Academy of Commercial and Supply Chain</span>).</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black uppercase tracking-wider">Auto-Adaptive</span>
+        </div>
         
         <div class="space-y-5">
-            <!-- Site Name -->
-            <div class="focus-ring-primary rounded-lg">
-                <label for="site_name" class="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
-                <input type="text" id="site_name" name="site_name" 
-                       value="{{ $settings['site_name']->value ?? 'CAB Academy' }}"
-                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Site Name -->
+                <div class="md:col-span-2 focus-ring-primary rounded-lg">
+                    <label for="site_name" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Institution / Site Name</label>
+                    <input type="text" id="site_name" name="site_name" x-model="previewSiteName"
+                           value="{{ $settings['site_name']->value ?? 'CAB Academy' }}"
+                           placeholder="e.g. CAB Academy or Academy of Commercial and Supply Chain"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#051c45] transition-shadow text-sm font-bold text-[#051c45]">
+                    <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                        <span class="text-[11px] text-slate-400">Quick test presets:</span>
+                        <button type="button" @click="previewSiteName = 'CAB Academy'" class="text-[11px] px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors">CAB Academy</button>
+                        <button type="button" @click="previewSiteName = 'ACS Academy'" class="text-[11px] px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors">ACS Academy</button>
+                        <button type="button" @click="previewSiteName = 'Academy of Commercial and Supply Chain'" class="text-[11px] px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors">Academy of Commercial and Supply Chain</button>
+                    </div>
+                </div>
+
+                <!-- Short Name (For Mobile App & PWA Icon Label) -->
+                <div class="focus-ring-primary rounded-lg">
+                    <label for="site_short_name" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Mobile / PWA Short Name</label>
+                    <input type="text" id="site_short_name" name="site_short_name" x-model="previewShortName"
+                           value="{{ $settings['site_short_name']->value ?? '' }}"
+                           placeholder="Auto (e.g. ACS / CAB)"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#051c45] transition-shadow text-sm font-semibold text-slate-800">
+                    <p class="text-[11px] text-slate-400 mt-1">Used on mobile home screens & compact app bars.</p>
+                </div>
             </div>
 
             <!-- Site Tagline / Slogan -->
             <div class="focus-ring-primary rounded-lg">
-                <label for="site_tagline" class="block text-sm font-medium text-gray-700 mb-1">Site Tagline / Subtitle</label>
+                <label for="site_tagline" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Site Tagline / Subtitle</label>
                 <input type="text" id="site_tagline" name="site_tagline" 
                        value="{{ $settings['site_tagline']->value ?? 'Learn, Grow, Lead.' }}"
                        placeholder="e.g. Learn, Grow, Lead."
-                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
+                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#051c45] transition-shadow text-sm">
             </div>
 
             <!-- Logo Upload -->
             <div class="focus-ring-primary rounded-lg">
-                <label for="logo_input" class="block text-sm font-medium text-gray-700 mb-2">Site Logo</label>
+                <label for="logo_input" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Site Logo</label>
                 @php
                     $currentLogo = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png');
                 @endphp
-                <div class="mb-3 p-3 bg-gray-50 rounded-lg inline-flex items-center gap-3 border border-gray-100">
+                <div class="mb-3 p-3 bg-slate-50 rounded-xl inline-flex items-center gap-3 border border-slate-200/80">
                     <img id="current_logo_img" src="{{ $currentLogo }}" alt="Current Logo" class="h-12 w-auto object-contain" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
-                    <span class="text-xs text-gray-400 font-mono">Active Logo Preview</span>
+                    <span class="text-xs text-slate-500 font-semibold">Active Logo Preview</span>
                 </div>
                 <input type="file" id="logo_input" name="logo" accept="image/*"
-                       class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-[#c30102] hover:file:bg-red-100 transition-colors cursor-pointer">
+                       class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-red-50 file:text-[#c30102] hover:file:bg-red-100 transition-colors cursor-pointer">
                 <input type="hidden" name="logo_base64" id="logo_base64">
                 <script>
                     document.getElementById('logo_input')?.addEventListener('change', function(e) {
@@ -70,16 +128,105 @@
 
             <!-- Primary Color -->
             <div class="focus-ring-primary rounded-lg">
-                <label for="primary_color" class="block text-sm font-medium text-gray-700 mb-1">Primary Color (Hex)</label>
+                <label for="primary_color" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Primary Color (Hex)</label>
                 <div class="flex items-center gap-3">
                     <input type="color" id="primary_color_picker" 
                            value="{{ $settings['primary_color']->value ?? '#c30102' }}"
                            oninput="document.getElementById('primary_color').value = this.value"
-                           class="h-12 w-12 rounded cursor-pointer border-0 p-0">
+                           class="h-11 w-12 rounded-lg cursor-pointer border border-slate-200 p-0.5">
                     <input type="text" id="primary_color" name="primary_color" 
                            value="{{ $settings['primary_color']->value ?? '#c30102' }}"
                            oninput="document.getElementById('primary_color_picker').value = this.value"
-                           class="flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base font-mono">
+                           class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#051c45] transition-shadow text-sm font-mono">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Typography, Minimum Text Size & Auto-Responsive Brand Scaling Engine -->
+    <div class="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-5 md:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-5">
+            <div>
+                <h3 class="text-base md:text-lg font-extrabold text-[#051c45]">Typography, Minimum Text Size & Auto-Responsive Scaling</h3>
+                <p class="text-xs text-slate-500">Set the global minimum font size and automatic brand title scaling across mobile, tablet, and desktop screens.</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-[#051c45]/10 text-[#051c45] text-[10px] font-black uppercase tracking-wider">Fluid CSS Clamp Engine</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+            <!-- Minimum Base Font Size (px) -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                <div class="flex items-center justify-between mb-2">
+                    <label for="ui_min_font_size" class="text-xs font-bold uppercase tracking-wider text-slate-700">Min Text Size (px)</label>
+                    <span class="px-2 py-0.5 rounded bg-[#051c45] text-white text-xs font-black" x-text="minFontSize + 'px'"></span>
+                </div>
+                <input type="range" id="ui_min_font_size" name="ui_min_font_size" min="12" max="20" step="1"
+                       x-model="minFontSize"
+                       value="{{ $initMinFont }}"
+                       class="w-full accent-[#c30102] cursor-pointer">
+                <div class="flex justify-between text-[10px] text-slate-400 font-semibold mt-1">
+                    <span>12px (Compact)</span>
+                    <span>14px (Std)</span>
+                    <span>20px (Large)</span>
+                </div>
+            </div>
+
+            <!-- Font Scale Multiplier -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                <label for="ui_font_scale" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Global Text Scale</label>
+                <select id="ui_font_scale" name="ui_font_scale" x-model="fontScale"
+                        class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-[#051c45] focus:outline-none focus:border-[#051c45]">
+                    <option value="compact">Compact Density (0.94x)</option>
+                    <option value="default">Default Balanced (1.0x)</option>
+                    <option value="comfortable">Comfortable Reading (1.06x)</option>
+                    <option value="large">High Accessibility (1.12x)</option>
+                </select>
+                <p class="text-[11px] text-slate-500 mt-1.5">Scales all headings, cards, tables, and buttons proportionally.</p>
+            </div>
+
+            <!-- Brand Name Sizing Mode -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                <label for="brand_name_size_mode" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Brand Name Sizing Mode</label>
+                <select id="brand_name_size_mode" name="brand_name_size_mode" x-model="brandMode"
+                        class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-[#051c45] focus:outline-none focus:border-[#051c45]">
+                    <option value="auto">Auto-Fit (Smart Character Length Scaling)</option>
+                    <option value="compact">Compact Header Lockup</option>
+                    <option value="standard">Standard Brand Lockup</option>
+                    <option value="large">Prominent Executive Lockup</option>
+                </select>
+                <p class="text-[11px] text-slate-500 mt-1.5">Auto-Fit automatically shrinks long names (>22 chars) so they never overflow.</p>
+            </div>
+        </div>
+
+        <!-- Live Auto-Responsive Brand & Typography Preview -->
+        <div class="rounded-2xl border border-slate-200 bg-[#f8fafc] p-4">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-[11px] font-black uppercase tracking-wider text-slate-400">Live Auto-Responsive Header & Mobile Preview</span>
+                <span class="text-[11px] font-semibold text-emerald-700" x-text="(previewSiteName || '').length > 22 ? 'Long Brand Name Detected (' + (previewSiteName || '').length + ' chars) — Auto-Scaling Active' : 'Short Brand Name (' + (previewSiteName || '').length + ' chars) — Standard Lockup'"></span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Simulated Public Navbar Lockup -->
+                <div class="bg-white rounded-xl border border-slate-200 p-3.5 flex items-center justify-between shadow-2xs">
+                    <div class="flex items-center gap-2.5 max-w-[230px]">
+                        <img src="{{ $currentLogo }}" alt="Logo" class="w-9 h-9 rounded-full object-contain border border-slate-100 shrink-0" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                        <div class="min-w-0">
+                            <div class="font-black uppercase text-[#051c45] leading-tight line-clamp-2" :style="'font-size: ' + previewHeaderSize" x-text="previewSiteName || 'CAB Academy'"></div>
+                            <div class="text-[8px] font-black uppercase tracking-widest text-[#c30102] mt-0.5">Learn, Grow, Lead.</div>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-lg bg-[#c30102] text-white text-[10px] font-bold shrink-0">Sign In</span>
+                </div>
+
+                <!-- Simulated Dark Executive Sidebar Lockup -->
+                <div class="bg-[#03112b] rounded-xl border border-slate-800 p-3.5 flex items-center justify-between text-white">
+                    <div class="flex items-center gap-2.5 max-w-[220px]">
+                        <img src="{{ $currentLogo }}" alt="Logo" class="w-8 h-8 rounded-lg bg-white p-0.5 object-contain shrink-0" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                        <div class="min-w-0">
+                            <div class="font-black uppercase text-white leading-tight line-clamp-2" :style="'font-size: ' + previewHeaderSize" x-text="previewSiteName || 'CAB Academy'"></div>
+                            <div class="text-[9px] font-bold uppercase tracking-widest text-emerald-400">Executive OS</div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400" x-text="'Min ' + minFontSize + 'px'"></span>
                 </div>
             </div>
         </div>

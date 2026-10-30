@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'phone', 'preferences', 'profile_picture', 'cover_photo'])]
+#[Fillable(['name', 'email', 'password', 'role', 'phone', 'preferences', 'notification_preferences', 'profile_picture', 'cover_photo', 'xp', 'current_streak', 'last_activity_date', 'email_verified_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -51,49 +51,57 @@ class User extends Authenticatable
     protected static function booted(): void
     {
         static::saved(function ($user) {
-            if ($user->role === 'instructor') {
-                Instructor::withoutEvents(function () use ($user) {
-                    $instructor = Instructor::where('user_id', $user->id)->first();
-                    if (!$instructor && !empty($user->email)) {
-                        $instructor = Instructor::where('email', $user->email)->first();
-                    }
-                    if (!$instructor) {
-                        $instructor = new Instructor();
-                        $instructor->user_id = $user->id;
-                        $instructor->name = $user->name;
-                        $instructor->email = $user->email;
-                        $instructor->title = 'Corporate Faculty Fellow';
-                        $instructor->expertise = 'International Trade & Industry Masterclasses';
-                        $instructor->phone = $user->phone ?? null;
-                        $instructor->is_active = true;
-                        $instructor->order = 99;
-                    } else {
-                        $instructor->user_id = $user->id;
-                        $instructor->name = $user->name;
-                        if (!empty($user->email)) {
+            try {
+                if (!\Illuminate\Support\Facades\Schema::hasTable('instructors') || !\Illuminate\Support\Facades\Schema::hasColumn('instructors', 'user_id')) {
+                    return;
+                }
+
+                if ($user->role === 'instructor' || ($user->isAdmin() && Instructor::where('user_id', $user->id)->exists())) {
+                    Instructor::withoutEvents(function () use ($user) {
+                        $instructor = Instructor::where('user_id', $user->id)->first();
+                        if (!$instructor && !empty($user->email) && \Illuminate\Support\Facades\Schema::hasColumn('instructors', 'email')) {
+                            $instructor = Instructor::where('email', $user->email)->first();
+                        }
+                        if (!$instructor) {
+                            $instructor = new Instructor();
+                            $instructor->user_id = $user->id;
+                            $instructor->name = $user->name;
                             $instructor->email = $user->email;
+                            $instructor->title = 'Corporate Faculty Fellow';
+                            $instructor->expertise = 'International Trade & Industry Masterclasses';
+                            $instructor->phone = $user->phone ?? null;
+                            $instructor->is_active = true;
+                            $instructor->order = 99;
+                        } else {
+                            $instructor->user_id = $user->id;
+                            $instructor->name = $user->name;
+                            if (!empty($user->email)) {
+                                $instructor->email = $user->email;
+                            }
+                            if (!empty($user->phone)) {
+                                $instructor->phone = $user->phone;
+                            }
+                            $instructor->is_active = true;
                         }
-                        if (!empty($user->phone)) {
-                            $instructor->phone = $user->phone;
+                        if ($user->profile_picture) {
+                            $instructor->avatar = $user->profile_picture;
+                        } elseif ($instructor->avatar && !$user->profile_picture) {
+                            $user->profile_picture = $instructor->avatar;
                         }
-                        $instructor->is_active = true;
-                    }
-                    if ($user->profile_picture) {
-                        $instructor->avatar = $user->profile_picture;
-                    } elseif ($instructor->avatar && !$user->profile_picture) {
-                        $user->profile_picture = $instructor->avatar;
-                    }
-                    $instructor->saveQuietly();
-                });
-            } else {
-                // If user role was changed away from instructor, cleanly deactivate linked instructor profile
-                Instructor::withoutEvents(function () use ($user) {
-                    $instructor = Instructor::where('user_id', $user->id)->first();
-                    if ($instructor) {
-                        $instructor->is_active = false;
                         $instructor->saveQuietly();
-                    }
-                });
+                    });
+                } elseif (!$user->isAdmin()) {
+                    // If user role was changed away from instructor/admin, cleanly deactivate linked instructor profile
+                    Instructor::withoutEvents(function () use ($user) {
+                        $instructor = Instructor::where('user_id', $user->id)->first();
+                        if ($instructor) {
+                            $instructor->is_active = false;
+                            $instructor->saveQuietly();
+                        }
+                    });
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('User::saved instructor sync skipped: ' . $e->getMessage());
             }
         });
     }

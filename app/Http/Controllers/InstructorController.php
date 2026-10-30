@@ -13,6 +13,7 @@ class InstructorController extends Controller
      */
     public function index()
     {
+        abort_if(!\App\Models\Setting::isPageEnabled('instructors') && (!auth()->check() || !auth()->user()->isAdmin()), 404);
         $instructors = Instructor::where('is_active', true)
             ->orderBy('order', 'asc')
             ->get();

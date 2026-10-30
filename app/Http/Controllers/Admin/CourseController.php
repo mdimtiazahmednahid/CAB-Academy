@@ -17,8 +17,11 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $query = Course::latest();
-        if (auth()->user()->role === 'instructor') {
+        \App\Support\DatabaseSchemaRepair::repairInstructorCourseLinks();
+        $query = Course::with(['instructorProfile', 'instructor'])
+            ->withCount(['students', 'sections', 'lessons', 'quizzes', 'certificates'])
+            ->latest();
+        if (auth()->user()->role === 'instructor' && !auth()->user()->isAdmin()) {
             $query->where('instructor_id', auth()->id());
         }
         $courses = $query->get();
@@ -28,6 +31,13 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->filled('instructor_id') && !\App\Models\User::where('id', $request->input('instructor_id'))->exists()) {
+            if ($inst = \App\Models\Instructor::find($request->input('instructor_id'))) {
+                $inst->save();
+                $request->merge(['instructor_id' => $inst->user_id]);
+            }
+        }
+
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -92,12 +102,16 @@ class CourseController extends Controller
         $course = Course::create($data);
 
         if ($course->is_published) {
-            $users = User::where(function($q) {
-                $q->whereNull('notification_preferences')
-                  ->orWhereJsonContains('notification_preferences->new_courses', true);
-            })->get();
-            if ($users->isNotEmpty()) {
-                Notification::send($users, new NewCourseNotification($course));
+            try {
+                $users = User::all()->filter(function ($u) {
+                    $prefs = is_array($u->notification_preferences) ? $u->notification_preferences : null;
+                    return $prefs === null || ($prefs['new_courses'] ?? true) === true;
+                });
+                if ($users->isNotEmpty()) {
+                    Notification::send($users, new NewCourseNotification($course));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Course publish notification skipped: ' . $e->getMessage());
             }
         }
 
@@ -110,7 +124,18 @@ class CourseController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $course->load(['sections.lessons', 'students', 'payments.user', 'payments.paymentMethod', 'certificates']);
+        \App\Support\DatabaseSchemaRepair::repairInstructorCourseLinks();
+        $course->load([
+            'instructorProfile',
+            'instructor',
+            'sections.lessons',
+            'quizzes.questions',
+            'materials',
+            'students',
+            'payments.user',
+            'payments.paymentMethod',
+            'certificates'
+        ]);
         $instructors = \App\Models\User::whereIn('role', ['admin', 'instructor'])->with('instructorProfile')->orderBy('name')->get();
         return view('admin.courses.show', compact('course', 'instructors'));
     }
@@ -160,6 +185,13 @@ class CourseController extends Controller
     {
         if (!auth()->user()->isAdmin() && auth()->user()->role === 'instructor' && $course->instructor_id && $course->instructor_id !== auth()->id()) {
             abort(403, 'Unauthorized access.');
+        }
+
+        if ($request->filled('instructor_id') && !\App\Models\User::where('id', $request->input('instructor_id'))->exists()) {
+            if ($inst = \App\Models\Instructor::find($request->input('instructor_id'))) {
+                $inst->save();
+                $request->merge(['instructor_id' => $inst->user_id]);
+            }
         }
 
         $data = $request->validate([
@@ -230,12 +262,16 @@ class CourseController extends Controller
         $course->update($data);
 
         if (!$wasPublished && $course->is_published) {
-            $users = User::where(function($q) {
-                $q->whereNull('notification_preferences')
-                  ->orWhereJsonContains('notification_preferences->new_courses', true);
-            })->get();
-            if ($users->isNotEmpty()) {
-                Notification::send($users, new NewCourseNotification($course));
+            try {
+                $users = User::all()->filter(function ($u) {
+                    $prefs = is_array($u->notification_preferences) ? $u->notification_preferences : null;
+                    return $prefs === null || ($prefs['new_courses'] ?? true) === true;
+                });
+                if ($users->isNotEmpty()) {
+                    Notification::send($users, new NewCourseNotification($course));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Course update notification skipped: ' . $e->getMessage());
             }
         }
 
@@ -254,6 +290,7 @@ class CourseController extends Controller
 
     public function updateSection(Request $request, Course $course, Section $section)
     {
+        abort_if((int) $section->course_id !== (int) $course->id, 404);
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'order' => 'integer'
@@ -265,12 +302,14 @@ class CourseController extends Controller
 
     public function destroySection(Course $course, Section $section)
     {
+        abort_if((int) $section->course_id !== (int) $course->id, 404);
         $section->delete();
         return back()->with('success', 'Section deleted successfully');
     }
 
     public function updateLesson(Request $request, Course $course, Section $section, Lesson $lesson)
     {
+        abort_if((int) $section->course_id !== (int) $course->id || (int) $lesson->section_id !== (int) $section->id, 404);
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'video_url' => 'nullable|url',
@@ -284,12 +323,14 @@ class CourseController extends Controller
 
     public function destroyLesson(Course $course, Section $section, Lesson $lesson)
     {
+        abort_if((int) $section->course_id !== (int) $course->id || (int) $lesson->section_id !== (int) $section->id, 404);
         $lesson->delete();
         return back()->with('success', 'Lesson deleted successfully');
     }
 
     public function destroyMaterial(Course $course, \App\Models\Material $material)
     {
+        abort_if((int) $material->course_id !== (int) $course->id, 404);
         $material->delete();
         return back()->with('success', 'Material deleted successfully');
     }

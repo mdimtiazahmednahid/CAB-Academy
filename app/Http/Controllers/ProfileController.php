@@ -36,6 +36,10 @@ class ProfileController extends Controller
 
         if ($request->hasFile('profile_picture')) {
             $user->profile_picture = $request->file('profile_picture')->store('profiles', 'public');
+            @mkdir(public_path('storage/profiles'), 0775, true);
+            if (file_exists(public_path('uploads/' . $user->profile_picture))) {
+                @copy(public_path('uploads/' . $user->profile_picture), public_path('storage/' . $user->profile_picture));
+            }
         } elseif ($request->filled('profile_picture_base64')) {
             $data = $request->input('profile_picture_base64');
             if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
@@ -45,6 +49,8 @@ class ProfileController extends Controller
                 if ($data !== false) {
                     $filename = 'profile_' . time() . '_' . uniqid() . '.' . $type;
                     \Illuminate\Support\Facades\Storage::disk('public')->put('profiles/' . $filename, $data);
+                    @mkdir(public_path('storage/profiles'), 0775, true);
+                    @file_put_contents(public_path('storage/profiles/' . $filename), $data);
                     $user->profile_picture = 'profiles/' . $filename;
                 }
             }

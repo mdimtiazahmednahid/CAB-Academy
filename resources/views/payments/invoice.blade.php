@@ -1,10 +1,24 @@
+@php
+    $siteName = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+    $institutionName = \App\Models\Setting::getVal('accounting_institution_name') ?: $siteName;
+    $shortSealName = \App\Models\Setting::getVal('site_short_name') ?: $siteName;
+    $invPrefix = \App\Models\Setting::getVal('accounting_invoice_prefix') ?: 'INV-CAB';
+    $ledgerSubtitle = \App\Models\Setting::getVal('accounting_ledger_subtitle') ?: ($siteName . ' • Official Tuition Invoice');
+    $signatoryTitle = \App\Models\Setting::getVal('accounting_signatory_title') ?: 'Authorized Registrar & Treasury';
+    $footerNote = \App\Models\Setting::getVal('accounting_footer_note') ?: ('Thank you for your enrollment with ' . $institutionName . '!');
+    $campusAddress = \App\Models\Setting::getVal('site_address') ?: 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216';
+    $hotlinePhone = \App\Models\Setting::getVal('site_phone') ?: '01917-054664';
+    $accountsEmail = \App\Models\Setting::getVal('site_email') ?: 'commercialacademy868@gmail.com';
+    $fallbackInv = $invPrefix . '-' . str_pad($payment->id, 5, '0', STR_PAD_LEFT);
+    $displayInvoiceNumber = $payment->invoice_number ?: $fallbackInv;
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-    <title>Tuition Receipt & Invoice #INV-CAB-{{ str_pad($payment->id, 5, '0', STR_PAD_LEFT) }} - CAB Academy</title>
+    <title>Tuition Receipt & Invoice #{{ $fallbackInv }} ({{ $displayInvoiceNumber }}) - {{ $institutionName }}</title>
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,17 +56,17 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-8 border-b-2 border-gray-100 gap-6">
             <div class="flex items-center gap-4">
-                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}" class="w-16 h-16 object-contain rounded-2xl bg-white border border-gray-100 p-1 shadow-sm" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $institutionName }}" class="w-16 h-16 object-contain rounded-2xl bg-white border border-gray-100 p-1 shadow-sm" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div>
-                    <h1 class="text-2xl font-black text-[#051c45] uppercase tracking-tight">Commercial Academy Bangladesh</h1>
-                    <span class="text-xs font-bold text-[#c30102] uppercase tracking-widest block">CAB Academy • Official Tuition Invoice</span>
-                    <p class="text-xs text-gray-500 mt-1">Mirpur-Pallabi, Dhaka, Bangladesh, 1216 | 01917-054664</p>
+                    <h1 class="text-2xl font-black text-[#051c45] uppercase tracking-tight">{{ $institutionName }}</h1>
+                    <span class="text-xs font-bold text-[#c30102] uppercase tracking-widest block">{{ $ledgerSubtitle }}</span>
+                    <p class="text-xs text-gray-500 mt-1">{{ $campusAddress }} | {{ $hotlinePhone }}</p>
                 </div>
             </div>
 
             <div class="text-left sm:text-right">
                 <span class="text-xs font-bold uppercase tracking-wider text-gray-400 block">Invoice Number</span>
-                <span class="text-lg font-mono font-black text-[#051c45]">INV-CAB-{{ str_pad($payment->id, 5, '0', STR_PAD_LEFT) }}</span>
+                <span class="text-lg font-mono font-black text-[#051c45]">{{ $displayInvoiceNumber }}</span>
                 <span class="text-xs text-gray-500 block mt-1">Date: {{ $payment->created_at->format('M d, Y') }}</span>
                 <div class="mt-2">
                     @if($payment->status === 'verified')
@@ -72,18 +86,18 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 my-8 pb-8 border-b border-gray-100">
             <div>
                 <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Billed To (Student)</h3>
-                <h4 class="text-base font-bold text-[#051c45]">{{ $payment->user->name }}</h4>
-                <p class="text-xs text-gray-600 mt-1">{{ $payment->user->email }}</p>
-                @if($payment->phone)
-                    <p class="text-xs text-gray-600 mt-0.5">Phone: {{ $payment->phone }}</p>
+                <h4 class="text-base font-bold text-[#051c45]">{{ $payment->user?->name ?? 'Student' }}</h4>
+                <p class="text-xs text-gray-600 mt-1">{{ $payment->user?->email ?? '' }}</p>
+                @if($payment->sender_number || $payment->user?->phone)
+                    <p class="text-xs text-gray-600 mt-0.5">Phone: {{ $payment->sender_number ?: $payment->user?->phone }}</p>
                 @endif
-                <p class="text-xs text-gray-500 mt-1">Student ID: #STU-{{ str_pad($payment->user->id, 5, '0', STR_PAD_LEFT) }}</p>
+                <p class="text-xs text-gray-500 mt-1">Student ID: #STU-{{ str_pad($payment->user_id ?? 0, 5, '0', STR_PAD_LEFT) }}</p>
             </div>
 
             <div class="sm:text-right">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Payment Details</h3>
                 <p class="text-xs text-gray-600">
-                    Channel: <strong class="text-gray-900">{{ $payment->paymentMethod?->name ?? 'MFS / Bank Transfer' }}</strong>
+                    Channel: <strong class="text-gray-900">{{ $payment->paymentMethod?->provider_name ?? 'MFS / Bank Transfer' }}</strong>
                 </p>
                 <p class="text-xs text-gray-600 mt-1 font-mono">
                     Transaction ID: <strong class="text-gray-900">{{ $payment->transaction_id ?: 'MANUAL-SYS' }}</strong>
@@ -107,11 +121,11 @@
                 <tbody class="divide-y divide-gray-100">
                     <tr>
                         <td class="py-4">
-                            <span class="font-bold text-gray-900 block text-base">{{ $payment->course->title }}</span>
+                            <span class="font-bold text-gray-900 block text-base">{{ $payment->course?->title ?? 'Course Tuition' }}</span>
                             <span class="text-xs text-gray-500">Professional certification module with evaluation & verifiable credential</span>
                         </td>
                         <td class="py-4 text-center text-xs text-gray-600 font-medium">
-                            {{ $payment->course->category ?? 'Executive Program' }}
+                            {{ $payment->course?->category ?? 'Executive Program' }}
                         </td>
                         <td class="py-4 text-right font-mono font-bold text-gray-900 text-base">
                             ৳{{ number_format($payment->amount, 2) }}
@@ -133,7 +147,7 @@
                     <span class="font-mono">৳0.00</span>
                 </div>
                 <div class="flex justify-between text-base font-black text-[#051c45] pt-2 border-t border-gray-200">
-                    <span>Total Paid:</span>
+                    <span>Total {{ $payment->status === 'verified' ? 'Paid' : 'Amount' }}:</span>
                     <span class="font-mono text-[#c30102]">৳{{ number_format($payment->amount, 2) }}</span>
                 </div>
             </div>
@@ -142,16 +156,31 @@
         <!-- Paid Seal & Signature Block -->
         <div class="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-6">
             <div class="text-xs text-gray-500 text-center sm:text-left">
-                <p class="font-bold text-[#051c45]">Thank you for your enrollment with CAB Academy!</p>
-                <p class="mt-1">For questions regarding billing or invoices, email accounts: <strong>commercialacademy868@gmail.com</strong></p>
+                <p class="font-bold text-[#051c45]">{{ $footerNote }}</p>
+                <p class="mt-1">For questions regarding billing or invoices, email accounts: <strong>{{ $accountsEmail }}</strong></p>
+                <p class="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ $signatoryTitle }} &bull; {{ $institutionName }}</p>
             </div>
 
             <!-- Official Stamp -->
-            <div class="w-28 h-28 rounded-full border-4 border-emerald-600 flex flex-col items-center justify-center text-emerald-700 transform -rotate-12 select-none">
-                <span class="text-[9px] font-black uppercase tracking-widest">CAB ACADEMY</span>
-                <span class="text-lg font-black tracking-tight my-0.5">PAID</span>
-                <span class="text-[8px] font-mono font-semibold">{{ $payment->created_at->format('d-m-Y') }}</span>
-            </div>
+            @if($payment->status === 'verified')
+                <div class="w-28 h-28 rounded-full border-4 border-emerald-600 flex flex-col items-center justify-center text-emerald-700 transform -rotate-12 select-none px-2 text-center">
+                    <span class="text-[8px] font-black uppercase tracking-wider leading-tight line-clamp-2">{{ $shortSealName }}</span>
+                    <span class="text-lg font-black tracking-tight my-0.5">PAID</span>
+                    <span class="text-[8px] font-mono font-semibold">{{ ($payment->verified_at ?: $payment->created_at)->format('d-m-Y') }}</span>
+                </div>
+            @elseif($payment->status === 'rejected')
+                <div class="w-28 h-28 rounded-full border-4 border-red-600 flex flex-col items-center justify-center text-red-700 transform -rotate-12 select-none px-2 text-center">
+                    <span class="text-[8px] font-black uppercase tracking-wider leading-tight line-clamp-2">{{ $shortSealName }}</span>
+                    <span class="text-sm font-black tracking-tight my-0.5 uppercase">REJECTED</span>
+                    <span class="text-[8px] font-mono font-semibold">{{ $payment->created_at->format('d-m-Y') }}</span>
+                </div>
+            @else
+                <div class="w-28 h-28 rounded-full border-4 border-amber-500 flex flex-col items-center justify-center text-amber-600 transform -rotate-12 select-none px-2 text-center">
+                    <span class="text-[8px] font-black uppercase tracking-wider leading-tight line-clamp-2">{{ $shortSealName }}</span>
+                    <span class="text-sm font-black tracking-tight my-0.5 uppercase">PENDING</span>
+                    <span class="text-[8px] font-mono font-semibold">{{ $payment->created_at->format('d-m-Y') }}</span>
+                </div>
+            @endif
         </div>
 
     </div>

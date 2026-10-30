@@ -13,7 +13,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
 
         <div>
@@ -32,7 +32,7 @@
                     <p class="text-sm mt-2 text-gray-800">
                         {{ __('Your email address is unverified.') }}
 
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#051c45]">
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
                     </p>
@@ -52,7 +52,7 @@
                         <img src="{{ $user->profile_picture_url }}" alt="Profile" class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover shadow-sm border border-gray-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=051c45&color=fff';">
                     </div>
                 @endif
-                <input type="file" id="profile_picture_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                <input type="file" name="profile_picture" id="profile_picture_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-[#051c45] hover:file:bg-slate-200" />
                 <input type="hidden" name="profile_picture_base64" id="profile_picture_base64">
                 <x-input-error class="mt-2" :messages="$errors->get('profile_picture')" />
             </div>
@@ -64,7 +64,7 @@
                         <img src="{{ $user->cover_photo_url }}" alt="Cover" class="w-full h-32 md:h-48 rounded-lg object-cover shadow-sm border border-gray-200" onerror="this.style.display='none';">
                     </div>
                 @endif
-                <input type="file" id="cover_photo_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                <input type="file" name="cover_photo" id="cover_photo_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-[#051c45] hover:file:bg-slate-200" />
                 <input type="hidden" name="cover_photo_base64" id="cover_photo_base64">
                 <x-input-error class="mt-2" :messages="$errors->get('cover_photo')" />
             </div>

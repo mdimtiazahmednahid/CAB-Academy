@@ -12,10 +12,11 @@ class CatalogController extends Controller
 {
     public function index(Request $request, ?string $category = null)
     {
+        \App\Support\DatabaseSchemaRepair::ensureSchema();
         $selectedCategory = $category ?? $request->query('category');
         
         $query = Course::where('is_published', true)
-            ->with(['instructor', 'sections.lessons']);
+            ->with(['instructorProfile', 'instructor', 'sections.lessons']);
 
         $categoryTitle = null;
         $categoryDesc = null;

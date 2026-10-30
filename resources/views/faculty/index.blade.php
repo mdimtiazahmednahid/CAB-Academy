@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
 
 @section('title', 'Distinguished Faculty & Industry Fellows')
 @section('meta_description', 'Meet CAB Academy\'s veteran faculty, C-suite executives, customs specialists, and international banking advisors delivering executive training programs in Bangladesh.')
@@ -51,7 +51,7 @@
                         @php
                             $avatarUrl = $f->avatar_url;
                         @endphp
-                        <div class="bg-white rounded-3xl border border-[#e3e7f0] p-6 text-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between hover:border-[#c30102]/30">
+                        <div class="liquid-glass-card bg-white/85 rounded-3xl border border-[#e3e7f0] p-6 text-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between hover:border-[#c30102]/30">
                             <div>
                                 <div class="w-28 h-28 mx-auto rounded-full overflow-hidden mb-5 border-4 border-slate-100 shadow-md bg-gray-100 group-hover:scale-105 group-hover:ring-4 group-hover:ring-[#c30102]/20 transition-all duration-300">
                                     <img src="{{ $avatarUrl }}" alt="{{ $f->name }}" class="w-full h-full object-cover object-top" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'">

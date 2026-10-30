@@ -11,21 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('instructors', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('title');
-            $table->string('expertise');
-            $table->string('avatar')->nullable();
-            $table->text('bio')->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->integer('order')->default(0);
-            $table->boolean('is_active')->default(true);
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->softDeletes();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('instructors')) {
+            Schema::create('instructors', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('title');
+                $table->string('expertise');
+                $table->string('avatar')->nullable();
+                $table->text('bio')->nullable();
+                $table->string('email')->nullable();
+                $table->string('phone')->nullable();
+                $table->integer('order')->default(0);
+                $table->boolean('is_active')->default(true);
+                $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+                $table->softDeletes();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -56,18 +56,27 @@
                             </div>
                         </td>
                         <td class="p-3.5 sm:p-4 text-gray-600">
+                            @php
+                                $aComp = $job->company ?: 'Company';
+                                $aWords = array_values(array_filter(explode(' ', preg_replace('/[^A-Za-z0-9\s]/', '', $aComp))));
+                                $aInit = count($aWords) >= 2
+                                    ? strtoupper(substr($aWords[0], 0, 1) . substr($aWords[1], 0, 1))
+                                    : strtoupper(substr($aWords[0] ?? 'CA', 0, 2));
+                            @endphp
                             <div class="flex items-center gap-2.5">
                                 @if($job->company_logo)
-                                    <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company }}" class="w-8 h-8 rounded-xl object-cover border border-gray-200 shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div style="display:none;" class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
-                                        <span class="text-xs font-bold text-gray-500">{{ substr($job->company, 0, 2) }}</span>
+                                    <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 p-1 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
+                                        <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company }}" class="w-full h-full object-contain object-center" onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='flex';">
+                                    </div>
+                                    <div style="display:none;" class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#051c45] to-[#1e3a8a] text-white items-center justify-center shrink-0 shadow-xs">
+                                        <span class="text-xs font-black tracking-wider">{{ $aInit }}</span>
                                     </div>
                                 @else
-                                    <div class="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
-                                        <span class="text-xs font-bold text-gray-500">{{ substr($job->company, 0, 2) }}</span>
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#051c45] to-[#1e3a8a] text-white flex items-center justify-center shrink-0 shadow-xs">
+                                        <span class="text-xs font-black tracking-wider">{{ $aInit }}</span>
                                     </div>
                                 @endif
-                                <span class="font-medium text-gray-800 truncate max-w-[150px] sm:max-w-xs">{{ $job->company }}</span>
+                                <span class="font-bold text-gray-800 truncate max-w-[150px] sm:max-w-xs">{{ $job->company }}</span>
                             </div>
                         </td>
                         <td class="p-3.5 sm:p-4">
@@ -87,9 +96,9 @@
                         </td>
                         <td class="p-3.5 sm:p-4 text-right whitespace-nowrap">
                             <div class="flex items-center justify-end gap-1.5">
-                                <a href="{{ route('admin.jobs.show', $job) }}" class="text-primary hover:text-green-700 font-bold text-xs bg-primary/10 hover:bg-primary/20 px-2.5 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1">
+                                <a href="{{ route('admin.jobs.show', $job) }}" class="text-primary hover:text-[#03112b] font-bold text-xs bg-primary/10 hover:bg-primary/20 px-2.5 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1">
                                     <span>Applicants</span>
-                                    <span class="bg-primary text-white text-[10px] px-1.5 py-0.2 rounded-full font-black">{{ $job->applications->count() }}</span>
+                                    <span class="bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full font-black">{{ $job->applications_count ?? $job->applications->count() }}</span>
                                 </a>
                                 
                                 <button type="button" 
@@ -102,6 +111,7 @@
                                         'salary_range' => $job->salary_range ?? '',
                                         'apply_link' => $job->apply_link ?? '',
                                         'description' => $job->description,
+                                        'company_logo_url' => $job->company_logo ? storage_asset($job->company_logo) : '',
                                         'is_active' => (bool)$job->is_active
                                     ]) }}"
                                     onclick="openEditJobModal(this)" 
@@ -153,7 +163,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Company <span class="text-red-500">*</span></label>
-                        <input type="text" name="company" required placeholder="e.g. Square Group" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
+                        <input type="text" name="company" id="create_company" oninput="updateCreateLogoPreview()" required placeholder="e.g. Square Group" class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
                     </div>
                     <div>
                         <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Job Type</label>
@@ -167,9 +177,21 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Company Logo (Optional)</label>
-                    <input type="file" name="company_logo" accept="image/*" class="w-full text-xs rounded-xl border border-gray-300 p-1.5 focus:border-primary focus:ring-primary">
+                <!-- Smart Auto-Fitted Company Logo Uploader with Fallback Emblem Preview -->
+                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center gap-3.5">
+                    <div class="w-14 h-14 rounded-2xl shrink-0 relative overflow-hidden">
+                        <div id="create_logo_img_wrap" class="w-full h-full rounded-2xl bg-white border border-slate-200 p-1.5 items-center justify-center hidden">
+                            <img id="create_logo_preview_img" src="" alt="Preview" class="w-full h-full object-contain object-center">
+                        </div>
+                        <div id="create_logo_emblem_wrap" class="w-full h-full rounded-2xl bg-gradient-to-br from-[#051c45] to-[#1e3a8a] text-white flex items-center justify-center shadow-sm">
+                            <span id="create_logo_initials" class="text-sm font-black tracking-wider">SG</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <label class="block text-xs font-bold text-gray-800 mb-1">Company Logo (Optional • Auto-Fitted)</label>
+                        <input type="file" name="company_logo" id="create_job_logo_file" accept="image/*" onchange="previewCreateJobLogo(this)" class="w-full text-xs rounded-xl border border-gray-300 bg-white p-1.5 focus:border-primary focus:ring-primary">
+                        <p class="text-[10px] text-gray-500 mt-1">If left empty, a clean corporate monogram emblem is generated automatically. Uploaded logos are auto-fitted without cropping.</p>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -225,7 +247,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Company <span class="text-red-500">*</span></label>
-                        <input type="text" name="company" id="edit_company" required class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
+                        <input type="text" name="company" id="edit_company" oninput="updateEditLogoInitials()" required class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-primary focus:ring-primary py-2 px-3">
                     </div>
                     <div>
                         <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Job Type</label>
@@ -239,10 +261,27 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Update Company Logo (Optional)</label>
-                    <input type="file" id="edit_job_logo_file" accept="image/*" class="w-full text-xs rounded-xl border border-gray-300 p-1.5 focus:border-primary focus:ring-primary">
-                    <input type="hidden" name="company_logo_base64" id="edit_company_logo_base64">
+                <!-- Smart Auto-Fitted Company Logo Updater & Fallback Emblem Preview -->
+                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center gap-3.5">
+                    <div class="w-14 h-14 rounded-2xl shrink-0 relative overflow-hidden">
+                        <div id="edit_logo_img_wrap" class="w-full h-full rounded-2xl bg-white border border-slate-200 p-1.5 items-center justify-center hidden">
+                            <img id="edit_logo_preview_img" src="" alt="Preview" class="w-full h-full object-contain object-center">
+                        </div>
+                        <div id="edit_logo_emblem_wrap" class="w-full h-full rounded-2xl bg-gradient-to-br from-[#051c45] to-[#1e3a8a] text-white flex items-center justify-center shadow-sm">
+                            <span id="edit_logo_initials" class="text-sm font-black tracking-wider">CA</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-gray-800">Update Company Logo (Auto-Fitted)</label>
+                            <label class="inline-flex items-center gap-1 text-[10px] font-bold text-red-600 cursor-pointer">
+                                <input type="checkbox" name="remove_company_logo" id="edit_remove_logo" value="1" onchange="toggleRemoveEditLogo(this)" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                <span>Use Auto Emblem</span>
+                            </label>
+                        </div>
+                        <input type="file" name="company_logo" id="edit_job_logo_file" accept="image/*" class="w-full text-xs rounded-xl border border-gray-300 bg-white p-1.5 focus:border-primary focus:ring-primary">
+                        <input type="hidden" name="company_logo_base64" id="edit_company_logo_base64">
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -280,12 +319,74 @@
 </div>
 
 <script>
-    document.getElementById('edit_job_logo_file')?.addEventListener('change', function(e) {
-        const file = e.target.files[0];
+    function computeCompanyInitials(name) {
+        const clean = (name || '').replace(/[^A-Za-z0-9\s]/g, '').trim();
+        if (!clean) return 'CA';
+        const parts = clean.split(/\s+/).filter(Boolean);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+        return parts[0].substring(0, 2).toUpperCase();
+    }
+
+    function updateCreateLogoPreview() {
+        const comp = document.getElementById('create_company')?.value || '';
+        const initEl = document.getElementById('create_logo_initials');
+        if (initEl) initEl.innerText = computeCompanyInitials(comp);
+    }
+
+    function previewCreateJobLogo(input) {
+        const file = input.files && input.files[0];
+        const imgWrap = document.getElementById('create_logo_img_wrap');
+        const imgEl = document.getElementById('create_logo_preview_img');
+        const embWrap = document.getElementById('create_logo_emblem_wrap');
         if (file) {
             const reader = new FileReader();
             reader.onload = function(evt) {
+                imgEl.src = evt.target.result;
+                imgWrap.classList.remove('hidden');
+                imgWrap.classList.add('flex');
+                embWrap.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imgWrap.classList.add('hidden');
+            imgWrap.classList.remove('flex');
+            embWrap.classList.remove('hidden');
+        }
+    }
+
+    function updateEditLogoInitials() {
+        const comp = document.getElementById('edit_company')?.value || '';
+        const initEl = document.getElementById('edit_logo_initials');
+        if (initEl) initEl.innerText = computeCompanyInitials(comp);
+    }
+
+    function toggleRemoveEditLogo(checkbox) {
+        const imgWrap = document.getElementById('edit_logo_img_wrap');
+        const embWrap = document.getElementById('edit_logo_emblem_wrap');
+        if (checkbox.checked) {
+            imgWrap.classList.add('hidden');
+            imgWrap.classList.remove('flex');
+            embWrap.classList.remove('hidden');
+        }
+    }
+
+    document.getElementById('edit_job_logo_file')?.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const imgWrap = document.getElementById('edit_logo_img_wrap');
+        const imgEl = document.getElementById('edit_logo_preview_img');
+        const embWrap = document.getElementById('edit_logo_emblem_wrap');
+        const removeCb = document.getElementById('edit_remove_logo');
+        if (file) {
+            if (removeCb) removeCb.checked = false;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
                 document.getElementById('edit_company_logo_base64').value = evt.target.result;
+                imgEl.src = evt.target.result;
+                imgWrap.classList.remove('hidden');
+                imgWrap.classList.add('flex');
+                embWrap.classList.add('hidden');
             };
             reader.readAsDataURL(file);
         }
@@ -303,6 +404,27 @@
             document.getElementById('edit_apply_link').value = job.apply_link || '';
             document.getElementById('edit_description').value = job.description || '';
             document.getElementById('edit_is_active').checked = !!job.is_active;
+            const fileInput = document.getElementById('edit_job_logo_file');
+            if (fileInput) fileInput.value = '';
+            const base64Input = document.getElementById('edit_company_logo_base64');
+            if (base64Input) base64Input.value = '';
+            const removeCb = document.getElementById('edit_remove_logo');
+            if (removeCb) removeCb.checked = false;
+
+            updateEditLogoInitials();
+            const imgWrap = document.getElementById('edit_logo_img_wrap');
+            const imgEl = document.getElementById('edit_logo_preview_img');
+            const embWrap = document.getElementById('edit_logo_emblem_wrap');
+            if (job.company_logo_url) {
+                imgEl.src = job.company_logo_url;
+                imgWrap.classList.remove('hidden');
+                imgWrap.classList.add('flex');
+                embWrap.classList.add('hidden');
+            } else {
+                imgWrap.classList.add('hidden');
+                imgWrap.classList.remove('flex');
+                embWrap.classList.remove('hidden');
+            }
             
             document.getElementById('editJobForm').action = `/admin/jobs/${job.id}`;
             document.getElementById('editJobModal').classList.remove('hidden');

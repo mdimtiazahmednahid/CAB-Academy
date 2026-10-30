@@ -11,62 +11,60 @@
     {!! \App\Models\Setting::getVal('landing_custom_html') !!}
 @else
 
-{{-- 1. Executive Hero Section (Billion-Dollar Apple/Stripe Grade Canvas) --}}
+{{-- 1. Executive Hero Section (Modern Minimalist Apple/Stripe Architecture) --}}
     @if(\App\Models\Setting::getVal('landing_hero_enabled', '1') == '1')
-    <section class="relative min-h-[auto] sm:min-h-[580px] lg:min-h-[640px] flex items-center bg-gradient-to-br from-[#020b18] via-[#041536] via-[#072152] to-[#092b68] text-white py-12 sm:py-20 lg:py-24 overflow-hidden border-b border-slate-800/80">
-        <!-- Multi-Stop Ambient Atmospheric Mesh Glows -->
-        <div class="absolute -top-32 -left-32 w-[30rem] h-[30rem] bg-gradient-to-tr from-[#c30102]/25 to-[#e11d48]/10 rounded-full blur-[120px] pointer-events-none"></div>
-        <div class="absolute -bottom-32 -right-32 w-[30rem] h-[30rem] bg-gradient-to-tl from-[#10b981]/20 to-[#047857]/10 rounded-full blur-[130px] pointer-events-none"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[42rem] h-[32rem] bg-[#0a3275]/25 rounded-full blur-[140px] pointer-events-none"></div>
+    <section class="relative min-h-[auto] sm:min-h-[540px] lg:min-h-[600px] flex items-center bg-[#030f26] bg-gradient-to-b from-[#020b1c] via-[#051c45] to-[#041536] text-white py-14 sm:py-20 lg:py-24 overflow-hidden border-b border-white/10">
+        <!-- Subtle Architectural Ambient Glow -->
+        <div class="absolute -top-40 right-0 w-[36rem] h-[36rem] bg-[#c30102]/12 rounded-full blur-[140px] pointer-events-none"></div>
+        <div class="absolute -bottom-40 left-0 w-[36rem] h-[36rem] bg-[#10b981]/10 rounded-full blur-[140px] pointer-events-none"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
                 
-                <!-- Left Content: CAB Academy Executive Branding -->
-                <div class="lg:col-span-7 space-y-5 sm:space-y-6 text-center lg:text-left">
+                <!-- Left Content: Minimalist Executive Branding -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
 
-                    <div class="space-y-2">
-                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
-                            {{ \App\Models\Setting::getVal('landing_hero_title', 'CAB Academy') }}
+                    <!-- Minimalist Trust Pill -->
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] border border-white/15 text-xs font-medium text-slate-200">
+                        <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+                        <span>{{ \App\Models\Setting::getVal('landing_hero_alumni_text', '10,000+ Corporate Alumni') }}</span>
+                    </div>
+
+                    @php
+                        $heroTitleText = \App\Models\Setting::getVal('landing_hero_title', \App\Models\Setting::getVal('site_name', 'CAB Academy'));
+                        $heroTitleSizing = \App\Models\Setting::getBrandSizing($heroTitleText);
+                    @endphp
+                    <div class="space-y-3">
+                        <h1 class="font-black tracking-tight text-white" style="{{ $heroTitleSizing['hero_style'] }}">
+                            {{ $heroTitleText }}
                         </h1>
-                        <div>
-                            <h3 class="inline-block bg-gradient-to-r from-[#c30102] via-[#d60102] to-[#c30102] text-white px-3 sm:px-4 py-1 rounded-lg text-xl sm:text-3xl lg:text-4xl font-black tracking-tight shadow-[0_8px_25px_rgba(195,1,2,0.45)] border border-white/20">
-                                {{ \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.') }}
-                            </h3>
-                        </div>
+                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-200">
+                            {{ \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.') }}
+                        </h3>
                     </div>
                     
-                    <p class="text-sm sm:text-lg text-slate-200/90 font-normal max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    <p class="text-sm sm:text-base lg:text-lg text-slate-300/90 font-normal max-w-xl mx-auto lg:mx-0 leading-relaxed">
                         {{ \App\Models\Setting::getVal('landing_hero_subtitle', 'Online Professional Certification Masterclasses & Corporate Programs.') }}
                     </p>
 
                     <!-- Call-to-Action Buttons -->
-                    <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
-                        <a href="{{ \App\Models\Setting::getVal('landing_hero_cta1_url', '#home-category') }}" class="btn-ipdp-primary px-7 sm:px-9 py-3.5 sm:py-4 rounded-xl text-white text-xs sm:text-sm font-black uppercase tracking-wider shadow-[0_10px_25px_-5px_rgba(195,1,2,0.45)] flex items-center justify-center gap-2.5 transition-all hover:scale-105 active:scale-95 flex-1 sm:flex-initial text-center group">
+                    <div class="pt-1 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
+                        <a href="{{ \App\Models\Setting::getVal('landing_hero_cta1_url', '#home-category') }}" class="btn-ipdp-primary px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl text-white text-xs sm:text-sm font-bold tracking-wide flex items-center justify-center gap-2.5 transition-all flex-1 sm:flex-initial text-center group">
                             <span>{{ \App\Models\Setting::getVal('landing_hero_cta1_text', \App\Models\Setting::getVal('landing_cta_text', 'Explore Courses')) }}</span>
                             <i class="fas fa-arrow-down text-xs group-hover:translate-y-0.5 transition-transform"></i>
                         </a>
 
-                        <a href="{{ \App\Models\Setting::getVal('landing_hero_cta2_url', route('catalog.category', 'export-import')) }}" class="px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/25 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all flex-1 sm:flex-initial text-center">
+                        <a href="{{ \App\Models\Setting::getVal('landing_hero_cta2_url', route('catalog.category', 'export-import')) }}" class="px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-white/[0.07] hover:bg-white/[0.14] text-white border border-white/15 text-xs sm:text-sm font-semibold tracking-wide flex items-center justify-center gap-2 transition-all flex-1 sm:flex-initial text-center">
                             <span>{{ \App\Models\Setting::getVal('landing_hero_cta2_text', 'Export – Import') }}</span>
-                            <i class="fas fa-chevron-right text-xs"></i>
+                            <i class="fas fa-chevron-right text-[10px] opacity-80"></i>
                         </a>
-                    </div>
-
-                    <!-- Marketing Trust Reassurance Line -->
-                    <div class="pt-2 flex items-center justify-center lg:justify-start">
-                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-sm text-xs font-semibold text-slate-200">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <i class="fas fa-user-graduate text-[#c30102]"></i>
-                            <span>{{ \App\Models\Setting::getVal('landing_hero_alumni_text', '10,000+ Corporate Alumni') }}</span>
-                        </div>
                     </div>
                 </div>
 
-                <!-- Right Video / Visual Showcase (Apple / MasterClass Luxury Acrylic Bezel) -->
+                <!-- Right Video / Visual Showcase (Minimalist Architectural Frame) -->
                 <div class="lg:col-span-5">
-                    <div class="relative p-1.5 sm:p-2 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-white/25 via-white/10 to-white/5 backdrop-blur-2xl shadow-[0_30px_70px_-15px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.2)]">
-                        <div class="relative rounded-xl sm:rounded-2xl overflow-hidden aspect-video sm:aspect-[4/3] flex items-center justify-center bg-slate-900 group">
+                    <div class="relative p-2 rounded-2xl bg-white/[0.06] border border-white/15 shadow-2xl">
+                        <div class="relative rounded-xl overflow-hidden aspect-video sm:aspect-[4/3] flex items-center justify-center bg-slate-900 group">
                             @php
                                 $heroMediaImg = \App\Models\Setting::getVal('landing_hero_media_image', 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80');
                                 $heroMediaLink = \App\Models\Setting::getVal('landing_hero_media_link', route('catalog.index'));
@@ -74,19 +72,18 @@
                             <img 
                                 src="{{ $heroMediaImg }}" 
                                 alt="{{ \App\Models\Setting::getVal('landing_hero_title', 'CAB Academy') }} Executive Training" 
-                                class="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:scale-105 transition-transform duration-700"
+                                class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1000&q=80';"
                             >
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#020b18] via-black/35 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#020b18]/80 via-black/25 to-transparent"></div>
                             
-                            <!-- Glowing Concentric Play Button -->
+                            <!-- Minimalist Play Trigger -->
                             <a 
                                 href="{{ $heroMediaLink }}" 
-                                class="relative z-10 w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-[#c30102] via-[#e11d48] to-[#ff4d6d] text-white flex items-center justify-center shadow-[0_0_40px_rgba(195,1,2,0.7)] hover:scale-110 hover:shadow-[0_0_55px_rgba(195,1,2,0.95)] transition-all duration-300"
+                                class="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#c30102] hover:bg-[#a50102] text-white flex items-center justify-center shadow-xl hover:scale-105 transition-all duration-300 border border-white/20"
                                 aria-label="Explore Courses"
                             >
-                                <span class="absolute inset-0 rounded-full bg-[#c30102] animate-ping opacity-25"></span>
-                                <i class="fas fa-play text-lg sm:text-2xl ml-0.5 sm:ml-1 text-white relative z-10"></i>
+                                <i class="fas fa-play text-base sm:text-lg ml-0.5 text-white"></i>
                             </a>
 
                         </div>
@@ -98,16 +95,14 @@
     </section>
     @endif
 
-{{-- 2. "Our Valuable Clients" (Grid of Corporate Partners) --}}
+{{-- 2. "Our Valuable Clients" (Minimalist Enterprise Sector Grid) --}}
     @if(\App\Models\Setting::getVal('landing_clients_enabled', '1') == '1')
-    <section class="py-12 sm:py-16 bg-gradient-to-b from-slate-50/90 via-white to-slate-50/60 border-b border-slate-200/80">
+    <section class="py-10 sm:py-14 bg-white border-b border-slate-200/70">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8 sm:mb-10">
-                <span class="inline-block text-[11px] font-black uppercase tracking-widest text-[#c30102] mb-1.5">Executive Professional Training & Enterprise Cohorts</span>
-                <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-[#041536] tracking-tight uppercase">
+            <div class="text-center mb-6 sm:mb-8">
+                <h2 class="text-lg sm:text-xl font-bold text-[#051c45] tracking-tight">
                     {{ \App\Models\Setting::getVal('landing_clients_title', 'Industry Sectors & Enterprise Training') }}
                 </h2>
-                <div class="w-12 h-1 bg-gradient-to-r from-[#041536] via-[#c30102] to-[#10b981] mx-auto mt-2.5 rounded-full"></div>
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-2.5 sm:gap-4 items-center">
@@ -244,7 +239,7 @@
                         @foreach($runningCategories as $cat)
                             <a 
                                 href="{{ route('catalog.category', $cat['slug']) }}" 
-                                class="category-nav-pill shrink-0 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-gradient-to-r hover:from-[#041536] hover:via-[#072152] hover:to-[#041536] text-[#0f172a] hover:text-white border border-slate-200/90 hover:border-[#0a2e6b] text-xs font-bold transition-all duration-300 group shadow-[0_2px_8px_-2px_rgba(4,21,54,0.06)] hover:shadow-[0_8px_20px_-4px_rgba(4,21,54,0.28)] hover:scale-105 active:scale-95 cursor-pointer"
+                                class="liquid-glass-pill category-nav-pill shrink-0 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-gradient-to-r hover:from-[#041536] hover:via-[#072152] hover:to-[#041536] text-[#0f172a] hover:text-white border border-slate-200/90 hover:border-[#0a2e6b] text-xs font-bold transition-all duration-300 group shadow-[0_2px_8px_-2px_rgba(4,21,54,0.06)] hover:shadow-[0_8px_20px_-4px_rgba(4,21,54,0.28)] hover:scale-105 active:scale-95 cursor-pointer"
                             >
                                 <span class="w-6 h-6 rounded-full bg-slate-100 group-hover:bg-[#c30102] text-[#c30102] group-hover:text-white flex items-center justify-center shrink-0 transition-all duration-300 shadow-inner group-hover:shadow-[0_0_10px_rgba(195,1,2,0.6)]">
                                     <i class="fas {{ $cat['icon'] }} text-[10px] transition-colors"></i>
@@ -290,13 +285,14 @@
                 <!-- 10ms-Style Clean Section Masthead -->
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-10 gap-4">
                     <div>
+                        @if(\App\Models\Setting::getVal('landing_courses_badge'))
                         <div class="flex items-center gap-2 mb-2">
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#051c45]/10 text-[#051c45] text-[10px] font-black uppercase tracking-widest border border-[#051c45]/15">
                                 <i class="fas fa-graduation-cap text-[#c30102]"></i>
-                                <span>{{ \App\Models\Setting::getVal('landing_courses_badge', 'Professional Masterclasses') }}</span>
+                                <span>{{ \App\Models\Setting::getVal('landing_courses_badge') }}</span>
                             </span>
-                            <span class="text-xs text-slate-400 font-semibold">• Live Online Zoom & Campus</span>
                         </div>
+                        @endif
                         <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-[#041536] tracking-tight">
                             {{ \App\Models\Setting::getVal('landing_courses_title', 'Industry Masterclasses & Courses') }}
                         </h2>
@@ -361,7 +357,7 @@
                 </div>
 
                 <!-- Unified 4-Column Clean Course Grid (Preserves .bg-[#f0f8ec] for Cypress test hook) -->
-                <div class="bg-[#f0f8ec] bg-opacity-25 rounded-3xl p-3 sm:p-5 border border-emerald-500/15">
+                <div class="bg-[#f0f8ec] !bg-transparent">
                     
                     <!-- TAB 1: ALL COURSES (Default) -->
                     <div x-show="activeCourseTab === 'all'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
@@ -431,24 +427,52 @@
                 </div>
             </div>
 
-            <!-- Job Cards Grid -->
+            <!-- Job Cards Grid (Liquid Glass Architecture) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                @php
+                    $homeJobGradients = [
+                        'from-[#051c45] via-[#0a2540] to-[#1e3a8a]',
+                        'from-[#7f1d1d] via-[#991b1b] to-[#c30102]',
+                        'from-[#064e3b] via-[#065f46] to-[#059669]',
+                        'from-[#1e1b4b] via-[#312e81] to-[#4338ca]',
+                        'from-[#0f172a] via-[#1e293b] to-[#334155]',
+                    ];
+                @endphp
                 @foreach($jobs as $job)
-                    <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-[0_4px_16px_rgba(4,21,54,0.05)] hover:shadow-[0_20px_45px_-10px_rgba(4,21,54,0.14)] hover:border-[#c30102]/30 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1.5 relative overflow-hidden">
+                    @php
+                        $jComp = $job->company ?? 'Corporate Partner';
+                        $jWords = array_values(array_filter(explode(' ', preg_replace('/[^A-Za-z0-9\s]/', '', $jComp))));
+                        $jInit = count($jWords) >= 2
+                            ? strtoupper(substr($jWords[0], 0, 1) . substr($jWords[1], 0, 1))
+                            : strtoupper(substr($jWords[0] ?? 'CA', 0, 2));
+                        $jGrad = $homeJobGradients[crc32($jComp) % count($homeJobGradients)];
+                    @endphp
+                    <div class="liquid-glass-card bg-white/85 rounded-2xl sm:rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-[0_4px_16px_rgba(4,21,54,0.05)] hover:shadow-[0_20px_45px_-10px_rgba(4,21,54,0.14)] hover:border-[#c30102]/30 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1.5 relative overflow-hidden">
                         
                         <!-- Top Accent Line -->
                         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#041536] via-[#c30102] to-[#10b981] opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
                         <div>
-                            <!-- Header: Badges & Logo -->
+                            <!-- Header: Badges & Auto-Fitted Logo / Rich Monogram Emblem -->
                             <div class="flex items-start justify-between gap-3 mb-4">
-                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#041536]/10 to-[#041536]/5 text-[#041536] border border-slate-200/60 flex items-center justify-center text-lg font-black group-hover:scale-105 transition-transform shrink-0 shadow-sm">
+                                <div class="relative w-14 h-14 rounded-2xl group-hover:scale-105 transition-transform shrink-0">
                                     @if(!empty($job->company_logo))
-                                        <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company ?? 'Company' }}" class="w-full h-full object-cover rounded-2xl" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
-                                        <span style="display:none;">{{ substr($job->company ?? 'CAB', 0, 2) }}</span>
+                                        <div class="w-full h-full rounded-2xl bg-white border border-slate-200/90 shadow-sm p-1.5 flex items-center justify-center overflow-hidden">
+                                            <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $jComp }}" class="w-full h-full object-contain object-center" onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='flex';">
+                                        </div>
+                                        <div style="display:none;" class="w-full h-full rounded-2xl bg-gradient-to-br {{ $jGrad }} text-white shadow-md border border-white/25 items-center justify-center relative overflow-hidden">
+                                            <i class="fas fa-building absolute -bottom-2 -right-2 text-2xl text-white/10 pointer-events-none"></i>
+                                            <span class="text-base font-black tracking-wider relative z-10">{{ $jInit }}</span>
+                                        </div>
                                     @else
-                                        <span>{{ substr($job->company ?? 'CAB', 0, 2) }}</span>
+                                        <div class="w-full h-full rounded-2xl bg-gradient-to-br {{ $jGrad }} text-white shadow-md border border-white/25 flex items-center justify-center relative overflow-hidden">
+                                            <i class="fas fa-building absolute -bottom-2 -right-2 text-2xl text-white/10 pointer-events-none"></i>
+                                            <span class="text-base font-black tracking-wider relative z-10">{{ $jInit }}</span>
+                                        </div>
                                     @endif
+                                    <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-white border-2 border-white flex items-center justify-center text-[7px] shadow-xs">
+                                        <i class="fas fa-check"></i>
+                                    </span>
                                 </div>
                                 <div class="flex flex-col items-end gap-1.5">
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/60">
@@ -518,7 +542,7 @@
             </div>
 
             <!-- Corporate Hiring Partner Callout Bar -->
-            <div class="mt-10 sm:mt-12 bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="liquid-glass-card mt-10 sm:mt-12 bg-white/85 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#041536] text-white flex items-center justify-center text-xl sm:text-2xl shrink-0 shadow-md">
                         <i class="fas fa-handshake"></i>
@@ -543,41 +567,44 @@
     </section>
     @endif
 
-    {{-- 6. Executive Counseling & Admissions Hotline Section --}}
+    {{-- 6. Executive Counseling & Admissions Hotline Section (Minimalist Imperial Navy) --}}
     @if(\App\Models\Setting::getVal('landing_counseling_enabled', '1') == '1')
-    <section class="py-12 sm:py-20 bg-gradient-to-r from-[#022b1e] via-[#045037] via-[#066345] to-[#033726] relative overflow-hidden text-white shadow-2xl">
-        <!-- Ambient Jewel Glows -->
-        <div class="absolute -top-24 -left-24 w-96 h-96 bg-emerald-400/15 rounded-full blur-[100px] pointer-events-none"></div>
-        <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-amber-400/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <section class="py-12 sm:py-16 bg-[#f8fafc] border-b border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-[#051c45] rounded-3xl p-8 sm:p-12 lg:p-14 text-center text-white relative overflow-hidden shadow-xl border border-white/10">
+                <div class="absolute -top-24 -right-24 w-80 h-80 bg-[#c30102]/15 rounded-full blur-[90px] pointer-events-none"></div>
+                <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-[#10b981]/12 rounded-full blur-[90px] pointer-events-none"></div>
 
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-            <h2 class="text-2xl sm:text-4xl font-black mb-3 text-white tracking-tight">
-                {{ \App\Models\Setting::getVal('landing_counseling_title', 'Need To Learn More ?') }}
-            </h2>
-            <p class="text-xs sm:text-base text-emerald-100/90 max-w-2xl mx-auto mb-6 sm:mb-8 font-normal leading-relaxed">
-                {{ \App\Models\Setting::getVal('landing_counseling_subtitle', 'Connect with our academic counselors for corporate training customized for your organization, batch reservations, or curriculum guidance.') }}
-            </p>
-            <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
-                @php
-                    $phoneLabel = \App\Models\Setting::getVal('landing_counseling_phone_label', 'Call: 01917-054664');
-                    $phoneTel = \App\Models\Setting::getVal('landing_counseling_phone_tel', '01917054664');
-                    $waLabel = \App\Models\Setting::getVal('landing_counseling_wa_label', 'Instant WhatsApp');
-                    $waNumber = \App\Models\Setting::getVal('landing_counseling_wa_number', '8801917054664');
-                    $btn3Text = \App\Models\Setting::getVal('landing_counseling_btn3_text', 'Explore Export – Import');
-                    $btn3Url = \App\Models\Setting::getVal('landing_counseling_btn3_url', route('catalog.category', 'export-import'));
-                @endphp
-                <a href="tel:{{ $phoneTel }}" class="btn-ipdp-primary px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-xs sm:text-sm shadow-[0_10px_25px_rgba(195,1,2,0.45)] flex items-center justify-center gap-2 hover:scale-105 transition-all w-full sm:w-auto">
-                    <i class="fas fa-phone-alt"></i>
-                    <span>{{ $phoneLabel }}</span>
-                </a>
-                <a href="https://wa.me/{{ $waNumber }}" target="_blank" rel="noopener noreferrer" class="bg-[#25D366] hover:bg-[#20ba5a] text-white px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-xs sm:text-sm shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105 w-full sm:w-auto">
-                    <i class="fab fa-whatsapp text-base"></i>
-                    <span>{{ $waLabel }}</span>
-                </a>
-                <a href="{{ $btn3Url }}" class="bg-white text-[#041536] hover:bg-slate-100 px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl font-black text-xs sm:text-sm shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:scale-105 w-full sm:w-auto">
-                    <span>{{ $btn3Text }}</span>
-                    <i class="fas fa-arrow-right text-xs"></i>
-                </a>
+                <div class="relative z-10 max-w-2xl mx-auto">
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black mb-3 text-white tracking-tight">
+                        {{ \App\Models\Setting::getVal('landing_counseling_title', 'Need To Learn More ?') }}
+                    </h2>
+                    <p class="text-xs sm:text-base text-slate-300 mb-7 font-normal leading-relaxed">
+                        {{ \App\Models\Setting::getVal('landing_counseling_subtitle', 'Connect with our academic counselors for corporate training customized for your organization, batch reservations, or curriculum guidance.') }}
+                    </p>
+                    <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
+                        @php
+                            $phoneLabel = \App\Models\Setting::getVal('landing_counseling_phone_label', 'Call: 01917-054664');
+                            $phoneTel = \App\Models\Setting::getVal('landing_counseling_phone_tel', '01917054664');
+                            $waLabel = \App\Models\Setting::getVal('landing_counseling_wa_label', 'Instant WhatsApp');
+                            $waNumber = \App\Models\Setting::getVal('landing_counseling_wa_number', '8801917054664');
+                            $btn3Text = \App\Models\Setting::getVal('landing_counseling_btn3_text', 'Explore Export – Import');
+                            $btn3Url = \App\Models\Setting::getVal('landing_counseling_btn3_url', route('catalog.category', 'export-import'));
+                        @endphp
+                        <a href="tel:{{ $phoneTel }}" class="btn-ipdp-primary px-7 py-3.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all w-full sm:w-auto">
+                            <i class="fas fa-phone-alt"></i>
+                            <span>{{ $phoneLabel }}</span>
+                        </a>
+                        <a href="https://wa.me/{{ $waNumber }}" target="_blank" rel="noopener noreferrer" class="bg-[#25D366] hover:bg-[#20ba5a] text-white px-7 py-3.5 rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 w-full sm:w-auto">
+                            <i class="fab fa-whatsapp text-base"></i>
+                            <span>{{ $waLabel }}</span>
+                        </a>
+                        <a href="{{ $btn3Url }}" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-7 py-3.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 w-full sm:w-auto">
+                            <span>{{ $btn3Text }}</span>
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -608,7 +635,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 @foreach($landingInstructors as $inst)
-                    <div class="bg-slate-50/60 rounded-3xl border border-slate-200/80 p-5 sm:p-6 text-center shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group flex flex-col justify-between hover:border-[#c30102]/30 hover:bg-white">
+                    <div class="liquid-glass-card bg-white/85 rounded-3xl border border-slate-200/80 p-5 sm:p-6 text-center shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 group flex flex-col justify-between hover:border-[#c30102]/30">
                         <div>
                             <div class="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full overflow-hidden mb-4 border-4 border-white shadow-md bg-white ring-2 ring-slate-200 group-hover:ring-[#c30102]/40 transition-all duration-300">
                                 <img src="{{ $inst->avatar_url }}" alt="{{ $inst->name }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($inst->name) }}&background=051c45&color=fff';">
@@ -702,7 +729,7 @@
                 @endphp
 
                 @foreach($features as $feat)
-                    <div class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(4,21,54,0.04)] hover:shadow-[0_18px_40px_-8px_rgba(4,21,54,0.14)] hover:border-[#c30102]/30 transition-all duration-300 group hover:-translate-y-1.5 flex flex-col justify-between">
+                    <div class="liquid-glass-card bg-white/85 p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-[0_2px_12px_rgba(4,21,54,0.04)] hover:shadow-[0_18px_40px_-8px_rgba(4,21,54,0.14)] hover:border-[#c30102]/30 transition-all duration-300 group hover:-translate-y-1.5 flex flex-col justify-between">
                         <div>
                             <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#041536]/5 text-[#041536] group-hover:bg-gradient-to-tr group-hover:from-[#c30102] group-hover:to-[#e11d48] group-hover:text-white transition-all duration-300 flex items-center justify-center text-xl sm:text-2xl mb-4 sm:mb-5 shadow-sm">
                                 <i class="fas {{ $feat['icon'] }}"></i>
@@ -750,7 +777,7 @@
                     ];
                 @endphp
                 @foreach($recentBlogs as $blog)
-                    <article class="group bg-white rounded-2xl sm:rounded-3xl shadow-[0_4px_16px_rgba(4,21,54,0.06)] hover:shadow-[0_20px_45px_-10px_rgba(4,21,54,0.16)] border border-slate-200/90 hover:border-[#c30102]/30 overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-1.5">
+                    <article class="liquid-glass-card group bg-white/85 rounded-2xl sm:rounded-3xl shadow-[0_4px_16px_rgba(4,21,54,0.06)] hover:shadow-[0_20px_45px_-10px_rgba(4,21,54,0.16)] border border-slate-200/90 hover:border-[#c30102]/30 overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-1.5">
                         <!-- Cover Image -->
                         <div class="relative aspect-video w-full overflow-hidden bg-slate-900">
                             <a href="{{ route('blog.show', $blog->slug) }}">
@@ -823,6 +850,58 @@
             </div>
         </div>
     </section>
+    @endif
+
+    {{-- 10. Dynamic Admin-Created Custom Homepage Sections --}}
+    @php
+        $customHomeSections = \App\Models\Setting::getCustomSections(true);
+    @endphp
+    @if(!empty($customHomeSections))
+        @foreach($customHomeSections as $cSec)
+            @php
+                $secTheme = $cSec['theme'] ?? 'white';
+                $secBgClass = match($secTheme) {
+                    'navy' => 'bg-gradient-to-br from-[#020b1c] via-[#051c45] to-[#0a2540] text-white border-b border-white/10',
+                    'slate' => 'bg-[#f8fafc] text-slate-900 border-b border-slate-200/80',
+                    default => 'bg-white text-slate-900 border-b border-slate-200/80',
+                };
+                $secTitleClass = $secTheme === 'navy' ? 'text-white' : 'text-[#051c45]';
+                $secSubClass = $secTheme === 'navy' ? 'text-slate-300' : 'text-slate-600';
+            @endphp
+            <section id="section-{{ $cSec['id'] ?? $loop->index }}" class="py-12 sm:py-16 {{ $secBgClass }}">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="max-w-3xl mx-auto text-center space-y-4">
+                        @if(!empty($cSec['badge']))
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider {{ $secTheme === 'navy' ? 'bg-white/10 text-emerald-300 border border-white/15' : 'bg-[#051c45]/8 text-[#051c45]' }}">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>
+                                <span>{{ $cSec['badge'] }}</span>
+                            </span>
+                        @endif
+                        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight {{ $secTitleClass }}">
+                            {{ $cSec['title'] }}
+                        </h2>
+                        @if(!empty($cSec['subtitle']))
+                            <p class="text-sm sm:text-base font-medium {{ $secSubClass }}">
+                                {{ $cSec['subtitle'] }}
+                            </p>
+                        @endif
+                        @if(!empty($cSec['content']))
+                            <div class="pt-2 text-sm sm:text-base leading-relaxed {{ $secSubClass }} prose max-w-none {{ $secTheme === 'navy' ? 'prose-invert' : '' }}">
+                                {!! $cSec['content'] !!}
+                            </div>
+                        @endif
+                        @if(!empty($cSec['cta_text']))
+                            <div class="pt-4">
+                                <a href="{{ $cSec['cta_url'] ?: route('catalog.index') }}" class="btn-ipdp-primary inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold text-white shadow-md">
+                                    <span>{{ $cSec['cta_text'] }}</span>
+                                    <i class="fas fa-arrow-right text-[11px]"></i>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </section>
+        @endforeach
     @endif
 
 @endif

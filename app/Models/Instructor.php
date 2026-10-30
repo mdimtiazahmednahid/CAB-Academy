@@ -30,8 +30,8 @@ class Instructor extends Model
 
     protected static function booted(): void
     {
-        static::creating(function ($instructor) {
-            if (empty($instructor->user_id)) {
+        static::saving(function ($instructor) {
+            if (empty($instructor->user_id) || !User::where('id', $instructor->user_id)->exists()) {
                 $user = null;
                 if (!empty($instructor->email)) {
                     $user = User::where('email', $instructor->email)->first();
@@ -70,6 +70,7 @@ class Instructor extends Model
                 $userWithEmail = User::where('email', $instructor->email)->first();
                 if ($userWithEmail && (!$user || $user->id !== $userWithEmail->id)) {
                     $instructor->user_id = $userWithEmail->id;
+                    $instructor->saveQuietly();
                     $user = $userWithEmail;
                 }
             }
@@ -108,6 +109,19 @@ class Instructor extends Model
                 }
             }
         });
+    }
+
+    /**
+     * Determine whether this instructor profile has been customized beyond the default seeded placeholder.
+     */
+    public function isCustomized(): bool
+    {
+        $avatar = trim((string) ($this->avatar ?: ($this->user?->profile_picture ?? '')));
+        if ($avatar !== '') {
+            return true;
+        }
+        $name = trim((string) $this->name);
+        return $name !== '' && !str_starts_with($name, 'Faculty Chair');
     }
 
     public function user()

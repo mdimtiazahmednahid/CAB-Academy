@@ -13,7 +13,10 @@ class InstructorController extends Controller
      */
     public function index()
     {
-        $instructors = Instructor::orderBy('order', 'asc')
+        \App\Support\DatabaseSchemaRepair::repairInstructorCourseLinks();
+
+        $instructors = Instructor::with('courses')
+            ->orderBy('order', 'asc')
             ->latest('id')
             ->paginate(15);
 
@@ -25,7 +28,8 @@ class InstructorController extends Controller
      */
     public function create()
     {
-        return view('admin.instructors.create');
+        $courses = \App\Models\Course::orderBy('id')->get();
+        return view('admin.instructors.create', compact('courses'));
     }
 
     /**
@@ -46,15 +50,21 @@ class InstructorController extends Controller
             'order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
             'password' => 'nullable|string|min:6',
+            'course_ids' => 'nullable|array',
+            'course_ids.*' => 'integer|exists:courses,id',
+            'sync_all_courses' => 'nullable|boolean',
         ]);
 
         $initialPassword = $request->input('password');
-        unset($validated['password']);
+        unset($validated['password'], $validated['course_ids'], $validated['sync_all_courses']);
+
+        @mkdir(public_path('uploads/instructors'), 0775, true);
+        @mkdir(public_path('storage/instructors'), 0775, true);
 
         if ($request->hasFile('avatar_file')) {
             $path = $request->file('avatar_file')->store('instructors', 'public');
             try {
-                if (is_dir(public_path('storage/instructors')) && file_exists(public_path('uploads/' . $path))) {
+                if (file_exists(public_path('uploads/' . $path))) {
                     @copy(public_path('uploads/' . $path), public_path('storage/' . $path));
                 }
             } catch (\Throwable $e) {}
@@ -68,9 +78,7 @@ class InstructorController extends Controller
                 if ($data !== false) {
                     $filename = 'instructor_' . time() . '_' . uniqid() . '.' . $type;
                     \Illuminate\Support\Facades\Storage::disk('public')->put('instructors/' . $filename, $data);
-                    if (is_dir(public_path('storage/instructors'))) {
-                        @file_put_contents(public_path('storage/instructors/' . $filename), $data);
-                    }
+                    @file_put_contents(public_path('storage/instructors/' . $filename), $data);
                     $validated['avatar'] = 'instructors/' . $filename;
                 }
             }
@@ -141,7 +149,15 @@ class InstructorController extends Controller
             }
         }
 
-        return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile created successfully.');
+        if ($instructor->user_id) {
+            if ($request->boolean('sync_all_courses')) {
+                \App\Models\Course::query()->update(['instructor_id' => $instructor->user_id]);
+            } elseif ($request->filled('course_ids')) {
+                \App\Models\Course::whereIn('id', (array) $request->input('course_ids'))->update(['instructor_id' => $instructor->user_id]);
+            }
+        }
+
+        return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile created and synced across courses successfully.');
     }
 
     /**
@@ -149,7 +165,9 @@ class InstructorController extends Controller
      */
     public function edit(Instructor $instructor)
     {
-        return view('admin.instructors.edit', compact('instructor'));
+        \App\Support\DatabaseSchemaRepair::repairInstructorCourseLinks();
+        $courses = \App\Models\Course::orderBy('id')->get();
+        return view('admin.instructors.edit', compact('instructor', 'courses'));
     }
 
     /**
@@ -170,12 +188,19 @@ class InstructorController extends Controller
             'order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
             'password' => 'nullable|string|min:6',
+            'course_ids' => 'nullable|array',
+            'course_ids.*' => 'integer|exists:courses,id',
+            'sync_all_courses' => 'nullable|boolean',
+            'remove_avatar' => 'nullable|boolean',
         ]);
+
+        @mkdir(public_path('uploads/instructors'), 0775, true);
+        @mkdir(public_path('storage/instructors'), 0775, true);
 
         if ($request->hasFile('avatar_file')) {
             $path = $request->file('avatar_file')->store('instructors', 'public');
             try {
-                if (is_dir(public_path('storage/instructors')) && file_exists(public_path('uploads/' . $path))) {
+                if (file_exists(public_path('uploads/' . $path))) {
                     @copy(public_path('uploads/' . $path), public_path('storage/' . $path));
                 }
             } catch (\Throwable $e) {}
@@ -189,14 +214,17 @@ class InstructorController extends Controller
                 if ($data !== false) {
                     $filename = 'instructor_' . time() . '_' . uniqid() . '.' . $type;
                     \Illuminate\Support\Facades\Storage::disk('public')->put('instructors/' . $filename, $data);
-                    if (is_dir(public_path('storage/instructors'))) {
-                        @file_put_contents(public_path('storage/instructors/' . $filename), $data);
-                    }
+                    @file_put_contents(public_path('storage/instructors/' . $filename), $data);
                     $validated['avatar'] = 'instructors/' . $filename;
                 }
             }
+        } elseif ($request->boolean('remove_avatar')) {
+            $validated['avatar'] = null;
+        } elseif (!$request->filled('avatar') && $instructor->avatar) {
+            // Preserve existing uploaded avatar if URL input was left blank
+            $validated['avatar'] = $instructor->avatar;
         }
-        unset($validated['avatar_base64'], $validated['avatar_file']);
+        unset($validated['avatar_base64'], $validated['avatar_file'], $validated['course_ids'], $validated['sync_all_courses'], $validated['remove_avatar']);
 
         $newPassword = $request->input('password');
         unset($validated['password']);
@@ -205,6 +233,7 @@ class InstructorController extends Controller
         $validated['is_active'] = $request->has('is_active');
 
         $instructor->update($validated);
+        $instructor->refresh();
 
         // Keep linked user record in sync safely
         $user = null;
@@ -231,6 +260,11 @@ class InstructorController extends Controller
             }
             if ($instructor->avatar) {
                 $user->profile_picture = $instructor->avatar;
+            } elseif ($request->boolean('remove_avatar')) {
+                $user->profile_picture = null;
+            }
+            if (!empty($instructor->phone)) {
+                $user->phone = $instructor->phone;
             }
             if (!empty($newPassword)) {
                 $user->password = bcrypt($newPassword);
@@ -242,7 +276,15 @@ class InstructorController extends Controller
             }
         }
 
-        return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile updated successfully.');
+        if ($instructor->user_id) {
+            if ($request->boolean('sync_all_courses')) {
+                \App\Models\Course::query()->update(['instructor_id' => $instructor->user_id]);
+            } elseif ($request->has('course_ids')) {
+                \App\Models\Course::whereIn('id', (array) $request->input('course_ids', []))->update(['instructor_id' => $instructor->user_id]);
+            }
+        }
+
+        return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile updated and synced across all pages successfully.');
     }
 
     /**

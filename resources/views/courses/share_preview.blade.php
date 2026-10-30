@@ -18,10 +18,9 @@
     $shortUrl = $course->short_url;
     $enrollUrl = route('courses.show', $course) . '?enroll=true';
     
-    $leadInst = $course->lead_faculty ?? $course->instructorProfile ?? $course->instructor;
-    $instName = $leadInst ? $leadInst->name : 'CAB Academy Senior Faculty';
-    $instAvatar = $leadInst ? ($leadInst->avatar_url ?? $leadInst->profile_picture_url ?? null) : null;
-    $instTitle = $leadInst ? ($leadInst->title ?? 'Executive Trade & Customs Specialist') : 'Executive Trade & Customs Specialist';
+    $instName = $course->instructor_name;
+    $instAvatar = $course->instructor_avatar_url;
+    $instTitle = $course->instructor_title;
 @endphp
 <!DOCTYPE html>
 <html lang="en" prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">

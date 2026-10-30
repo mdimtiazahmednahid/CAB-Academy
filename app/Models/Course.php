@@ -82,11 +82,14 @@ class Course extends Model
                 $course->attributes['thumbnail'] = $img;
             }
 
-            // Ensure instructor_id points to users.id even if an instructors.id was passed
+            // Ensure instructor_id points to users.id only if instructor_id is not already a valid users.id
             if (!empty($course->instructor_id)) {
-                $inst = Instructor::find($course->instructor_id);
-                if ($inst && $inst->user_id) {
-                    $course->instructor_id = $inst->user_id;
+                $userExists = User::where('id', $course->instructor_id)->exists();
+                if (!$userExists) {
+                    $inst = Instructor::find($course->instructor_id);
+                    if ($inst && $inst->user_id) {
+                        $course->instructor_id = $inst->user_id;
+                    }
                 }
             }
         });
@@ -187,6 +190,54 @@ class Course extends Model
         return 'https://www.linkedin.com/sharing/share-offsite/?url=' . urlencode($this->short_url);
     }
 
+    public function getFormattedPriceAttribute(): string
+    {
+        return $this->price > 0 ? '৳' . number_format((float) $this->price, 0) : 'Free';
+    }
+
+    public function getBatchNoAttribute(): ?string
+    {
+        return $this->batch;
+    }
+
+    /**
+     * Resolve course attendance mode from venue ('online', 'in_person', or 'hybrid').
+     */
+    public function getAttendanceModeAttribute(): string
+    {
+        $venue = strtolower(trim((string) ($this->venue ?? '')));
+        if ($venue === '') {
+            return 'online';
+        }
+
+        if (str_contains($venue, 'hybrid') || str_contains($venue, 'both')) {
+            return 'hybrid';
+        }
+
+        $hasOnline = (bool) preg_match('/(online|zoom|virtual|webinar|meet)/i', $venue);
+        $hasCampus = (bool) preg_match('/(campus|in-person|in\s+person|offline|classroom|training\s+room|mirpur|pallabi|banani|uttara|physical)/i', $venue);
+
+        if ($hasOnline && $hasCampus) {
+            return 'hybrid';
+        }
+
+        if ($hasCampus && !$hasOnline) {
+            return 'in_person';
+        }
+
+        return 'online';
+    }
+
+    public function isOnlineOnly(): bool
+    {
+        return $this->attendance_mode === 'online';
+    }
+
+    public function isCampusOnly(): bool
+    {
+        return $this->attendance_mode === 'in_person';
+    }
+
     public function instructor()
     {
         return $this->belongsTo(User::class, 'instructor_id');
@@ -198,25 +249,99 @@ class Course extends Model
     }
 
     /**
-     * Bulletproof Lead Faculty resolver handling both User ID and Instructor ID foreign keys.
+     * Bulletproof Lead Faculty resolver handling User ID, Instructor ID, and customized Faculty sync across all pages.
      */
     public function getLeadFacultyAttribute()
     {
-        if (!$this->instructor_id) {
-            return null;
+        $directProfile = null;
+
+        if ($this->instructor_id) {
+            $directProfile = Instructor::where('user_id', $this->instructor_id)
+                ->where('is_active', true)
+                ->first();
+
+            if ($directProfile && $directProfile->isCustomized()) {
+                return $directProfile;
+            }
         }
-        if ($this->instructor && $this->instructor->instructorProfile) {
-            return $this->instructor->instructorProfile;
+
+        // Check if any active Instructor profile has been customized by the admin (custom photo or custom name)
+        $activeInstructors = Instructor::where('is_active', true)
+            ->orderBy('order', 'asc')
+            ->orderByDesc('updated_at')
+            ->get();
+
+        $customizedInstructor = $activeInstructors->first(fn ($i) => $i->isCustomized());
+        if ($customizedInstructor) {
+            return $customizedInstructor;
         }
-        if ($inst = Instructor::find($this->instructor_id)) {
-            return $inst;
+
+        if ($directProfile) {
+            return $directProfile;
         }
+
+        if ($this->instructor_id) {
+            if ($byInstId = Instructor::where('id', $this->instructor_id)->where('is_active', true)->first()) {
+                return $byInstId;
+            }
+            if ($this->instructor && (!empty($this->instructor->profile_picture) || $this->instructor->role === 'instructor')) {
+                return $this->instructor;
+            }
+        }
+
+        if ($activeInstructors->isNotEmpty()) {
+            return $activeInstructors->first();
+        }
+
         return $this->instructor;
+    }
+
+    public function getInstructorNameAttribute(): string
+    {
+        $lead = $this->lead_faculty;
+        return $lead ? $lead->name : 'CAB Academy Senior Faculty';
+    }
+
+    public function getInstructorTitleAttribute(): string
+    {
+        $lead = $this->lead_faculty;
+        if ($lead && !empty($lead->title)) {
+            return $lead->title;
+        }
+        return 'Executive Trade & Customs Specialist';
+    }
+
+    public function getInstructorAvatarUrlAttribute(): string
+    {
+        $lead = $this->lead_faculty;
+        if ($lead) {
+            if (!empty($lead->avatar_url)) {
+                return $lead->avatar_url;
+            }
+            if (!empty($lead->profile_picture_url)) {
+                return $lead->profile_picture_url;
+            }
+        }
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->instructor_name) . '&background=051c45&color=fff';
+    }
+
+    public function getInstructorBioAttribute(): string
+    {
+        $lead = $this->lead_faculty;
+        if ($lead && !empty($lead->bio)) {
+            return $lead->bio;
+        }
+        return 'Distinguished Faculty Specialist in international trade, corporate customs, and regulatory compliance.';
     }
 
     public function sections()
     {
         return $this->hasMany(Section::class)->orderBy('order');
+    }
+
+    public function lessons()
+    {
+        return $this->hasManyThrough(Lesson::class, Section::class);
     }
 
     public function quizzes()

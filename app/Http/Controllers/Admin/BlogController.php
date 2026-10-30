@@ -52,7 +52,7 @@ class BlogController extends Controller
 
         if ($request->hasFile('featured_image_file')) {
             $path = $request->file('featured_image_file')->store('blogs', 'public');
-            $validated['featured_image'] = Storage::url($path);
+            $validated['featured_image'] = $path;
         } elseif ($request->filled('featured_image_base64')) {
             $data = $request->input('featured_image_base64');
             if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
@@ -113,7 +113,7 @@ class BlogController extends Controller
 
         if ($request->hasFile('featured_image_file')) {
             $path = $request->file('featured_image_file')->store('blogs', 'public');
-            $validated['featured_image'] = Storage::url($path);
+            $validated['featured_image'] = $path;
         } elseif ($request->filled('featured_image_base64')) {
             $data = $request->input('featured_image_base64');
             if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {

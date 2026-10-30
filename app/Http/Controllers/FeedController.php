@@ -13,6 +13,7 @@ class FeedController extends Controller
 {
     public function index(Request $request)
     {
+        abort_if(!\App\Models\Setting::isPageEnabled('feed') && (!auth()->check() || !auth()->user()->isAdmin()), 404);
         $filter = $request->query('filter', 'all');
         $category = $request->query('category');
         $search = $request->query('search');

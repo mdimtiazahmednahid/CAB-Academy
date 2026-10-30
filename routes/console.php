@@ -71,4 +71,20 @@ Artisan::command('instructors:fix', function () {
     return 0;
 })->purpose('Resolve duplicate email collisions and synchronize instructor profile user IDs');
 
+Artisan::command('schema:repair', function () {
+    $this->info("Running self-healing production database schema verification & repair...");
+    $result = \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+    $repaired = $result['repaired'] ?? [];
+    if (!empty($repaired)) {
+        foreach ($repaired as $item) {
+            $this->line(" ✓ Repaired: " . $item);
+        }
+    } else {
+        $this->line(" ✓ All core tables, columns, and ENUM statuses are already intact.");
+    }
+    $this->info("Database schema verification & repair completed successfully! (status: " . ($result['status'] ?? 'ok') . ")");
+    return 0;
+})->purpose('Verify and auto-repair missing database tables, columns, and MySQL ENUM types without data loss');
+
+
 

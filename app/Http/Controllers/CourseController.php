@@ -17,13 +17,15 @@ class CourseController extends Controller
         
         $course->load([
             'instructor',
+            'instructorProfile',
+            'materials',
             'sections' => function($q) {
                 $q->orderBy('order');
             },
             'sections.lessons' => function($q) {
                 $q->orderBy('order');
             },
-            'quizzes'
+            'quizzes.questions'
         ]);
         
         $user = $request->user();
@@ -87,11 +89,26 @@ class CourseController extends Controller
     public function showLesson(Course $course, Lesson $lesson)
     {
         abort_if(!$course->is_published, 404);
+        abort_if(!$lesson->section || (int) $lesson->section->course_id !== (int) $course->id, 404);
+
+        $user = auth()->user();
+        if (!$user->isAdmin() && $course->instructor_id !== $user->id && !$user->enrolledCourses()->where('course_id', $course->id)->exists()) {
+            return redirect()->route('courses.show', $course)->with('error', 'Please enroll in this course to access its lessons.');
+        }
         
-        $isCompleted = DB::table('lesson_user')
-            ->where('user_id', auth()->id())
-            ->where('lesson_id', $lesson->id)
-            ->exists();
+        $course->load([
+            'materials',
+            'sections' => function ($q) {
+                $q->orderBy('order');
+            },
+            'sections.lessons' => function ($q) {
+                $q->orderBy('order');
+            },
+            'quizzes.questions',
+        ]);
+
+        $completedLessonIds = $user ? $user->completedLessons()->pluck('lesson_id')->toArray() : [];
+        $isCompleted = in_array($lesson->id, $completedLessonIds);
 
         $nextLesson = Lesson::where('section_id', $lesson->section_id)
             ->where('order', '>', $lesson->order)
@@ -109,11 +126,18 @@ class CourseController extends Controller
             }
         }
 
-        return view('lessons.show', compact('course', 'lesson', 'isCompleted', 'nextLesson'));
+        return view('lessons.show', compact('course', 'lesson', 'isCompleted', 'nextLesson', 'completedLessonIds'));
     }
 
     public function completeLesson(Request $request, Course $course, Lesson $lesson)
     {
+        abort_if(!$lesson->section || (int) $lesson->section->course_id !== (int) $course->id, 404);
+
+        $user = $request->user();
+        if (!$user->isAdmin() && $course->instructor_id !== $user->id && !$user->enrolledCourses()->where('course_id', $course->id)->exists()) {
+            return redirect()->route('courses.show', $course)->with('error', 'Please enroll in this course to complete lessons.');
+        }
+
         $wasCompleted = DB::table('lesson_user')
             ->where('user_id', auth()->id())
             ->where('lesson_id', $lesson->id)
@@ -128,8 +152,11 @@ class CourseController extends Controller
             $request->user()->awardXp(10);
         }
 
-        if ($request->next_lesson_url) {
-            return redirect($request->next_lesson_url);
+        if ($request->filled('next_lesson_url')) {
+            $nextUrl = (string) $request->next_lesson_url;
+            if (str_starts_with($nextUrl, '/') || str_starts_with($nextUrl, url('/'))) {
+                return redirect($nextUrl);
+            }
         }
 
         return back()->with('success', 'Lesson completed' . (!$wasCompleted ? ' and you earned 10 XP!' : ''));

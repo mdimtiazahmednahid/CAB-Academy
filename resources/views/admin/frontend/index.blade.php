@@ -28,9 +28,14 @@
     </div>
 @endif
 
+@php
+    $initialCustomPages = \App\Models\Setting::getCustomPages(false);
+    $initialCustomSections = \App\Models\Setting::getCustomSections(false);
+@endphp
+
 <form action="{{ route('admin.frontend.store') }}" method="POST" enctype="multipart/form-data" 
       x-data="{ 
-          activeTab: 'hero',
+          activeTab: 'matrix',
           mode: '{{ $settings['landing_page_mode'] ?? 'default' }}',
           heroEnabled: {{ ($settings['landing_hero_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
           clientsEnabled: {{ ($settings['landing_clients_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
@@ -40,23 +45,104 @@
           counselingEnabled: {{ ($settings['landing_counseling_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
           facultyEnabled: {{ ($settings['landing_faculty_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
           featuresEnabled: {{ ($settings['landing_features_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
-          jobsEnabled: {{ ($settings['landing_jobs_enabled'] ?? '1') == '1' ? 'true' : 'false' }}
+          jobsEnabled: {{ ($settings['landing_jobs_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          pageJobsEnabled: {{ ($settings['page_jobs_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          pageBlogEnabled: {{ ($settings['page_blog_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          pageFeedEnabled: {{ ($settings['page_feed_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          pageInstructorsEnabled: {{ ($settings['page_instructors_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          pageAboutEnabled: {{ ($settings['page_about_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          pageContactEnabled: {{ ($settings['page_contact_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          pageVerifyEnabled: {{ ($settings['page_verify_certificate_enabled'] ?? '1') == '1' ? 'true' : 'false' }},
+          customPages: @js($initialCustomPages),
+          customSections: @js($initialCustomSections),
+          addCustomPage() {
+              this.customPages.push({
+                  title: 'New Custom Page',
+                  slug: 'custom-page-' + (this.customPages.length + 1),
+                  subtitle: 'Executive Overview & Institutional Guidelines',
+                  content: '<p>Enter your custom page content here.</p>',
+                  meta_description: '',
+                  is_published: true,
+                  show_in_header: true,
+                  show_in_footer: true
+              });
+          },
+          removeCustomPage(idx) {
+              this.customPages.splice(idx, 1);
+          },
+          addCustomSection() {
+              this.customSections.push({
+                  id: 'sec_' + Date.now(),
+                  title: 'Executive Corporate Training & Advisory',
+                  subtitle: 'Tailored capability development programs for commercial banks and trade enterprises.',
+                  badge: 'Enterprise Solutions',
+                  content: '<p>Partner with our distinguished faculty for customized in-house workshops and executive bootcamps.</p>',
+                  cta_text: 'Request Corporate Proposal',
+                  cta_url: '/contact',
+                  theme: 'white',
+                  is_visible: true
+              });
+          },
+          removeCustomSection(idx) {
+              this.customSections.splice(idx, 1);
+          }
       }" 
       class="relative pb-24 md:pb-12">
     @csrf
     <input type="hidden" name="landing_cms_form_submitted" value="1">
+    <input type="hidden" name="cms_custom_pages_json" :value="JSON.stringify(customPages)">
+    <input type="hidden" name="landing_custom_sections_json" :value="JSON.stringify(customSections)">
+    <input type="hidden" name="page_jobs_enabled" :value="pageJobsEnabled ? '1' : '0'">
+    <input type="hidden" name="page_blog_enabled" :value="pageBlogEnabled ? '1' : '0'">
+    <input type="hidden" name="page_feed_enabled" :value="pageFeedEnabled ? '1' : '0'">
+    <input type="hidden" name="page_instructors_enabled" :value="pageInstructorsEnabled ? '1' : '0'">
+    <input type="hidden" name="page_about_enabled" :value="pageAboutEnabled ? '1' : '0'">
+    <input type="hidden" name="page_contact_enabled" :value="pageContactEnabled ? '1' : '0'">
+    <input type="hidden" name="page_verify_certificate_enabled" :value="pageVerifyEnabled ? '1' : '0'">
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Sidebar Navigation Tabs -->
-        <div class="lg:col-span-3 space-y-2 sticky top-20 bg-white p-3 rounded-2xl border border-gray-200/80 shadow-sm">
-            <div class="px-3 py-2 text-xs font-bold uppercase tracking-wider text-gray-400">Sections Directory</div>
+        <div class="lg:col-span-3 space-y-1.5 sticky top-20 bg-white p-3 rounded-2xl border border-gray-200/80 shadow-sm">
+            <div class="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Production Command</div>
+
+            <button type="button" @click="activeTab = 'matrix'" 
+                    :class="activeTab === 'matrix' ? 'bg-[#051c45] text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-sliders text-sm text-emerald-400"></i>
+                    <span>Section Control Matrix</span>
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-300">All</span>
+            </button>
+
+            <button type="button" @click="activeTab = 'custom_sections'" 
+                    :class="activeTab === 'custom_sections' ? 'bg-[#051c45] text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-plus-square text-sm text-[#c30102]"></i>
+                    <span>Custom Sections Builder</span>
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-slate-100 text-slate-700" x-text="customSections.length"></span>
+            </button>
+
+            <button type="button" @click="activeTab = 'pages'" 
+                    :class="activeTab === 'pages' ? 'bg-[#051c45] text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'"
+                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-file-circle-plus text-sm text-blue-500"></i>
+                    <span>Pages & Page Builder</span>
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-blue-100 text-blue-800" x-text="customPages.length + ' Custom'"></span>
+            </button>
+
+            <div class="px-3 pt-3 pb-1 text-[10px] font-black uppercase tracking-widest text-slate-400 border-t border-slate-100">Homepage Sections (1–9)</div>
 
             <button type="button" @click="activeTab = 'hero'" 
                     :class="activeTab === 'hero' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-compass text-sm"></i>
+                    <i class="fas fa-compass text-xs"></i>
                     <span>1. Executive Hero</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="heroEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
@@ -64,9 +150,9 @@
 
             <button type="button" @click="activeTab = 'clients'" 
                     :class="activeTab === 'clients' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-handshake text-sm"></i>
+                    <i class="fas fa-handshake text-xs"></i>
                     <span>2. Valuable Clients</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="clientsEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
@@ -74,9 +160,9 @@
 
             <button type="button" @click="activeTab = 'categories'" 
                     :class="activeTab === 'categories' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-layer-group text-sm"></i>
+                    <i class="fas fa-layer-group text-xs"></i>
                     <span>3. Sticky Categories</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="categoriesEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
@@ -84,9 +170,9 @@
 
             <button type="button" @click="activeTab = 'courses'" 
                     :class="activeTab === 'courses' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-graduation-cap text-sm"></i>
+                    <i class="fas fa-graduation-cap text-xs"></i>
                     <span>4. Course Showcase</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="coursesEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
@@ -94,9 +180,9 @@
 
             <button type="button" @click="activeTab = 'jobs'" 
                     :class="activeTab === 'jobs' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-briefcase text-sm"></i>
+                    <i class="fas fa-briefcase text-xs"></i>
                     <span>5. Career & Jobs</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="jobsEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
@@ -104,9 +190,9 @@
 
             <button type="button" @click="activeTab = 'counseling'" 
                     :class="activeTab === 'counseling' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-phone-volume text-sm"></i>
+                    <i class="fas fa-phone-volume text-xs"></i>
                     <span>6. Counseling Hotline</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="counselingEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
@@ -114,9 +200,9 @@
 
             <button type="button" @click="activeTab = 'faculty'" 
                     :class="activeTab === 'faculty' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-user-tie text-sm"></i>
+                    <i class="fas fa-user-tie text-xs"></i>
                     <span>7. Distinguished Faculty</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="facultyEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
@@ -124,9 +210,9 @@
 
             <button type="button" @click="activeTab = 'features'" 
                     :class="activeTab === 'features' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-star text-sm"></i>
+                    <i class="fas fa-star text-xs"></i>
                     <span>8. Features (6 Cards)</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="featuresEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
@@ -134,61 +220,51 @@
 
             <button type="button" @click="activeTab = 'blog'" 
                     :class="activeTab === 'blog' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-newspaper text-sm"></i>
+                    <i class="fas fa-newspaper text-xs"></i>
                     <span>9. Knowledge Hub</span>
                 </span>
                 <span class="w-2 h-2 rounded-full" :class="blogEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
 
-            <div class="px-3 pt-3 pb-1 text-xs font-bold uppercase tracking-wider text-gray-400 border-t border-gray-100">Inner Pages CMS</div>
+            <div class="px-3 pt-3 pb-1 text-[10px] font-black uppercase tracking-widest text-slate-400 border-t border-slate-100">Inner Pages Content</div>
 
             <button type="button" @click="activeTab = 'about'" 
                     :class="activeTab === 'about' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-university text-sm"></i>
-                    <span>9. About Us Page</span>
+                    <i class="fas fa-university text-xs"></i>
+                    <span>About Us Content</span>
                 </span>
+                <span class="w-2 h-2 rounded-full" :class="pageAboutEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
 
             <button type="button" @click="activeTab = 'contact'" 
                     :class="activeTab === 'contact' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-map-marker-alt text-sm"></i>
-                    <span>10. Contact Coordinates</span>
+                    <i class="fas fa-map-marker-alt text-xs"></i>
+                    <span>Contact Coordinates</span>
                 </span>
+                <span class="w-2 h-2 rounded-full" :class="pageContactEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
 
             <button type="button" @click="activeTab = 'legal'" 
                     :class="activeTab === 'legal' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-balance-scale text-sm"></i>
-                    <span>11. Legal & Policies</span>
+                    <i class="fas fa-balance-scale text-xs"></i>
+                    <span>Legal & Policies</span>
                 </span>
-            </button>
-
-            <div class="px-3 pt-3 pb-1 text-xs font-bold uppercase tracking-wider text-gray-400 border-t border-gray-100">Site Directory</div>
-
-            <button type="button" @click="activeTab = 'pages'" 
-                    :class="activeTab === 'pages' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                    class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
-                <span class="flex items-center gap-2.5">
-                    <i class="fas fa-sitemap text-sm"></i>
-                    <span>All Site Pages Directory</span>
-                </span>
-                <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-blue-100 text-blue-800">20+</span>
             </button>
 
             <div class="pt-2 border-t border-gray-100">
                 <button type="button" @click="activeTab = 'mode'" 
                         :class="activeTab === 'mode' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
-                        class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
+                        class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                     <span class="flex items-center gap-2.5">
-                        <i class="fas fa-code text-sm"></i>
+                        <i class="fas fa-code text-xs"></i>
                         <span>Template Mode & Code</span>
                     </span>
                     <span class="text-[10px] uppercase font-bold text-gray-400" x-text="mode"></span>
@@ -198,13 +274,274 @@
             <div class="pt-4">
                 <button type="submit" class="w-full py-3 px-4 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-xl shadow-lg shadow-red-900/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-sm">
                     <i class="fas fa-save"></i>
-                    <span>Save All Sections</span>
+                    <span>Save All Changes</span>
                 </button>
             </div>
         </div>
 
         <!-- Tab Content Panels -->
         <div class="lg:col-span-9 space-y-6">
+
+            <!-- ========================================== -->
+            <!-- 0A. MASTER SECTION VISIBILITY MATRIX -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'matrix'" class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                        <div>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#051c45]/10 text-[#051c45] mb-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                <span>1-Click Section Visibility Matrix</span>
+                            </span>
+                            <h3 class="text-lg sm:text-xl font-black text-[#051c45]">Homepage Sections Master Control</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Show or hide any landing page section in 1 click, or click "Edit Content" to customize its text, media, and CTAs.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="activeTab = 'custom_sections'" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] text-xs font-bold transition-colors">
+                                + Add Custom Section
+                            </button>
+                            <button type="submit" class="px-4 py-2 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold shadow-xs transition-colors">
+                                Save Matrix
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+                        <!-- 1. Hero -->
+                        <div class="p-4 rounded-xl border transition-all flex flex-col justify-between gap-3" :class="heroEnabled ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 01</span>
+                                    <h4 class="text-sm font-extrabold text-[#051c45]">Executive Hero Banner</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Headline, tagline, trust pill, and video showcase.</p>
+                                </div>
+                                <input type="checkbox" x-model="heroEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-[10px] font-black uppercase" :class="heroEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="heroEnabled ? 'Visible on Home' : 'Hidden'"></span>
+                                <button type="button" @click="activeTab = 'hero'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. Valuable Clients -->
+                        <div class="p-4 rounded-xl border transition-all flex flex-col justify-between gap-3" :class="clientsEnabled ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 02</span>
+                                    <h4 class="text-sm font-extrabold text-[#051c45]">Enterprise Sectors</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Industry sectors & corporate partner showcase.</p>
+                                </div>
+                                <input type="checkbox" x-model="clientsEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-[10px] font-black uppercase" :class="clientsEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="clientsEnabled ? 'Visible on Home' : 'Hidden'"></span>
+                                <button type="button" @click="activeTab = 'clients'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                            </div>
+                        </div>
+
+                        <!-- 3. Sticky Categories -->
+                        <div class="p-4 rounded-xl border transition-all flex flex-col justify-between gap-3" :class="categoriesEnabled ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 03</span>
+                                    <h4 class="text-sm font-extrabold text-[#051c45]">Sticky Category Bar</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Quick horizontal category filter navigation.</p>
+                                </div>
+                                <input type="checkbox" x-model="categoriesEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-[10px] font-black uppercase" :class="categoriesEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="categoriesEnabled ? 'Visible on Home' : 'Hidden'"></span>
+                                <button type="button" @click="activeTab = 'categories'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                            </div>
+                        </div>
+
+                        <!-- 4. Course Showcase -->
+                        <div class="p-4 rounded-xl border transition-all flex flex-col justify-between gap-3" :class="coursesEnabled ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 04</span>
+                                    <h4 class="text-sm font-extrabold text-[#051c45]">Course Catalog Grid</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Certificate & Day-Long Masterclass cards.</p>
+                                </div>
+                                <input type="checkbox" x-model="coursesEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-[10px] font-black uppercase" :class="coursesEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="coursesEnabled ? 'Visible on Home' : 'Hidden'"></span>
+                                <button type="button" @click="activeTab = 'courses'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                            </div>
+                        </div>
+
+                        <!-- 5. Career & Jobs -->
+                        <div class="p-4 rounded-xl border transition-all flex flex-col justify-between gap-3" :class="jobsEnabled ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 05</span>
+                                    <h4 class="text-sm font-extrabold text-[#051c45]">Career & Placement Portal</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Featured corporate hiring & job listings.</p>
+                                </div>
+                                <input type="checkbox" x-model="jobsEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-[10px] font-black uppercase" :class="jobsEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="jobsEnabled ? 'Visible on Home' : 'Hidden'"></span>
+                                <button type="button" @click="activeTab = 'jobs'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                            </div>
+                        </div>
+
+                        <!-- 6. Counseling Hotline -->
+                        <div class="p-4 rounded-xl border transition-all flex flex-col justify-between gap-3" :class="counselingEnabled ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 06</span>
+                                    <h4 class="text-sm font-extrabold text-[#051c45]">Executive Counseling CTA</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Direct phone & WhatsApp admissions strip.</p>
+                                </div>
+                                <input type="checkbox" x-model="counselingEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-[10px] font-black uppercase" :class="counselingEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="counselingEnabled ? 'Visible on Home' : 'Hidden'"></span>
+                                <button type="button" @click="activeTab = 'counseling'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                            </div>
+                        </div>
+
+                        <!-- 7. Distinguished Faculty -->
+                        <div class="p-4 rounded-xl border transition-all flex flex-col justify-between gap-3" :class="facultyEnabled ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 07</span>
+                                    <h4 class="text-sm font-extrabold text-[#051c45]">Distinguished Faculty</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Industry practitioners & instructor profiles.</p>
+                                </div>
+                                <input type="checkbox" x-model="facultyEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-[10px] font-black uppercase" :class="facultyEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="facultyEnabled ? 'Visible on Home' : 'Hidden'"></span>
+                                <button type="button" @click="activeTab = 'faculty'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                            </div>
+                        </div>
+
+                        <!-- 8. Features (6 Cards) -->
+                        <div class="p-4 rounded-xl border transition-all flex flex-col justify-between gap-3" :class="featuresEnabled ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 08</span>
+                                    <h4 class="text-sm font-extrabold text-[#051c45]">Institutional Advantages</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">6 value proposition cards on Imperial Navy.</p>
+                                </div>
+                                <input type="checkbox" x-model="featuresEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-[10px] font-black uppercase" :class="featuresEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="featuresEnabled ? 'Visible on Home' : 'Hidden'"></span>
+                                <button type="button" @click="activeTab = 'features'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                            </div>
+                        </div>
+
+                        <!-- 9. Knowledge Hub -->
+                        <div class="p-4 rounded-xl border transition-all flex flex-col justify-between gap-3" :class="blogEnabled ? 'bg-white border-slate-200 shadow-2xs' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 09</span>
+                                    <h4 class="text-sm font-extrabold text-[#051c45]">Knowledge Hub & Blogs</h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Latest trade & banking articles grid.</p>
+                                </div>
+                                <input type="checkbox" x-model="blogEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <span class="text-[10px] font-black uppercase" :class="blogEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="blogEnabled ? 'Visible on Home' : 'Hidden'"></span>
+                                <button type="button" @click="activeTab = 'blog'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 0B. CUSTOM HOMEPAGE SECTIONS BUILDER -->
+            <!-- ========================================== -->
+            <div x-show="activeTab === 'custom_sections'" class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-red-50 text-[#c30102]">Dynamic Section Builder</span>
+                            <h3 class="text-xl font-black text-[#051c45] mt-1">Custom Homepage Sections</h3>
+                            <p class="text-xs text-slate-500">Create unlimited custom sections on the landing page and toggle their visibility anytime without writing code.</p>
+                        </div>
+                        <button type="button" @click="addCustomSection()" class="px-4 py-2.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs transition-colors">
+                            <i class="fas fa-plus"></i>
+                            <span>Add New Section</span>
+                        </button>
+                    </div>
+
+                    <template x-if="customSections.length === 0">
+                        <div class="text-center py-10 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                            <i class="fas fa-layer-group text-2xl text-slate-400 mb-2"></i>
+                            <p class="text-sm font-bold text-slate-700">No custom homepage sections created yet.</p>
+                            <p class="text-xs text-slate-500 mt-1 mb-4">Click "Add New Section" to add corporate training banners, scholarship announcements, or custom blocks.</p>
+                            <button type="button" @click="addCustomSection()" class="px-4 py-2 rounded-xl bg-[#c30102] text-white text-xs font-bold">+ Create First Custom Section</button>
+                        </div>
+                    </template>
+
+                    <div class="space-y-4">
+                        <template x-for="(sec, idx) in customSections" :key="idx">
+                            <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-4">
+                                <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                                    <div class="flex items-center gap-3">
+                                        <span class="px-2.5 py-1 rounded-lg bg-[#051c45] text-white text-xs font-black" x-text="'Custom Section #' + (idx + 1)"></span>
+                                        <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold">
+                                            <input type="checkbox" x-model="sec.is_visible" class="w-4 h-4 accent-emerald-600 rounded">
+                                            <span :class="sec.is_visible ? 'text-emerald-700' : 'text-slate-400'" x-text="sec.is_visible ? 'Visible on Homepage' : 'Hidden'"></span>
+                                        </label>
+                                    </div>
+                                    <button type="button" @click="removeCustomSection(idx)" class="text-xs font-bold text-rose-600 hover:text-rose-800 px-2.5 py-1 rounded-lg hover:bg-rose-50">
+                                        <i class="fas fa-trash-can mr-1"></i>Remove
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Section Heading</label>
+                                        <input type="text" x-model="sec.title" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-bold text-[#051c45]">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Visual Theme</label>
+                                        <select x-model="sec.theme" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-800">
+                                            <option value="white">Crisp Alabaster White</option>
+                                            <option value="slate">Soft Slate Canvas</option>
+                                            <option value="navy">Imperial Navy Executive</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Top Pill Badge</label>
+                                        <input type="text" x-model="sec.badge" placeholder="e.g. Corporate Program" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Subtitle</label>
+                                        <input type="text" x-model="sec.subtitle" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Section Body Content (HTML or Text)</label>
+                                    <textarea x-model="sec.content" rows="3" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-mono"></textarea>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">CTA Button Label (Optional)</label>
+                                        <input type="text" x-model="sec.cta_text" placeholder="e.g. Request Proposal" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">CTA Target URL</label>
+                                        <input type="text" x-model="sec.cta_url" placeholder="/contact" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-mono">
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
 
             <!-- ========================================== -->
             <!-- 1. EXECUTIVE HERO SECTION -->
@@ -1059,9 +1396,185 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- ALL SITE PAGES & ROUTES DIRECTORY -->
+            <!-- ALL SITE PAGES, VISIBILITY CONTROLS & CUSTOM PAGE BUILDER -->
             <!-- ========================================== -->
             <div x-show="activeTab === 'pages'" class="space-y-6">
+                
+                <!-- Part A: Built-in Public Pages Visibility Controls -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">Page Access Control</span>
+                            <h3 class="text-xl font-black text-[#051c45] mt-1">Built-In Public Pages Visibility</h3>
+                            <p class="text-xs text-slate-500">Show or hide built-in platform pages from navigation menus and public access (admins can always preview hidden pages).</p>
+                        </div>
+                        <button type="submit" class="px-4 py-2 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold shadow-xs transition-colors">
+                            Save Page States
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                        <!-- Careers & Jobs -->
+                        <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageJobsEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="min-w-0">
+                                <div class="text-xs font-extrabold text-[#051c45] truncate">Careers & Jobs Portal</div>
+                                <div class="text-[11px] font-mono text-slate-400">/jobs</div>
+                            </div>
+                            <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
+                                <input type="checkbox" x-model="pageJobsEnabled" class="w-4 h-4 accent-emerald-600 rounded">
+                                <span class="text-[10px] font-black uppercase" :class="pageJobsEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="pageJobsEnabled ? 'Published' : 'Hidden'"></span>
+                            </label>
+                        </div>
+
+                        <!-- Instructors Directory -->
+                        <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageInstructorsEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="min-w-0">
+                                <div class="text-xs font-extrabold text-[#051c45] truncate">Instructors Directory</div>
+                                <div class="text-[11px] font-mono text-slate-400">/instructors</div>
+                            </div>
+                            <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
+                                <input type="checkbox" x-model="pageInstructorsEnabled" class="w-4 h-4 accent-emerald-600 rounded">
+                                <span class="text-[10px] font-black uppercase" :class="pageInstructorsEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="pageInstructorsEnabled ? 'Published' : 'Hidden'"></span>
+                            </label>
+                        </div>
+
+                        <!-- Blog & Knowledge Hub -->
+                        <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageBlogEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="min-w-0">
+                                <div class="text-xs font-extrabold text-[#051c45] truncate">Knowledge Hub & Blogs</div>
+                                <div class="text-[11px] font-mono text-slate-400">/blog</div>
+                            </div>
+                            <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
+                                <input type="checkbox" x-model="pageBlogEnabled" class="w-4 h-4 accent-emerald-600 rounded">
+                                <span class="text-[10px] font-black uppercase" :class="pageBlogEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="pageBlogEnabled ? 'Published' : 'Hidden'"></span>
+                            </label>
+                        </div>
+
+                        <!-- Community Feed -->
+                        <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageFeedEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="min-w-0">
+                                <div class="text-xs font-extrabold text-[#051c45] truncate">Community Discussion Feed</div>
+                                <div class="text-[11px] font-mono text-slate-400">/feed</div>
+                            </div>
+                            <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
+                                <input type="checkbox" x-model="pageFeedEnabled" class="w-4 h-4 accent-emerald-600 rounded">
+                                <span class="text-[10px] font-black uppercase" :class="pageFeedEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="pageFeedEnabled ? 'Published' : 'Hidden'"></span>
+                            </label>
+                        </div>
+
+                        <!-- About Us -->
+                        <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageAboutEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="min-w-0">
+                                <div class="text-xs font-extrabold text-[#051c45] truncate">About Us Page</div>
+                                <div class="text-[11px] font-mono text-slate-400">/about</div>
+                            </div>
+                            <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
+                                <input type="checkbox" x-model="pageAboutEnabled" class="w-4 h-4 accent-emerald-600 rounded">
+                                <span class="text-[10px] font-black uppercase" :class="pageAboutEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="pageAboutEnabled ? 'Published' : 'Hidden'"></span>
+                            </label>
+                        </div>
+
+                        <!-- Contact & Support -->
+                        <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageContactEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
+                            <div class="min-w-0">
+                                <div class="text-xs font-extrabold text-[#051c45] truncate">Contact & Admissions</div>
+                                <div class="text-[11px] font-mono text-slate-400">/contact</div>
+                            </div>
+                            <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
+                                <input type="checkbox" x-model="pageContactEnabled" class="w-4 h-4 accent-emerald-600 rounded">
+                                <span class="text-[10px] font-black uppercase" :class="pageContactEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="pageContactEnabled ? 'Published' : 'Hidden'"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part B: Custom Standalone Pages Builder (/page/{slug}) -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-blue-50 text-blue-700 border border-blue-200">Custom Page Engine</span>
+                            <h3 class="text-xl font-black text-[#051c45] mt-1">Custom Standalone Pages (`/page/{slug}`)</h3>
+                            <p class="text-xs text-slate-500">Create unlimited custom pages (e.g., Corporate Training, Scholarships, Accreditation), publish or hide them, and attach them to the Header or Footer.</p>
+                        </div>
+                        <button type="button" @click="addCustomPage()" class="px-4 py-2.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs transition-colors">
+                            <i class="fas fa-plus"></i>
+                            <span>Create New Page</span>
+                        </button>
+                    </div>
+
+                    <template x-if="customPages.length === 0">
+                        <div class="text-center py-10 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                            <i class="fas fa-file-circle-plus text-2xl text-slate-400 mb-2"></i>
+                            <p class="text-sm font-bold text-slate-700">No custom standalone pages created yet.</p>
+                            <p class="text-xs text-slate-500 mt-1 mb-4">Click "Create New Page" to launch a dedicated page with its own URL slug and navigation link.</p>
+                            <button type="button" @click="addCustomPage()" class="px-4 py-2 rounded-xl bg-[#c30102] text-white text-xs font-bold">+ Create First Page</button>
+                        </div>
+                    </template>
+
+                    <div class="space-y-4">
+                        <template x-for="(cPage, pIdx) in customPages" :key="pIdx">
+                            <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-4">
+                                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+                                    <div class="flex flex-wrap items-center gap-3">
+                                        <span class="px-2.5 py-1 rounded-lg bg-[#051c45] text-white text-xs font-black" x-text="cPage.title || ('Page #' + (pIdx + 1))"></span>
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold">
+                                            <input type="checkbox" x-model="cPage.is_published" class="w-4 h-4 accent-emerald-600 rounded">
+                                            <span :class="cPage.is_published ? 'text-emerald-700' : 'text-slate-400'" x-text="cPage.is_published ? 'Published' : 'Hidden (Draft)'"></span>
+                                        </label>
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-700">
+                                            <input type="checkbox" x-model="cPage.show_in_header" class="w-3.5 h-3.5 accent-[#051c45] rounded">
+                                            <span>Header Nav</span>
+                                        </label>
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-700">
+                                            <input type="checkbox" x-model="cPage.show_in_footer" class="w-3.5 h-3.5 accent-[#051c45] rounded">
+                                            <span>Footer Link</span>
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <a :href="'/page/' + (cPage.slug || '')" target="_blank" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-[#051c45] hover:bg-slate-100">
+                                            Preview ↗
+                                        </a>
+                                        <button type="button" @click="removeCustomPage(pIdx)" class="text-xs font-bold text-rose-600 hover:text-rose-800 px-2.5 py-1 rounded-lg hover:bg-rose-50">
+                                            <i class="fas fa-trash-can mr-1"></i>Delete
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Page Title</label>
+                                        <input type="text" x-model="cPage.title" placeholder="e.g. Corporate Training Solutions" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-bold text-[#051c45]">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">URL Slug (`/page/{slug}`)</label>
+                                        <div class="flex items-center rounded-xl border border-slate-300 bg-white overflow-hidden">
+                                            <span class="px-3 py-2 bg-slate-100 text-slate-500 text-xs font-mono border-r border-slate-200">/page/</span>
+                                            <input type="text" x-model="cPage.slug" placeholder="corporate-training" class="flex-1 px-3 py-2 text-xs font-mono text-slate-800 outline-none">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Hero Subtitle</label>
+                                        <input type="text" x-model="cPage.subtitle" placeholder="Executive summary displayed in the navy banner" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">SEO Meta Description</label>
+                                        <input type="text" x-model="cPage.meta_description" placeholder="Optional SEO description for search engines" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Page Body Content (HTML or Text)</label>
+                                    <textarea x-model="cPage.content" rows="5" placeholder="<h2>Section Heading</h2><p>Write your page content...</p>" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-mono"></textarea>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Part C: Master Route Directory -->
                 <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-6">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
                         <div>

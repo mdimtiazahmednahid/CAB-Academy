@@ -8,6 +8,9 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\QuizController as AdminQuizController;
 Route::get('/reset-db', function () {
+    if (!app()->environment('local', 'testing') && (!auth()->check() || !auth()->user()->isAdmin())) {
+        abort(403, 'Unauthorized database reset attempt.');
+    }
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
     \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
@@ -16,7 +19,8 @@ Route::get('/reset-db', function () {
 
 Route::get('/', function () {
     try {
-        $courses = \App\Models\Course::where('is_published', true)->latest()->get();
+        \App\Support\DatabaseSchemaRepair::ensureSchema();
+        $courses = \App\Models\Course::with(['instructorProfile', 'instructor'])->where('is_published', true)->latest()->get();
         
         $certCount = (int) \App\Models\Setting::getVal('landing_cert_count', 4);
         if ($certCount < 1) $certCount = 4;
@@ -26,7 +30,8 @@ Route::get('/', function () {
         if ($blogCount < 1) $blogCount = 3;
 
         // Certificate Courses Section
-        $certificateCourses = \App\Models\Course::where('is_published', true)
+        $certificateCourses = \App\Models\Course::with(['instructorProfile', 'instructor'])
+            ->where('is_published', true)
             ->where(function($q) {
                 $q->where('level', 'Certificate')
                   ->orWhere('title', 'like', '%Certificate%');
@@ -41,7 +46,8 @@ Route::get('/', function () {
 
         // Day Long Courses Section (strictly non-overlapping with Certificate programs)
         $certIds = $certificateCourses->pluck('id')->toArray();
-        $dayLongCourses = \App\Models\Course::where('is_published', true)
+        $dayLongCourses = \App\Models\Course::with(['instructorProfile', 'instructor'])
+            ->where('is_published', true)
             ->whereNotIn('id', $certIds)
             ->where(function($q) {
                 $q->where('level', 'Day Long')
@@ -70,6 +76,10 @@ Route::get('/', function () {
     }
 });
 
+// PWA Web App Manifest & Custom CMS Pages
+Route::get('/manifest.json', [App\Http\Controllers\PageController::class, 'manifest'])->name('pwa.manifest');
+Route::get('/page/{slug}', [App\Http\Controllers\PageController::class, 'show'])->name('pages.show');
+
 // Community Feed & Blogs (Minimal Community Like Facebook)
 Route::get('/feed', [App\Http\Controllers\FeedController::class, 'index'])->name('feed.index');
 Route::post('/feed/posts', [App\Http\Controllers\FeedController::class, 'store'])->name('feed.posts.store');
@@ -87,7 +97,10 @@ Route::get('/blog/{post:slug}', [App\Http\Controllers\BlogController::class, 'sh
 // Institutional Trust & Legal Suite
 Route::get('/contact', [App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'submit'])->name('contact.submit');
-Route::get('/about', function () { return view('about.index'); })->name('about.index');
+Route::get('/about', function () {
+    abort_if(!\App\Models\Setting::isPageEnabled('about') && (!auth()->check() || !auth()->user()->isAdmin()), 404);
+    return view('about.index');
+})->name('about.index');
 Route::get('/privacy-policy', function () { return view('legal.privacy'); })->name('legal.privacy');
 Route::get('/terms-of-service', function () { return view('legal.terms'); })->name('legal.terms');
 Route::get('/refund-policy', function () { return view('legal.refund'); })->name('legal.refund');
@@ -117,44 +130,52 @@ Route::get('/day-long-course', function () {
 })->name('catalog.day_long');
 
 // InfinityFree Storage & Uploads Workaround: Stream media files dynamically without requiring symlinks
-Route::get('/storage/{path}', function ($path) {
-    // 1. Check in public/uploads/
-    $filePath = public_path("uploads/" . $path);
-    if (!file_exists($filePath) || is_dir($filePath)) {
-        // 2. Primary storage path under storage/app/public/
-        $filePath = storage_path("app/public/" . $path);
-    }
-    if (!file_exists($filePath) || is_dir($filePath)) {
-        // 3. Fallback checking public/storage/ directory
-        $filePath = public_path("storage/" . $path);
-    }
-    if (!file_exists($filePath) || is_dir($filePath)) {
+$streamPublicFile = function (string $path) {
+    $cleanPath = ltrim(str_replace('\\', '/', $path), '/');
+    if ($cleanPath === '' || str_contains($cleanPath, '..') || str_contains($cleanPath, "\0")) {
         abort(404);
     }
-    $mimeType = @mime_content_type($filePath) ?: 'application/octet-stream';
-    return response()->file($filePath, [
-        'Content-Type' => $mimeType,
-        'Cache-Control' => 'public, max-age=86400',
-    ]);
-})->where('path', '.*')->name('storage.stream');
 
-Route::get('/uploads/{path}', function ($path) {
-    $filePath = public_path("uploads/" . $path);
-    if (!file_exists($filePath) || is_dir($filePath)) {
-        $filePath = storage_path("app/public/" . $path);
+    $allowedRoots = array_filter([
+        realpath(public_path('uploads')),
+        realpath(storage_path('app/public')),
+        realpath(public_path('storage')),
+    ]);
+
+    $candidates = [
+        public_path('uploads/' . $cleanPath),
+        storage_path('app/public/' . $cleanPath),
+        public_path('storage/' . $cleanPath),
+    ];
+
+    $resolvedFile = null;
+    foreach ($candidates as $candidate) {
+        if (file_exists($candidate) && !is_dir($candidate)) {
+            $realCandidate = realpath($candidate);
+            if ($realCandidate !== false) {
+                foreach ($allowedRoots as $root) {
+                    if (str_starts_with($realCandidate, $root . DIRECTORY_SEPARATOR)) {
+                        $resolvedFile = $realCandidate;
+                        break 2;
+                    }
+                }
+            }
+        }
     }
-    if (!file_exists($filePath) || is_dir($filePath)) {
-        $filePath = public_path("storage/" . $path);
-    }
-    if (!file_exists($filePath) || is_dir($filePath)) {
+
+    if (!$resolvedFile) {
         abort(404);
     }
-    $mimeType = @mime_content_type($filePath) ?: 'application/octet-stream';
-    return response()->file($filePath, [
+
+    $mimeType = @mime_content_type($resolvedFile) ?: 'application/octet-stream';
+    return response()->file($resolvedFile, [
         'Content-Type' => $mimeType,
         'Cache-Control' => 'public, max-age=86400',
     ]);
-})->where('path', '.*')->name('uploads.stream');
+};
+
+Route::get('/storage/{path}', $streamPublicFile)->where('path', '.*')->name('storage.stream');
+Route::get('/uploads/{path}', $streamPublicFile)->where('path', '.*')->name('uploads.stream');
 
 // Dynamic Search Engine XML Sitemap (Strictly public, indexable pages only)
 Route::get('/sitemap.xml', function () {
@@ -331,22 +352,54 @@ Route::post('/courses/{course}/express-enroll', [App\Http\Controllers\PaymentCon
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
-        if (auth()->user()->role === 'admin') {
+        \App\Support\DatabaseSchemaRepair::ensureSchema();
+
+        if (auth()->user()->isAdmin()) {
             return redirect()->route('admin.dashboard');
         }
 
-        if (auth()->user()->preferences === null) {
-            return redirect()->route('onboarding');
-        }
         $user = auth()->user();
-        $payments = $user->payments()->with(['course'])->latest()->get();
-        $enrolledCourses = $user->enrolledCourses()->latest()->get();
-        $jobApplications = $user->jobApplications()->with('jobPost')->latest()->get();
+        if ($user->preferences === null) {
+            // If user already enrolled or submitted a payment via Express Enrollment, auto-populate default preferences so they land directly on their dashboard
+            if ($user->enrolledCourses()->exists() || $user->payments()->exists()) {
+                try {
+                    $user->preferences = [
+                        'level' => 'Intermediate',
+                        'subjects' => ['Supply Chain & Logistics', 'Export & Import Operations'],
+                        'goals' => ['Executive Certification', 'Career Advancement'],
+                    ];
+                    $user->saveQuietly();
+                } catch (\Throwable $e) {}
+            } else {
+                return redirect()->route('onboarding');
+            }
+        }
+        $completedLessonIds = $user->completedLessons()->pluck('lesson_id')->toArray();
+        $payments = $user->payments()->with(['course' => fn($q) => $q->withTrashed(), 'paymentMethod'])->latest()->get();
+        $pendingPayments = $payments->whereIn('status', ['pending', 'processing'])->values();
+        $enrolledCourses = $user->enrolledCourses()
+            ->with([
+                'certificates' => fn($q) => $q->where('user_id', $user->id),
+                'sections' => fn($q) => $q->orderBy('order'),
+                'sections.lessons' => fn($q) => $q->orderBy('order'),
+            ])
+            ->latest()
+            ->get();
+        $jobApplications = $user->jobApplications()->with(['jobPost' => fn($q) => $q->withTrashed()])->latest()->get();
+        $recentNotifications = $user->notifications()->latest()->take(3)->get();
         
-        $feedCourses = \App\Models\Course::where('is_published', true)->latest()->take(3)->get();
+        $enrolledIds = $enrolledCourses->pluck('id')->toArray();
+        $feedCourses = \App\Models\Course::where('is_published', true)
+            ->whereNotIn('id', $enrolledIds)
+            ->latest()
+            ->take(3)
+            ->get();
+        if ($feedCourses->isEmpty()) {
+            $feedCourses = \App\Models\Course::where('is_published', true)->latest()->take(3)->get();
+        }
         $feedJobs = \App\Models\JobPost::where('is_active', true)->latest()->take(3)->get();
         
-        return view('dashboard', compact('payments', 'enrolledCourses', 'jobApplications', 'feedCourses', 'feedJobs'));
+        return view('dashboard', compact('payments', 'pendingPayments', 'enrolledCourses', 'completedLessonIds', 'jobApplications', 'recentNotifications', 'feedCourses', 'feedJobs'));
     })->name('dashboard');
 
     Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
@@ -419,6 +472,7 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::post('/accounting/tuition', [App\Http\Controllers\Admin\AccountingController::class, 'recordTuition'])->name('admin.accounting.tuition.store');
     Route::post('/accounting/expenses', [App\Http\Controllers\Admin\AccountingController::class, 'recordExpense'])->name('admin.accounting.expenses.store');
     Route::delete('/accounting/expenses/{expense}', [App\Http\Controllers\Admin\AccountingController::class, 'destroyExpense'])->name('admin.accounting.expenses.destroy');
+    Route::post('/accounting/template-settings', [App\Http\Controllers\Admin\AccountingController::class, 'updateTemplateSettings'])->name('admin.accounting.template.store');
     Route::get('/accounting/statement', [App\Http\Controllers\Admin\AccountingController::class, 'statement'])->name('admin.accounting.statement');
 
     // Community Feed Moderation

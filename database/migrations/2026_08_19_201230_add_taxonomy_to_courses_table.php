@@ -8,10 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('courses', function (Blueprint $table) {
-            $table->string('level')->nullable(); // e.g., HSC, SSC
-            $table->string('category')->nullable(); // e.g., Science, Arts
-        });
+        if (Schema::hasTable('courses')) {
+            Schema::table('courses', function (Blueprint $table) {
+                if (!Schema::hasColumn('courses', 'level')) {
+                    $table->string('level')->nullable();
+                }
+                if (!Schema::hasColumn('courses', 'category')) {
+                    $table->string('category')->nullable();
+                }
+            });
+        }
     }
 
     public function down(): void

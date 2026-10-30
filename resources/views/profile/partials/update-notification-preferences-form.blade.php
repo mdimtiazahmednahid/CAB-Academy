@@ -22,21 +22,21 @@
 
         <div>
             <label class="inline-flex items-center">
-                <input type="checkbox" name="notify_new_courses" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" {{ !isset($prefs['new_courses']) || $prefs['new_courses'] ? 'checked' : '' }}>
+                <input type="checkbox" name="notify_new_courses" class="rounded border-gray-300 text-[#051c45] shadow-sm focus:ring-[#051c45]" {{ !isset($prefs['new_courses']) || $prefs['new_courses'] ? 'checked' : '' }}>
                 <span class="ml-2 text-sm text-gray-600">{{ __('Notify me when new courses are published') }}</span>
             </label>
         </div>
 
         <div>
             <label class="inline-flex items-center">
-                <input type="checkbox" name="notify_new_jobs" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" {{ !isset($prefs['new_jobs']) || $prefs['new_jobs'] ? 'checked' : '' }}>
+                <input type="checkbox" name="notify_new_jobs" class="rounded border-gray-300 text-[#051c45] shadow-sm focus:ring-[#051c45]" {{ !isset($prefs['new_jobs']) || $prefs['new_jobs'] ? 'checked' : '' }}>
                 <span class="ml-2 text-sm text-gray-600">{{ __('Notify me about new job opportunities') }}</span>
             </label>
         </div>
 
         <div>
             <label class="inline-flex items-center">
-                <input type="checkbox" name="notify_announcements" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" {{ !isset($prefs['announcements']) || $prefs['announcements'] ? 'checked' : '' }}>
+                <input type="checkbox" name="notify_announcements" class="rounded border-gray-300 text-[#051c45] shadow-sm focus:ring-[#051c45]" {{ !isset($prefs['announcements']) || $prefs['announcements'] ? 'checked' : '' }}>
                 <span class="ml-2 text-sm text-gray-600">{{ __('Receive important announcements') }}</span>
             </label>
         </div>

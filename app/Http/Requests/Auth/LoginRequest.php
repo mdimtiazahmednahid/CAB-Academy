@@ -28,13 +28,14 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
 
     /**
      * Attempt to authenticate the request's credentials.
+     * Supports login via Email Address OR 11-digit Mobile Number + Password/PIN.
      *
      * @throws ValidationException
      */
@@ -42,7 +43,67 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $identifier = trim((string) $this->input('email'));
+        $password = (string) $this->input('password');
+        $remember = $this->boolean('remember');
+        $authenticated = false;
+
+        if (str_contains($identifier, '@')) {
+            try {
+                $authenticated = Auth::attempt(['email' => $identifier, 'password' => $password], $remember);
+            } catch (\Throwable $e) {
+                \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+                $authenticated = Auth::attempt(['email' => $identifier, 'password' => $password], $remember);
+            }
+        } else {
+            $digits = preg_replace('/[^0-9]/', '', $identifier);
+            if (strlen($digits) === 13 && str_starts_with($digits, '8801')) {
+                $digits = substr($digits, 2);
+            }
+
+            if (!empty($digits)) {
+                try {
+                    $candidates = \App\Models\User::where('phone', $digits)
+                        ->orWhere('phone', $identifier)
+                        ->orWhere('email', 'student_' . $digits . '@cabacademy.com')
+                        ->get();
+                } catch (\Throwable $e) {
+                    \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+                    $candidates = \App\Models\User::where('email', 'student_' . $digits . '@cabacademy.com')->get();
+                }
+
+                foreach ($candidates as $candidate) {
+                    if (Auth::attempt(['email' => $candidate->email, 'password' => $password], $remember)) {
+                        $authenticated = true;
+                        break;
+                    }
+                    // Legacy Express Enrollment recovery: if account was auto-created (student_{phone}@cabacademy.com)
+                    // and student logs in with last 4 digits of their phone number
+                    if (
+                        !$candidate->isAdmin()
+                        && str_starts_with((string) $candidate->email, 'student_')
+                        && strlen($digits) >= 4
+                        && $password === substr($digits, -4)
+                    ) {
+                        $candidate->password = \Illuminate\Support\Facades\Hash::make($password);
+                        $candidate->saveQuietly();
+                        Auth::login($candidate, $remember);
+                        $authenticated = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!$authenticated) {
+                try {
+                    $authenticated = Auth::attempt(['email' => $identifier, 'password' => $password], $remember);
+                } catch (\Throwable $e) {
+                    $authenticated = false;
+                }
+            }
+        }
+
+        if (! $authenticated) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

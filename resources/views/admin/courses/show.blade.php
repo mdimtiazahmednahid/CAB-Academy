@@ -1,52 +1,109 @@
 @extends('layouts.admin')
 
+@section('header_title', $course->title)
+
 @section('content')
-<div class="mb-6 flex items-center justify-between">
-    <div class="flex items-center gap-4">
-        <a href="{{ route('admin.courses') }}" class="text-gray-400 hover:text-primary transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+@php
+    $totalLessonsCount = $course->sections->sum(fn($s) => $s->lessons->count());
+    $realizedCourseRevenue = (float) $course->payments->where('status', 'verified')->sum('amount');
+    $pendingCoursePayments = $course->payments->where('status', 'pending')->count();
+@endphp
+
+<div x-data="{ wsTab: 'all' }">
+<div class="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <div class="flex items-center gap-3 flex-wrap">
+        <a href="{{ route('admin.courses') }}" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-[#051c45] hover:border-[#051c45] flex items-center justify-center transition-colors shadow-xs">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         </a>
-        <h1 class="text-2xl font-bold">{{ $course->title }}</h1>
-        @if($course->is_published)
-            <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">Published</span>
-        @else
-            <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Draft</span>
-        @endif
-        @if($course->certificate_enabled)
-            <span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs font-medium flex items-center gap-1">
-                <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                Certificates Released
-            </span>
-        @else
-            <span class="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs font-medium flex items-center gap-1" title="Digital certificates are hidden from students until released">
-                <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                Certificates Locked
-            </span>
-        @endif
+        <div>
+            <div class="flex items-center gap-2 flex-wrap">
+                <h1 class="text-xl sm:text-2xl font-black text-[#051c45] tracking-tight">{{ $course->title }}</h1>
+                @if($course->is_published)
+                    <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold">Published</span>
+                @else
+                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 border border-slate-200 rounded-full text-xs font-bold">Draft</span>
+                @endif
+                @if($course->certificate_enabled)
+                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold flex items-center gap-1">
+                        <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Certificates Released
+                    </span>
+                @else
+                    <span class="px-2.5 py-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-xs font-bold flex items-center gap-1" title="Digital certificates are hidden from students until released">
+                        <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        Certificates Locked
+                    </span>
+                @endif
+            </div>
+        </div>
     </div>
-    <div class="flex gap-2">
-        <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm">
-            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+    <div class="flex flex-wrap gap-2">
+        <a href="{{ route('courses.show', $course) }}" target="_blank" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs">
+            <i class="fas fa-arrow-up-right-from-square text-[10px] text-[#c30102]"></i>
+            <span>Public Page</span>
+        </a>
+        <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs">
+            <i class="fas fa-sliders text-emerald-600"></i>
             <span>Course Settings</span>
         </button>
-        <button onclick="document.getElementById('formBuilderCard')?.scrollIntoView({ behavior: 'smooth' })" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2 shadow-sm">
-            <svg class="w-4 h-4 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-            <span>Registration Form Builder</span>
-        </button>
-        <button onclick="document.getElementById('quizModal').classList.remove('hidden')" class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:opacity-90">
+        <button onclick="document.getElementById('quizModal').classList.remove('hidden')" class="px-3.5 py-2 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors shadow-xs">
             + Add Quiz
         </button>
-        <button onclick="document.getElementById('sectionModal').classList.remove('hidden')" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:opacity-90">
+        <button onclick="document.getElementById('sectionModal').classList.remove('hidden')" class="px-3.5 py-2 bg-[#c30102] hover:bg-[#a50102] text-white rounded-xl text-xs font-bold transition-colors shadow-xs">
             + Add Section
         </button>
     </div>
 </div>
 
 @if(session('success'))
-    <div class="p-4 mb-6 text-sm text-green-800 rounded-lg bg-green-50 border border-green-200">
-        {{ session('success') }}
+    <div class="p-4 mb-6 text-sm text-emerald-800 rounded-2xl bg-emerald-50 border border-emerald-200 font-semibold flex items-center gap-2 shadow-xs">
+        <i class="fas fa-check-circle text-emerald-600"></i>
+        <span>{{ session('success') }}</span>
     </div>
 @endif
+
+<!-- Course At-A-Glance KPI Strip -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tuition & Revenue</div>
+        <div class="text-xl font-black text-[#051c45] mt-1">৳{{ number_format($realizedCourseRevenue, 0) }}</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">Fee: {{ $course->formatted_price }} @if($pendingCoursePayments > 0) &bull; <span class="text-amber-600 font-bold">{{ $pendingCoursePayments }} Pending</span> @endif</div>
+    </div>
+    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Enrolled Students</div>
+        <div class="text-xl font-black text-[#051c45] mt-1">{{ $course->students->count() }}</div>
+        <div class="text-[11px] text-emerald-600 font-semibold mt-0.5">{{ $course->certificates->count() }} Certificates Issued</div>
+    </div>
+    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Curriculum Outline</div>
+        <div class="text-xl font-black text-[#051c45] mt-1">{{ $course->sections->count() }} Sections</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">{{ $totalLessonsCount }} Video & Text Lessons</div>
+    </div>
+    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Assessments & Files</div>
+        <div class="text-xl font-black text-[#051c45] mt-1">{{ $course->quizzes->count() }} Quizzes</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">{{ $course->materials->count() }} Downloadable Resources</div>
+    </div>
+</div>
+
+<!-- Workspace Filter Tabs -->
+<div class="mb-6 bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-1.5 overflow-x-auto">
+    <button type="button" @click="wsTab = 'all'" :class="wsTab === 'all' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+        All Workspace Modules
+    </button>
+    <button type="button" @click="wsTab = 'curriculum'" :class="wsTab === 'curriculum' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+        Curriculum & Quizzes ({{ $course->sections->count() }})
+    </button>
+    <button type="button" @click="wsTab = 'students'" :class="wsTab === 'students' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+        Enrolled Students ({{ $course->students->count() }})
+    </button>
+    <button type="button" @click="wsTab = 'payments'" :class="wsTab === 'payments' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+        Payments ({{ $course->payments->count() }})
+    </button>
+    <button type="button" @click="wsTab = 'form'" :class="wsTab === 'form' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+        Registration Form Builder
+    </button>
+</div>
 
 <!-- Course Banner & Cover Photo Spotlight Card -->
 <div class="mb-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -64,28 +121,31 @@
                 @endif
             </div>
             <h3 class="text-sm font-bold text-gray-900 mt-1 truncate">{{ $course->title }}</h3>
-            <p class="text-xs text-gray-500 mt-0.5">
-                Instructor: <span class="font-medium text-gray-700">{{ $course->instructorProfile ? $course->instructorProfile->name : ($course->instructor ? $course->instructor->name : 'Unassigned') }}</span>
-                • Fee: <span class="font-medium text-gray-700">৳{{ number_format($course->price, 2) }}</span>
+            <p class="text-xs text-gray-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                <span>Instructor:</span>
+                <img src="{{ $course->instructor_avatar_url }}" alt="{{ $course->instructor_name }}" class="w-4 h-4 rounded-full object-cover border border-gray-300 inline-block" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($course->instructor_name) }}&background=051c45&color=fff';">
+                <span class="font-semibold text-gray-800">{{ $course->instructor_name }}</span>
+                <span>• Fee: <span class="font-medium text-gray-700">৳{{ number_format($course->price, 2) }}</span></span>
             </p>
         </div>
     </div>
-    <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition-all w-full sm:w-auto flex items-center justify-center gap-1.5 shrink-0 shadow-sm">
-        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+    <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-all w-full sm:w-auto flex items-center justify-center gap-1.5 shrink-0 shadow-sm">
+        <svg class="w-4 h-4 text-[#051c45]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
         <span>Upload / Change Picture</span>
     </button>
 </div>
 
 <!-- Dynamic Course Registration & Enrollment Form Builder -->
 <div id="formBuilderCard" 
+     x-show="wsTab === 'all' || wsTab === 'form'"
      x-data="courseFormBuilder({
         initialFields: @json($course->effective_enrollment_fields),
         templates: @json(\App\Models\Course::getBuiltinTemplates())
      })" 
-     class="mb-8 bg-white rounded-2xl border border-gray-200/90 shadow-sm overflow-hidden">
+     class="mb-8 bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
      
     <!-- Card Header -->
-    <div class="p-5 sm:p-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="p-5 sm:p-6 bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <div class="flex items-center gap-2.5 flex-wrap">
                 <span class="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 text-[10px] font-black uppercase tracking-wider">
@@ -582,7 +642,7 @@ function courseFormBuilder(config) {
 }
 </script>
 
-<div class="space-y-6">
+<div class="space-y-6" x-show="wsTab === 'all' || wsTab === 'curriculum'">
     @forelse($course->sections as $section)
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
@@ -634,19 +694,19 @@ function courseFormBuilder(config) {
     <!-- Quizzes List -->
     <h2 class="text-xl font-bold mt-8 mb-4 border-t pt-8 border-gray-200">Course Quizzes</h2>
     @forelse($course->quizzes as $quiz)
-        <div class="bg-white rounded-2xl border border-purple-100 shadow-sm overflow-hidden mb-4">
-            <div class="px-6 py-4 bg-purple-50 flex justify-between items-center">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-4">
+            <div class="px-6 py-4 bg-slate-50 flex justify-between items-center">
                 <h3 class="font-bold text-gray-900 text-lg flex items-center gap-2">
-                    <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-5 h-5 text-[#051c45]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     {{ $quiz->title }}
                 </h3>
                 <div class="flex items-center gap-3">
                     @if($quiz->is_published)
-                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">Published</span>
+                        <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-medium">Published</span>
                     @else
                         <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Draft</span>
                     @endif
-                    <a href="{{ route('admin.quizzes.show', [$course, $quiz]) }}" class="text-sm font-medium text-purple-600 hover:underline">Manage Questions →</a>
+                    <a href="{{ route('admin.quizzes.show', [$course, $quiz]) }}" class="text-sm font-semibold text-[#051c45] hover:underline">Manage Questions →</a>
                     <form method="POST" action="{{ route('admin.courses.quizzes.destroy', [$course, $quiz]) }}" class="inline">
                         @csrf
                         @method('DELETE')
@@ -655,7 +715,7 @@ function courseFormBuilder(config) {
                 </div>
             </div>
             @if($quiz->description)
-                <div class="px-6 py-3 text-sm text-gray-600 border-t border-purple-100 bg-white">
+                <div class="px-6 py-3 text-sm text-gray-600 border-t border-slate-100 bg-white">
                     {{ $quiz->description }}
                 </div>
             @endif
@@ -668,10 +728,10 @@ function courseFormBuilder(config) {
 </div>
 
 <!-- Course Materials -->
-<div class="mb-8">
+<div class="mb-8" x-show="wsTab === 'all' || wsTab === 'curriculum'">
     <div class="flex justify-between items-center mb-4 border-t pt-8 border-gray-200">
         <h2 class="text-xl font-bold text-gray-900">Course Materials</h2>
-        <button onclick="document.getElementById('addMaterialModal').classList.remove('hidden')" class="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg font-medium hover:bg-indigo-100 transition-colors">
+        <button onclick="document.getElementById('addMaterialModal').classList.remove('hidden')" class="px-4 py-2 bg-slate-100 text-[#051c45] rounded-lg font-medium hover:bg-slate-200 transition-colors">
             + Add Material
         </button>
     </div>
@@ -680,7 +740,7 @@ function courseFormBuilder(config) {
         @forelse($course->materials as $material)
             <div class="bg-white rounded-2xl border border-gray-100 p-4 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-500 flex items-center justify-center shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-slate-100 text-[#051c45] flex items-center justify-center shrink-0">
                         @if($material->type === 'pdf')
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                         @elseif($material->type === 'zip')
@@ -696,9 +756,9 @@ function courseFormBuilder(config) {
                 </div>
                 <div class="flex items-center gap-3">
                     @if($material->type === 'link')
-                        <a href="{{ $material->external_link }}" target="_blank" class="text-indigo-600 hover:underline text-sm font-medium">View</a>
+                        <a href="{{ $material->external_link }}" target="_blank" class="text-[#051c45] hover:underline text-sm font-semibold">View</a>
                     @else
-                        <a href="{{ Storage::url($material->file_path) }}" target="_blank" class="text-indigo-600 hover:underline text-sm font-medium">Download</a>
+                        <a href="{{ storage_asset($material->file_path) }}" target="_blank" class="text-[#051c45] hover:underline text-sm font-semibold">Download</a>
                     @endif
                     <form method="POST" action="{{ route('admin.courses.materials.destroy', [$course, $material]) }}" class="inline">
                         @csrf
@@ -716,7 +776,7 @@ function courseFormBuilder(config) {
 </div>
 
 <!-- Enrolled Students -->
-<div class="mb-8">
+<div class="mb-8" x-show="wsTab === 'all' || wsTab === 'students'">
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-gray-900">Enrolled Students</h2>
         <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">{{ $course->students->count() }} Total</span>
@@ -807,7 +867,7 @@ function courseFormBuilder(config) {
 </div>
 
 <!-- Course Payments & Verifications -->
-<div class="mb-8">
+<div class="mb-8" x-show="wsTab === 'all' || wsTab === 'payments'">
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-gray-900">Payments & Verifications</h2>
         <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">{{ $course->payments->count() }} Payments</span>
@@ -1015,7 +1075,7 @@ function courseFormBuilder(config) {
                     <input type="checkbox" name="is_published" id="quiz_is_published" value="1" class="rounded text-primary focus:ring-primary mr-2">
                     <label for="quiz_is_published" class="text-sm font-medium text-gray-700">Publish immediately</label>
                 </div>
-                <button type="submit" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:opacity-90">Create Quiz</button>
+                <button type="submit" class="w-full px-4 py-2 bg-[#051c45] text-white rounded-lg font-medium hover:opacity-90">Create Quiz</button>
             </div>
         </form>
     </div>
@@ -1033,11 +1093,11 @@ function courseFormBuilder(config) {
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                    <input type="text" name="title" required class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                    <input type="text" name="title" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                    <select name="type" id="materialType" onchange="toggleMaterialFields()" required class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                    <select name="type" id="materialType" onchange="toggleMaterialFields()" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                         <option value="link">External Link</option>
                         <option value="pdf">PDF Document</option>
                         <option value="zip">ZIP File</option>
@@ -1045,14 +1105,14 @@ function courseFormBuilder(config) {
                 </div>
                 <div id="linkField">
                     <label class="block text-sm font-medium text-gray-700 mb-1">External Link URL</label>
-                    <input type="url" name="external_link" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                    <input type="url" name="external_link" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div id="fileField" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-1">File Upload</label>
-                    <input type="file" name="file_path" accept=".pdf,.zip" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <input type="file" name="file_path" accept=".pdf,.zip" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-[#051c45] hover:file:bg-slate-200">
                     <p class="text-xs text-gray-500 mt-1">Max 10MB.</p>
                 </div>
-                <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:opacity-90 mt-2">Add Material</button>
+                <button type="submit" class="w-full px-4 py-2 bg-[#051c45] text-white rounded-lg font-medium hover:opacity-90 mt-2">Add Material</button>
             </div>
         </form>
     </div>
@@ -1146,7 +1206,12 @@ function courseFormBuilder(config) {
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Venue / Format</label>
-                        <input type="text" name="venue" value="{{ $course->venue }}" placeholder="e.g. Online (Zoom) / Banani" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <input type="text" id="edit-course-venue" name="venue" value="{{ $course->venue }}" placeholder="e.g. Online Live (Zoom) / Executive Campus" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                        <div class="flex flex-wrap gap-1.5 mt-1.5">
+                            <button type="button" onclick="document.getElementById('edit-course-venue').value='Online Live (Zoom)'" class="px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold transition-colors">Online Only (Disables Campus)</button>
+                            <button type="button" onclick="document.getElementById('edit-course-venue').value='Executive Campus'" class="px-2 py-0.5 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[10px] font-bold transition-colors">Campus Only</button>
+                            <button type="button" onclick="document.getElementById('edit-course-venue').value='Hybrid (Online Zoom & Executive Campus)'" class="px-2 py-0.5 rounded-md bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[10px] font-bold transition-colors">Hybrid (Both)</button>
+                        </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -1255,6 +1320,7 @@ function courseFormBuilder(config) {
             @method('DELETE')
         </form>
     </div>
+</div>
 </div>
 
 @endsection

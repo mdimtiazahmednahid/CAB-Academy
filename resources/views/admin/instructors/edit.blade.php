@@ -120,6 +120,29 @@
             <textarea name="bio" rows="4" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ old('bio', $instructor->bio) }}</textarea>
         </div>
 
+        @if(isset($courses) && $courses->isNotEmpty())
+        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-[#041536]">Assigned Courses & Card Avatar Sync</label>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Select which courses display this instructor's corner image and profile.</p>
+                </div>
+                <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 cursor-pointer">
+                    <input type="checkbox" name="sync_all_courses" value="1" onchange="document.querySelectorAll('.inst-course-cb').forEach(cb => cb.checked = this.checked)" class="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500">
+                    <span class="text-xs font-bold text-emerald-800">Sync to All Courses</span>
+                </label>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-56 overflow-y-auto pr-1">
+                @foreach($courses as $c)
+                    <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-white border border-slate-200/80 hover:border-[#041536]/40 cursor-pointer text-xs">
+                        <input type="checkbox" name="course_ids[]" value="{{ $c->id }}" {{ ($instructor->user_id && $c->instructor_id == $instructor->user_id) ? 'checked' : '' }} class="inst-course-cb mt-0.5 rounded border-slate-300 text-[#041536] focus:ring-[#041536]">
+                        <span class="font-semibold text-slate-800 leading-snug">{{ $c->title }}</span>
+                    </label>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <div class="pt-2">
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_active" value="1" {{ old('is_active', $instructor->is_active) ? 'checked' : '' }} class="rounded border-gray-300 text-[#041536] focus:ring-[#041536]">

@@ -107,7 +107,23 @@ if ($action) {
         if ($action === 'migrate') {
             \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
             $commandOutput = \Illuminate\Support\Facades\Artisan::output();
-            $notification = ['type' => 'success', 'text' => 'Database tables migrated successfully!'];
+            if (class_exists(\App\Support\DatabaseSchemaRepair::class)) {
+                $repairResult = \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+                $repairedItems = $repairResult['repaired'] ?? [];
+                $commandOutput .= "\n[Schema Verification] Status: " . ($repairResult['status'] ?? 'ok');
+                if (!empty($repairedItems)) {
+                    $commandOutput .= "\n - " . implode("\n - ", $repairedItems);
+                }
+            }
+            $notification = ['type' => 'success', 'text' => 'Database tables migrated and verified successfully!'];
+        } elseif ($action === 'schema_repair') {
+            $repairResult = \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+            $repairedItems = $repairResult['repaired'] ?? [];
+            $commandOutput = "Self-Healing Schema & Column Verification (Status: " . ($repairResult['status'] ?? 'ok') . "):\n";
+            $commandOutput .= !empty($repairedItems)
+                ? " - Repaired: " . implode("\n - Repaired: ", $repairedItems)
+                : " ✓ All required tables, columns, and ENUM statuses are already intact.";
+            $notification = ['type' => 'success', 'text' => 'All database tables, columns, and ENUM statuses verified & repaired!'];
         } elseif ($action === 'seed') {
             \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
             $commandOutput = \Illuminate\Support\Facades\Artisan::output();
@@ -450,6 +466,9 @@ $allPermsOk = ($permViews && $permSessions && $permLogs && $permBootstrap);
                 </a>
                 <a href="?action=migrate" class="btn btn-secondary">
                     🔄 Run Migrations Only
+                </a>
+                <a href="?action=schema_repair" class="btn btn-secondary">
+                    🛠️ Auto-Repair Schema & Columns (Fix 500 Errors)
                 </a>
                 <a href="?action=seed" class="btn btn-secondary">
                     🌱 Seed Data Only

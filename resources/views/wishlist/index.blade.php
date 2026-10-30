@@ -1,23 +1,29 @@
-@extends('layouts.public')
+@extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
 
-@section('title', 'Saved Courses & Wishlist - CAB Academy')
+@section('title', 'Saved Courses & Wishlist - ' . \App\Models\Setting::getVal('site_name', 'CAB Academy'))
+@section('header_title', 'Saved Wishlist')
 @section('robots', 'noindex, nofollow, noarchive, nosnippet')
 
 @section('content')
-<div class="bg-gradient-to-b from-white via-[#f8fafc] to-[#f2f4f7] py-12 lg:py-16 min-h-[70vh]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="{{ auth()->check() && !auth()->user()->isAdmin() ? 'py-2' : 'bg-gradient-to-b from-white via-[#f8fafc] to-[#f2f4f7] py-12 lg:py-16 min-h-[70vh]' }}">
+    <div class="{{ auth()->check() && !auth()->user()->isAdmin() ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' }}">
         
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-[#e3e7f0]">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-[#e3e7f0]">
             <div>
-                <h1 class="text-3xl sm:text-4xl font-black text-[#0f131f] tracking-tight">
+                <h1 class="text-2xl sm:text-3xl font-black text-[#0f131f] tracking-tight">
                     Saved Programs & Courses
                 </h1>
                 <p class="text-sm text-[#727f9f] mt-1">
                     Keep track of executive certifications and day-long workshops you plan to attend.
                 </p>
             </div>
-            <div>
+            <div class="flex items-center gap-2.5">
+                @auth
+                    <a href="{{ route('dashboard') }}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-[#051c45] hover:bg-slate-50 shadow-xs inline-flex items-center gap-2">
+                        <i class="fas fa-th-large"></i> My Dashboard
+                    </a>
+                @endauth
                 <a href="{{ route('catalog.index') }}" class="btn-ipdp-secondary px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm inline-flex items-center gap-2">
                     <i class="fas fa-search"></i> Explore More Courses
                 </a>
@@ -32,14 +38,14 @@
         @endif
 
         @if($courses->isNotEmpty())
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 {{ auth()->check() && !auth()->user()->isAdmin() ? 'lg:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4' }} gap-6">
                 @foreach($courses as $course)
                     <x-course-card :course="$course" />
                 @endforeach
             </div>
         @else
             <!-- Empty State -->
-            <div class="bg-white rounded-3xl p-12 text-center border border-[#e3e7f0] shadow-sm max-w-2xl mx-auto my-12">
+            <div class="liquid-glass-card bg-white rounded-3xl p-12 text-center border border-[#e3e7f0] shadow-sm max-w-2xl mx-auto my-8">
                 <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#c30102]/15 to-[#051c45]/10 text-[#c30102] border border-[#c30102]/20 flex items-center justify-center mx-auto text-3xl mb-6 shadow-sm">
                     <i class="far fa-heart"></i>
                 </div>

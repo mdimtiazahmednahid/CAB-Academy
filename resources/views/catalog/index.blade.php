@@ -1,6 +1,7 @@
-@extends('layouts.public')
+@extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
 
 @section('title', ($categoryTitle ?? 'Export - Import'))
+@section('header_title', ($categoryTitle ?? 'Browse Courses'))
 @section('meta_description', 'Explore CAB Academy\'s executive training programs in ' . ($categoryTitle ?? 'Commercial Banking and Export-Import') . '. Industry-led practical curriculum with verified professional certification in Dhaka, Bangladesh.')
 @section('canonical_url', request()->url())
 
@@ -14,12 +15,6 @@
         <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[#10b981]/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <!-- Scarcity / Category Pill -->
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#10b981] text-xs font-black uppercase tracking-wider mb-4 shadow-sm">
-                <i class="fas fa-certificate text-xs"></i>
-                <span>Executive Certification Programs</span>
-            </div>
-
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3">
                 {{ $categoryTitle ?? 'Export – Import' }}
             </h1>
@@ -29,8 +24,17 @@
             </p>
 
             <!-- Breadcrumbs Navigation (Preserved for Cypress test: Home, Course) -->
-            <div class="flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-300 font-medium">
-                <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
+            <div class="flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-300 font-medium flex-wrap">
+                @auth
+                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1 text-amber-300 hover:text-white font-bold transition-colors">
+                        <i class="fas fa-th-large text-[10px]"></i>
+                        <span>My Dashboard</span>
+                    </a>
+                    <span class="text-slate-500">/</span>
+                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="hover:text-white transition-colors">Home</a>
+                @else
+                    <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
+                @endauth
                 <span class="text-slate-500">/</span>
                 <a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Course</a>
                 @if($categoryTitle)
@@ -51,6 +55,7 @@
                 <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-none">
                     <a 
                         href="{{ route('catalog.index') }}" 
+                        onclick="showCatalogSkeleton()"
                         class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ empty($selectedCategory) ? 'bg-[#c30102] text-white shadow-md shadow-[#c30102]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200 hover:border-slate-300' }}"
                     >
                         All Categories
@@ -58,6 +63,7 @@
                     @foreach(array_slice($runningCategories, 0, 6) as $cat)
                         <a 
                             href="{{ route('catalog.category', $cat['slug']) }}" 
+                            onclick="showCatalogSkeleton()"
                             class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ ($selectedCategory && \Illuminate\Support\Str::slug($selectedCategory) === $cat['slug']) ? 'bg-[#c30102] text-white shadow-md shadow-[#c30102]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200 hover:border-slate-300' }}"
                         >
                             {{ $cat['name'] }}
@@ -74,7 +80,7 @@
                     <select 
                         name="sort" 
                         id="sort" 
-                        onchange="this.form.submit()" 
+                        onchange="showCatalogSkeleton(); this.form.submit()" 
                         class="bg-white border border-slate-200 text-[#0f131f] text-xs rounded-xl focus:ring-2 focus:ring-[#c30102] focus:border-[#c30102] py-2 pl-3 pr-8 shadow-sm font-semibold cursor-pointer"
                     >
                         <option value="recommended" {{ request('sort') == 'recommended' ? 'selected' : '' }}>Recommended</option>
@@ -85,8 +91,33 @@
                 </form>
             </div>
 
+            <!-- 3-Column Course Grid Skeleton Loader (Shown during Category & Sort transitions) -->
+            <div id="catalog-grid-skeleton" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 pb-10 hidden" aria-hidden="true">
+                @for($sk = 0; $sk < 6; $sk++)
+                    <div class="liquid-glass-card rounded-2xl overflow-hidden flex flex-col h-full">
+                        <div class="h-44 w-full skeleton-shimmer"></div>
+                        <div class="p-4.5 space-y-3 flex-1 flex flex-col justify-between">
+                            <div class="space-y-2.5">
+                                <div class="flex items-center gap-2">
+                                    <div class="h-5 w-24 rounded-full skeleton-shimmer"></div>
+                                    <div class="h-5 w-16 rounded-full skeleton-shimmer"></div>
+                                </div>
+                                <div class="h-5 w-full rounded-lg skeleton-shimmer"></div>
+                                <div class="h-5 w-3/4 rounded-lg skeleton-shimmer"></div>
+                                <div class="h-3 w-full rounded skeleton-shimmer"></div>
+                                <div class="h-3 w-5/6 rounded skeleton-shimmer"></div>
+                            </div>
+                            <div class="pt-3 border-t border-slate-100 space-y-2">
+                                <div class="h-4 w-36 mx-auto rounded skeleton-shimmer"></div>
+                                <div class="h-11 w-full rounded-xl skeleton-shimmer"></div>
+                            </div>
+                        </div>
+                    </div>
+                @endfor
+            </div>
+
             <!-- 3-Column Course Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 pb-10">
+            <div id="catalog-grid-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 pb-10">
                 @forelse($courses as $course)
                     <x-course-card :course="$course" />
                 @empty
@@ -131,7 +162,7 @@
                 @foreach($runningCategories as $catItem)
                     <a 
                         href="{{ route('catalog.category', $catItem['slug']) }}" 
-                        class="group bg-white rounded-2xl p-4 border border-[#e3e7f0] shadow-sm hover:shadow-xl hover:border-[#c30102]/30 transition-all duration-300 text-center flex flex-col items-center justify-between hover:-translate-y-1"
+                        class="liquid-glass-card group bg-white/85 rounded-2xl p-4 border border-[#e3e7f0] shadow-sm hover:shadow-xl hover:border-[#c30102]/30 transition-all duration-300 text-center flex flex-col items-center justify-between hover:-translate-y-1"
                     >
                         <!-- 80x80px Circular Thumbnail -->
                         <div class="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-white shadow-md bg-gray-100 group-hover:scale-105 group-hover:ring-2 group-hover:ring-[#c30102] transition-all duration-300 shrink-0">
@@ -160,4 +191,14 @@
     </section>
 
 </div>
+<script>
+    function showCatalogSkeleton() {
+        const skel = document.getElementById('catalog-grid-skeleton');
+        const res = document.getElementById('catalog-grid-results');
+        if (skel && res) {
+            res.classList.add('hidden');
+            skel.classList.remove('hidden');
+        }
+    }
+</script>
 @endsection

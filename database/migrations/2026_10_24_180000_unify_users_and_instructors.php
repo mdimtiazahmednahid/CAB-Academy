@@ -14,10 +14,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 0. Ensure users table has phone column for unified contact identity
-        if (!Schema::hasColumn('users', 'phone')) {
+        // 0. Ensure users and instructors tables have required unified columns
+        if (Schema::hasTable('users') && !Schema::hasColumn('users', 'phone')) {
             Schema::table('users', function (Blueprint $table) {
-                $table->string('phone', 50)->nullable()->after('email');
+                $table->string('phone', 50)->nullable();
+            });
+        }
+
+        if (Schema::hasTable('instructors')) {
+            Schema::table('instructors', function (Blueprint $table) {
+                if (!Schema::hasColumn('instructors', 'email')) {
+                    $table->string('email')->nullable();
+                }
+                if (!Schema::hasColumn('instructors', 'phone')) {
+                    $table->string('phone')->nullable();
+                }
+                if (!Schema::hasColumn('instructors', 'user_id')) {
+                    $table->unsignedBigInteger('user_id')->nullable();
+                }
+                if (!Schema::hasColumn('instructors', 'deleted_at')) {
+                    $table->softDeletes();
+                }
             });
         }
 

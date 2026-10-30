@@ -10,19 +10,20 @@
     <form method="POST" action="{{ route('login') }}" class="space-y-6">
         @csrf
 
-        <!-- Email Address -->
+        <!-- Email Address or Mobile Number -->
         <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email address</label>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" 
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address or Mobile Number</label>
+            <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" 
                 class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" 
-                placeholder="Enter your email">
+                placeholder="Enter your email or 11-digit mobile number (e.g. 01917054664)">
+            <p class="mt-1.5 text-xs text-gray-500">Enrolled via Express Enrollment? Sign in with your mobile number or email and your 4+ digit login password/PIN.</p>
             <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm text-red-500" />
         </div>
 
-        <!-- Password -->
+        <!-- Password / PIN -->
         <div>
             <div class="flex justify-between items-center mb-2">
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password or Login PIN (4+ digits)</label>
                 @if (Route::has('password.request'))
                     <a href="{{ route('password.request') }}" class="text-sm font-medium text-primary hover:text-primary-600 transition-colors">
                         Forgot password?
@@ -31,7 +32,7 @@
             </div>
             <input id="password" type="password" name="password" required autocomplete="current-password" 
                 class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" 
-                placeholder="••••••••">
+                placeholder="Enter your password or 4+ digit PIN">
             <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm text-red-500" />
         </div>
 

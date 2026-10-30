@@ -1,6 +1,7 @@
-@extends('layouts.public')
+@extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
 
 @section('title', 'Insights & Knowledge Hub')
+@section('header_title', 'Insights & Knowledge Hub')
 @section('meta_description', 'Official CAB Academy Blog & Trade Knowledge Hub. In-depth research papers, LC operational guides, HS code updates, and NBR customs gazettes.')
 @section('canonical_url', route('blog.index'))
 
@@ -73,7 +74,7 @@
             <!-- Articles Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($posts as $post)
-                    <article class="bg-white rounded-3xl border border-[#e3e7f0] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group hover:border-[#c30102]/30">
+                    <article class="liquid-glass-card bg-white/85 rounded-3xl border border-[#e3e7f0] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group hover:border-[#c30102]/30">
                         <div>
                             <!-- Featured Image -->
                             <div class="relative aspect-video overflow-hidden bg-gray-100">

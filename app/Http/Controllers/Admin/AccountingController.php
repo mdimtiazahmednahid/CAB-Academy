@@ -44,14 +44,17 @@ class AccountingController extends Controller
             ->groupBy('provider')
             ->get();
 
-        // 3. Course-by-Course Profitability & Tuition Realization
+        // 3. Course-by-Course Profitability & Tuition Realization (Eager aggregated without N+1)
         $courseRevenueStats = Course::withCount([
             'payments as verified_students_count' => function ($q) {
                 $q->where('status', 'verified');
             }
-        ])->get()->map(function ($course) {
-            $realized = Payment::where('course_id', $course->id)->where('status', 'verified')->sum('amount');
-            $course->realized_revenue = $realized;
+        ])->withSum([
+            'payments as realized_revenue' => function ($q) {
+                $q->where('status', 'verified');
+            }
+        ], 'amount')->get()->map(function ($course) {
+            $course->realized_revenue = (float) ($course->realized_revenue ?? 0);
             return $course;
         })->sortByDesc('realized_revenue');
 
@@ -96,6 +99,18 @@ class AccountingController extends Controller
         $allCourses = Course::where('is_published', true)->orderBy('title')->get();
         $allPaymentMethods = PaymentMethod::where('is_active', true)->get();
 
+        // Accounting & Invoice Template Settings (fallback to global site_name)
+        $siteName = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+        $templateSettings = [
+            'accounting_institution_name' => \App\Models\Setting::getVal('accounting_institution_name', ''),
+            'effective_institution_name' => \App\Models\Setting::getVal('accounting_institution_name') ?: $siteName,
+            'accounting_ledger_subtitle' => \App\Models\Setting::getVal('accounting_ledger_subtitle', 'Executive Accounting & Tuition Treasury Ledger'),
+            'accounting_invoice_prefix' => \App\Models\Setting::getVal('accounting_invoice_prefix', 'INV'),
+            'accounting_signatory_title' => \App\Models\Setting::getVal('accounting_signatory_title', 'Authorized Registrar & Treasury'),
+            'accounting_footer_note' => \App\Models\Setting::getVal('accounting_footer_note', 'Official Electronic Financial Record — ' . (\App\Models\Setting::getVal('accounting_institution_name') ?: $siteName)),
+            'accounting_fiscal_year' => \App\Models\Setting::getVal('accounting_fiscal_year', 'FY ' . now()->format('Y') . '–' . now()->addYear()->format('y')),
+        ];
+
         return view('admin.accounting.index', compact(
             'totalRealizedRevenue',
             'monthlyRealizedRevenue',
@@ -109,8 +124,30 @@ class AccountingController extends Controller
             'ledgerTransactions',
             'recentExpenses',
             'allCourses',
-            'allPaymentMethods'
+            'allPaymentMethods',
+            'templateSettings'
         ));
+    }
+
+    /**
+     * Save custom Accounting & Invoice Template Options.
+     */
+    public function updateTemplateSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'accounting_institution_name' => 'nullable|string|max:180',
+            'accounting_ledger_subtitle' => 'nullable|string|max:200',
+            'accounting_invoice_prefix' => 'nullable|string|max:25',
+            'accounting_signatory_title' => 'nullable|string|max:150',
+            'accounting_footer_note' => 'nullable|string|max:350',
+            'accounting_fiscal_year' => 'nullable|string|max:50',
+        ]);
+
+        foreach ($validated as $key => $val) {
+            \App\Models\Setting::setVal($key, trim((string) ($val ?? '')), 'accounting');
+        }
+
+        return redirect()->route('admin.accounting.index')->with('success', 'Accounting & Invoice Template Options saved! Statements and student invoices now reflect your updated branding.');
     }
 
     /**
@@ -130,40 +167,42 @@ class AccountingController extends Controller
             'notes' => 'nullable|string|max:500',
         ]);
 
-        // Find or create student user
-        $user = User::firstOrCreate(
-            ['email' => $validated['student_email']],
-            [
-                'name' => $validated['student_name'],
-                'password' => bcrypt(Str::random(12)),
-                'role' => 'student',
-                'phone' => $validated['student_phone'] ?? null,
-                'email_verified_at' => now(),
-            ]
-        );
-
         $course = Course::findOrFail($validated['course_id']);
         $trxId = !empty($validated['transaction_id']) ? $validated['transaction_id'] : 'CAMPUS-' . strtoupper(Str::random(8));
 
-        // Create Verified Payment Record
-        $payment = Payment::create([
-            'user_id' => $user->id,
-            'course_id' => $course->id,
-            'payment_method_id' => $validated['payment_method_id'] ?? null,
-            'amount' => $validated['amount'],
-            'sender_number' => $validated['student_phone'] ?? 'Campus Desk',
-            'transaction_id' => $trxId,
-            'payment_type' => $validated['payment_type'],
-            'status' => 'verified',
-            'notes' => $validated['notes'] ?? 'Direct campus admission recorded by ' . auth()->user()->name,
-            'verified_at' => now(),
-            'verified_by' => auth()->id(),
-        ]);
+        [$user, $payment] = DB::transaction(function () use ($validated, $course, $trxId) {
+            // Find or create student user
+            $user = User::firstOrCreate(
+                ['email' => $validated['student_email']],
+                [
+                    'name' => $validated['student_name'],
+                    'password' => bcrypt(Str::random(12)),
+                    'role' => 'student',
+                    'phone' => $validated['student_phone'] ?? null,
+                    'email_verified_at' => now(),
+                ]
+            );
 
-        // Enroll Student
-        if (!$user->enrolledCourses()->where('course_id', $course->id)->exists()) {
-            $user->enrolledCourses()->attach($course->id);
-        }
+            // Create Verified Payment Record
+            $payment = Payment::create([
+                'user_id' => $user->id,
+                'course_id' => $course->id,
+                'payment_method_id' => $validated['payment_method_id'] ?? null,
+                'amount' => $validated['amount'],
+                'sender_number' => $validated['student_phone'] ?? 'Campus Desk',
+                'transaction_id' => $trxId,
+                'payment_type' => $validated['payment_type'],
+                'status' => 'verified',
+                'notes' => $validated['notes'] ?? 'Direct campus admission recorded by ' . auth()->user()->name,
+                'verified_at' => now(),
+                'verified_by' => auth()->id(),
+            ]);
+
+            // Enroll Student
+            $user->enrolledCourses()->syncWithoutDetaching([$course->id]);
+
+            return [$user, $payment];
+        });
 
         return redirect()->route('admin.accounting.index')->with('success', "Tuition receipt #{$payment->invoice_number} successfully registered. Student {$user->name} has been enrolled in {$course->title}.");
     }

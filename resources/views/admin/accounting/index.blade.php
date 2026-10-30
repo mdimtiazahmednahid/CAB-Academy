@@ -3,22 +3,26 @@
 @section('header_title', 'Accounting & Financial Control')
 
 @section('content')
-<div class="space-y-8" x-data="{ tuitionModalOpen: false, expenseModalOpen: false }">
+<div class="space-y-8" x-data="{ tuitionModalOpen: false, expenseModalOpen: false, templateModalOpen: false }">
 
     <!-- Header & Action Toolbar -->
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
             <div class="flex items-center gap-2 mb-1">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#051c45] text-white">
-                    <i class="fas fa-coins text-[#10b981] mr-1.5"></i> Treasury & Ledger
+                    <i class="fas fa-coins text-[#10b981] mr-1.5"></i> {{ $templateSettings['effective_institution_name'] ?? \App\Models\Setting::getVal('site_name', 'CAB Academy') }} &bull; Treasury
                 </span>
-                <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider">FY 2026-2027</span>
+                <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider">{{ $templateSettings['accounting_fiscal_year'] ?? 'FY 2026-2027' }}</span>
             </div>
             <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Institutional Accounting & Revenue</h1>
-            <p class="text-sm text-gray-500 mt-1">Real-time ledger, campus cash tuition realization, operational expenses, and profitability analytics.</p>
+            <p class="text-sm text-gray-500 mt-1">{{ $templateSettings['accounting_ledger_subtitle'] ?? 'Real-time ledger, campus cash tuition realization, operational expenses, and profitability analytics.' }}</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
+            <button type="button" @click="templateModalOpen = true" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all">
+                <i class="fas fa-sliders-h text-[#051c45]"></i>
+                <span>Template Options</span>
+            </button>
             <a href="{{ route('admin.accounting.statement') }}" target="_blank" class="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all">
                 <i class="fas fa-print text-gray-500"></i>
                 <span>Print Statement</span>
@@ -542,6 +546,103 @@
                     </button>
                     <button type="submit" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-md">
                         Record Expense
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Accounting Statement & Student Invoice Template Options -->
+    <div x-show="templateModalOpen" style="display:none;" class="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div @click.away="templateModalOpen = false" class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-100 space-y-5">
+            <div class="flex items-center justify-between border-b border-gray-100 pb-4">
+                <div>
+                    <h3 class="text-lg font-black text-gray-900">Statement & Invoice Template Options</h3>
+                    <p class="text-xs text-gray-500">Customize the institution name and branding shown on Financial Statements and Student Tuition Invoices.</p>
+                </div>
+                <button type="button" @click="templateModalOpen = false" class="text-gray-400 hover:text-gray-700">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('admin.accounting.template.store') }}" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-700 mb-1">
+                        Template Institution Name <span class="text-[10px] font-normal text-gray-400">(Leave blank to auto-use Global Site Name: "{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}")</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="accounting_institution_name"
+                        value="{{ $templateSettings['accounting_institution_name'] ?? '' }}"
+                        placeholder="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}"
+                        class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                    >
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Invoice Number Prefix</label>
+                        <input
+                            type="text"
+                            name="accounting_invoice_prefix"
+                            value="{{ $templateSettings['accounting_invoice_prefix'] ?? 'INV' }}"
+                            placeholder="INV"
+                            class="w-full text-xs font-mono uppercase rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Fiscal Year Label</label>
+                        <input
+                            type="text"
+                            name="accounting_fiscal_year"
+                            value="{{ $templateSettings['accounting_fiscal_year'] ?? 'FY 2026-27' }}"
+                            placeholder="FY 2026-27"
+                            class="w-full text-xs font-mono rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Statement / Invoice Subtitle</label>
+                    <input
+                        type="text"
+                        name="accounting_ledger_subtitle"
+                        value="{{ $templateSettings['accounting_ledger_subtitle'] ?? '' }}"
+                        placeholder="Institutional Financial Ledger & Tuition Realization Audit"
+                        class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                    >
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Authorized Signatory Title</label>
+                        <input
+                            type="text"
+                            name="accounting_signatory_title"
+                            value="{{ $templateSettings['accounting_signatory_title'] ?? '' }}"
+                            placeholder="Director of Finance"
+                            class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Footer / Verification Note</label>
+                        <input
+                            type="text"
+                            name="accounting_footer_note"
+                            value="{{ $templateSettings['accounting_footer_note'] ?? '' }}"
+                            placeholder="Audit Document Verified & Sealed"
+                            class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                        >
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-gray-100 flex items-center justify-end gap-2.5">
+                    <button type="button" @click="templateModalOpen = false" class="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 bg-[#051c45] hover:bg-[#072559] text-white text-xs font-bold rounded-xl shadow-md">
+                        Save Template Options
                     </button>
                 </div>
             </form>

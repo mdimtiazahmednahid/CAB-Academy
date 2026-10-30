@@ -14,7 +14,7 @@ class JobController extends Controller
 {
     public function index()
     {
-        $jobs = JobPost::latest()->get();
+        $jobs = JobPost::withCount('applications')->latest()->get();
         return view('admin.jobs.index', compact('jobs'));
     }
 
@@ -59,12 +59,16 @@ class JobController extends Controller
         $job = JobPost::create($data);
 
         if ($job->is_active) {
-            $users = User::where(function($q) {
-                $q->whereNull('notification_preferences')
-                  ->orWhereJsonContains('notification_preferences->new_jobs', true);
-            })->get();
-            if ($users->isNotEmpty()) {
-                Notification::send($users, new NewJobNotification($job));
+            try {
+                $users = User::all()->filter(function ($u) {
+                    $prefs = is_array($u->notification_preferences) ? $u->notification_preferences : null;
+                    return $prefs === null || ($prefs['new_jobs'] ?? true) === true;
+                });
+                if ($users->isNotEmpty()) {
+                    Notification::send($users, new NewJobNotification($job));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Job publish notification skipped: ' . $e->getMessage());
             }
         }
 
@@ -89,7 +93,9 @@ class JobController extends Controller
         $data['job_type'] = $request->input('job_type', $job->job_type ?? 'Full-time') ?: 'Full-time';
         $data['is_active'] = $request->has('is_active');
 
-        if ($request->hasFile('company_logo')) {
+        if ($request->boolean('remove_company_logo')) {
+            $data['company_logo'] = null;
+        } elseif ($request->hasFile('company_logo')) {
             $data['company_logo'] = $request->file('company_logo')->store('company_logos', 'public');
         } elseif ($request->filled('company_logo_base64')) {
             $base64 = $request->input('company_logo_base64');
@@ -114,12 +120,16 @@ class JobController extends Controller
         $job->update($data);
 
         if (!$wasActive && $job->is_active) {
-            $users = User::where(function($q) {
-                $q->whereNull('notification_preferences')
-                  ->orWhereJsonContains('notification_preferences->new_jobs', true);
-            })->get();
-            if ($users->isNotEmpty()) {
-                Notification::send($users, new NewJobNotification($job));
+            try {
+                $users = User::all()->filter(function ($u) {
+                    $prefs = is_array($u->notification_preferences) ? $u->notification_preferences : null;
+                    return $prefs === null || ($prefs['new_jobs'] ?? true) === true;
+                });
+                if ($users->isNotEmpty()) {
+                    Notification::send($users, new NewJobNotification($job));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Job update notification skipped: ' . $e->getMessage());
             }
         }
 

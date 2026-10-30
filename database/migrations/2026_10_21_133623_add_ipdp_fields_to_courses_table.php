@@ -11,12 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('courses', function (Blueprint $table) {
-            $table->text('short_description')->nullable()->after('description');
-            $table->date('start_date')->nullable()->after('duration');
-            $table->string('venue')->nullable()->after('start_date');
-            $table->text('target_audience')->nullable()->after('venue');
-        });
+        if (Schema::hasTable('courses')) {
+            Schema::table('courses', function (Blueprint $table) {
+                if (!Schema::hasColumn('courses', 'short_description')) {
+                    $table->text('short_description')->nullable();
+                }
+                if (!Schema::hasColumn('courses', 'start_date')) {
+                    $table->date('start_date')->nullable();
+                }
+                if (!Schema::hasColumn('courses', 'venue')) {
+                    $table->string('venue')->nullable();
+                }
+                if (!Schema::hasColumn('courses', 'target_audience')) {
+                    $table->text('target_audience')->nullable();
+                }
+            });
+        }
     }
 
     /**

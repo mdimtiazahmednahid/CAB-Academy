@@ -12,10 +12,15 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: 'var(--primary-color, #1F6F54)',
-                'primary-dark': 'var(--primary-color-dark, #16523E)',
-                'primary-100': '#D1FAE5',
-                'primary-600': 'var(--primary-color, #1F6F54)',
+                primary: 'var(--primary-color, #051c45)',
+                'primary-dark': 'var(--primary-color-dark, #03112b)',
+                'primary-100': '#dce5f5',
+                'primary-600': 'var(--primary-color, #051c45)',
+                navy: '#051c45',
+                crimson: '#c30102',
+                emerald: {
+                    verify: '#10b981',
+                },
             },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],

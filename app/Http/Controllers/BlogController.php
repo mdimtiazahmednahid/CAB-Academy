@@ -12,6 +12,7 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
+        abort_if(!\App\Models\Setting::isPageEnabled('blog') && (!auth()->check() || !auth()->user()->isAdmin()), 404);
         $query = BlogPost::published()->latest('published_at');
 
         if ($request->filled('category')) {

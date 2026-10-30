@@ -71,7 +71,7 @@ class FeedController extends Controller
         $imageUrl = $validated['image_url'] ?? null;
         if ($request->hasFile('image_file')) {
             $path = $request->file('image_file')->store('community', 'public');
-            $imageUrl = Storage::url($path);
+            $imageUrl = storage_asset($path);
         }
 
         CommunityPost::create([
@@ -83,7 +83,7 @@ class FeedController extends Controller
             'title' => $validated['title'],
             'content' => $validated['content'],
             'image_url' => $imageUrl,
-            'is_pinned' => $request->has('is_pinned') ? true : true,
+            'is_pinned' => $request->boolean('is_pinned', true),
             'likes_count' => 0,
             'comments_count' => 0,
         ]);

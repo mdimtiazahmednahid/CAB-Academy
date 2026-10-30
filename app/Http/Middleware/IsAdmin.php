@@ -15,6 +15,8 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
+        \App\Support\DatabaseSchemaRepair::ensureSchema();
+
         if (!auth()->check()) {
             return redirect()->guest(route('login'));
         }

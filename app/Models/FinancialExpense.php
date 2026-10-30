@@ -23,6 +23,10 @@ class FinancialExpense extends Model
         'created_by',
     ];
 
+    protected $attributes = [
+        'paid_to' => 'General Vendor',
+    ];
+
     protected $casts = [
         'amount' => 'decimal:2',
         'expense_date' => 'date',

@@ -9,6 +9,7 @@ class ContactController extends Controller
 {
     public function index()
     {
+        abort_if(!\App\Models\Setting::isPageEnabled('contact') && (!auth()->check() || !auth()->user()->isAdmin()), 404);
         return view('contact.index');
     }
 

@@ -193,6 +193,7 @@ if (!empty($_REQUEST['cmd_b64'])) {
     $actionMap = [
         'test_db' => 'test:db',
         'migrate' => 'migrate --force',
+        'schema_repair' => 'schema:repair',
         'seed' => 'db:seed --force',
         'fresh' => 'migrate:fresh --seed --force',
         'clear' => 'optimize:clear',
@@ -396,6 +397,34 @@ if ($rawCommand !== '') {
             $executionStatus = 'error';
         }
     }
+    // 6b. Self-Healing Database Schema & Column Repair (Fixes 500 & Migration Drift)
+    elseif (in_array($cleanCommand, ['schema:repair', 'repair:schema', 'fix:schema'])) {
+        try {
+            $autoloadFile = $baseDir . '/vendor/autoload.php';
+            require_once $autoloadFile;
+            $app = require_once $baseDir . '/bootstrap/app.php';
+            $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+            $kernel->bootstrap();
+
+            $output = "CAB Academy Self-Healing Schema & Column Verifier\n";
+            $output .= "========================================================\n";
+            $result = \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+            $repaired = $result['repaired'] ?? [];
+            if (!empty($repaired)) {
+                foreach ($repaired as $line) {
+                    $output .= " ✓ Repaired: {$line}\n";
+                }
+            } else {
+                $output .= " ✓ All tables, columns, and MySQL ENUM statuses are already intact.\n";
+            }
+            $output .= "\nSchema verification status: " . strtoupper($result['status'] ?? 'OK') . "\n";
+            $commandOutput = $output;
+            $executionStatus = 'success';
+        } catch (\Throwable $e) {
+            $commandOutput = "Error repairing schema: " . $e->getMessage() . "\n" . $e->getTraceAsString();
+            $executionStatus = 'error';
+        }
+    }
     // 7. In-Memory Artisan Command Execution
     else {
         try {
@@ -446,12 +475,37 @@ if ($rawCommand !== '') {
 
             \Illuminate\Support\Facades\Artisan::call($cmd, $params);
             $commandOutput = \Illuminate\Support\Facades\Artisan::output();
+
+            if (in_array($cmd, ['migrate', 'migrate:fresh']) && class_exists(\App\Support\DatabaseSchemaRepair::class)) {
+                $repairResult = \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+                $repairedItems = $repairResult['repaired'] ?? [];
+                if (!empty($repairedItems)) {
+                    $commandOutput .= "\n[Self-Healing Schema Verification]\n - Repaired: " . implode("\n - Repaired: ", $repairedItems) . "\n";
+                } else {
+                    $commandOutput .= "\n[Self-Healing Schema Verification] All tables & columns verified intact.\n";
+                }
+            }
+
             if (empty(trim($commandOutput))) {
                 $commandOutput = "Command `{$cleanCommand}` executed successfully with zero console output.";
             }
             $executionStatus = 'success';
         } catch (\Throwable $e) {
-            $commandOutput = "Artisan Execution Error:\n" . $e->getMessage() . "\n\nStack Trace:\n" . $e->getTraceAsString();
+            // If a migration failed halfway on shared hosting, still attempt self-healing schema repair
+            $repairFallback = '';
+            try {
+                if (class_exists(\App\Support\DatabaseSchemaRepair::class)) {
+                    $repairResult = \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+                    $repairedItems = $repairResult['repaired'] ?? [];
+                    if (!empty($repairedItems)) {
+                        $repairFallback = "\n\n[Auto-Recovery Applied]\nSelf-healing schema verifier ensured all required tables & columns exist:\n - " . implode("\n - ", $repairedItems);
+                    } else {
+                        $repairFallback = "\n\n[Auto-Recovery Applied] Self-healing schema verifier confirmed all tables & columns are intact.";
+                    }
+                }
+            } catch (\Throwable $inner) {}
+
+            $commandOutput = "Artisan Execution Error:\n" . $e->getMessage() . $repairFallback . "\n\nStack Trace:\n" . $e->getTraceAsString();
             $executionStatus = 'error';
         }
     }
@@ -599,6 +653,18 @@ ob_end_clean();
                                 <p class="text-[11px] text-slate-300 mt-0.5">Executes pending migrations safely without data loss</p>
                             </div>
                             <i class="fas fa-chevron-right text-xs opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                        </button>
+
+                        <button onclick="runCommand('schema:repair')" class="w-full p-3.5 text-left rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 transition-all flex items-center justify-between group">
+                            <div>
+                                <div class="text-xs font-bold text-sky-900 flex items-center gap-2">
+                                    <i class="fas fa-tools text-sky-600"></i>
+                                    <span>Auto-Repair Schema & Columns (Fix 500 / Migration Errors)</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-200 text-sky-900 font-mono">schema:repair</span>
+                                </div>
+                                <p class="text-[11px] text-sky-700 mt-0.5">Heals missing columns, tables, and MySQL ENUM mismatches on live databases</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs text-sky-400 group-hover:text-sky-700 group-hover:translate-x-1 transition-all"></i>
                         </button>
 
                         <button onclick="runCommand('db:seed --force')" class="w-full p-3.5 text-left rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all flex items-center justify-between group">

@@ -30,6 +30,12 @@ if (!function_exists('storage_asset')) {
             return '/' . $trimmed;
         }
 
+        // Mirror file from public/uploads to public/storage if public/storage is a directory and missing the file
+        if (file_exists(public_path('uploads/' . $trimmed)) && is_dir(public_path('storage')) && !is_link(public_path('storage')) && !file_exists(public_path('storage/' . $trimmed))) {
+            @mkdir(dirname(public_path('storage/' . $trimmed)), 0775, true);
+            @copy(public_path('uploads/' . $trimmed), public_path('storage/' . $trimmed));
+        }
+
         return '/storage/' . $trimmed;
     }
 }

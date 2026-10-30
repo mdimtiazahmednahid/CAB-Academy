@@ -1,5 +1,10 @@
 <?php
 
+if (($_GET['pin'] ?? $_POST['pin'] ?? '') !== 'cab2026') {
+    http_response_code(403);
+    die('<h3>403 Forbidden: Maintenance PIN required.</h3>');
+}
+
 require __DIR__.'/../vendor/autoload.php';
 $app = require_once __DIR__.'/../bootstrap/app.php';
 

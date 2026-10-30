@@ -12,10 +12,20 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans text-gray-900 antialiased bg-white">
-    <div x-data="onboarding()" class="min-h-screen flex flex-col pt-12 pb-28 px-6 max-w-lg mx-auto relative">
+    <div x-data="onboarding()" class="min-h-screen flex flex-col pt-8 pb-28 px-6 max-w-lg mx-auto relative">
+        <!-- Top Brand + Skip Option -->
+        <div class="flex items-center justify-between mb-6">
+            <span class="text-xs font-extrabold uppercase tracking-widest text-[#051c45]">
+                {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} &bull; Setup
+            </span>
+            <button type="button" @click="skip()" class="text-xs font-bold text-slate-500 hover:text-[#c30102] transition-colors cursor-pointer">
+                Skip to Dashboard &rarr;
+            </button>
+        </div>
+
         <!-- Progress -->
-        <div class="w-full bg-gray-100 rounded-full h-1.5 mb-10">
-            <div class="bg-green-600 h-1.5 rounded-full transition-all duration-300" :style="`width: ${(step / totalSteps) * 100}%`"></div>
+        <div class="w-full bg-gray-100 rounded-full h-1.5 mb-8">
+            <div class="bg-[#051c45] h-1.5 rounded-full transition-all duration-300" :style="`width: ${(step / totalSteps) * 100}%`"></div>
         </div>
 
         <div class="flex-1">
@@ -104,13 +114,32 @@
                 step: 1,
                 totalSteps: 3,
                 loading: false,
-                levels: ['School', 'University', 'Professional'],
-                availableSubjects: ['Physics', 'Mathematics', 'Chemistry', 'English'],
-                availableGoals: ['Improve grades', 'Prepare for exams', 'Build skills'],
+                levels: ['Executive & Corporate Professional', 'University Graduate / Job Seeker', 'Business Owner & Entrepreneur'],
+                availableSubjects: ['Export-Import & L/C Operations', 'Supply Chain & Procurement', 'Customs, VAT & NBR Compliance', 'Commercial Banking & Trade Finance'],
+                availableGoals: ['Earn Verified Executive Certification', 'Advance Corporate Career & Placement', 'Master Practical Trade Documentation'],
                 formData: {
                     level: null,
                     subjects: [],
                     goals: []
+                },
+                async skip() {
+                    this.loading = true;
+                    try {
+                        const response = await fetch('/onboarding', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify({ skip: true })
+                        });
+                        const data = await response.json();
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    } catch (error) {
+                        window.location.href = '{{ route('dashboard') }}';
+                    }
                 },
                 toggleSubject(subj) {
                     if (this.formData.subjects.includes(subj)) {

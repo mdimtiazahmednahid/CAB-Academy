@@ -12,10 +12,12 @@ class UserController extends Controller
     {
         $query = User::query();
         
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->get('search');
-            $query->where('name', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%");
+            });
         }
         
         $users = $query->latest()->paginate(15);
@@ -157,19 +159,21 @@ class UserController extends Controller
             return back()->withErrors(['error' => 'You cannot delete yourself.']);
         }
 
-        // Soft delete instructor profile if linked
-        if ($instructor = \App\Models\Instructor::where('user_id', $user->id)->first()) {
-            $instructor->is_active = false;
-            $instructor->delete();
-        }
+        \Illuminate\Support\Facades\DB::transaction(function () use ($user) {
+            // Soft delete instructor profile if linked
+            if ($instructor = \App\Models\Instructor::where('user_id', $user->id)->first()) {
+                $instructor->is_active = false;
+                $instructor->delete();
+            }
 
-        // Detach enrollments safely
-        $user->enrolledCourses()->detach();
+            // Detach enrollments safely
+            $user->enrolledCourses()->detach();
 
-        // Nullify instructor foreign key on authored courses
-        \App\Models\Course::where('instructor_id', $user->id)->update(['instructor_id' => null]);
-        
-        $user->delete();
+            // Nullify instructor foreign key on authored courses
+            \App\Models\Course::where('instructor_id', $user->id)->update(['instructor_id' => null]);
+            
+            $user->delete();
+        });
         
         return redirect()->route('admin.users')->with('success', 'User deleted successfully.');
     }

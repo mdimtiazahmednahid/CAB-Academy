@@ -1,6 +1,7 @@
-@extends('layouts.public')
+@extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
 
 @section('title', $course->title . ' - CAB Academy')
+@section('header_title', 'Course Overview')
 @section('meta_description', \Illuminate\Support\Str::limit(strip_tags($course->short_description ?: $course->description ?: 'Enroll in ' . $course->title . ' at CAB Academy Dhaka. Professional certification, live masterclasses, and career training.'), 200))
 @section('canonical_url', route('courses.show', $course))
 @section('og_image', $course->og_image_url)
@@ -41,13 +42,11 @@
         ],
     ];
 
-    if ($course->instructor) {
-        $courseSchema['instructor'] = [
-            '@type' => 'Person',
-            'name' => $course->instructor->name,
-            'jobTitle' => $course->instructor->title ?? 'Executive Trainer',
-        ];
-    }
+    $courseSchema['instructor'] = [
+        '@type' => 'Person',
+        'name' => $course->instructor_name,
+        'jobTitle' => $course->instructor_title,
+    ];
 
     $faqSchema = [
         '@context' => 'https://schema.org',
@@ -123,6 +122,10 @@
 @endsection
 
 @section('content')
+@php
+    $allCourseLessons = $course->sections->flatMap->lessons;
+    $resumeLesson = $allCourseLessons->first(fn($l) => !in_array($l->id, $completedLessonIds)) ?? $allCourseLessons->first();
+@endphp
 <div class="bg-[#f8fafc] min-h-screen pb-16">
 
     <!-- 1. Executive Hero Banner Header with Clickable Thumbnail & Direct Action Buttons -->
@@ -130,8 +133,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumbs -->
             <nav class="flex flex-wrap items-center gap-2 text-xs text-slate-300 mb-4">
-                <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
-                <span class="text-slate-500">/</span>
+                @auth
+                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1 text-amber-300 hover:text-white font-bold transition-colors">
+                        <i class="fas fa-th-large text-[10px]"></i>
+                        <span>My Dashboard</span>
+                    </a>
+                    <span class="text-slate-500">/</span>
+                @else
+                    <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
+                    <span class="text-slate-500">/</span>
+                @endauth
                 <a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Courses</a>
                 @if($course->category)
                     <span class="text-slate-500">/</span>
@@ -157,7 +168,15 @@
                         @endif
                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                            <span>Live Zoom & Campus</span>
+                            <span>
+                                @if($course->attendance_mode === 'online')
+                                    Online Live (Zoom)
+                                @elseif($course->attendance_mode === 'in_person')
+                                    Executive Campus
+                                @else
+                                    Live Zoom &amp; Campus
+                                @endif
+                            </span>
                         </span>
                     </div>
 
@@ -191,23 +210,44 @@
 
                     <!-- Direct Action Buttons in Hero -->
                     <div class="pt-2 flex flex-wrap items-center gap-2.5">
-                        <button 
-                            type="button"
-                            onclick="openEnrollDrawer({ 
-                                id: {{ $course->id }}, 
-                                title: '{{ addslashes($course->title) }}', 
-                                price: '{{ number_format($course->price, 2) }}', 
-                                rawPrice: {{ $course->price }}, 
-                                batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                                venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
-                                fields: {{ json_encode($course->effective_enrollment_fields) }}
-                            })"
-                            class="px-5 py-3 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-sm tracking-wide uppercase shadow-[0_4px_20px_rgba(195,1,2,0.4)] flex items-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer"
-                        >
-                            <i class="fas fa-bolt text-amber-300 text-xs"></i>
-                            <span>Enroll Now (30 Sec)</span>
-                            <i class="fas fa-arrow-right text-[10px]"></i>
-                        </button>
+                        @if($isEnrolled)
+                            @if($resumeLesson)
+                                <a 
+                                    href="{{ route('lessons.show', [$course, $resumeLesson]) }}"
+                                    class="px-5 py-3 rounded-xl bg-gradient-to-r from-[#10b981] to-[#059669] hover:from-[#059669] hover:to-[#047857] text-white font-extrabold text-xs sm:text-sm tracking-wide uppercase shadow-[0_4px_20px_rgba(16,185,129,0.4)] flex items-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-95"
+                                >
+                                    <i class="fas fa-play-circle text-white text-sm"></i>
+                                    <span>Continue Classroom</span>
+                                    <i class="fas fa-arrow-right text-[10px]"></i>
+                                </a>
+                            @endif
+                            <a 
+                                href="{{ route('dashboard') }}"
+                                class="px-4 py-3 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 text-white font-bold text-xs sm:text-sm tracking-wide flex items-center gap-2 transition-all"
+                            >
+                                <i class="fas fa-th-large text-amber-300 text-xs"></i>
+                                <span>My Dashboard</span>
+                            </a>
+                        @else
+                            <button 
+                                type="button"
+                                onclick="openEnrollDrawer({ 
+                                    id: {{ $course->id }}, 
+                                    title: '{{ addslashes($course->title) }}', 
+                                    price: '{{ number_format($course->price, 2) }}', 
+                                    rawPrice: {{ $course->price }}, 
+                                    batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
+                                    venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                                    attendanceMode: '{{ $course->attendance_mode }}',
+                                    fields: {{ json_encode($course->effective_enrollment_fields) }}
+                                })"
+                                class="px-5 py-3 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-sm tracking-wide uppercase shadow-[0_4px_20px_rgba(195,1,2,0.4)] flex items-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer"
+                            >
+                                <i class="fas fa-bolt text-amber-300 text-xs"></i>
+                                <span>Enroll Now (30 Sec)</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        @endif
 
                         <a 
                             href="{{ $course->counselor_whatsapp_url }}" 
@@ -254,7 +294,8 @@
                                 price: '{{ number_format($course->price, 2) }}', 
                                 rawPrice: {{ $course->price }}, 
                                 batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                                venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
+                                venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                                attendanceMode: '{{ $course->attendance_mode }}',
                                 fields: {{ json_encode($course->effective_enrollment_fields) }}
                             })" 
                             title="Click to Express Enroll in {{ $course->title }}"
@@ -278,6 +319,12 @@
                                         {{ $course->price > 0 ? '৳' . number_format($course->price, 2) : 'Free Access' }}
                                     </span>
                                 </div>
+                            </div>
+
+                            <!-- Bottom Right Synced Instructor Avatar & Name Badge on Hero Image -->
+                            <div class="absolute bottom-3 right-3 z-20 flex items-center gap-2 bg-[#020b18]/90 backdrop-blur-md border border-white/20 pl-1.5 pr-3 py-1 rounded-full shadow-lg">
+                                <img src="{{ $course->instructor_avatar_url }}" alt="{{ $course->instructor_name }}" class="w-7 h-7 rounded-full object-cover object-top border border-white/60 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($course->instructor_name) }}&background=051c45&color=fff';">
+                                <span class="text-[11px] font-bold text-white truncate max-w-[140px]">{{ $course->instructor_name }}</span>
                             </div>
 
                             <!-- Center Hover Overlay Pill -->
@@ -322,8 +369,8 @@
                         </div>
                         <div class="flex justify-between items-center text-xs text-slate-500">
                             <span>{{ $completedCount }} of {{ $totalLessons }} lessons completed</span>
-                            @if($course->sections->first() && $course->sections->first()->lessons->first())
-                                <a href="{{ route('lessons.show', [$course, $course->sections->first()->lessons->first()]) }}" class="text-[#c30102] font-semibold hover:underline">
+                            @if($resumeLesson)
+                                <a href="{{ route('lessons.show', [$course, $resumeLesson]) }}" class="text-[#c30102] font-semibold hover:underline">
                                     Resume Lesson &rarr;
                                 </a>
                             @endif
@@ -463,12 +510,10 @@
 
                 <!-- Section 4: Faculty Spotlight (Required by Cypress: cy.get('.w-[150px].h-[150px].rounded-full')) -->
                 @php
-                    $profile = $course->instructorProfile;
-                    $leadInstructor = $course->lead_faculty ?? $profile ?? $course->instructor ?? \App\Models\Instructor::where('is_active', true)->first();
-                    $instructorName = $leadInstructor ? $leadInstructor->name : 'CAB Academy Senior Faculty';
-                    $instructorTitle = $leadInstructor ? ($leadInstructor->title ?? 'Faculty Specialist') : 'Faculty Specialist';
-                    $instructorAvatar = $leadInstructor ? ($leadInstructor->avatar_url ?? $leadInstructor->profile_picture_url ?? null) : null;
-                    $instructorBio = $leadInstructor ? ($leadInstructor->bio ?? 'Distinguished Faculty Specialist in international trade, corporate customs, and regulatory compliance.') : 'Distinguished Faculty Specialist in international trade, corporate customs, and regulatory compliance.';
+                    $instructorName = $course->instructor_name;
+                    $instructorTitle = $course->instructor_title;
+                    $instructorAvatar = $course->instructor_avatar_url;
+                    $instructorBio = $course->instructor_bio;
                 @endphp
                 <div class="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs">
                     <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">Instructor Profile</h2>
@@ -525,7 +570,7 @@
                                         <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between text-xs">
                                             <span class="font-medium text-slate-800">{{ $mat->title }}</span>
                                             @if($isEnrolled)
-                                                <a href="{{ asset($mat->file_path) }}" target="_blank" class="font-bold text-[#c30102] hover:underline">
+                                                <a href="{{ $mat->type === 'link' ? $mat->external_link : storage_asset($mat->file_path) }}" target="_blank" class="font-bold text-[#c30102] hover:underline">
                                                     Download
                                                 </a>
                                             @else
@@ -649,7 +694,8 @@
                                         price: '{{ number_format($course->price, 2) }}', 
                                         rawPrice: {{ $course->price }}, 
                                         batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                                        venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
+                                        venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                                        attendanceMode: '{{ $course->attendance_mode }}',
                                         fields: {{ json_encode($course->effective_enrollment_fields) }}
                                     })"
                                     class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
@@ -673,10 +719,10 @@
                                 <div class="w-full py-2 bg-[#051c45]/5 text-[#051c45] font-bold rounded-xl text-center text-xs border border-[#051c45]/20">
                                     Enrolled in Course
                                 </div>
-                                @if($course->sections->first() && $course->sections->first()->lessons->first())
+                                @if($resumeLesson)
                                     <a 
-                                        href="{{ route('lessons.show', [$course, $course->sections->first()->lessons->first()]) }}" 
-                                        class="block w-full py-2.5 bg-[#051c45] text-white font-bold rounded-xl text-center text-xs"
+                                        href="{{ route('lessons.show', [$course, $resumeLesson]) }}" 
+                                        class="block w-full py-2.5 bg-[#051c45] hover:bg-[#082860] text-white font-bold rounded-xl text-center text-xs transition-colors"
                                     >
                                         Continue Learning
                                     </a>
@@ -690,6 +736,12 @@
                                         View Verified Certificate
                                     </a>
                                 @endif
+                                <a 
+                                    href="{{ route('dashboard') }}" 
+                                    class="block w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-center text-xs transition-colors"
+                                >
+                                    &larr; Back to My Dashboard
+                                </a>
                             </div>
                         @endif
 
@@ -799,7 +851,7 @@
     <div class="lg:hidden fixed bottom-3 left-1/2 -translate-x-1/2 w-[88%] max-w-xs z-30">
         @if($isEnrolled)
             <a 
-                href="{{ $course->sections->first() && $course->sections->first()->lessons->first() ? route('lessons.show', [$course, $course->sections->first()->lessons->first()]) : '#' }}"
+                href="{{ $resumeLesson ? route('lessons.show', [$course, $resumeLesson]) : route('dashboard') }}"
                 class="block w-full py-2.5 bg-[#051c45] text-white font-bold rounded-full shadow-xl text-center text-xs"
             >
                 Continue Learning
@@ -813,7 +865,8 @@
                     price: '{{ number_format($course->price, 2) }}', 
                     rawPrice: {{ $course->price }}, 
                     batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                    venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
+                    venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                    attendanceMode: '{{ $course->attendance_mode }}',
                     fields: {{ json_encode($course->effective_enrollment_fields) }}
                 })"
                 class="block w-full py-2.5 px-4 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-full shadow-xl text-center text-xs tracking-wide flex items-center justify-center gap-1.5"
@@ -837,7 +890,8 @@
                             price: '{{ number_format($course->price, 2) }}', 
                             rawPrice: {{ $course->price }}, 
                             batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                            venue: '{{ addslashes($course->venue ?? 'Mirpur-Pallabi Campus & Online Zoom') }}',
+                            venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                            attendanceMode: '{{ $course->attendance_mode }}',
                             fields: {{ json_encode($course->effective_enrollment_fields) }}
                         });
                     }
