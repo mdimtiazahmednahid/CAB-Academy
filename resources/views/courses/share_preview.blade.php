@@ -38,6 +38,7 @@
     <link rel="canonical" href="{{ $shortUrl }}">
 
     <!-- Open Graph / Facebook Meta Tags (1200x630 Large Card Standard) -->
+    <meta property="fb:app_id" content="966242223397117">
     <meta property="og:site_name" content="{{ $siteName }}">
     <meta property="article:publisher" content="{{ $officialFacebookUrl }}">
     <meta property="og:type" content="website">

@@ -59,6 +59,7 @@
     <meta name="ICBM" content="23.8223, 90.3654">
 
     <!-- Open Graph (Facebook, LinkedIn, Social Previews) -->
+    <meta property="fb:app_id" content="966242223397117">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:site_name" content="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}">
     <meta property="og:locale" content="en_US">

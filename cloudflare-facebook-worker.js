@@ -79,7 +79,7 @@ export default {
     // 4. If human visitor clicks the Facebook preview card via https://fb.neurasoftware.workers.dev/c/{id},
     //    redirect them straight to https://acsacademy.bd/courses/{id}?enroll=true (opens Enroll Now drawer!)
     if (isWorkersDev && !isSocialBot && !reqUrl.searchParams.has('debug_og') && !reqUrl.searchParams.has('preview_debug')) {
-      const shortMatch = reqUrl.pathname.match(/^\/c\/(\d+)/);
+      const shortMatch = reqUrl.pathname.match(/^\/(?:c|courses)\/(\d+)/);
       if (shortMatch) {
         return Response.redirect(`${PRIMARY_ORIGIN}/courses/${shortMatch[1]}?enroll=true`, 302);
       }
@@ -110,26 +110,26 @@ function buildCandidateAssetUrls(rawPath) {
   if (!subPath || cleanPath.startsWith('/images/') || cleanPath.startsWith('/public/images/')) {
     const imgSub = cleanPath.replace(/^\/(public\/)?images\//i, '');
     return [
+      `${LEGACY_ORIGIN}/images/${imgSub}`,
       `${PRIMARY_ORIGIN}/images/${imgSub}`,
       `${PRIMARY_ORIGIN}/public/images/${imgSub}`,
-      `${LEGACY_ORIGIN}/images/${imgSub}`,
     ];
   }
 
   return [
-    // Primary domain (acsacademy.bd) — try Laravel /storage/ stream route & direct upload folders first
-    `${PRIMARY_ORIGIN}/storage/${subPath}`,
-    `${PRIMARY_ORIGIN}/public/uploads/${subPath}`,
-    `${PRIMARY_ORIGIN}/uploads/${subPath}`,
-    `${PRIMARY_ORIGIN}/public/storage/${subPath}`,
-    // Legacy domain (cabacademy.bd) — in case course cover was uploaded before switching domains
-    `${LEGACY_ORIGIN}/storage/${subPath}`,
+    // Direct InfinityFree origin (cabacademy.bd) first to avoid Cloudflare same-worker route loop
     `${LEGACY_ORIGIN}/public/uploads/${subPath}`,
+    `${LEGACY_ORIGIN}/storage/${subPath}`,
     `${LEGACY_ORIGIN}/uploads/${subPath}`,
     `${LEGACY_ORIGIN}/public/storage/${subPath}`,
+    // Primary domain (acsacademy.bd)
+    `${PRIMARY_ORIGIN}/public/uploads/${subPath}`,
+    `${PRIMARY_ORIGIN}/storage/${subPath}`,
+    `${PRIMARY_ORIGIN}/uploads/${subPath}`,
+    `${PRIMARY_ORIGIN}/public/storage/${subPath}`,
     // Direct storage/app/public fallback
-    `${PRIMARY_ORIGIN}/storage/app/public/${subPath}`,
     `${LEGACY_ORIGIN}/storage/app/public/${subPath}`,
+    `${PRIMARY_ORIGIN}/storage/app/public/${subPath}`,
   ];
 }
 
@@ -146,6 +146,36 @@ async function fetchAssetSolvingChallenge(reqUrl) {
       const buf = await resp.arrayBuffer();
       // Verify it is a real non-empty binary image (> 200 bytes)
       if (buf.byteLength > 200) {
+        // When Facebook scrapes ?og_crop=1, resize/crop to a real 1200x630 horizontal JPEG via Automattic Photon CDN
+        // (non-Cloudflare infrastructure, avoiding CF Worker loopbacks) so Facebook permanently locks into the
+        // Full-Width Top-Banner layout and never flips to the small left-side vertical thumbnail.
+        if (reqUrl.searchParams.has('og_crop') && !reqUrl.searchParams.has('raw')) {
+          try {
+            const photonUrl = `https://i0.wp.com/fb.neurasoftware.workers.dev${reqUrl.pathname}?resize=1200,630&ssl=1`;
+            const cropResp = await fetch(photonUrl, {
+              headers: { 'User-Agent': CHROME_UA, 'Accept': 'image/jpeg,image/*,*/*;q=0.8' },
+            });
+            if (cropResp.ok) {
+              const cropBuf = await cropResp.arrayBuffer();
+              if (cropBuf.byteLength > 1000) {
+                return new Response(cropBuf, {
+                  status: 200,
+                  headers: {
+                    'Content-Type': 'image/jpeg',
+                    'Content-Length': String(cropBuf.byteLength),
+                    'Cache-Control': 'public, max-age=86400',
+                    'Access-Control-Allow-Origin': '*',
+                    'X-Resolved-Asset-Url': targetUrl,
+                    'X-Og-Dimensions': '1200x630',
+                  },
+                });
+              }
+            }
+          } catch (e) {
+            // Fall through to raw buffer below if Photon is unreachable
+          }
+        }
+
         const ext = reqUrl.pathname.split('.').pop().toLowerCase();
         const inferredMime =
           ext === 'png' ? 'image/png' :
@@ -224,7 +254,21 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
   originUrl.searchParams.delete('preview_debug');
 
   let resp = await fetchWithInfinityFreeCookie(originUrl.toString(), false);
-  let html = resp ? await resp.text() : '';
+  let html = resp && resp.ok ? await resp.text() : '';
+
+  // If acsacademy.bd subrequest was blocked by Cloudflare same-worker loop (when called via fb.acsacademy.bd),
+  // seamlessly fall back to cabacademy.bd (direct InfinityFree origin) and normalize domain references to acsacademy.bd
+  if (!html || !html.includes('og:title')) {
+    const legacyUrl = new URL(`${LEGACY_ORIGIN}${reqUrl.pathname}${reqUrl.search}`);
+    legacyUrl.searchParams.delete('fbclid');
+    legacyUrl.searchParams.delete('debug_og');
+    legacyUrl.searchParams.delete('preview_debug');
+    const legacyResp = await fetchWithInfinityFreeCookie(legacyUrl.toString(), false);
+    if (legacyResp && legacyResp.ok) {
+      html = await legacyResp.text();
+      html = html.replace(/cabacademy\.bd/gi, 'acsacademy.bd').replace(/CAB Academy/g, 'ACS Academy');
+    }
+  }
 
   // Strip ?i=1 from canonical and og:url if present
   html = html.replace(/\?i=1/g, '');
@@ -243,8 +287,9 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
   }
 
   let resolvedWorkerOgUrl = '';
+  let resolvedRawAssetPath = '';
   if (rawOgImage.startsWith('data:image/')) {
-    resolvedWorkerOgUrl = `${activeHostOrigin}/__og_b64${reqUrl.pathname}?v=${cacheBust}`;
+    resolvedWorkerOgUrl = `${activeHostOrigin}/__og_b64${reqUrl.pathname}?og_crop=1&v=${cacheBust}`;
   } else if (rawOgImage) {
     try {
       const parsedImg = new URL(rawOgImage, PRIMARY_ORIGIN);
@@ -254,12 +299,15 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
         parsedImg.hostname === 'localhost' ||
         parsedImg.hostname === '127.0.0.1'
       ) {
-        resolvedWorkerOgUrl = `${activeHostOrigin}${parsedImg.pathname}?v=${cacheBust}`;
+        resolvedRawAssetPath = parsedImg.pathname;
       }
     } catch (e) {
       if (rawOgImage.startsWith('/')) {
-        resolvedWorkerOgUrl = `${activeHostOrigin}${rawOgImage}?v=${cacheBust}`;
+        resolvedRawAssetPath = rawOgImage;
       }
+    }
+    if (resolvedRawAssetPath) {
+      resolvedWorkerOgUrl = `${activeHostOrigin}${resolvedRawAssetPath}?og_crop=1&v=${cacheBust}`;
     }
   }
 
@@ -268,9 +316,8 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
     const ogTitleMatch = html.match(/<meta\s+property=["']og:title["']\s+content=["']([^"']*)["']/i);
     const probeResults = [];
 
-    if (resolvedWorkerOgUrl && !resolvedWorkerOgUrl.includes('/__og_b64/')) {
-      const imgUrlObj = new URL(resolvedWorkerOgUrl);
-      for (const candUrl of buildCandidateAssetUrls(imgUrlObj.pathname)) {
+    if (resolvedRawAssetPath) {
+      for (const candUrl of buildCandidateAssetUrls(resolvedRawAssetPath)) {
         const r = await fetchWithInfinityFreeCookie(candUrl, true);
         if (!r) {
           probeResults.push({ url: candUrl, status: '404_or_redirected_to_error_page' });
@@ -307,6 +354,26 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
     );
   }
 
+  // Ensure fb:app_id is present so Meta Sharing Debugger shows zero warnings
+  if (!html.includes('fb:app_id')) {
+    html = html.replace(/<head[^>]*>/i, (m) => `${m}\n    <meta property="fb:app_id" content="966242223397117">`);
+  }
+
+  // Append compact "[𝐄𝐧𝐫𝐨𝐥𝐥]" at the bottom-right of og:title & twitter:title on course links (/c/{id} and /courses/{id})
+  const isCoursePage = /^\/(?:c|courses)\/\d+/i.test(reqUrl.pathname);
+  if (isCoursePage) {
+    const enrollWord = ' [𝐄𝐧𝐫𝐨𝐥𝐥]';
+    html = html
+      .replace(/(<meta\s+property=["']og:title["']\s+content=["'])([^"']*)(["'])/gi, (m, p1, title, p3) => {
+        if (title.includes('𝐄𝐧𝐫𝐨𝐥𝐥') || title.includes('Enroll')) return m;
+        return `${p1}${title.trim()}${enrollWord}${p3}`;
+      })
+      .replace(/(<meta\s+name=["']twitter:title["']\s+content=["'])([^"']*)(["'])/gi, (m, p1, title, p3) => {
+        if (title.includes('𝐄𝐧𝐫𝐨𝐥𝐥') || title.includes('Enroll')) return m;
+        return `${p1}${title.trim()}${enrollWord}${p3}`;
+      });
+  }
+
   // Replace og:image, og:image:secure_url, and twitter:image with the resolved Worker URL + cache-buster
   if (resolvedWorkerOgUrl) {
     html = html
@@ -336,74 +403,86 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
  * automatically solving the /aes.js challenge and skipping 404 redirects to errors.infinityfree.net.
  */
 async function fetchWithInfinityFreeCookie(urlStr, isBinary) {
-  const targetUrlObj = new URL(urlStr);
-  const domain = targetUrlObj.hostname;
-  const originBase = `${targetUrlObj.protocol}//${domain}`;
+  try {
+    const targetUrlObj = new URL(urlStr);
+    const domain = targetUrlObj.hostname;
+    const originBase = `${targetUrlObj.protocol}//${domain}`;
 
-  const headers = new Headers();
-  headers.set('User-Agent', CHROME_UA);
-  headers.set(
-    'Accept',
-    isBinary
-      ? 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
-      : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8'
-  );
-  headers.set('Accept-Language', 'en-US,en;q=0.9');
-  headers.set('Referer', `${originBase}/`);
+    const headers = new Headers();
+    headers.set('User-Agent', CHROME_UA);
+    headers.set(
+      'Accept',
+      isBinary
+        ? 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
+        : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8'
+    );
+    headers.set('Accept-Language', 'en-US,en;q=0.9');
+    headers.set('Referer', `${originBase}/`);
 
-  if (cachedTestCookies[domain]) {
-    headers.set('Cookie', `__test=${cachedTestCookies[domain]}`);
-  }
+    if (cachedTestCookies[domain]) {
+      headers.set('Cookie', `__test=${cachedTestCookies[domain]}`);
+    }
 
-  let response = await fetch(urlStr, {
-    method: 'GET',
-    headers,
-    redirect: 'follow',
-  });
+    let response = await fetch(urlStr, {
+      method: 'GET',
+      headers,
+      redirect: 'follow',
+    });
 
-  if (response.url && (response.url.includes('errors.infinityfree.net') || response.url.includes('/errors/'))) {
+    if (!response.ok && response.status >= 500) {
+      return null;
+    }
+
+    if (response.url && (response.url.includes('errors.infinityfree.net') || response.url.includes('/errors/'))) {
+      return null;
+    }
+
+    const ct = (response.headers.get('content-type') || '').toLowerCase();
+    if (!ct.includes('text/html')) {
+      return response;
+    }
+
+    const bodyText = await response.text();
+    const match = bodyText.match(/toNumbers\("([0-9a-fA-F]{32})"\).*?toNumbers\("([0-9a-fA-F]{32})"\).*?toNumbers\("([0-9a-fA-F]{32})"\)/s);
+
+    if (match) {
+      const keyHex = match[1];
+      const ivHex = match[2];
+      const cipherHex = match[3];
+
+      const testCookieVal = await decryptInfinityFreeTestCookie(keyHex, ivHex, cipherHex);
+      if (testCookieVal) {
+        cachedTestCookies[domain] = testCookieVal;
+        headers.set('Cookie', `__test=${testCookieVal}`);
+
+        const retryUrl = new URL(urlStr);
+        retryUrl.searchParams.set('i', '1');
+
+        const retryResp = await fetch(retryUrl.toString(), {
+          method: 'GET',
+          headers,
+          redirect: 'follow',
+        });
+
+        if (!retryResp.ok && retryResp.status >= 500) {
+          return null;
+        }
+
+        if (retryResp.url && (retryResp.url.includes('errors.infinityfree.net') || retryResp.url.includes('/errors/'))) {
+          return null;
+        }
+
+        return retryResp;
+      }
+    }
+
+    return new Response(bodyText, {
+      status: response.status,
+      headers: response.headers,
+    });
+  } catch (e) {
     return null;
   }
-
-  const ct = (response.headers.get('content-type') || '').toLowerCase();
-  if (!ct.includes('text/html')) {
-    return response;
-  }
-
-  const bodyText = await response.text();
-  const match = bodyText.match(/toNumbers\("([0-9a-fA-F]{32})"\).*?toNumbers\("([0-9a-fA-F]{32})"\).*?toNumbers\("([0-9a-fA-F]{32})"\)/s);
-
-  if (match) {
-    const keyHex = match[1];
-    const ivHex = match[2];
-    const cipherHex = match[3];
-
-    const testCookieVal = await decryptInfinityFreeTestCookie(keyHex, ivHex, cipherHex);
-    if (testCookieVal) {
-      cachedTestCookies[domain] = testCookieVal;
-      headers.set('Cookie', `__test=${testCookieVal}`);
-
-      const retryUrl = new URL(urlStr);
-      retryUrl.searchParams.set('i', '1');
-
-      const retryResp = await fetch(retryUrl.toString(), {
-        method: 'GET',
-        headers,
-        redirect: 'follow',
-      });
-
-      if (retryResp.url && (retryResp.url.includes('errors.infinityfree.net') || retryResp.url.includes('/errors/'))) {
-        return null;
-      }
-
-      return retryResp;
-    }
-  }
-
-  return new Response(bodyText, {
-    status: response.status,
-    headers: response.headers,
-  });
 }
 
 function hexToBytes(hex) {
