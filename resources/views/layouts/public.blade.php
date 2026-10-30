@@ -66,7 +66,10 @@
     <meta property="og:description" content="@yield('meta_description', 'ACS Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
     <meta property="og:url" content="@yield('canonical_url', url()->current())">
     @php
-        $rawOgImg = trim(View::getSection('og_image') ?: (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')));
+        $defaultOgBanner = file_exists(public_path('images/og-banner.jpg'))
+            ? asset('images/og-banner.jpg')
+            : (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png'));
+        $rawOgImg = trim(View::getSection('og_image') ?: $defaultOgBanner);
         while (str_contains($rawOgImg, '&amp;')) {
             $rawOgImg = html_entity_decode($rawOgImg, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         }

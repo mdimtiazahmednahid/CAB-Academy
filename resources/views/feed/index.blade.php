@@ -186,13 +186,18 @@
                                     <template x-if="livePreview.image">
                                         <div class="relative w-full bg-white overflow-hidden border-b border-[#dadde1]">
                                             <img :src="livePreview.image" :alt="livePreview.title" class="w-full h-auto max-h-[380px] object-cover" x-on:error="livePreview.image = null">
-                                            <span class="absolute top-3 right-11 w-7 h-7 rounded-full bg-white/95 text-[#1c1e21] border border-black/10 shadow-md flex items-center justify-center font-serif italic font-bold text-xs select-none">i</span>
                                         </div>
                                     </template>
-                                    <div class="px-4 py-3 bg-[#f2f3f5]/60 group-hover:bg-[#ebedf0]/70 transition-colors">
-                                        <div class="text-xs font-normal text-[#65676b] truncate" x-text="livePreview.display_domain || livePreview.domain.toLowerCase()"></div>
-                                        <h4 class="text-[15px] font-serif font-bold text-[#050505] group-hover:text-[#c30102] line-clamp-2 leading-snug mt-0.5" x-text="livePreview.stylish_title || livePreview.title"></h4>
-                                        <p x-show="!livePreview.image && livePreview.description" class="text-xs text-[#65676b] line-clamp-2 mt-1 leading-relaxed" x-text="livePreview.description"></p>
+                                    <div class="px-4 py-3 bg-[#f2f3f5]/80 group-hover:bg-[#ebedf0]/90 transition-colors flex items-center justify-between gap-3">
+                                        <div class="min-w-0 flex-1">
+                                            <div class="text-xs font-normal text-[#65676b] uppercase tracking-tight truncate" x-text="livePreview.display_domain || livePreview.domain.toLowerCase()"></div>
+                                            <h4 class="text-[15px] font-serif font-bold text-[#050505] group-hover:text-[#c30102] underline decoration-[#050505]/40 group-hover:decoration-[#c30102] line-clamp-2 leading-snug mt-0.5" x-text="livePreview.stylish_title || livePreview.title"></h4>
+                                            <p x-show="!livePreview.image && livePreview.description" class="text-xs text-[#65676b] line-clamp-2 mt-1 leading-relaxed" x-text="livePreview.description"></p>
+                                        </div>
+                                        <span class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white font-extrabold text-xs sm:text-[13px] shrink-0 transition-all shadow-[0_0_18px_rgba(195,1,2,0.55)] group-hover:scale-105 inline-flex items-center gap-1.5 select-none">
+                                            <i class="fas fa-bolt text-amber-300 text-[11px] animate-pulse"></i>
+                                            <span>Enroll Now</span>
+                                        </span>
                                     </div>
                                 </a>
                                 <button type="button" @click="livePreview = null" title="Dismiss preview" class="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-slate-900/75 hover:bg-slate-900 text-white text-xs flex items-center justify-center shadow-sm">

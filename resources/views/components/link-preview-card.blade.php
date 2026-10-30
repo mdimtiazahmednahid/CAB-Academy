@@ -38,18 +38,13 @@
         @endif
 
         @if(!empty($image) && !$compact)
-            <!-- Top Course Photo / Thumbnail with Facebook-Style Top-Right (i) Info Badge -->
+            <!-- Top Course Photo / Thumbnail -->
             <div x-show="!imgError" class="relative w-full bg-white overflow-hidden border-b border-[#dadde1]">
                 <img src="{{ $image }}"
                      alt="{{ $title }}"
                      loading="lazy"
                      x-on:error="imgError = true"
                      class="w-full h-auto max-h-[440px] object-cover group-hover:scale-[1.01] transition-transform duration-300">
-
-                <!-- Facebook-style (i) info pill in top-right corner -->
-                <span class="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/95 text-[#1c1e21] border border-black/10 shadow-md flex items-center justify-center font-serif italic font-bold text-xs select-none" title="{{ $domain }}">
-                    i
-                </span>
             </div>
         @endif
 
@@ -74,24 +69,29 @@
             </div>
         </div>
 
-        <!-- Bottom Metadata Bar (Lowercase Domain + Stylish Bold Serif Headline) -->
-        <div class="px-4 py-3 bg-[#f2f3f5]/60 group-hover:bg-[#ebedf0]/70 transition-colors border-t border-[#dadde1]">
-            <div class="flex items-center justify-between gap-2">
-                <span class="text-xs sm:text-[13px] font-normal text-[#65676b] truncate">
+        <!-- Bottom Metadata Bar (Domain + Stylish Bold Serif Headline + Right-Side 'Enroll now' CTA Button) -->
+        <div class="px-4 py-3 bg-[#f2f3f5]/80 group-hover:bg-[#ebedf0]/90 transition-colors border-t border-[#dadde1] flex items-center justify-between gap-3">
+            <div class="min-w-0 flex-1">
+                <div class="text-xs sm:text-[13px] font-normal text-[#65676b] uppercase tracking-tight truncate">
                     {{ $displayDomain }}
-                </span>
+                </div>
+
+                <h4 class="text-[15px] sm:text-base font-serif font-bold text-[#050505] group-hover:text-[#c30102] underline decoration-[#050505]/40 group-hover:decoration-[#c30102] transition-colors line-clamp-2 leading-snug mt-0.5 tracking-tight">
+                    {{ $stylishTitle }}
+                    <span class="sr-only">{{ $title }}</span>
+                </h4>
+
+                @if(!empty($description) && (empty($image) || $compact))
+                    <p class="text-xs text-[#65676b] line-clamp-2 mt-1 leading-relaxed font-normal">
+                        {{ $description }}
+                    </p>
+                @endif
             </div>
 
-            <h4 class="text-[15px] sm:text-base font-serif font-bold text-[#050505] group-hover:text-[#c30102] transition-colors line-clamp-2 leading-snug mt-0.5 tracking-tight">
-                {{ $stylishTitle }}
-                <span class="sr-only">{{ $title }}</span>
-            </h4>
-
-            @if(!empty($description) && (empty($image) || $compact))
-                <p class="text-xs text-[#65676b] line-clamp-2 mt-1 leading-relaxed font-normal">
-                    {{ $description }}
-                </p>
-            @endif
+            <span class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-[13px] shrink-0 transition-all shadow-[0_0_18px_rgba(195,1,2,0.55)] group-hover:shadow-[0_0_24px_rgba(225,29,72,0.8)] group-hover:scale-105 inline-flex items-center gap-1.5 select-none">
+                <i class="fas fa-bolt text-amber-300 text-[11px] animate-pulse"></i>
+                <span>Enroll Now</span>
+            </span>
         </div>
     </a>
 @endif

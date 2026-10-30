@@ -119,21 +119,24 @@
                     <div class="px-4 py-3 bg-white border-b border-[#ebedf0] text-[13px] sm:text-sm font-serif font-bold text-[#050505] tracking-wide leading-snug"
                          x-text="course.postHeader"></div>
 
-                    <!-- Course Photo / Thumbnail with Top-Right (i) Info Badge -->
+                    <!-- Course Photo / Thumbnail -->
                     <div class="relative w-full bg-white overflow-hidden border-b border-[#dadde1]">
                         <img :src="course.image"
                              :alt="course.title"
                              class="w-full h-auto max-h-[300px] object-cover group-hover:scale-[1.01] transition-transform duration-300">
-                        <span class="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/95 text-[#1c1e21] border border-black/10 shadow-md flex items-center justify-center font-serif italic font-bold text-xs select-none">
-                            i
-                        </span>
                     </div>
 
-                    <!-- 2-Line Facebook Footer Bar (Domain + Bold Serif Title with Start Date) -->
-                    <div class="px-4 py-3 bg-[#f2f3f5]/60 group-hover:bg-[#ebedf0]/70 transition-colors border-t border-[#dadde1]">
-                        <div class="text-xs sm:text-[13px] font-normal text-[#65676b] truncate" x-text="course.displayDomain"></div>
-                        <h4 class="text-[15px] sm:text-base font-serif font-bold text-[#050505] group-hover:text-[#c30102] transition-colors line-clamp-2 leading-snug mt-0.5 tracking-tight"
-                            x-text="course.stylishTitle"></h4>
+                    <!-- 2-Line Facebook Footer Bar (Domain + Bold Serif Title + Right-Side Glowing 'Enroll Now' Button) -->
+                    <div class="px-4 py-3 bg-[#f2f3f5]/80 group-hover:bg-[#ebedf0]/90 transition-colors border-t border-[#dadde1] flex items-center justify-between gap-3">
+                        <div class="min-w-0 flex-1">
+                            <div class="text-xs sm:text-[13px] font-normal text-[#65676b] uppercase tracking-tight truncate" x-text="course.displayDomain"></div>
+                            <h4 class="text-[15px] sm:text-base font-serif font-bold text-[#050505] group-hover:text-[#c30102] underline decoration-[#050505]/40 group-hover:decoration-[#c30102] transition-colors line-clamp-2 leading-snug mt-0.5 tracking-tight"
+                                x-text="course.stylishTitle"></h4>
+                        </div>
+                        <span class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white font-extrabold text-xs sm:text-[13px] shrink-0 transition-all shadow-[0_0_18px_rgba(195,1,2,0.55)] group-hover:shadow-[0_0_24px_rgba(225,29,72,0.8)] group-hover:scale-105 inline-flex items-center gap-1.5 select-none">
+                            <i class="fas fa-bolt text-amber-300 text-[11px] animate-pulse"></i>
+                            <span>Enroll Now</span>
+                        </span>
                     </div>
                 </a>
             </div>

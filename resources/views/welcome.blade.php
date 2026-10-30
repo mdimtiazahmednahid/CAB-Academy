@@ -1,6 +1,8 @@
 @extends('layouts.public')
 
 @section('title', 'Executive Training & Professional Certifications')
+@section('og_title', \App\Models\Setting::getVal('site_tagline', 'Learn, Grow, Lead.') . ' – ' . \App\Models\Setting::getVal('site_name', 'Academy of Commercial & Supply Chain (ACS)'))
+@section('og_image', asset('images/og-banner.jpg'))
 @section('meta_description', 'ACS Academy is Bangladesh\'s premier executive certification institute for Commercial Banking, Letter of Credit (LC), Customs Clearance, and Supply Chain Management.')
 @section('canonical_url', url('/'))
 

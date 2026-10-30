@@ -238,6 +238,10 @@ class Course extends Model
             return $default;
         }
 
+        if (str_starts_with($img, 'data:image/')) {
+            return url('/courses/' . $this->id . '/og-image.jpg');
+        }
+
         $url = storage_asset($img, $default);
 
         // Ensure 100% absolute URL for social crawlers (Facebook, WhatsApp, LinkedIn, Twitter)
