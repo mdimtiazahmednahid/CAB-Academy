@@ -119,11 +119,11 @@
                     <div class="px-4 py-3 bg-white border-b border-[#ebedf0] text-[13px] sm:text-sm font-serif font-bold text-[#050505] tracking-wide leading-snug"
                          x-text="course.postHeader"></div>
 
-                    <!-- Course Photo / Thumbnail -->
-                    <div class="relative w-full bg-white overflow-hidden border-b border-[#dadde1]">
+                    <!-- Course Photo / Thumbnail (Full Image Display Without Cropping) -->
+                    <div class="relative w-full bg-slate-900/5 flex items-center justify-center overflow-hidden border-b border-[#dadde1]">
                         <img :src="course.image"
                              :alt="course.title"
-                             class="w-full h-auto max-h-[300px] object-cover group-hover:scale-[1.01] transition-transform duration-300">
+                             class="w-full h-auto max-h-[520px] object-contain group-hover:scale-[1.01] transition-transform duration-300">
                     </div>
 
                     <!-- 2-Line Facebook Footer Bar (Domain + Bold Serif Title + Right-Side Glowing 'Enroll Now' Button) -->

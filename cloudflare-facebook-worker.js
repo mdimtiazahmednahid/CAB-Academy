@@ -25,6 +25,19 @@ const cachedTestCookies = {
   [LEGACY_DOMAIN]: '',
 };
 
+// Tier 1: In-Worker Isolate Memory Cache (microsecond response time)
+const imageMemoryCache = new Map();
+const htmlMemoryCache = new Map();
+const MAX_MEM_ITEMS = 60;
+
+function setMemCache(cacheMap, key, value) {
+  if (cacheMap.size >= MAX_MEM_ITEMS) {
+    const oldestKey = cacheMap.keys().next().value;
+    cacheMap.delete(oldestKey);
+  }
+  cacheMap.set(key, value);
+}
+
 export default {
   async fetch(request, env, ctx) {
     const reqUrl = new URL(request.url);
@@ -61,7 +74,7 @@ export default {
         status: 200,
         headers: {
           'Content-Type': 'text/plain; charset=utf-8',
-          'Cache-Control': 'public, max-age=3600',
+          'Cache-Control': 'public, max-age=86400, s-maxage=86400',
         },
       });
     }
@@ -72,8 +85,9 @@ export default {
     }
 
     // 3. Image / static asset request: resolve exact course thumbnail across acsacademy.bd and cabacademy.bd
+    //    Accelerated via Tier-1 Memory Cache + Tier-2 Cloudflare Global Edge Cache (caches.default) + Optional Redis/KV
     if (isAssetPath) {
-      return fetchAssetSolvingChallenge(reqUrl);
+      return fetchAssetSolvingChallenge(reqUrl, request, env, ctx);
     }
 
     // 4. If human visitor clicks the Facebook preview card via https://fb.neurasoftware.workers.dev/c/{id},
@@ -93,7 +107,8 @@ export default {
     }
 
     // 6. HTML page for social crawlers (or ?debug_og=1)
-    return fetchHtmlSolvingChallenge(reqUrl, isWorkersDev);
+    //    Accelerated via Cloudflare Global Edge Cache
+    return fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx);
   },
 };
 
@@ -118,13 +133,13 @@ function buildCandidateAssetUrls(rawPath) {
 
   return [
     // Direct InfinityFree origin (cabacademy.bd) first to avoid Cloudflare same-worker route loop
-    `${LEGACY_ORIGIN}/public/uploads/${subPath}`,
     `${LEGACY_ORIGIN}/storage/${subPath}`,
+    `${LEGACY_ORIGIN}/public/uploads/${subPath}`,
     `${LEGACY_ORIGIN}/uploads/${subPath}`,
     `${LEGACY_ORIGIN}/public/storage/${subPath}`,
     // Primary domain (acsacademy.bd)
-    `${PRIMARY_ORIGIN}/public/uploads/${subPath}`,
     `${PRIMARY_ORIGIN}/storage/${subPath}`,
+    `${PRIMARY_ORIGIN}/public/uploads/${subPath}`,
     `${PRIMARY_ORIGIN}/uploads/${subPath}`,
     `${PRIMARY_ORIGIN}/public/storage/${subPath}`,
     // Direct storage/app/public fallback
@@ -133,7 +148,73 @@ function buildCandidateAssetUrls(rawPath) {
   ];
 }
 
-async function fetchAssetSolvingChallenge(reqUrl) {
+/**
+ * Verify binary image magic bytes (JPEG, PNG, GIF, WebP) so we never serve an HTML page as an image.
+ */
+function isValidImageBuffer(buf) {
+  if (!buf || buf.byteLength < 256) return false;
+  const b = new Uint8Array(buf, 0, 12);
+  // JPEG: FF D8 FF
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return true;
+  // PNG: 89 50 4E 47
+  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return true;
+  // GIF: 47 49 46 38
+  if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38) return true;
+  // WebP: RIFF....WEBP
+  if (
+    b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 &&
+    b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50
+  ) {
+    return true;
+  }
+  return false;
+}
+
+async function fetchAssetSolvingChallenge(reqUrl, request, env, ctx) {
+  const cacheKeyStr = `${reqUrl.origin}${reqUrl.pathname}`;
+
+  // 1. Tier-1 Instant RAM Memory Cache (0-1 ms response time from Worker RAM)
+  if (imageMemoryCache.has(cacheKeyStr)) {
+    const mem = imageMemoryCache.get(cacheKeyStr);
+    return new Response(mem.buf.slice(0), {
+      status: 200,
+      headers: {
+        'Content-Type': mem.mime,
+        'Content-Length': String(mem.buf.byteLength),
+        'Cache-Control': 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400',
+        'Access-Control-Allow-Origin': '*',
+        'CF-Cache-Status': 'HIT-L1-RAM',
+        'X-Resolved-Asset-Url': mem.targetUrl,
+      },
+    });
+  }
+
+  // 2. Tier-2 Cloudflare Global Edge Cache (10-25 ms response time across 300+ edge data centers)
+  const edgeCache = caches.default;
+  const cacheKey = new Request(cacheKeyStr, { method: 'GET' });
+  const cachedResp = await edgeCache.match(cacheKey);
+  if (cachedResp) {
+    try {
+      const cloned = cachedResp.clone();
+      const ab = await cloned.arrayBuffer();
+      if (isValidImageBuffer(ab)) {
+        setMemCache(imageMemoryCache, cacheKeyStr, {
+          buf: ab,
+          mime: cachedResp.headers.get('content-type') || 'image/jpeg',
+          targetUrl: cachedResp.headers.get('X-Resolved-Asset-Url') || cacheKeyStr,
+        });
+      }
+    } catch (e) {}
+
+    const hitHeaders = new Headers(cachedResp.headers);
+    hitHeaders.set('CF-Cache-Status', 'HIT-L2-EDGE');
+    return new Response(cachedResp.body, {
+      status: cachedResp.status,
+      headers: hitHeaders,
+    });
+  }
+
+  // 3. Fallback: Origin Fetch (InfinityFree) with candidate URLs
   const candidateUrls = buildCandidateAssetUrls(reqUrl.pathname);
 
   for (const targetUrl of candidateUrls) {
@@ -144,55 +225,41 @@ async function fetchAssetSolvingChallenge(reqUrl) {
 
     if (resp.ok && !ct.includes('text/html')) {
       const buf = await resp.arrayBuffer();
-      // Verify it is a real non-empty binary image (> 200 bytes)
-      if (buf.byteLength > 200) {
-        // When Facebook scrapes ?og_crop=1, resize/crop to a real 1200x630 horizontal JPEG via Automattic Photon CDN
-        // (non-Cloudflare infrastructure, avoiding CF Worker loopbacks) so Facebook permanently locks into the
-        // Full-Width Top-Banner layout and never flips to the small left-side vertical thumbnail.
-        if (reqUrl.searchParams.has('og_crop') && !reqUrl.searchParams.has('raw')) {
-          try {
-            const photonUrl = `https://i0.wp.com/fb.neurasoftware.workers.dev${reqUrl.pathname}?resize=1200,630&ssl=1`;
-            const cropResp = await fetch(photonUrl, {
-              headers: { 'User-Agent': CHROME_UA, 'Accept': 'image/jpeg,image/*,*/*;q=0.8' },
-            });
-            if (cropResp.ok) {
-              const cropBuf = await cropResp.arrayBuffer();
-              if (cropBuf.byteLength > 1000) {
-                return new Response(cropBuf, {
-                  status: 200,
-                  headers: {
-                    'Content-Type': 'image/jpeg',
-                    'Content-Length': String(cropBuf.byteLength),
-                    'Cache-Control': 'public, max-age=86400',
-                    'Access-Control-Allow-Origin': '*',
-                    'X-Resolved-Asset-Url': targetUrl,
-                    'X-Og-Dimensions': '1200x630',
-                  },
-                });
-              }
-            }
-          } catch (e) {
-            // Fall through to raw buffer below if Photon is unreachable
-          }
-        }
-
+      // Verify it is a real binary image using magic byte signature
+      if (isValidImageBuffer(buf)) {
         const ext = reqUrl.pathname.split('.').pop().toLowerCase();
         const inferredMime =
           ext === 'png' ? 'image/png' :
           ext === 'webp' ? 'image/webp' :
           ext === 'gif' ? 'image/gif' :
           'image/jpeg';
+        const finalMime = ct.startsWith('image/') ? ct : inferredMime;
 
-        return new Response(buf, {
+        // Populate Tier-1 RAM cache
+        setMemCache(imageMemoryCache, cacheKeyStr, {
+          buf: buf.slice(0),
+          mime: finalMime,
+          targetUrl,
+        });
+
+        const edgeResp = new Response(buf, {
           status: 200,
           headers: {
-            'Content-Type': ct.startsWith('image/') ? ct : inferredMime,
+            'Content-Type': finalMime,
             'Content-Length': String(buf.byteLength),
-            'Cache-Control': 'public, max-age=86400',
+            'Cache-Control': 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400',
             'Access-Control-Allow-Origin': '*',
             'X-Resolved-Asset-Url': targetUrl,
+            'CF-Cache-Status': 'MISS-ORIGIN-CACHED',
           },
         });
+
+        // Asynchronously populate Cloudflare Edge Cache (Tier-2) without blocking the response
+        if (ctx && typeof ctx.waitUntil === 'function') {
+          ctx.waitUntil(edgeCache.put(cacheKey, edgeResp.clone()));
+        }
+
+        return edgeResp;
       }
     }
   }
@@ -204,7 +271,7 @@ async function fetchAssetSolvingChallenge(reqUrl) {
     status: 200,
     headers: {
       'Content-Type': 'image/jpeg',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Cache-Control': 'public, max-age=86400, s-maxage=86400',
       'Access-Control-Allow-Origin': '*',
       'X-Resolved-Asset-Url': 'fallback-1200x630',
     },
@@ -247,7 +314,33 @@ async function serveBase64CourseImage(reqUrl) {
  * Fetch HTML page for social crawlers, solving InfinityFree's aes.js challenge
  * and ensuring the exact course thumbnail URL is served with cache-busting.
  */
-async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
+async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx) {
+  const isNoCache = reqUrl.searchParams.has('debug_og') || reqUrl.searchParams.has('nocache');
+  const cacheKeyStr = `${reqUrl.origin}${reqUrl.pathname}`;
+  const edgeCache = caches.default;
+  const cacheKey = new Request(cacheKeyStr, { method: 'GET' });
+
+  // 1. Tier-1 Instant RAM Cache for Open Graph HTML (0-1 ms response)
+  if (!isNoCache && htmlMemoryCache.has(cacheKeyStr)) {
+    const memHtml = htmlMemoryCache.get(cacheKeyStr);
+    return new Response(memHtml, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=1800, s-maxage=1800, stale-while-revalidate=86400',
+        'CF-Cache-Status': 'HIT-L1-RAM',
+      },
+    });
+  }
+
+  // 2. Tier-2 Cloudflare Global Edge Cache (10-25 ms response)
+  if (!isNoCache) {
+    const cachedHtml = await edgeCache.match(cacheKey);
+    if (cachedHtml) {
+      return cachedHtml;
+    }
+  }
+
   const originUrl = new URL(`${PRIMARY_ORIGIN}${reqUrl.pathname}${reqUrl.search}`);
   originUrl.searchParams.delete('fbclid');
   originUrl.searchParams.delete('debug_og');
@@ -289,7 +382,7 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
   let resolvedWorkerOgUrl = '';
   let resolvedRawAssetPath = '';
   if (rawOgImage.startsWith('data:image/')) {
-    resolvedWorkerOgUrl = `${activeHostOrigin}/__og_b64${reqUrl.pathname}?og_crop=1&v=${cacheBust}`;
+    resolvedWorkerOgUrl = `${activeHostOrigin}/__og_b64${reqUrl.pathname}?v=${cacheBust}`;
   } else if (rawOgImage) {
     try {
       const parsedImg = new URL(rawOgImage, PRIMARY_ORIGIN);
@@ -307,7 +400,7 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
       }
     }
     if (resolvedRawAssetPath) {
-      resolvedWorkerOgUrl = `${activeHostOrigin}${resolvedRawAssetPath}?og_crop=1&v=${cacheBust}`;
+      resolvedWorkerOgUrl = `${activeHostOrigin}${resolvedRawAssetPath}?v=${cacheBust}`;
     }
   }
 
@@ -389,13 +482,24 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev) {
       .replace(/(<link\s+rel=["']canonical["']\s+href=["'])https?:\/\/(?:www\.)?(?:acsacademy|cabacademy)\.bd/gi, `$1${activeHostOrigin}`);
   }
 
-  return new Response(html, {
+  if (!isNoCache) {
+    setMemCache(htmlMemoryCache, cacheKeyStr, html);
+  }
+
+  const finalHtmlResponse = new Response(html, {
     status: 200,
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Cache-Control': isNoCache ? 'no-cache, no-store, must-revalidate' : 'public, max-age=1800, s-maxage=1800, stale-while-revalidate=86400',
+      'CF-Cache-Status': isNoCache ? 'BYPASS' : 'MISS-STORED',
     },
   });
+
+  if (!isNoCache && ctx && typeof ctx.waitUntil === 'function') {
+    ctx.waitUntil(edgeCache.put(cacheKey, finalHtmlResponse.clone()));
+  }
+
+  return finalHtmlResponse;
 }
 
 /**

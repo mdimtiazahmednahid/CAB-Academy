@@ -38,13 +38,13 @@
         @endif
 
         @if(!empty($image) && !$compact)
-            <!-- Top Course Photo / Thumbnail -->
-            <div x-show="!imgError" class="relative w-full bg-white overflow-hidden border-b border-[#dadde1]">
+            <!-- Top Course Photo / Thumbnail (Full Image Display Without Cropping) -->
+            <div x-show="!imgError" class="relative w-full bg-slate-900/5 flex items-center justify-center overflow-hidden border-b border-[#dadde1]">
                 <img src="{{ $image }}"
                      alt="{{ $title }}"
                      loading="lazy"
                      x-on:error="imgError = true"
-                     class="w-full h-auto max-h-[440px] object-cover group-hover:scale-[1.01] transition-transform duration-300">
+                     class="w-full h-auto max-h-[560px] object-contain group-hover:scale-[1.01] transition-transform duration-300">
             </div>
         @endif
 
