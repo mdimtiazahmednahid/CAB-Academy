@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="overflow-x-hidden">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,8 +33,8 @@
             }
         </style>
     </head>
-    <body class="antialiased text-gray-900 bg-white">
-        <div class="min-h-screen flex w-full">
+    <body class="antialiased text-gray-900 bg-white overflow-x-hidden">
+        <div class="min-h-screen flex w-full overflow-x-hidden">
             
             <!-- Left Side - Graphic & Branding -->
             <div class="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-[#031330] via-[#051c45] to-[#0a2540] border-r border-[#1e2d4a] items-center justify-center overflow-hidden">
@@ -50,9 +50,9 @@
                 <div class="relative z-10 w-full max-w-lg px-12">
                     <div class="mb-10">
                         <a href="{{ url('/') }}" class="inline-flex items-center gap-3.5 group">
-                            <img class="h-14 w-14 rounded-full bg-white p-1 object-contain shadow-lg group-hover:scale-105 transition-transform" src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="ACS Academy" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                            <img class="h-14 w-14 rounded-full bg-white p-1 object-contain shadow-lg group-hover:scale-105 transition-transform shrink-0" src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="ACS Academy" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                             <div class="flex flex-col">
-                                <span class="text-2xl font-black text-white tracking-tight uppercase leading-none">{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}</span>
+                                <span class="text-lg xl:text-xl font-black text-white tracking-tight uppercase leading-tight">{!! \App\Models\Setting::formatBrandNameHtml() !!}</span>
                                 <span class="text-[10px] text-[#c30102] font-black uppercase tracking-widest mt-1">Learn, Grow, Lead.</span>
                             </div>
                         </a>
@@ -86,10 +86,10 @@
                 <div class="w-full flex-1 flex flex-col justify-center max-w-md my-8">
                     <!-- Mobile Logo -->
                     <div class="mb-8 lg:hidden">
-                        <a href="{{ url('/') }}" class="flex items-center gap-2">
+                        <a href="{{ url('/') }}" class="flex items-center gap-2.5">
                             @php $logo = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png'); @endphp
-                            <img class="h-8 w-auto object-contain" src="{{ $logo }}" alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
-                            <span class="font-bold text-lg tracking-tight text-gray-900 uppercase">{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}</span>
+                            <img class="h-10 w-10 rounded-full object-contain bg-white border border-slate-200 p-0.5 shrink-0" src="{{ $logo }}" alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                            <span class="font-black text-sm sm:text-base tracking-tight text-gray-900 uppercase leading-tight">{!! \App\Models\Setting::formatBrandNameHtml() !!}</span>
                         </a>
                     </div>
                     

@@ -103,6 +103,26 @@ class User extends Authenticatable
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('User::saved instructor sync skipped: ' . $e->getMessage());
             }
+
+            // Also sync author_avatar and author_name across Community Feed posts & comments
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('community_posts')) {
+                    $effectiveAvatar = $user->profile_picture ?: ($user->instructorProfile?->avatar ?? null);
+                    CommunityPost::where('user_id', $user->id)->update([
+                        'author_name' => $user->name,
+                        'author_avatar' => $effectiveAvatar,
+                    ]);
+                }
+                if (\Illuminate\Support\Facades\Schema::hasTable('community_comments')) {
+                    $effectiveAvatar = $user->profile_picture ?: ($user->instructorProfile?->avatar ?? null);
+                    CommunityComment::where('user_id', $user->id)->update([
+                        'author_name' => $user->name,
+                        'author_avatar' => $effectiveAvatar,
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('User::saved community avatar sync skipped: ' . $e->getMessage());
+            }
         });
     }
 
@@ -117,12 +137,20 @@ class User extends Authenticatable
     }
 
     /**
+     * Check whether the user has an uploaded profile picture or linked instructor avatar.
+     */
+    public function hasCustomProfilePicture(): bool
+    {
+        return !empty($this->profile_picture) || !empty($this->instructorProfile?->avatar);
+    }
+
+    /**
      * Get fully-qualified profile picture URL with fallback to instructor avatar and UI Avatars.
      */
     public function getProfilePictureUrlAttribute(): string
     {
         $pic = $this->profile_picture ?: ($this->instructorProfile?->avatar ?? null);
-        $default = 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=051c45&color=fff';
+        $default = 'https://ui-avatars.com/api/?name=' . urlencode($this->name ?: 'User') . '&background=051c45&color=fff&bold=true';
         if (!$pic) {
             return $default;
         }

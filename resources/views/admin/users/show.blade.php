@@ -14,9 +14,13 @@
     <!-- Left Column: User Profile -->
     <div class="space-y-6">
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center">
-            <div class="w-24 h-24 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-3xl mx-auto mb-4">
-                {{ substr($user->name, 0, 1) }}
-            </div>
+            @if($user->hasCustomProfilePicture())
+                <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover border-2 border-slate-200 mx-auto mb-4 shadow-sm" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=051c45&color=fff';">
+            @else
+                <div class="w-24 h-24 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-3xl mx-auto mb-4">
+                    {{ substr($user->name, 0, 1) }}
+                </div>
+            @endif
             <h2 class="text-xl font-bold text-gray-900">{{ $user->name }}</h2>
             <p class="text-gray-500 mb-4">{{ $user->email }}</p>
             

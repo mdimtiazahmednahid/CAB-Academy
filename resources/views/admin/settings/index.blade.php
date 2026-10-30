@@ -207,10 +207,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Simulated Public Navbar Lockup -->
                 <div class="bg-white rounded-xl border border-slate-200 p-3.5 flex items-center justify-between shadow-2xs">
-                    <div class="flex items-center gap-2.5 max-w-[230px]">
+                    <div class="flex items-center gap-2.5 max-w-[250px]">
                         <img src="{{ $currentLogo }}" alt="Logo" class="w-9 h-9 rounded-full object-contain border border-slate-100 shrink-0" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                         <div class="min-w-0">
-                            <div class="font-black uppercase text-[#051c45] leading-tight line-clamp-2" :style="'font-size: ' + previewHeaderSize" x-text="previewSiteName || 'ACS Academy'"></div>
+                            <div class="font-black uppercase text-[#051c45] leading-tight" :style="'font-size: ' + previewHeaderSize" x-html="(previewSiteName || 'ACS Academy').replace(/^(academy\s+of)\s+/i, '$1<br>')"></div>
                             <div class="text-[8px] font-black uppercase tracking-widest text-[#c30102] mt-0.5">Learn, Grow, Lead.</div>
                         </div>
                     </div>
@@ -219,10 +219,10 @@
 
                 <!-- Simulated Dark Executive Sidebar Lockup -->
                 <div class="bg-[#03112b] rounded-xl border border-slate-800 p-3.5 flex items-center justify-between text-white">
-                    <div class="flex items-center gap-2.5 max-w-[220px]">
+                    <div class="flex items-center gap-2.5 max-w-[240px]">
                         <img src="{{ $currentLogo }}" alt="Logo" class="w-8 h-8 rounded-lg bg-white p-0.5 object-contain shrink-0" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                         <div class="min-w-0">
-                            <div class="font-black uppercase text-white leading-tight line-clamp-2" :style="'font-size: ' + previewHeaderSize" x-text="previewSiteName || 'ACS Academy'"></div>
+                            <div class="font-black uppercase text-white leading-tight" :style="'font-size: ' + previewHeaderSize" x-html="(previewSiteName || 'ACS Academy').replace(/^(academy\s+of)\s+/i, '$1<br>')"></div>
                             <div class="text-[9px] font-bold uppercase tracking-widest text-emerald-400">Executive OS</div>
                         </div>
                     </div>

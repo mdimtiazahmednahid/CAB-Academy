@@ -45,8 +45,8 @@
             <div class="flex items-center gap-4">
                 <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $institutionName }} Crest" class="w-16 h-16 object-contain rounded-xl p-1 border border-slate-200" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div>
-                    <h1 class="text-2xl font-black text-[#051c45] tracking-tight uppercase">{{ $institutionName }}</h1>
-                    <p class="text-xs text-slate-500 font-semibold">{{ $ledgerSubtitle }}</p>
+                    <h1 class="text-xl sm:text-2xl font-black text-[#051c45] tracking-tight uppercase leading-tight">{!! \App\Models\Setting::formatBrandNameHtml($institutionName) !!}</h1>
+                    <p class="text-xs text-slate-500 font-semibold mt-0.5">{{ $ledgerSubtitle }}</p>
                     <p class="text-[11px] text-slate-400 mt-0.5">{{ $campusAddress }} | Hotline: {{ $hotlinePhone }}</p>
                 </div>
             </div>

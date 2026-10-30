@@ -69,5 +69,4 @@ Allow: /uploads/
 
 # ==============================================================================
 # SITEMAP SPECIFICATION
-Sitemap: https://cabacademy.bd/sitemap.xml
-Sitemap: https://cabacademybd.com/sitemap.xml
+Sitemap: https://acsacademy.bd/sitemap.xml

@@ -45,30 +45,33 @@
                 </div>
             @endif
         <div class="space-y-4">
-            <div>
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
                 <x-input-label for="profile_picture_input" :value="__('Profile Picture')" />
-                @if($user->profile_picture || ($user->instructorProfile && $user->instructorProfile->avatar))
-                    <div class="mt-2 mb-2">
-                        <img src="{{ $user->profile_picture_url }}" alt="Profile" class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover shadow-sm border border-gray-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=051c45&color=fff';">
+                <div class="mt-2 flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white shadow-md bg-[#051c45] text-white flex items-center justify-center font-black text-2xl shrink-0">
+                        <img id="form_profile_picture_preview" src="{{ $user->profile_picture_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover {{ $user->hasCustomProfilePicture() ? '' : 'hidden' }}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=051c45&color=fff';">
+                        @if(!$user->hasCustomProfilePicture())
+                            <span id="form_profile_picture_initial">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                        @endif
                     </div>
-                @endif
-                <input type="file" name="profile_picture" id="profile_picture_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-[#051c45] hover:file:bg-slate-200" />
-                <input type="hidden" name="profile_picture_base64" id="profile_picture_base64">
+                    <div class="flex-1 space-y-2">
+                        <input type="file" name="profile_picture" id="profile_picture_input" accept="image/*" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#051c45] file:text-white hover:file:bg-[#0a2540] file:cursor-pointer cursor-pointer bg-white rounded-xl border border-slate-200 p-1" />
+                        <input type="hidden" name="profile_picture_base64" id="profile_picture_base64">
+                        <p class="text-[11px] text-slate-500">Select a photo and click <strong>Save</strong> below — your avatar updates across the top bar, sidebar, and community feed immediately.</p>
+                    </div>
+                </div>
                 <x-input-error class="mt-2" :messages="$errors->get('profile_picture')" />
             </div>
 
-            <div>
-                <x-input-label for="cover_photo_input" :value="__('Cover Photo')" />
-                @if($user->cover_photo)
-                    <div class="mt-2 mb-2 w-full max-w-2xl">
-                        <img src="{{ $user->cover_photo_url }}" alt="Cover" class="w-full h-32 md:h-48 rounded-lg object-cover shadow-sm border border-gray-200" onerror="this.style.display='none';">
-                    </div>
-                @endif
-                <input type="file" name="cover_photo" id="cover_photo_input" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-[#051c45] hover:file:bg-slate-200" />
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                <x-input-label for="cover_photo_input" :value="__('Cover Photo (Optional)')" />
+                <div id="form_cover_photo_wrapper" class="mt-2 mb-2 w-full max-w-2xl {{ $user->cover_photo ? '' : 'hidden' }}">
+                    <img id="form_cover_photo_preview" src="{{ $user->cover_photo_url }}" alt="Cover" class="w-full h-32 md:h-44 rounded-xl object-cover shadow-sm border border-gray-200" onerror="this.style.display='none';">
+                </div>
+                <input type="file" name="cover_photo" id="cover_photo_input" accept="image/*" class="mt-1 block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-200 file:text-[#051c45] hover:file:bg-slate-300 file:cursor-pointer cursor-pointer bg-white rounded-xl border border-slate-200 p-1" />
                 <input type="hidden" name="cover_photo_base64" id="cover_photo_base64">
                 <x-input-error class="mt-2" :messages="$errors->get('cover_photo')" />
             </div>
-        </div>
         </div>
 
         <script>
@@ -78,6 +81,21 @@
                     const reader = new FileReader();
                     reader.onload = function(evt) {
                         document.getElementById('profile_picture_base64').value = evt.target.result;
+                        const formPreview = document.getElementById('form_profile_picture_preview');
+                        const formInitial = document.getElementById('form_profile_picture_initial');
+                        if (formPreview) {
+                            formPreview.src = evt.target.result;
+                            formPreview.classList.remove('hidden');
+                        }
+                        if (formInitial) formInitial.classList.add('hidden');
+
+                        const heroPreview = document.getElementById('hero_profile_avatar_img');
+                        const heroInitial = document.getElementById('hero_profile_avatar_initial');
+                        if (heroPreview) {
+                            heroPreview.src = evt.target.result;
+                            heroPreview.classList.remove('hidden');
+                        }
+                        if (heroInitial) heroInitial.classList.add('hidden');
                     };
                     reader.readAsDataURL(file);
                 }
@@ -88,6 +106,13 @@
                     const reader = new FileReader();
                     reader.onload = function(evt) {
                         document.getElementById('cover_photo_base64').value = evt.target.result;
+                        const wrapper = document.getElementById('form_cover_photo_wrapper');
+                        const preview = document.getElementById('form_cover_photo_preview');
+                        if (wrapper) wrapper.classList.remove('hidden');
+                        if (preview) {
+                            preview.src = evt.target.result;
+                            preview.style.display = 'block';
+                        }
                     };
                     reader.readAsDataURL(file);
                 }

@@ -27,4 +27,20 @@ class CommunityComment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getAuthorAvatarUrlAttribute(): ?string
+    {
+        if ($this->user && $this->user->hasCustomProfilePicture()) {
+            return $this->user->profile_picture_url;
+        }
+        if (!empty($this->author_avatar)) {
+            return storage_asset($this->author_avatar);
+        }
+        return null;
+    }
+
+    public function getFormattedContentHtmlAttribute(): string
+    {
+        return \App\Support\LinkPreviewResolver::formatTextWithClickableLinks($this->content);
+    }
 }

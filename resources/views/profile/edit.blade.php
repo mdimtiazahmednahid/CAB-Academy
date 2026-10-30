@@ -15,9 +15,14 @@
 
         <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-2xl font-black text-white shadow-inner shrink-0">
-                    {{ strtoupper(substr($profileUser->name, 0, 1)) }}
-                </div>
+                @if($profileUser && $profileUser->hasCustomProfilePicture())
+                    <img id="hero_profile_avatar_img" src="{{ $profileUser->profile_picture_url }}" alt="{{ $profileUser->name }}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-white/30 shadow-md shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($profileUser->name) }}&background=051c45&color=fff';">
+                @else
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-2xl font-black text-white shadow-inner shrink-0 overflow-hidden">
+                        <img id="hero_profile_avatar_img" src="" alt="" class="w-full h-full object-cover hidden">
+                        <span id="hero_profile_avatar_initial">{{ strtoupper(substr($profileUser->name, 0, 1)) }}</span>
+                    </div>
+                @endif
                 <div>
                     <div class="flex items-center gap-2 flex-wrap">
                         <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">{{ __('Profile & Account Security') }}</h1>

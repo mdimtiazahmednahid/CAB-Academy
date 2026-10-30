@@ -375,9 +375,13 @@
                 @forelse($recentStudents ?? [] as $stu)
                     <div class="px-6 py-3 flex items-center justify-between gap-3 hover:bg-slate-50/70 transition-colors">
                         <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-8 h-8 rounded-lg bg-[#051c45] text-white font-black text-xs flex items-center justify-center shrink-0">
-                                {{ strtoupper(substr($stu->name ?? 'S', 0, 1)) }}
-                            </div>
+                            @if($stu->hasCustomProfilePicture())
+                                <img src="{{ $stu->profile_picture_url }}" alt="{{ $stu->name }}" class="w-8 h-8 rounded-lg object-cover border border-slate-200 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($stu->name) }}&background=051c45&color=fff';">
+                            @else
+                                <div class="w-8 h-8 rounded-lg bg-[#051c45] text-white font-black text-xs flex items-center justify-center shrink-0">
+                                    {{ strtoupper(substr($stu->name ?? 'S', 0, 1)) }}
+                                </div>
+                            @endif
                             <div class="min-w-0">
                                 <div class="text-xs font-bold text-slate-900 truncate">{{ $stu->name }}</div>
                                 <div class="text-[11px] text-slate-500 truncate">

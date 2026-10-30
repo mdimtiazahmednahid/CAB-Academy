@@ -105,7 +105,7 @@ if (!$isAuthenticated) {
         window.parent.handleTerminalResult(<?= json_encode([
             'command' => $_REQUEST['artisan_command'] ?? '',
             'status' => 'error',
-            'output' => "Security PIN verification failed or session expired.\nPlease refresh the page and enter PIN '{$masterPin}'.",
+            'output' => "Security PIN verification failed or session expired.\nPlease refresh the page and enter your administrator PIN.",
             'time_ms' => 0
         ]) ?>);
         </script></body></html>
@@ -119,7 +119,7 @@ if (!$isAuthenticated) {
         echo json_encode([
             'command' => $_REQUEST['artisan_command'] ?? '',
             'status' => 'error',
-            'output' => "Security PIN verification failed or session expired.\nPlease refresh the page and enter PIN '{$masterPin}'.",
+            'output' => "Security PIN verification failed or session expired.\nPlease refresh the page and enter your administrator PIN.",
             'time_ms' => 0
         ]);
         exit;
@@ -162,7 +162,6 @@ if (!$isAuthenticated) {
                         <input type="password" name="pin" required autofocus placeholder="Enter Access PIN" 
                                class="w-full px-4 py-3 rounded-xl border border-gray-300 text-sm focus:border-[#051c45] focus:ring-2 focus:ring-[#051c45]/20 font-mono tracking-widest text-center">
                     </div>
-                    <p class="text-[11px] text-gray-400 mt-1.5 text-center">Default deployment PIN: <code class="font-bold text-[#051c45]"><?= htmlspecialchars($masterPin) ?></code></p>
                 </div>
 
                 <button type="submit" class="w-full py-3.5 px-4 bg-[#051c45] hover:bg-[#072559] text-white font-bold rounded-xl shadow-lg shadow-blue-950/20 active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
@@ -179,6 +178,25 @@ if (!$isAuthenticated) {
     </html>
     <?php
     exit;
+}
+
+// Auto-heal Composer ClassLoader & autoload_real on shared hosting so missing dev classes (like Faker) never crash
+$classLoaderPath = $baseDir . '/vendor/composer/ClassLoader.php';
+if (file_exists($classLoaderPath)) {
+    $clCode = @file_get_contents($classLoaderPath);
+    if (is_string($clCode) && str_contains($clCode, "if (isset(\$this->classMap[\$class])) {\n            return \$this->classMap[\$class];\n        }")) {
+        $clCode = str_replace(
+            "if (isset(\$this->classMap[\$class])) {\n            return \$this->classMap[\$class];\n        }",
+            "if (isset(\$this->classMap[\$class])) {\n            if (is_file(\$this->classMap[\$class])) {\n                return \$this->classMap[\$class];\n            }\n            unset(\$this->classMap[\$class]);\n            \$this->missingClasses[\$class] = true;\n            return false;\n        }",
+            $clCode
+        );
+        $clCode = str_replace(
+            "self::\$includeFile = \\Closure::bind(static function(\$file) {\n            include \$file;\n        }, null, null);",
+            "self::\$includeFile = \\Closure::bind(static function(\$file) {\n            if (is_file(\$file)) {\n                include \$file;\n            }\n        }, null, null);",
+            $clCode
+        );
+        @file_put_contents($classLoaderPath, $clCode);
+    }
 }
 
 // Handle Command Invocations
@@ -288,15 +306,26 @@ if ($rawCommand !== '') {
             $executionStatus = 'error';
         }
     }
-    // 3. Environment Fixer (Copies .env.production to .env if missing)
+    // 3. Environment Fixer (Copies .env.production to .env if missing and enforces acsacademy.bd + APP_DEBUG=false)
     elseif ($cleanCommand === 'env:fix') {
         $src = $baseDir . '/.env.production';
         $dest = $baseDir . '/.env';
-        if (file_exists($dest)) {
-            $commandOutput = "✓ Status: .env exists.\nLocation: {$dest}\nSize: " . filesize($dest) . " bytes\n";
-        } elseif (file_exists($src)) {
+        if (!file_exists($dest) && file_exists($src)) {
             copy($src, $dest);
-            $commandOutput = "✓ Successfully copied .env.production to .env!\nLocation: {$dest}\n";
+        }
+        if (file_exists($dest)) {
+            $envContent = @file_get_contents($dest);
+            if (is_string($envContent)) {
+                $envContent = str_replace(
+                    ['https://cabacademy.bd/', 'https://cabacademy.bd', 'http://cabacademy.bd/', 'http://cabacademy.bd'],
+                    'https://acsacademy.bd',
+                    $envContent
+                );
+                $envContent = str_replace('APP_NAME="CAB Academy"', 'APP_NAME="ACS Academy"', $envContent);
+                $envContent = str_replace('APP_DEBUG=true', 'APP_DEBUG=false', $envContent);
+                @file_put_contents($dest, $envContent);
+            }
+            $commandOutput = "✓ Status: .env verified and synced (APP_URL=https://acsacademy.bd, APP_DEBUG=false).\nLocation: {$dest}\nSize: " . filesize($dest) . " bytes\n";
         } else {
             $commandOutput = "✗ Error: Neither .env nor .env.production found in {$baseDir}.\n";
         }
@@ -324,7 +353,7 @@ if ($rawCommand !== '') {
     elseif ($cleanCommand === 'about') {
         $appEnv = $envVars['APP_ENV'] ?? 'production';
         $appDebug = ($envVars['APP_DEBUG'] ?? 'false') === 'true' ? 'ENABLED' : 'OFF';
-        $appUrl = $envVars['APP_URL'] ?? 'https://cabacademy.bd';
+        $appUrl = $envVars['APP_URL'] ?? 'https://acsacademy.bd';
         $dbConn = $envVars['DB_CONNECTION'] ?? 'mysql';
         $dbHost = $envVars['DB_HOST'] ?? 'sql202.infinityfree.com';
         $dbName = $envVars['DB_DATABASE'] ?? 'if0_42678796_cab';

@@ -15,7 +15,8 @@ class DatabaseSchemaRepair
      */
     public static function ensureSchema(bool $force = false): array
     {
-        $lockFile = storage_path('framework/schema_verified_v6.lock');
+        $dbKey = md5(config('database.default') . '_' . config('database.connections.' . config('database.default') . '.database'));
+        $lockFile = storage_path("framework/schema_verified_v8_{$dbKey}.lock");
         if (!$force && file_exists($lockFile)) {
             return ['status' => 'cached', 'repaired' => []];
         }
@@ -458,7 +459,7 @@ class DatabaseSchemaRepair
                 foreach ($legacySettings as $s) {
                     $newVal = str_replace(
                         ['Commercial Academy Bangladesh (CAB Academy)', 'Commercial Academy Bangladesh', 'CAB Academy', 'INV-CAB'],
-                        ['ACS Academy', 'ACS Academy', 'ACS Academy', 'INV-ACS'],
+                        ['Academy of Commercial & Supply Chain (ACS)', 'Academy of Commercial & Supply Chain (ACS)', 'ACS Academy', 'INV-ACS'],
                         (string) $s->value
                     );
                     if ($newVal !== $s->value) {
@@ -466,6 +467,30 @@ class DatabaseSchemaRepair
                         $s->saveQuietly();
                     }
                 }
+
+                \App\Models\Setting::where('key', 'site_name')
+                    ->whereIn('value', ['CAB Academy', 'ACS Academy', 'Commercial & Banking Academy (CAB)'])
+                    ->update(['value' => 'Academy of Commercial & Supply Chain (ACS)']);
+
+                \App\Models\Setting::where('key', 'landing_hero_title')
+                    ->whereIn('value', ['Master Your Future with CAB Academy', 'Master Your Future with ACS Academy'])
+                    ->update(['value' => 'ACS']);
+
+                \App\Models\Setting::where('key', 'landing_hero_tagline')
+                    ->where('value', 'Learn, Grow, Lead.')
+                    ->update(['value' => 'Academy of Commercial & Supply Chain']);
+
+                \App\Models\Setting::where('key', 'primary_color')
+                    ->where('value', '#1F6F54')
+                    ->update(['value' => '#051c45']);
+
+                \App\Models\Setting::where('key', 'site_logo')
+                    ->where(function ($q) {
+                        $q->where('value', 'like', '%090dXs1BPxkT2d2liIcwLlCwDhpMZYMtHvwucsRP%')
+                          ->orWhere('value', 'like', '%sbe5BF8KYOGzI59j3QQIE7BTFnvcT5A3egerT7Go%')
+                          ->orWhere('value', 'like', '%cab-logo%');
+                    })
+                    ->update(['value' => '/images/logo.png']);
                 \Illuminate\Support\Facades\Cache::forget('global_settings');
             }
         } catch (\Throwable $e) {

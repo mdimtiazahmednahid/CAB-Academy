@@ -8,7 +8,7 @@
 @section('meta_description', \Illuminate\Support\Str::limit(strip_tags($post->meta_description ?: $post->excerpt ?: $post->content), 160))
 @section('canonical_url', route('blog.show', $post->slug))
 @section('og_image', $post->featured_image_url)
-@section('og_title', $post->title . ' - ' . $siteName)
+@section('og_title', $post->stylish_og_title)
 @section('og_type', 'article')
 
 @section('schema')

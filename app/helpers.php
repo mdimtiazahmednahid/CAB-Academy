@@ -30,10 +30,14 @@ if (!function_exists('storage_asset')) {
             return '/' . $trimmed;
         }
 
-        // Mirror file from public/uploads to public/storage if public/storage is a directory and missing the file
-        if (file_exists(public_path('uploads/' . $trimmed)) && is_dir(public_path('storage')) && !is_link(public_path('storage')) && !file_exists(public_path('storage/' . $trimmed))) {
-            @mkdir(dirname(public_path('storage/' . $trimmed)), 0775, true);
-            @copy(public_path('uploads/' . $trimmed), public_path('storage/' . $trimmed));
+        // Mirror file from public/uploads to public/storage so static Apache requests to /storage/... always succeed without symlinks
+        $uploadPath = public_path('uploads/' . $trimmed);
+        $storagePath = public_path('storage/' . $trimmed);
+        if (file_exists($uploadPath) && !is_link(public_path('storage'))) {
+            if (!file_exists($storagePath) || @filesize($uploadPath) !== @filesize($storagePath)) {
+                @mkdir(dirname($storagePath), 0775, true);
+                @copy($uploadPath, $storagePath);
+            }
         }
 
         return '/storage/' . $trimmed;

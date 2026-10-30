@@ -33,5 +33,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+
+        if ($this->app->environment('production')
+            || request()->header('X-Forwarded-Proto') === 'https'
+            || str_contains((string) request()->header('CF-Visitor'), 'https')
+            || str_contains((string) request()->getHost(), 'acsacademy.bd')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }

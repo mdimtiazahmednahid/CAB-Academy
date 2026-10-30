@@ -47,14 +47,29 @@ class PwaTypographyAndCmsTest extends TestCase
         $longSizing = Setting::getBrandSizing();
         $this->assertTrue($longSizing['is_long']);
         $this->assertStringContainsString('0.72rem', $longSizing['header_style']);
+        $this->assertEquals('Academy of<br>Commercial and Supply Chain', $longSizing['formatted_html']);
+
+        // Verify two-part formatting with (ACS)
+        $this->assertEquals(
+            'Academy of<br>Commercial &amp; Supply Chain (ACS)',
+            Setting::formatBrandNameHtml('Academy of Commercial & Supply Chain (ACS)')
+        );
+
+        // Verify legacy CAB logo hashes fall back to official ACS logo
+        $this->assertStringContainsString(
+            '/images/logo.png',
+            Setting::resolveLogoUrl('storage/logos/090dXs1BPxkT2d2liIcwLlCwDhpMZYMtHvwucsRP.jpg')
+        );
 
         $css = Setting::getTypographyCss();
         $this->assertStringContainsString('clamp(16px', $css);
+        $this->assertStringContainsString('overflow-x: clip', $css);
 
-        // Verify public homepage renders the adaptive brand title and PWA manifest link
+        // Verify public homepage renders the adaptive two-part brand title and PWA manifest link
+        Setting::setVal('site_name', 'Academy of Commercial & Supply Chain (ACS)');
         $home = $this->get('/');
         $home->assertStatus(200);
-        $home->assertSee('Academy of Commercial and Supply Chain');
+        $home->assertSee('Academy of<br>Commercial &amp; Supply Chain (ACS)', false);
         $home->assertSee(route('pwa.manifest'));
     }
 
@@ -785,5 +800,315 @@ class PwaTypographyAndCmsTest extends TestCase
         $this->assertStringContainsString('Apex Group', $csvContent);
         $this->assertStringContainsString('3-7 Years', $csvContent);
         $this->assertStringContainsString('RMG & Textile', $csvContent);
+    }
+
+    public function test_modular_partial_course_updates_never_overwrite_untouched_fields(): void
+    {
+        $admin = \App\Models\User::factory()->create(['role' => 'admin']);
+        $customFields = [
+            ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_enabled' => true, 'is_required' => true],
+            ['name' => 'phone', 'label' => 'WhatsApp Mobile', 'type' => 'tel', 'is_enabled' => true, 'is_required' => true],
+            ['name' => 'email', 'label' => 'Email', 'type' => 'email', 'is_enabled' => false, 'is_required' => false],
+            ['name' => 'organization', 'label' => 'Company', 'type' => 'text', 'is_enabled' => true, 'is_required' => true],
+        ];
+
+        $course = \App\Models\Course::create([
+            'title' => 'Original Title',
+            'description' => 'Original Description',
+            'price' => 4500,
+            'is_published' => true,
+            'certificate_enabled' => true,
+            'batch' => '105th Batch',
+            'show_batch' => true,
+            'counselor_phone' => '01744542955',
+            'enrollment_fields' => $customFields,
+            'instructor_id' => $admin->id,
+        ]);
+
+        // 1. Update ONLY Title (e.g. inline title editor) — must NOT reset price, is_published, certificate_enabled, batch, or enrollment_fields
+        $this->actingAs($admin)->post(route('admin.courses.update', $course), [
+            '_section_label' => 'Course Title',
+            'title' => 'New Simplified Title Only',
+        ])->assertRedirect();
+
+        $course->refresh();
+        $this->assertEquals('New Simplified Title Only', $course->title);
+        $this->assertEquals(4500, (float) $course->price);
+        $this->assertTrue((bool) $course->is_published);
+        $this->assertTrue((bool) $course->certificate_enabled);
+        $this->assertEquals('105th Batch', $course->batch);
+        $this->assertTrue((bool) $course->show_batch);
+        $this->assertEquals('01744542955', $course->counselor_phone);
+        $this->assertFalse(collect($course->effective_enrollment_fields)->keyBy('name')['email']['is_enabled']);
+
+        // 2. Update ONLY Cover Photo (base64 1x1 PNG) without sending title or any other field
+        $tinyPngBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+        $this->actingAs($admin)->post(route('admin.courses.update', $course), [
+            '_section_label' => 'Course Cover Photo',
+            'cover_image_base64' => $tinyPngBase64,
+        ])->assertRedirect();
+
+        $course->refresh();
+        $this->assertNotNull($course->cover_image);
+        $this->assertStringContainsString('course_covers/', $course->cover_image);
+        $this->assertEquals('New Simplified Title Only', $course->title);
+        $this->assertEquals(4500, (float) $course->price);
+        $this->assertTrue((bool) $course->is_published);
+        $this->assertTrue((bool) $course->certificate_enabled);
+        $this->assertFalse(collect($course->effective_enrollment_fields)->keyBy('name')['email']['is_enabled']);
+
+        // 3. Toggle ONLY Certificate Status in 1 click
+        $this->actingAs($admin)->post(route('admin.courses.update', $course), [
+            'certificate_enabled' => '0',
+        ])->assertRedirect();
+
+        $course->refresh();
+        $this->assertFalse((bool) $course->certificate_enabled);
+        $this->assertTrue((bool) $course->is_published);
+        $this->assertEquals(4500, (float) $course->price);
+        $this->assertEquals('New Simplified Title Only', $course->title);
+    }
+
+    public function test_universal_profile_picture_sync_everywhere_including_top_right_avatar_and_community_feed(): void
+    {
+        $student = User::factory()->create([
+            'name' => 'Mahmudul Hasan',
+            'email' => 'mahmudul@acsacademy.bd',
+            'role' => 'student',
+            'profile_picture' => null,
+            'preferences' => ['level' => 'Professional'],
+        ]);
+
+        // Before uploading a custom profile picture, the user has no custom picture
+        $this->assertFalse($student->hasCustomProfilePicture());
+
+        // Create a community post and comment while avatar is still null
+        $post = \App\Models\CommunityPost::create([
+            'user_id' => $student->id,
+            'author_name' => $student->name,
+            'author_title' => 'Student Member',
+            'author_avatar' => null,
+            'category' => 'General Discussion',
+            'content' => 'Excited to join ACS Academy!',
+        ]);
+
+        $comment = \App\Models\CommunityComment::create([
+            'community_post_id' => $post->id,
+            'user_id' => $student->id,
+            'author_name' => $student->name,
+            'author_avatar' => null,
+            'content' => 'Great community discussion!',
+        ]);
+
+        // Upload a profile picture via PATCH /profile (even without resending email)
+        $fakeAvatar = \Illuminate\Http\UploadedFile::fake()->image('avatar.jpg', 300, 300);
+
+        $this->actingAs($student)->patch(route('profile.update'), [
+            'name' => 'Mahmudul Hasan',
+            'profile_picture' => $fakeAvatar,
+        ])->assertRedirect(route('profile.edit'));
+
+        $student->refresh();
+        $this->assertTrue($student->hasCustomProfilePicture());
+        $this->assertNotNull($student->profile_picture);
+        $this->assertStringContainsString('profiles/', $student->profile_picture_url);
+
+        // Verify CommunityPost and CommunityComment records were synced automatically
+        $this->assertEquals($student->profile_picture, $post->fresh()->author_avatar);
+        $this->assertEquals($student->profile_picture, $comment->fresh()->author_avatar);
+        $this->assertEquals($student->profile_picture_url, $post->fresh()->author_avatar_url);
+        $this->assertEquals($student->profile_picture_url, $comment->fresh()->author_avatar_url);
+
+        // Verify the top-right header in Student Portal (/dashboard and /profile) renders the uploaded profile picture URL instead of the static 'M' letter avatar
+        $dashboardResponse = $this->actingAs($student)->get(route('dashboard'));
+        $dashboardResponse->assertStatus(200);
+        $dashboardResponse->assertSee($student->profile_picture_url, false);
+
+        $profileResponse = $this->actingAs($student)->get(route('profile.edit'));
+        $profileResponse->assertStatus(200);
+        $profileResponse->assertSee($student->profile_picture_url, false);
+    }
+
+    public function test_facebook_style_rich_link_preview_and_open_graph_metadata(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $course = \App\Models\Course::create([
+            'title' => 'Communication Skills for Career Success.',
+            'short_description' => 'Master professional communication, workplace etiquette, and leadership conversations.',
+            'description' => 'Comprehensive communication training.',
+            'price' => 0,
+            'start_date' => '2026-10-30',
+            'is_published' => true,
+            'instructor_id' => $admin->id,
+            'cover_image' => 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200',
+        ]);
+
+        // Verify StylishTextFormatter converts text to Unicode Mathematical Bold Serif (like "𝐏𝐆𝐃 𝐈𝐍 𝐒𝐔𝐏𝐏𝐋𝐘 𝐂𝐇𝐀𝐈𝐍 𝐌𝐀𝐍𝐀𝐆𝐄𝐌𝐄𝐍𝐓")
+        $this->assertEquals(
+            '𝐏𝐆𝐃 𝐈𝐍 𝐒𝐔𝐏𝐏𝐋𝐘 𝐂𝐇𝐀𝐈𝐍 𝐌𝐀𝐍𝐀𝐆𝐄𝐌𝐄𝐍𝐓',
+            \App\Support\StylishTextFormatter::toUpperBoldSerif('PGD in Supply Chain Management')
+        );
+        $this->assertEquals(
+            '𝐏𝐆𝐃 𝐢𝐧 𝐒𝐮𝐩𝐩𝐥𝐲 𝐂𝐡𝐚𝐢𝐧 𝐌𝐚𝐧𝐚𝐠𝐞𝐦𝐞𝐧𝐭. 𝐒𝐭𝐚𝐫𝐭𝐢𝐧𝐠 𝟑𝟎 𝐎𝐜𝐭𝐨𝐛𝐞𝐫',
+            \App\Support\StylishTextFormatter::toBoldSerif('PGD in Supply Chain Management. Starting 30 October')
+        );
+        $this->assertEquals(
+            'Communication Skills for Career Success. Starting 30 October',
+            $course->social_card_headline
+        );
+        $this->assertEquals(
+            '𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐂𝐀𝐓𝐈𝐎𝐍 𝐒𝐊𝐈𝐋𝐋𝐒 𝐅𝐎𝐑 𝐂𝐀𝐑𝐄𝐄𝐑 𝐒𝐔𝐂𝐂𝐄𝐒𝐒',
+            $course->stylish_post_header
+        );
+        $this->assertEquals(
+            '𝐂𝐨𝐦𝐦𝐮𝐧𝐢𝐜𝐚𝐭𝐢𝐨𝐧 𝐒𝐤𝐢𝐥𝐥𝐬 𝐟𝐨𝐫 𝐂𝐚𝐫𝐞𝐞𝐫 𝐒𝐮𝐜𝐜𝐞𝐬𝐬. 𝐒𝐭𝐚𝐫𝐭𝐢𝐧𝐠 𝟑𝟎 𝐎𝐜𝐭𝐨𝐛𝐞𝐫',
+            $course->stylish_og_title
+        );
+        $this->assertEquals(
+            "𝐂𝐎𝐌𝐌𝐔𝐍𝐈𝐂𝐀𝐓𝐈𝐎𝐍 𝐒𝐊𝐈𝐋𝐋𝐒 𝐅𝐎𝐑 𝐂𝐀𝐑𝐄𝐄𝐑 𝐒𝐔𝐂𝐂𝐄𝐒𝐒\n\n" . $course->short_url,
+            $course->stylish_social_caption
+        );
+        $this->assertStringNotContainsString('📅', $course->stylish_social_caption);
+
+        // 1. Verify Open Graph metadata tags on course page (/courses/{id}) and short link (/c/{id})
+        $coursePage = $this->get(route('courses.show', $course));
+        $coursePage->assertStatus(200);
+        $coursePage->assertSee('property="og:title"', false);
+        $coursePage->assertSee($course->stylish_og_title, false);
+        $coursePage->assertSee('property="og:description"', false);
+        $coursePage->assertSee('property="og:image"', false);
+        $coursePage->assertSee('property="og:url"', false);
+        $coursePage->assertSee('fb-link-preview-card', false);
+
+        $shortPage = $this->get(route('courses.short', $course->id));
+        $shortPage->assertStatus(200);
+        $shortPage->assertSee('<link rel="canonical" href="' . $course->short_url . '">', false);
+        $shortPage->assertSee('property="og:url" content="' . $course->short_url . '"', false);
+        $shortPage->assertSee('property="og:title" content="' . $course->stylish_og_title . '"', false);
+        $shortPage->assertSee('property="og:description"', false);
+        $shortPage->assertSee('property="og:image"', false);
+        $shortPage->assertSee('property="og:url"', false);
+
+        // 2. Verify LinkPreviewResolver resolves internal course URLs (/c/{id} and /courses/{id})
+        $preview = \App\Support\LinkPreviewResolver::resolve(route('courses.short', $course->id));
+        $this->assertNotNull($preview);
+        $this->assertEquals(route('courses.show', $course), $preview['url']);
+        $this->assertStringContainsString('Communication Skills for Career Success. Starting 30 October', $preview['title']);
+        $this->assertEquals($course->stylish_og_title, $preview['stylish_title']);
+        $this->assertEquals($course->stylish_post_header, $preview['post_header']);
+        $this->assertStringContainsString('Master professional communication', $preview['description']);
+        $this->assertNotEmpty($preview['image']);
+        $this->assertNotEmpty($preview['domain']);
+
+        // 3. Verify LinkPreviewResolver parses Open Graph HTML metadata from external HTML
+        $sampleHtml = <<<'HTML'
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Fallback HTML Title</title>
+            <meta property="og:title" content="Global Trade & L/C Summit 2026">
+            <meta property="og:description" content="Join 500+ supply chain leaders for live trade finance simulations.">
+            <meta property="og:image" content="/assets/banners/lc-summit.jpg">
+            <meta property="og:url" content="https://example.org/events/lc-summit">
+            <meta property="og:site_name" content="Example Trade Institute">
+        </head>
+        <body></body>
+        </html>
+        HTML;
+
+        $parsedOg = \App\Support\LinkPreviewResolver::parseHtmlMetadata($sampleHtml, 'https://example.org/lc-summit');
+        $this->assertEquals('Global Trade & L/C Summit 2026', $parsedOg['title']);
+        $this->assertEquals('Join 500+ supply chain leaders for live trade finance simulations.', $parsedOg['description']);
+        $this->assertEquals('https://example.org/assets/banners/lc-summit.jpg', $parsedOg['image']);
+        $this->assertEquals('https://example.org/events/lc-summit', $parsedOg['url']);
+        $this->assertEquals('EXAMPLE.ORG', $parsedOg['domain']);
+
+        // 4. Verify sensible fallback when a URL does NOT provide Open Graph metadata
+        $minimalHtml = '<html><head></head><body>No OG tags here</body></html>';
+        $fallbackOg = \App\Support\LinkPreviewResolver::parseHtmlMetadata($minimalHtml, 'https://customs-portal.gov.bd/tariff-guide-2026');
+        $this->assertEquals('CUSTOMS-PORTAL.GOV.BD', $fallbackOg['domain']);
+        $this->assertEquals('Tariff Guide 2026 — CUSTOMS-PORTAL.GOV.BD', $fallbackOg['title']);
+        $this->assertNull($fallbackOg['image']);
+        $this->assertStringContainsString('customs-portal.gov.bd', $fallbackOg['description']);
+
+        // 5. Verify live /link-preview JSON API endpoint
+        $apiResponse = $this->getJson(route('link.preview', ['url' => route('courses.short', $course->id)]));
+        $apiResponse->assertStatus(200)
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('preview.url', route('courses.show', $course));
+
+        // 6. Verify sharing a URL in the Community Feed renders the clickable Facebook-style rich preview card
+        $this->actingAs($admin)->post(route('feed.posts.store'), [
+            'category' => 'General Discussion',
+            'content' => 'Check out our upcoming batch: ' . route('courses.short', $course->id),
+        ])->assertRedirect();
+
+        $feedPage = $this->get(route('feed.index'));
+        $feedPage->assertStatus(200);
+        $feedPage->assertSee('fb-link-preview-card', false);
+        $feedPage->assertSee('Communication Skills for Career Success.');
+        $feedPage->assertSee(route('courses.show', $course), false);
+    }
+
+    public function test_e2e_security_lockdown_and_zero_error_leakage(): void
+    {
+        // 1. Verify NO standalone dangerous administrative/migration scripts exist in root or public/
+        $forbiddenScripts = [
+            'migrate.php',
+            'migrate-fresh.php',
+            'migrateseed.php',
+            'migratenotifications.php',
+            'unzip.php',
+            'fix-env.php',
+            'force-fix.php',
+            'check-db.php',
+            'check-jobs.php',
+            'connfigclear.php',
+            'optimizeclear.php',
+            'storagelink.php',
+            'symlink.php',
+        ];
+
+        foreach ($forbiddenScripts as $script) {
+            $this->assertFileDoesNotExist(base_path($script), "Standalone script {$script} must not exist in project root.");
+            $this->assertFileDoesNotExist(public_path($script), "Standalone script public/{$script} must not exist in public directory.");
+        }
+
+        // 2. Verify only index.php and cmd.php exist in root and public/
+        $this->assertFileExists(base_path('index.php'));
+        $this->assertFileExists(public_path('index.php'));
+        $this->assertFileExists(base_path('cmd.php'));
+        $this->assertFileExists(public_path('cmd.php'));
+
+        // 3. Verify public/index.php, 500.blade.php, and database.blade.php never expose raw errors, paths, migrate.php, or cmd.php PINs
+        $publicIndex = file_get_contents(public_path('index.php'));
+        $this->assertStringNotContainsString('migrate.php', $publicIndex);
+        $this->assertStringNotContainsString('unzip.php', $publicIndex);
+        $this->assertStringNotContainsString('cab2026', $publicIndex);
+        $this->assertStringNotContainsString('Run Database Setup Wizard', $publicIndex);
+        $this->assertStringNotContainsString('EXCEPTION DETAIL', $publicIndex);
+
+        $error500 = file_get_contents(resource_path('views/errors/500.blade.php'));
+        $this->assertStringNotContainsString('migrate.php', $error500);
+        $this->assertStringNotContainsString('cmd.php', $error500);
+        $this->assertStringNotContainsString('cab2026', $error500);
+        $this->assertStringNotContainsString('getMessage()', $error500);
+
+        $errorDb = file_get_contents(resource_path('views/errors/database.blade.php'));
+        $this->assertStringNotContainsString('migrate.php', $errorDb);
+        $this->assertStringNotContainsString('cmd.php', $errorDb);
+        $this->assertStringNotContainsString('cab2026', $errorDb);
+        $this->assertStringNotContainsString('$message', $errorDb);
+
+        // 4. Verify .env.production and .env.production.example enforce https://acsacademy.bd and APP_DEBUG=false
+        $envProd = file_get_contents(base_path('.env.production'));
+        $this->assertStringContainsString('APP_URL=https://acsacademy.bd', $envProd);
+        $this->assertStringContainsString('APP_DEBUG=false', $envProd);
+        $this->assertStringNotContainsString('cabacademy.bd', $envProd);
+
+        // 5. Verify Composer ClassLoader safely checks is_file() and Faker\Generator loads cleanly for Artisan commands
+        $classLoader = file_get_contents(base_path('vendor/composer/ClassLoader.php'));
+        $this->assertStringContainsString('is_file(', $classLoader);
+        $this->assertTrue(class_exists(\Faker\Generator::class));
     }
 }

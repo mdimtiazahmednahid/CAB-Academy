@@ -41,10 +41,10 @@
                     <div class="absolute -inset-2 bg-gradient-to-r from-[#c30102] to-[#051c45] rounded-3xl blur-xl opacity-20 transform -rotate-1"></div>
                     <div class="relative liquid-glass-card rounded-3xl p-8 space-y-6">
                         <div class="flex items-center gap-4">
-                            <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $siteName }} Crest" class="w-16 h-16 rounded-2xl p-1 bg-white border border-gray-100 shadow-sm object-contain" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
-                            <div>
-                                <h3 class="text-xl font-black text-[#0f131f] uppercase tracking-tight">{{ $siteName }}</h3>
-                                <span class="text-xs font-black text-[#c30102] uppercase tracking-widest">{{ \App\Models\Setting::getVal('site_tagline', 'Learn, Grow, Lead.') }}</span>
+                            <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $siteName }} Crest" class="w-16 h-16 rounded-2xl p-1 bg-white border border-gray-100 shadow-sm object-contain shrink-0" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                            <div class="min-w-0">
+                                <h3 class="text-base sm:text-lg font-black text-[#0f131f] uppercase tracking-tight leading-tight">{!! \App\Models\Setting::formatBrandNameHtml($siteName) !!}</h3>
+                                <span class="text-xs font-black text-[#c30102] uppercase tracking-widest block mt-0.5">{{ \App\Models\Setting::getVal('site_tagline', 'Learn, Grow, Lead.') }}</span>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100 text-center">

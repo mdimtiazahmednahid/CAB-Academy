@@ -9,31 +9,81 @@
     $pendingCoursePayments = $course->payments->where('status', 'pending')->count();
 @endphp
 
-<div x-data="{ wsTab: 'all' }">
+<div x-data="{ wsTab: 'all', editingTitle: false, titleDraft: @js($course->title), editingPrice: false, priceDraft: @js($course->price) }">
 <div class="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-    <div class="flex items-center gap-3 flex-wrap">
-        <a href="{{ route('admin.courses') }}" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-[#051c45] hover:border-[#051c45] flex items-center justify-center transition-colors shadow-xs">
+    <div class="flex items-center gap-3 flex-wrap flex-1 min-w-0">
+        <a href="{{ route('admin.courses') }}" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-[#051c45] hover:border-[#051c45] flex items-center justify-center transition-colors shadow-xs shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         </a>
-        <div>
+        <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
-                <h1 class="text-xl sm:text-2xl font-black text-[#051c45] tracking-tight">{{ $course->title }}</h1>
-                @if($course->is_published)
-                    <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold">Published</span>
-                @else
-                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 border border-slate-200 rounded-full text-xs font-bold">Draft</span>
-                @endif
-                @if($course->certificate_enabled)
-                    <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold flex items-center gap-1">
-                        <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Certificates Released
-                    </span>
-                @else
-                    <span class="px-2.5 py-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-xs font-bold flex items-center gap-1" title="Digital certificates are hidden from students until released">
-                        <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                        Certificates Locked
-                    </span>
-                @endif
+                <!-- Inline Title Display & 1-Click Quick Editor -->
+                <div x-show="!editingTitle" class="flex items-center gap-2 group">
+                    <h1 @click="editingTitle = true; $nextTick(() => $refs.inlineTitleInput.focus())"
+                        title="Click to edit title only"
+                        class="text-xl sm:text-2xl font-black text-[#051c45] tracking-tight cursor-pointer hover:text-[#c30102] transition-colors">
+                        {{ $course->title }}
+                    </h1>
+                    <button type="button"
+                            @click="editingTitle = true; $nextTick(() => $refs.inlineTitleInput.focus())"
+                            title="Quick-edit course title only"
+                            class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-[#051c45] text-slate-500 hover:text-white text-[11px] font-bold transition-all inline-flex items-center gap-1">
+                        <i class="fas fa-pen text-[9px]"></i>
+                        <span>Edit Title</span>
+                    </button>
+                </div>
+
+                <!-- Inline Title Form (Saves ONLY Title) -->
+                <form x-show="editingTitle" x-cloak method="POST" action="{{ route('admin.courses.update', $course) }}" class="flex items-center gap-2 w-full max-w-xl">
+                    @csrf
+                    <input type="hidden" name="_section_label" value="Course Title">
+                    <input x-ref="inlineTitleInput" type="text" name="title" x-model="titleDraft" required
+                           @keydown.escape.window="editingTitle = false; titleDraft = @js($course->title)"
+                           class="flex-1 rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm font-bold text-[#051c45] py-1.5 px-3">
+                    <button type="submit" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-xs shrink-0">
+                        Save Title
+                    </button>
+                    <button type="button" @click="editingTitle = false; titleDraft = @js($course->title)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold shrink-0">
+                        Cancel
+                    </button>
+                </form>
+
+                <!-- 1-Click Publish / Draft Toggle (Saves ONLY Publish Status) -->
+                <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="inline-block">
+                    @csrf
+                    <input type="hidden" name="_section_label" value="Publish Status">
+                    <input type="hidden" name="is_published" value="{{ $course->is_published ? '0' : '1' }}">
+                    @if($course->is_published)
+                        <button type="submit" title="Click to switch to Draft" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span>Published</span>
+                            <i class="fas fa-rotate text-[9px] opacity-60"></i>
+                        </button>
+                    @else
+                        <button type="submit" title="Click to Publish immediately" class="px-2.5 py-1 bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200 rounded-full text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                            <span>Draft (Click to Publish)</span>
+                        </button>
+                    @endif
+                </form>
+
+                <!-- 1-Click Certificates Toggle (Saves ONLY Certificate Release Status) -->
+                <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="inline-block">
+                    @csrf
+                    <input type="hidden" name="_section_label" value="Certificate Release Status">
+                    <input type="hidden" name="certificate_enabled" value="{{ $course->certificate_enabled ? '0' : '1' }}">
+                    @if($course->certificate_enabled)
+                        <button type="submit" title="Click to Lock Certificates" class="px-2.5 py-1 bg-emerald-100 hover:bg-amber-50 text-emerald-800 hover:text-amber-800 border border-emerald-200 hover:border-amber-200 rounded-full text-xs font-bold inline-flex items-center gap-1 transition-all cursor-pointer">
+                            <i class="fas fa-award text-emerald-600"></i>
+                            <span>Certificates Released</span>
+                        </button>
+                    @else
+                        <button type="submit" title="Click to Release Digital Certificates to Students" class="px-2.5 py-1 bg-amber-50 hover:bg-emerald-50 text-amber-800 hover:text-emerald-800 border border-amber-200 hover:border-emerald-200 rounded-full text-xs font-bold inline-flex items-center gap-1 transition-all cursor-pointer">
+                            <i class="fas fa-lock text-amber-600 text-[10px]"></i>
+                            <span>Certificates Locked (Click to Release)</span>
+                        </button>
+                    @endif
+                </form>
             </div>
         </div>
     </div>
@@ -42,9 +92,9 @@
             <i class="fas fa-arrow-up-right-from-square text-[10px] text-[#c30102]"></i>
             <span>Public Page</span>
         </a>
-        <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs">
+        <button type="button" @click="wsTab = 'settings'; $nextTick(() => document.getElementById('modularCourseSettings')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs">
             <i class="fas fa-sliders text-emerald-600"></i>
-            <span>Course Settings</span>
+            <span>Modular Settings</span>
         </button>
         <button onclick="document.getElementById('quizModal').classList.remove('hidden')" class="px-3.5 py-2 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors shadow-xs">
             + Add Quiz
@@ -62,12 +112,27 @@
     </div>
 @endif
 
-<!-- Course At-A-Glance KPI Strip -->
+<!-- Course At-A-Glance KPI Strip (with 1-Click Inline Fee Edit) -->
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tuition & Revenue</div>
-        <div class="text-xl font-black text-[#051c45] mt-1">৳{{ number_format($realizedCourseRevenue, 0) }}</div>
-        <div class="text-[11px] text-slate-500 mt-0.5">Fee: {{ $course->formatted_price }} @if($pendingCoursePayments > 0) &bull; <span class="text-amber-600 font-bold">{{ $pendingCoursePayments }} Pending</span> @endif</div>
+        <div class="flex items-center justify-between">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tuition & Revenue</div>
+            <button type="button" @click="editingPrice = !editingPrice" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800">
+                <i class="fas fa-pen text-[9px]"></i> Edit Fee
+            </button>
+        </div>
+        <div x-show="!editingPrice" class="text-xl font-black text-[#051c45] mt-1">৳{{ number_format($realizedCourseRevenue, 0) }}</div>
+        <div x-show="!editingPrice" class="text-[11px] text-slate-500 mt-0.5">
+            Fee: <strong class="text-slate-700">{{ $course->formatted_price }}</strong>
+            @if($pendingCoursePayments > 0) &bull; <span class="text-amber-600 font-bold">{{ $pendingCoursePayments }} Pending</span> @endif
+        </div>
+        <form x-show="editingPrice" x-cloak method="POST" action="{{ route('admin.courses.update', $course) }}" class="mt-2 flex items-center gap-1.5">
+            @csrf
+            <input type="hidden" name="_section_label" value="Course Tuition Fee">
+            <input type="number" step="0.01" min="0" name="price" x-model="priceDraft" class="w-24 rounded-lg border-slate-300 text-xs font-bold py-1 px-2">
+            <button type="submit" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold">Save</button>
+            <button type="button" @click="priceDraft = 0" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-bold" title="Set Free (0 BDT)">Free</button>
+        </form>
     </div>
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
         <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Enrolled Students</div>
@@ -91,6 +156,10 @@
     <button type="button" @click="wsTab = 'all'" :class="wsTab === 'all' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
         All Workspace Modules
     </button>
+    <button type="button" @click="wsTab = 'settings'" :class="wsTab === 'settings' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5">
+        <i class="fas fa-sliders text-emerald-500"></i>
+        <span>Course Settings (Modular)</span>
+    </button>
     <button type="button" @click="wsTab = 'curriculum'" :class="wsTab === 'curriculum' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
         Curriculum & Quizzes ({{ $course->sections->count() }})
     </button>
@@ -105,46 +174,324 @@
     </button>
 </div>
 
-<!-- Course Banner & Cover Photo Spotlight Card -->
-<div class="mb-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-    <div class="flex items-center gap-4 w-full sm:w-auto">
-        <div class="relative w-24 h-16 sm:w-32 sm:h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-100 shadow-inner shrink-0">
-            <img src="{{ $course->cover_image_url }}" alt="{{ $course->title }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';">
-        </div>
+<!-- Direct 1-Click Course Cover Photo Card (Saves ONLY Picture, Never Touches Any Other Setting) -->
+<div class="mb-6 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4"
+     x-data="{ photoPreview: @js($course->cover_image_url), photoSelected: false, photoBase64: '' }">
+    <div class="flex items-center gap-4 w-full lg:w-auto">
+        <label for="quick_cover_file_input" title="Click thumbnail to pick a new cover photo" class="relative w-28 h-16 sm:w-36 sm:h-20 rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-inner shrink-0 cursor-pointer group">
+            <img :src="photoPreview" alt="{{ $course->title }}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';">
+            <div class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold gap-1">
+                <i class="fas fa-camera"></i>
+                <span>Change</span>
+            </div>
+        </label>
         <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-[10px] font-black uppercase tracking-wider text-gray-400">Course Picture</span>
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">1-Click Course Cover Poster</span>
                 @if($course->cover_image)
                     <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[10px] font-bold">Custom Photo Active</span>
                 @else
                     <span class="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded text-[10px] font-bold">Default Photo Active</span>
                 @endif
+                <span x-show="photoSelected" x-cloak class="px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded text-[10px] font-extrabold animate-pulse">New Photo Ready to Save</span>
             </div>
-            <h3 class="text-sm font-bold text-gray-900 mt-1 truncate">{{ $course->title }}</h3>
-            <p class="text-xs text-gray-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
-                <span>Instructor:</span>
-                <img src="{{ $course->instructor_avatar_url }}" alt="{{ $course->instructor_name }}" class="w-4 h-4 rounded-full object-cover border border-gray-300 inline-block" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($course->instructor_name) }}&background=051c45&color=fff';">
-                <span class="font-semibold text-gray-800">{{ $course->instructor_name }}</span>
-                <span>• Fee: <span class="font-medium text-gray-700">৳{{ number_format($course->price, 2) }}</span></span>
+            <h3 class="text-sm font-bold text-slate-900 mt-1 truncate">{{ $course->title }}</h3>
+            <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                <span>Faculty:</span>
+                <img src="{{ $course->instructor_avatar_url }}" alt="{{ $course->instructor_name }}" class="w-4 h-4 rounded-full object-cover border border-slate-300 inline-block" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($course->instructor_name) }}&background=051c45&color=fff';">
+                <span class="font-semibold text-slate-800">{{ $course->instructor_name }}</span>
+                <span>&bull; Fee: <span class="font-bold text-[#051c45]">{{ $course->formatted_price }}</span></span>
+                <span>&bull; Format: <span class="font-semibold text-slate-700">{{ $course->venue ?: 'Online Live (Zoom)' }}</span></span>
             </p>
         </div>
     </div>
-    <button onclick="document.getElementById('editCourseModal').classList.remove('hidden')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-all w-full sm:w-auto flex items-center justify-center gap-1.5 shrink-0 shadow-sm">
-        <svg class="w-4 h-4 text-[#051c45]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-        <span>Upload / Change Picture</span>
-    </button>
+
+    <!-- Dedicated Photo-Only Form -->
+    <form method="POST" action="{{ route('admin.courses.update', $course) }}" enctype="multipart/form-data" class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-end">
+        @csrf
+        <input type="hidden" name="_section_label" value="Course Cover Photo">
+        <input type="hidden" name="cover_image_base64" :value="photoBase64">
+        <input type="file" id="quick_cover_file_input" name="cover_image" accept="image/*" class="hidden"
+               @change="
+                   const file = $event.target.files[0];
+                   if (file) {
+                       photoSelected = true;
+                       const reader = new FileReader();
+                       reader.onload = (evt) => {
+                           photoPreview = evt.target.result;
+                           photoBase64 = evt.target.result;
+                       };
+                       reader.readAsDataURL(file);
+                   }
+               ">
+        <label for="quick_cover_file_input" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-2xs">
+            <i class="fas fa-image text-[#051c45]"></i>
+            <span x-text="photoSelected ? 'Choose Different Picture' : 'Select New Picture'"></span>
+        </label>
+        <button x-show="photoSelected" x-cloak type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-extrabold transition-all inline-flex items-center gap-1.5 shadow-sm">
+            <i class="fas fa-cloud-arrow-up"></i>
+            <span>Save Picture Only</span>
+        </button>
+    </form>
+</div>
+
+<!-- Modular Course Settings Studio (3 Independent Non-Destructive Cards) -->
+<div id="modularCourseSettings" x-show="wsTab === 'settings'" x-cloak class="mb-8 space-y-5">
+    <div class="bg-gradient-to-r from-[#051c45] to-[#0a2540] text-white p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+        <div>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-black uppercase tracking-wider">Modular Non-Destructive Settings</span>
+            <h2 class="text-lg font-black mt-1">Independent Course Settings Cards</h2>
+            <p class="text-xs text-slate-300">Save only the specific section you edited — other fields and your custom registration form remain 100% untouched.</p>
+        </div>
+        <button type="button" @click="wsTab = 'all'" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/15 self-start sm:self-auto">
+            &larr; Back to All Modules
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Card 1: Core Identity & Faculty (Saves ONLY Identity Fields) -->
+        <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 flex flex-col justify-between space-y-4">
+            @csrf
+            <input type="hidden" name="_section_label" value="Course Identity & Faculty">
+            <div class="space-y-3.5">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                        <span class="text-[10px] font-black uppercase tracking-wider text-indigo-600">Module 1</span>
+                        <h3 class="text-sm font-black text-[#051c45]">Identity, Category & Faculty</h3>
+                    </div>
+                    <i class="fas fa-id-card text-slate-300 text-lg"></i>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Course Title <span class="text-rose-500">*</span></label>
+                    <input type="text" name="title" value="{{ $course->title }}" required class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-bold text-[#051c45]">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Category</label>
+                        <input list="category-options-modular" type="text" name="category" value="{{ $course->category }}" placeholder="e.g. Leadership" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                        <datalist id="category-options-modular">
+                            @foreach(\App\Models\Category::active()->ordered()->get() as $cat)
+                                <option value="{{ $cat->name }}"></option>
+                            @endforeach
+                        </datalist>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Level</label>
+                        <input type="text" name="level" value="{{ $course->level }}" placeholder="e.g. Executive / Certificate" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                    </div>
+                </div>
+                @if(auth()->user()->isAdmin() && isset($instructors))
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Assigned Faculty / Instructor</label>
+                    <select name="instructor_id" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-semibold">
+                        <option value="">-- No Instructor Assigned --</option>
+                        @foreach($instructors as $instructor)
+                            <option value="{{ $instructor->id }}" {{ $course->instructor_id == $instructor->id ? 'selected' : '' }}>
+                                {{ $instructor->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Short Card Excerpt (1-2 sentences)</label>
+                    <input type="text" name="short_description" value="{{ $course->short_description }}" placeholder="Brief summary shown on catalog cards" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Full Overview / Description</label>
+                    <textarea name="description" rows="3" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">{{ $course->description }}</textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Target Audience / Who Should Attend</label>
+                    <textarea name="target_audience" rows="2" placeholder="e.g. Commercial Executives, Entrepreneurs..." class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">{{ $course->target_audience }}</textarea>
+                </div>
+            </div>
+            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-extrabold transition-all shadow-xs flex items-center justify-center gap-2">
+                <i class="fas fa-check text-emerald-400"></i>
+                <span>Save Identity & Faculty Only</span>
+            </button>
+        </form>
+
+        <!-- Card 2: Tuition Fee, Schedule, Batch & Attendance Mode (Saves ONLY Schedule/Pricing) -->
+        <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 flex flex-col justify-between space-y-4"
+              x-data="{ modVenue: @js($course->venue ?: 'Online Live (Zoom)'), modPrice: @js($course->price) }">
+            @csrf
+            <input type="hidden" name="_section_label" value="Tuition Fee & Schedule">
+            <div class="space-y-3.5">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                        <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Module 2</span>
+                        <h3 class="text-sm font-black text-[#051c45]">Tuition Fee, Schedule & Format</h3>
+                    </div>
+                    <i class="fas fa-calendar-check text-slate-300 text-lg"></i>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-slate-700">Price (৳ BDT)</label>
+                            <button type="button" @click="modPrice = 0" class="text-[10px] font-bold text-emerald-600 hover:underline">Set Free (৳0)</button>
+                        </div>
+                        <input type="number" step="0.01" min="0" name="price" x-model="modPrice" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-black text-[#051c45]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Starting Date</label>
+                        <input type="date" name="start_date" value="{{ $course->start_date ? $course->start_date->format('Y-m-d') : '' }}" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Duration / Schedule</label>
+                    <input type="text" name="duration" value="{{ $course->duration }}" placeholder="e.g. 1.5 Hours / 8 Weeks" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Attendance Format / Venue</label>
+                    <input type="text" name="venue" x-model="modVenue" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-semibold">
+                    <div class="grid grid-cols-3 gap-1.5 mt-1.5">
+                        <button type="button" @click="modVenue = 'Online Live (Zoom)'" class="px-2 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold transition-colors">Online Only</button>
+                        <button type="button" @click="modVenue = 'Executive Campus'" class="px-2 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[10px] font-bold transition-colors">Campus Only</button>
+                        <button type="button" @click="modVenue = 'Hybrid (Online Zoom & Executive Campus)'" class="px-2 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[10px] font-bold transition-colors">Hybrid (Both)</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 pt-1">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Batch Label</label>
+                        <input type="text" name="batch" value="{{ $course->batch }}" placeholder="e.g. 105th Batch" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                    </div>
+                    <div class="flex items-end">
+                        <input type="hidden" name="show_batch" value="0">
+                        <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors w-full">
+                            <input type="checkbox" name="show_batch" value="1" {{ $course->show_batch ? 'checked' : '' }} class="rounded text-[#051c45] focus:ring-[#051c45]">
+                            <span class="text-[11px] font-bold text-slate-700">Show Batch</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold transition-all shadow-xs flex items-center justify-center gap-2">
+                <i class="fas fa-check"></i>
+                <span>Save Tuition & Schedule Only</span>
+            </button>
+        </form>
+
+        <!-- Card 3: Counselor WhatsApp, Hotline & Status Controls (Saves ONLY WhatsApp & Visibility) -->
+        <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 flex flex-col justify-between space-y-4"
+              x-data="{ waMsg: @js($course->whatsapp_message ?? '') }">
+            @csrf
+            <input type="hidden" name="_section_label" value="WhatsApp & Visibility Settings">
+            <div class="space-y-3.5">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                        <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Module 3</span>
+                        <h3 class="text-sm font-black text-[#051c45]">Counselor WhatsApp & Visibility</h3>
+                    </div>
+                    <i class="fab fa-whatsapp text-emerald-500 text-lg"></i>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Per-Course Counselor Phone / WhatsApp</label>
+                    <input type="text" name="counselor_phone" value="{{ $course->counselor_phone }}" placeholder="Blank = Global ({{ \App\Models\Setting::getVal('contact_hotline', '01917-054664') }})" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-semibold">
+                    <p class="text-[10px] text-slate-400 mt-1">Active on page: <strong class="text-slate-700">{{ $course->effective_counselor_phone }}</strong></p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-xs font-bold text-slate-700">Custom WhatsApp Inquiry Message</label>
+                        <button type="button" @click="waMsg = ''" class="text-[10px] font-bold text-slate-400 hover:text-rose-600">Reset Default</button>
+                    </div>
+                    <textarea name="whatsapp_message" x-model="waMsg" rows="3" placeholder="Assalamu Alaikum! I would like to inquire/enroll in *{title}* (Fee: {price}). Please share batch details and enrollment procedure: {url}" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs"></textarea>
+                    <div class="flex flex-wrap gap-1 mt-1.5">
+                        <span class="text-[10px] text-slate-400 mr-1">Insert tag:</span>
+                        <button type="button" @click="waMsg = (waMsg || '') + ' *{title}*'" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[10px] font-mono text-slate-700">{title}</button>
+                        <button type="button" @click="waMsg = (waMsg || '') + ' (Fee: {price})'" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[10px] font-mono text-slate-700">{price}</button>
+                        <button type="button" @click="waMsg = (waMsg || '') + ' {batch}'" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[10px] font-mono text-slate-700">{batch}</button>
+                        <button type="button" @click="waMsg = (waMsg || '') + ' {url}'" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[10px] font-mono text-slate-700">{url}</button>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-slate-100 space-y-2">
+                    <input type="hidden" name="is_published" value="0">
+                    <label class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 cursor-pointer">
+                        <span class="text-xs font-bold text-slate-700">Published on Catalog</span>
+                        <input type="checkbox" name="is_published" value="1" {{ $course->is_published ? 'checked' : '' }} class="rounded text-emerald-600 focus:ring-emerald-500">
+                    </label>
+                    <input type="hidden" name="certificate_enabled" value="0">
+                    <label class="flex items-center justify-between p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/50 cursor-pointer">
+                        <span class="text-xs font-bold text-emerald-950">Release Digital Certificates</span>
+                        <input type="checkbox" name="certificate_enabled" value="1" {{ $course->certificate_enabled ? 'checked' : '' }} class="rounded text-emerald-600 focus:ring-emerald-500">
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-extrabold transition-all shadow-xs flex items-center justify-center gap-2">
+                <i class="fab fa-whatsapp text-emerald-400"></i>
+                <span>Save WhatsApp & Status Only</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Module 4: Facebook Rich Link Preview & Stylish Social Caption Kit -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5"
+         x-data="{ copiedKey: '' }">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-4">
+            <div>
+                <span class="text-[10px] font-black uppercase tracking-wider text-[#1877F2]">Module 4 • Social & Open Graph Studio</span>
+                <h3 class="text-sm font-black text-[#051c45]">Facebook Rich Link Preview & Auto-Generated Stylish Captions</h3>
+                <p class="text-xs text-slate-500">Automatically formatted in Unicode Bold Serif (<span class="font-serif">{{ $course->stylish_post_header }}</span>) with dynamic start date.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button"
+                        @click="navigator.clipboard.writeText({{ Js::from($course->stylish_post_header) }}); copiedKey = 'header'; setTimeout(() => copiedKey = '', 2000)"
+                        class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] text-xs font-bold transition-all inline-flex items-center gap-1.5">
+                    <i class="fas fa-font text-[#c30102]"></i>
+                    <span x-text="copiedKey === 'header' ? 'Copied Headline!' : 'Copy Bold Headline'"></span>
+                </button>
+                <button type="button"
+                        @click="navigator.clipboard.writeText({{ Js::from($course->stylish_social_caption) }}); copiedKey = 'full'; setTimeout(() => copiedKey = '', 2000)"
+                        class="px-3.5 py-2 rounded-xl bg-[#1877F2] hover:bg-[#166fe5] text-white text-xs font-extrabold transition-all inline-flex items-center gap-1.5 shadow-2xs">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    <span x-text="copiedKey === 'full' ? 'Copied Full Caption!' : 'Copy Full Stylish Post + Link'"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <!-- Left: Live Facebook Mobile Feed Card Preview -->
+            <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Live Facebook Link Card Preview</div>
+                <x-link-preview-card :preview="\App\Support\LinkPreviewResolver::resolve($course->short_url)" :showPostHeader="true" />
+            </div>
+
+            <!-- Right: Ready-to-Paste Stylish Promotional Caption -->
+            <div class="space-y-3">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Clean Facebook Post Caption (1-Line Title + Link)</span>
+                        <span class="text-[10px] font-semibold text-emerald-600">Matches Reference Feed Style</span>
+                    </div>
+                    <textarea readonly rows="4" class="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3.5 text-sm text-slate-900 font-serif font-bold leading-relaxed focus:outline-none select-all">{{ $course->stylish_social_caption }}</textarea>
+                </div>
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                    <div class="text-[11px] text-slate-600 leading-snug">
+                        <strong class="text-[#051c45] block">Updated Course Photo or Start Date?</strong>
+                        Click Refresh on Facebook Sharing Debugger to clear Facebook's cached preview.
+                    </div>
+                    <a href="{{ $course->facebook_debugger_url }}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 text-[#1877F2] border border-slate-200 text-xs font-extrabold whitespace-nowrap inline-flex items-center gap-1.5 shadow-2xs shrink-0">
+                        <i class="fab fa-facebook"></i>
+                        <span>Refresh FB Cache</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Dynamic Course Registration & Enrollment Form Builder Studio -->
-<div id="formBuilderCard" 
-     x-show="wsTab === 'all' || wsTab === 'form'"
-     x-data="courseFormBuilder({
+<script>
+    window.__courseFormBuilderConfig = {
         initialFields: @json($course->effective_enrollment_fields),
         templates: @json(\App\Models\Course::getBuiltinTemplates()),
         quickQuestions: @json(\App\Models\Course::getQuickAddQuestions()),
         isOnlineOnly: {{ $course->isOnlineOnly() ? 'true' : 'false' }},
         isCampusOnly: {{ $course->isCampusOnly() ? 'true' : 'false' }}
-     })" 
+    };
+</script>
+<div id="formBuilderCard" 
+     x-show="wsTab === 'all' || wsTab === 'form'"
+     x-data="courseFormBuilder(window.__courseFormBuilderConfig)" 
      class="mb-8 bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
      
     <!-- Studio Header -->
@@ -1142,9 +1489,13 @@ function courseFormBuilder(config) {
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mr-3 shrink-0">
-                                        {{ substr($student->name, 0, 1) }}
-                                    </div>
+                                    @if($student->hasCustomProfilePicture())
+                                        <img src="{{ $student->profile_picture_url }}" alt="{{ $student->name }}" class="w-8 h-8 rounded-full object-cover mr-3 shrink-0 border border-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($student->name) }}&background=051c45&color=fff';">
+                                    @else
+                                        <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mr-3 shrink-0">
+                                            {{ substr($student->name, 0, 1) }}
+                                        </div>
+                                    @endif
                                     <div>
                                         <div class="font-medium text-gray-900">{{ $student->name }}</div>
                                         <div class="text-xs text-gray-500">{{ $student->email }}</div>
@@ -1564,6 +1915,7 @@ function courseFormBuilder(config) {
                         <input type="text" name="batch" value="{{ $course->batch }}" placeholder="e.g. 105th Batch" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm">
                     </div>
                     <div class="flex items-end pb-1">
+                        <input type="hidden" name="show_batch" value="0">
                         <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-lg border border-gray-200 bg-gray-50/70 hover:bg-gray-100 transition-colors w-full">
                             <input type="checkbox" name="show_batch" value="1" {{ $course->show_batch ? 'checked' : '' }} class="rounded text-primary focus:ring-primary">
                             <span class="text-xs font-semibold text-gray-700">Show Batch Publicly</span>
@@ -1644,27 +1996,18 @@ function courseFormBuilder(config) {
                         }
                     });
                 </script>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Registration Form Template</label>
-                    <select name="enrollment_template" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-xs">
-                        <option value="">-- Keep Current Form Setup ({{ count($course->effective_enrollment_fields) }} Fields) --</option>
-                        <option value="standard">Standard Professional (Name + Phone + Email Required)</option>
-                        <option value="quick_lead">Quick Lead (Name + Phone Only - Email Disabled/Not Required)</option>
-                        <option value="corporate">Executive & Corporate (Name + Phone + Email + Company + Role)</option>
-                        <option value="comprehensive">Comprehensive Application (Full Fields + Questions)</option>
-                    </select>
-                    <p class="text-[10px] text-gray-400 mt-1">Select a preset to quickly switch basic templates, or use the Form Builder card for granular fields.</p>
-                </div>
                 <div class="p-3.5 bg-emerald-50/80 rounded-xl border border-emerald-200 flex items-center justify-between">
                     <div>
                         <label for="edit_certificate_enabled" class="block text-xs font-bold text-emerald-950">Release Digital Certificates to Students</label>
                         <p class="text-[11px] text-emerald-800 mt-0.5">When checked, enrolled students who completed the course can view and download their official digital certificate.</p>
                     </div>
                     <div class="ml-4">
+                        <input type="hidden" name="certificate_enabled" value="0">
                         <input type="checkbox" name="certificate_enabled" id="edit_certificate_enabled" value="1" {{ $course->certificate_enabled ? 'checked' : '' }} class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-gray-300">
                     </div>
                 </div>
                 <div class="flex items-center pt-2">
+                    <input type="hidden" name="is_published" value="0">
                     <input type="checkbox" name="is_published" id="is_published" value="1" {{ $course->is_published ? 'checked' : '' }} class="rounded text-primary focus:ring-primary mr-2">
                     <label for="is_published" class="text-sm font-medium text-gray-700">Publish immediately</label>
                 </div>

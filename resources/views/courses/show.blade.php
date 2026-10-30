@@ -10,11 +10,11 @@
 @section('meta_description', \Illuminate\Support\Str::limit(strip_tags($course->short_description ?: $course->description ?: 'Enroll in ' . $course->title . ' at ' . $siteName . '. Professional certification, live masterclasses, and career training.'), 200))
 @section('canonical_url', route('courses.show', $course))
 @section('og_image', $course->og_image_url)
-@section('og_title', $course->title . ' - ' . $siteName)
+@section('og_title', $course->stylish_og_title)
 @section('og_type', 'website')
 @section('og_image_width', '1200')
 @section('og_image_height', '630')
-@section('og_image_alt', $course->title)
+@section('og_image_alt', $course->social_card_headline)
 
 @section('schema')
 @php
@@ -284,13 +284,30 @@
                             <span>{{ $counselorPhone }}</span>
                         </a>
 
+                        @php
+                            $heroShareDomain = strtolower(preg_replace('/^www\./i', '', parse_url(config('app.url'), PHP_URL_HOST) ?: 'acsacademy.bd'));
+                            $heroSharePayload = [
+                                'id' => $course->id,
+                                'title' => $course->title,
+                                'postHeader' => $course->stylish_post_header,
+                                'stylishTitle' => $course->stylish_og_title,
+                                'socialCaption' => $course->stylish_social_caption,
+                                'shortUrl' => $course->short_url,
+                                'courseUrl' => route('courses.show', $course),
+                                'image' => $course->cover_image_url,
+                                'displayDomain' => $heroShareDomain,
+                                'facebookShareUrl' => $course->facebook_share_url,
+                                'whatsappShareUrl' => $course->whatsapp_share_url,
+                            ];
+                        @endphp
                         <a 
                             href="{{ $course->facebook_share_url }}" 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            onclick="window.open(this.href, 'fbshare', 'width=640,height=560,menubar=no,toolbar=no'); return false;"
+                            data-share-payload="{{ json_encode($heroSharePayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}"
+                            onclick="event.preventDefault(); openCourseShareModal(JSON.parse(this.dataset.sharePayload)); return false;"
                             class="inline-flex items-center gap-1.5 px-3 py-3 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
-                            title="Share on Facebook"
+                            title="Copy Stylish Caption & Share on Facebook"
                         >
                             <i class="fab fa-facebook-f text-[11px]"></i>
                             <span class="hidden sm:inline">Share</span>
@@ -820,17 +837,33 @@
                                 </span>
                             </div>
 
-                            <!-- Facebook Share Button -->
-                            <a 
-                                href="{{ $course->facebook_share_url }}" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                onclick="window.open(this.href, 'fbshare', 'width=640,height=560,menubar=no,toolbar=no'); return false;"
-                                class="w-full py-2.5 px-3 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2 mb-2.5 active:scale-95 cursor-pointer"
-                            >
-                                <i class="fab fa-facebook-f text-sm"></i>
-                                <span>Share to Facebook Feed</span>
-                            </a>
+                            <!-- Facebook Rich Link Preview Card -->
+                            <div class="mb-3">
+                                <x-link-preview-card :preview="\App\Support\LinkPreviewResolver::resolve($course->short_url)" :showPostHeader="true" />
+                            </div>
+
+                            <!-- Facebook Share Button + 1-Click Stylish Caption Copy -->
+                            <div class="grid grid-cols-1 gap-2 mb-2.5">
+                                <a 
+                                    href="{{ $course->facebook_share_url }}" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    onclick="copyShortLink({{ Js::from($course->stylish_post_header) }}, this); window.open(this.href, 'fbshare', 'width=640,height=560,menubar=no,toolbar=no'); return false;"
+                                    class="w-full py-2.5 px-3 bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+                                >
+                                    <i class="fab fa-facebook-f text-sm"></i>
+                                    <span>Share to Facebook Feed</span>
+                                </a>
+
+                                <button 
+                                    type="button"
+                                    onclick="copyShortLink({{ Js::from($course->stylish_social_caption) }}, this)"
+                                    class="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-[#051c45] border border-slate-200/80 font-bold rounded-xl text-[11px] transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer"
+                                >
+                                    <i class="fas fa-wand-magic-sparkles text-[#c30102] text-[10px]"></i>
+                                    <span>Copy Stylish Caption + Link</span>
+                                </button>
+                            </div>
 
                             <!-- Short Link Input + Copy Button -->
                             <div class="relative flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden p-1">
@@ -960,7 +993,7 @@
                             venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
                             attendanceMode: '{{ $course->attendance_mode }}',
                             whatsapp: '{{ $course->effective_whatsapp_number }}',
-                            fields: {{ json_encode($course->effective_enrollment_fields) }}
+                            fields: @json($course->effective_enrollment_fields)
                         });
                     }
                 }, 350);

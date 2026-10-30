@@ -61,4 +61,22 @@ class BlogPost extends Model
         }
         return storage_asset($this->featured_image, $default);
     }
+
+    /**
+     * Unicode Mathematical Bold Serif headline for Open Graph (og:title) and Facebook Link Cards.
+     */
+    public function getStylishOgTitleAttribute(): string
+    {
+        $cleanTitle = rtrim(trim((string) $this->title), '. ');
+        $readSuffix = !empty($this->read_time) ? " • {$this->read_time}" : '';
+        return \App\Support\StylishTextFormatter::toBoldSerif($cleanTitle . $readSuffix);
+    }
+
+    /**
+     * Uppercase Unicode Mathematical Bold Serif post caption header.
+     */
+    public function getStylishPostHeaderAttribute(): string
+    {
+        return \App\Support\StylishTextFormatter::toUpperBoldSerif(rtrim(trim((string) $this->title), '. '));
+    }
 }

@@ -35,11 +35,11 @@
                         $heroTitleSizing = \App\Models\Setting::getBrandSizing($heroTitleText);
                     @endphp
                     <div class="space-y-3">
-                        <h1 class="font-black tracking-tight text-white" style="{{ $heroTitleSizing['hero_style'] }}">
-                            {{ $heroTitleText }}
+                        <h1 class="font-black tracking-tight text-white leading-tight" style="{{ $heroTitleSizing['hero_style'] }}">
+                            {!! $heroTitleSizing['formatted_html'] ?? e($heroTitleText) !!}
                         </h1>
-                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-200">
-                            {{ \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.') }}
+                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-200 leading-snug">
+                            {!! \App\Models\Setting::formatBrandNameHtml(\App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) !!}
                         </h3>
                     </div>
                     
@@ -105,7 +105,7 @@
                 </h2>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-2.5 sm:gap-4 items-center">
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4 items-stretch">
                 @php
                     $rawClients = \App\Models\Setting::getVal('landing_clients_data');
                     if (!empty(trim($rawClients))) {
@@ -137,7 +137,7 @@
                 @endphp
 
                 @foreach($clients as $client)
-                    <div class="p-2 sm:p-3 bg-white hover:bg-white rounded-xl sm:rounded-2xl border border-slate-200/80 hover:border-slate-300 shadow-[0_2px_8px_rgba(4,21,54,0.04)] hover:shadow-[0_12px_24px_-6px_rgba(4,21,54,0.1)] hover:border-[#041536]/20 transition-all duration-300 group flex items-center justify-center h-16 sm:h-20">
+                    <div class="p-3 sm:p-4 bg-white hover:bg-white rounded-xl sm:rounded-2xl border border-slate-200/80 hover:border-slate-300 shadow-[0_2px_8px_rgba(4,21,54,0.04)] hover:shadow-[0_12px_24px_-6px_rgba(4,21,54,0.1)] hover:border-[#041536]/20 transition-all duration-300 group flex items-center justify-center min-h-[4.25rem] sm:min-h-[4.75rem] h-auto">
                         @if(!empty($client['logo']))
                             <img 
                                 src="{{ storage_asset($client['logo']) }}" 
@@ -146,9 +146,9 @@
                                 loading="lazy"
                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
                             >
-                            <span style="display:none;" class="text-xs sm:text-sm font-bold text-slate-700 tracking-tight text-center">{{ $client['name'] }}</span>
+                            <span style="display:none;" class="text-xs sm:text-sm font-bold text-slate-700 tracking-tight text-center leading-snug break-words">{{ $client['name'] }}</span>
                         @else
-                            <span class="text-xs sm:text-sm font-bold text-slate-700 tracking-tight text-center">{{ $client['name'] }}</span>
+                            <span class="text-xs sm:text-sm font-bold text-slate-700 tracking-tight text-center leading-snug break-words">{{ $client['name'] }}</span>
                         @endif
                     </div>
                 @endforeach

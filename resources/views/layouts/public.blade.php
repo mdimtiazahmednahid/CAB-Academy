@@ -74,7 +74,7 @@
         $siteLogoUrl = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png');
         $siteNameVal = \App\Models\Setting::getVal('site_name', 'ACS Academy');
         $sitePhoneVal = \App\Models\Setting::getVal('contact_hotline', '+8801917054664');
-        $siteEmailVal = \App\Models\Setting::getVal('contact_email', 'info@cab-academy.com');
+        $siteEmailVal = \App\Models\Setting::getVal('contact_email', 'info@acsacademy.bd');
         $orgSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'EducationalOrganization',
@@ -99,8 +99,8 @@
                 'longitude' => 90.3654,
             ],
             'sameAs' => [
-                'https://www.facebook.com/cabacademybd',
-                'https://www.linkedin.com/company/cab-academy-bd',
+                'https://www.facebook.com/acsacademybd',
+                'https://www.linkedin.com/company/acs-academy-bd',
             ],
             'potentialAction' => [
                 '@type' => 'SearchAction',
@@ -323,35 +323,35 @@
     </div>
 
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_4px_25px_-5px_rgba(5,28,69,0.06)] transition-all">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
-            <div class="flex justify-between items-center h-16 sm:h-20 gap-2 lg:gap-4">
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_4px_25px_-5px_rgba(5,28,69,0.06)] transition-all w-full">
+        <div class="max-w-7xl mx-auto px-3 sm:px-5 lg:px-6 w-full">
+            <div class="flex justify-between items-center h-16 sm:h-20 gap-2 xl:gap-3 w-full min-w-0">
                 
-                <!-- Auto-Responsive Institution Brand Lockup (Handles Short "ACS Academy" & Long "Academy of Commercial and Supply Chain") -->
-                <a href="{{ url('/') }}" class="flex items-center gap-2 sm:gap-3 shrink-0 group max-w-[230px] sm:max-w-[290px] xl:max-w-[330px]">
+                <!-- Auto-Responsive Institution Brand Lockup (Two-Part Name: "Academy of" <br> "Commercial & Supply Chain (ACS)") -->
+                <a href="{{ url('/') }}" class="flex items-center gap-2 sm:gap-2.5 shrink-0 group max-w-[220px] sm:max-w-[260px] lg:max-w-[240px] xl:max-w-[270px]">
                     <div class="relative shrink-0">
-                        <img class="h-10 w-10 sm:h-12 sm:w-12 xl:h-13 xl:w-13 object-contain rounded-full shadow-sm bg-white border border-slate-100 ring-2 ring-slate-100 group-hover:ring-[#c30102]/30 group-hover:scale-105 transition-all duration-300" 
+                        <img class="h-10 w-10 sm:h-11 sm:w-11 xl:h-12 xl:w-12 object-contain rounded-full shadow-sm bg-white border border-slate-100 ring-2 ring-slate-100 group-hover:ring-[#c30102]/30 group-hover:scale-105 transition-all duration-300" 
                              src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" 
                              alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                     </div>
                     <div class="flex flex-col min-w-0">
-                        <span class="brand-adaptive-title font-black tracking-tight text-[#041536] uppercase" style="{{ $brandSizing['header_style'] ?? '' }}" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}">
-                            {{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}
+                        <span class="brand-adaptive-title font-black tracking-tight text-[#041536] uppercase leading-[1.15]" style="{{ $brandSizing['header_style'] ?? '' }}" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}">
+                            {!! $brandSizing['formatted_html'] ?? e($brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy') !!}
                         </span>
-                        <span class="text-[8px] sm:text-[9.5px] tracking-widest uppercase font-black text-[#c30102] mt-0.5 truncate">{{ \App\Models\Setting::getVal('site_tagline', \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) }}</span>
+                        <span class="text-[8px] sm:text-[9px] tracking-widest uppercase font-black text-[#c30102] mt-0.5 truncate">{{ \App\Models\Setting::getVal('site_tagline', \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) }}</span>
                     </div>
                 </a>
 
-                <!-- Desktop Navigation Menu (Careers & Jobs Prominently Featured) -->
-                <nav class="hidden lg:flex items-center gap-0.5 xl:gap-1.5 2xl:gap-2.5 text-xs xl:text-[13.5px] 2xl:text-[14px] font-semibold text-[#041536]" x-data="{ courseDropdown: false, communityDropdown: false }">
-                    <a href="{{ url('/') }}" class="px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('/') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                <!-- Desktop Navigation Menu (Fluid & Zero-Overflow at all Laptop/Desktop widths) -->
+                <nav class="hidden lg:flex items-center justify-center flex-1 min-w-0 gap-0.5 xl:gap-1 2xl:gap-2 text-[11.5px] xl:text-[12.5px] 2xl:text-[13.5px] font-semibold text-[#041536]" x-data="{ courseDropdown: false, communityDropdown: false }">
+                    <a href="{{ url('/') }}" class="px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('/') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                         <span>Home</span>
                     </a>
 
                     <!-- Course Dropdown -->
                     <div class="relative py-2" @mouseenter="courseDropdown = true" @mouseleave="courseDropdown = false" @click.away="courseDropdown = false">
-                        <a href="{{ route('catalog.index') }}" @click="if (window.innerWidth < 1280) { $event.preventDefault(); courseDropdown = !courseDropdown; }" class="flex items-center gap-1 px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('catalog*') || request()->is('courses*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                        <a href="{{ route('catalog.index') }}" @click="if (window.innerWidth < 1280) { $event.preventDefault(); courseDropdown = !courseDropdown; }" class="flex items-center gap-1 px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('catalog*') || request()->is('courses*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                             <span>Courses</span>
                             <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="courseDropdown ? 'rotate-180 text-[#c30102]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </a>
@@ -436,43 +436,43 @@
 
                     @if(\App\Models\Setting::isPageEnabled('jobs'))
                     <!-- Career & Placement Opportunities -->
-                    <a href="{{ route('jobs.index') }}" class="flex items-center gap-1.5 px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('jobs*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
-                        <i class="fas fa-briefcase text-xs text-[#051c45]"></i>
+                    <a href="{{ route('jobs.index') }}" class="flex items-center gap-1 px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('jobs*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                        <i class="fas fa-briefcase text-[11px] text-[#051c45] hidden xl:inline-block"></i>
                         <span>Careers & Jobs</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[9px] bg-emerald-500 text-white font-black uppercase tracking-wider shadow-sm">Hiring</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[8.5px] bg-emerald-500 text-white font-black uppercase tracking-wider shadow-xs">Hiring</span>
                     </a>
                     @endif
 
                     @if(\App\Models\Setting::isPageEnabled('instructors'))
                     <!-- Instructors Directory -->
-                    <a href="{{ route('instructors.index') }}" class="px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('instructors*') || request()->is('faculty*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                    <a href="{{ route('instructors.index') }}" class="px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('instructors*') || request()->is('faculty*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                         <span>Instructors</span>
                     </a>
                     @endif
 
                     @if(\App\Models\Setting::isPageEnabled('about'))
                     <!-- About Us -->
-                    <a href="{{ route('about.index') }}" class="px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('about.*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                    <a href="{{ route('about.index') }}" class="px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('about.*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                         <span>About</span>
                     </a>
                     @endif
 
                     @if(\App\Models\Setting::isPageEnabled('contact'))
                     <!-- Contact -->
-                    <a href="{{ route('contact.index') }}" class="px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('contact.*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                    <a href="{{ route('contact.index') }}" class="px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('contact.*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                         <span>Contact</span>
                     </a>
                     @endif
 
                     @foreach($headerCustomPages as $customNavPage)
-                        <a href="{{ route('pages.show', $customNavPage['slug']) }}" class="px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('page/' . $customNavPage['slug']) ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                        <a href="{{ route('pages.show', $customNavPage['slug']) }}" class="px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('page/' . $customNavPage['slug']) ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                             <span>{{ $customNavPage['title'] }}</span>
                         </a>
                     @endforeach
 
                     <!-- Community & Insights Dropdown (Feed, Blog, Verification, Policies) -->
                     <div class="relative py-2" @mouseenter="communityDropdown = true" @mouseleave="communityDropdown = false" @click.away="communityDropdown = false">
-                        <button type="button" @click="communityDropdown = !communityDropdown" class="flex items-center gap-1 px-2 xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('feed*') || request()->is('blog*') || request()->is('verify-certificate*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
+                        <button type="button" @click="communityDropdown = !communityDropdown" class="flex items-center gap-1 px-1.5 xl:px-2 2xl:px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('feed*') || request()->is('blog*') || request()->is('verify-certificate*') ? 'text-[#c30102] font-bold bg-slate-50/80' : '' }}">
                             <span>Community & Insights</span>
                             <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="communityDropdown ? 'rotate-180 text-[#c30102]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
@@ -523,9 +523,14 @@
                 </nav>
 
                 <!-- Actions: Wishlist Heart, Auth, Smooth Search (Responsive at all screen sizes) -->
-                <div class="hidden sm:flex items-center gap-2 xl:gap-3 shrink-0">
-                    <!-- Quick Expanding Search Pill -->
-                    <div class="relative hidden lg:block" x-data="{ expanded: false }">
+                <div class="hidden sm:flex items-center gap-1.5 xl:gap-2.5 shrink-0">
+                    <!-- Compact Search Trigger on lg (1024px-1279px) -->
+                    <button type="button" @click="searchModalOpen = true" class="hidden lg:inline-flex xl:hidden w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-600 items-center justify-center transition-colors" title="Search Courses">
+                        <i class="fas fa-search text-xs"></i>
+                    </button>
+
+                    <!-- Quick Expanding Search Pill on xl+ (1280px+) -->
+                    <div class="relative hidden xl:block" x-data="{ expanded: false }">
                         <form action="{{ route('catalog.index') }}" method="GET" class="relative flex items-center">
                             <input 
                                 type="text" 
@@ -533,15 +538,15 @@
                                 placeholder="Search..." 
                                 @focus="expanded = true" 
                                 @blur="expanded = false"
-                                :class="expanded ? 'w-40 xl:w-52 ring-2 ring-[#c30102]/20 border-[#c30102] bg-white' : 'w-24 xl:w-32 bg-slate-100/90 border-slate-200'"
-                                class="transition-all duration-300 text-xs py-1.5 xl:py-2 pl-7 xl:pl-8 pr-2.5 rounded-xl border text-slate-800 outline-none placeholder:text-slate-400 font-medium"
+                                :class="expanded ? 'w-32 2xl:w-44 ring-2 ring-[#c30102]/20 border-[#c30102] bg-white' : 'w-22 2xl:w-28 bg-slate-100/90 border-slate-200'"
+                                class="transition-all duration-300 text-xs py-1.5 pl-7 pr-2 rounded-xl border text-slate-800 outline-none placeholder:text-slate-400 font-medium"
                             >
                             <i class="fas fa-search text-[11px] text-slate-400 absolute left-2.5 pointer-events-none"></i>
                         </form>
                     </div>
 
                     <!-- Wishlist Heart Icon with dynamic badge -->
-                    <a href="{{ route('wishlist.index') }}" title="Saved Wishlist" class="relative text-[#c30102] p-1.5 xl:p-2 hover:scale-110 transition-transform">
+                    <a href="{{ route('wishlist.index') }}" title="Saved Wishlist" class="relative text-[#c30102] p-1.5 hover:scale-110 transition-transform shrink-0">
                         <i class="fas fa-heart text-base xl:text-lg"></i>
                         <span id="wishlist-count-badge" class="absolute -top-0.5 -right-0.5 bg-[#c30102] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow {{ auth()->check() && auth()->user()->wishlists()->count() > 0 ? '' : 'hidden' }}">
                             {{ auth()->check() ? auth()->user()->wishlists()->count() : 0 }}
@@ -549,12 +554,16 @@
                     </a>
 
                     @auth
-                        <a href="{{ route('dashboard') }}" class="btn-ipdp-primary px-3 xl:px-4 py-2 xl:py-2.5 rounded-xl text-xs xl:text-sm font-bold shadow-md flex items-center gap-1.5 whitespace-nowrap">
-                            <i class="far fa-user text-xs"></i>
+                        <a href="{{ route('dashboard') }}" class="btn-ipdp-primary px-2.5 xl:px-3.5 py-1.5 xl:py-2 rounded-xl text-xs xl:text-[13px] font-bold shadow-md flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                            @if(auth()->user()->hasCustomProfilePicture())
+                                <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-5 h-5 xl:w-6 xl:h-6 rounded-full object-cover border border-white/40 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=051c45&color=fff';">
+                            @else
+                                <i class="far fa-user text-xs"></i>
+                            @endif
                             <span>Dashboard</span>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="btn-ipdp-primary px-3 xl:px-4 py-2 xl:py-2.5 rounded-xl text-xs xl:text-sm font-bold shadow-md flex items-center gap-1.5 whitespace-nowrap">
+                        <a href="{{ route('login') }}" class="btn-ipdp-primary px-3 xl:px-4 py-1.5 xl:py-2 rounded-xl text-xs xl:text-[13px] font-bold shadow-md flex items-center gap-1.5 whitespace-nowrap shrink-0">
                             <i class="fas fa-lock text-xs"></i>
                             <span>Sign In</span>
                         </a>
@@ -709,7 +718,7 @@
                              alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                         <div class="min-w-0">
-                            <h3 class="text-white font-black uppercase tracking-tight brand-adaptive-title" style="{{ $brandSizing['sidebar_style'] ?? '' }}">{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}</h3>
+                            <h3 class="text-white font-black uppercase tracking-tight brand-adaptive-title leading-tight" style="{{ $brandSizing['sidebar_style'] ?? '' }}">{!! $brandSizing['formatted_html'] ?? e($brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy') !!}</h3>
                             <span class="text-[10px] text-[#c30102] font-black tracking-widest uppercase block truncate mt-0.5">{{ \App\Models\Setting::getVal('site_tagline', \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) }}</span>
                         </div>
                     </div>
@@ -882,8 +891,8 @@
     </nav>
     @endif
 
-    <!-- Mobile Quick Search Sheet Modal -->
-    <div x-show="searchModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-[#051c45]/60 backdrop-blur-sm flex items-start justify-center p-4 pt-20 lg:hidden" style="display: none;">
+    <!-- Quick Search Sheet Modal -->
+    <div x-show="searchModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-[#051c45]/60 backdrop-blur-sm flex items-start justify-center p-4 pt-20" style="display: none;">
         <div @click.away="searchModalOpen = false" class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 p-4">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-black uppercase tracking-wider text-[#051c45]">Search Programs & Masterclasses</span>
@@ -917,6 +926,10 @@
 
         window.openEnrollDrawer = function(courseData) {
             window.dispatchEvent(new CustomEvent('open-enroll-drawer', { detail: courseData }));
+        };
+
+        window.openCourseShareModal = function(courseData) {
+            window.dispatchEvent(new CustomEvent('open-course-share-modal', { detail: courseData }));
         };
 
         window.toggleWishlist = function(courseId, buttonEl) {
@@ -1008,6 +1021,9 @@
 
     <!-- Global Express Course Enrollment Drawer -->
     <x-express-enroll-drawer />
+
+    <!-- Global Facebook Rich Link Preview & Stylish Share Modal -->
+    <x-course-share-modal />
 
 </body>
 </html>

@@ -9,9 +9,13 @@
     <title>@hasSection('title') @yield('title') - @endif{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}</title>
     @hasSection('meta_description')
         <meta name="description" content="@yield('meta_description')">
+        <meta property="og:description" content="@yield('meta_description')">
     @endif
     @hasSection('canonical_url')
         <link rel="canonical" href="@yield('canonical_url')">
+        <meta property="og:url" content="@yield('canonical_url')">
+    @else
+        <meta property="og:url" content="{{ url()->current() }}">
     @endif
     @hasSection('og_title')
         <meta property="og:title" content="@yield('og_title')">
@@ -19,6 +23,8 @@
     @hasSection('og_image')
         <meta property="og:image" content="@yield('og_image')">
     @endif
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:site_name" content="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}">
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="manifest" href="{{ route('pwa.manifest') }}">
     <meta name="theme-color" content="#051c45">
@@ -176,7 +182,7 @@
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 min-w-0 group" title="Student Portal Dashboard">
                 <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}" class="h-9 w-9 shrink-0 rounded-xl object-contain bg-white border border-slate-200/80 p-0.5 shadow-2xs group-hover:scale-105 transition-transform" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div class="hidden lg:flex flex-col min-w-0">
-                    <span class="font-black tracking-tight text-[#051c45] uppercase brand-adaptive-title leading-tight" style="{{ $brandSizing['sidebar_style'] ?? '' }}" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}">{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}</span>
+                    <span class="font-black tracking-tight text-[#051c45] uppercase brand-adaptive-title leading-tight" style="{{ $brandSizing['sidebar_style'] ?? '' }}" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}">{!! $brandSizing['formatted_html'] ?? e($brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy') !!}</span>
                     <span class="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest text-[#c30102] mt-0.5">
                         <span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>
                         <span>Student Portal</span>
@@ -264,9 +270,13 @@
         <div class="p-3 lg:p-3.5 border-t border-slate-100 bg-slate-50/60 space-y-2">
             @if($portalUser)
                 <a href="{{ route('profile.edit') }}" class="hidden lg:flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200/80 hover:border-[#051c45]/30 transition-all shadow-2xs">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#051c45] to-[#0d3378] text-white font-black text-xs flex items-center justify-center shrink-0">
-                        {{ strtoupper(substr($portalUser->name, 0, 1)) }}
-                    </div>
+                    @if($portalUser->hasCustomProfilePicture())
+                        <img src="{{ $portalUser->profile_picture_url }}" alt="{{ $portalUser->name }}" class="w-8 h-8 rounded-lg object-cover border border-slate-200 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($portalUser->name) }}&background=051c45&color=fff';">
+                    @else
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#051c45] to-[#0d3378] text-white font-black text-xs flex items-center justify-center shrink-0">
+                            {{ strtoupper(substr($portalUser->name, 0, 1)) }}
+                        </div>
+                    @endif
                     <div class="min-w-0 flex-1">
                         <div class="text-xs font-extrabold text-slate-800 truncate">{{ $portalUser->name }}</div>
                         <div class="text-[10px] font-semibold text-slate-400 truncate">{{ $portalUser->phone ?: $portalUser->email }}</div>
@@ -338,8 +348,12 @@
 
             <!-- Profile Shortcut -->
             @if($portalUser)
-                <a href="{{ route('profile.edit') }}" class="w-9 h-9 rounded-xl bg-[#051c45] text-white font-black text-xs flex items-center justify-center shadow-xs hover:bg-[#082860] transition-colors" title="Profile & Security Settings">
-                    {{ strtoupper(substr($portalUser->name, 0, 1)) }}
+                <a href="{{ route('profile.edit') }}" class="w-9 h-9 rounded-xl bg-[#051c45] text-white font-black text-xs flex items-center justify-center shadow-xs hover:bg-[#082860] transition-colors overflow-hidden border border-slate-200/80" title="Profile & Security Settings">
+                    @if($portalUser->hasCustomProfilePicture())
+                        <img src="{{ $portalUser->profile_picture_url }}" alt="{{ $portalUser->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($portalUser->name) }}&background=051c45&color=fff';">
+                    @else
+                        {{ strtoupper(substr($portalUser->name, 0, 1)) }}
+                    @endif
                 </a>
             @endif
         </div>
@@ -409,6 +423,10 @@
             window.dispatchEvent(new CustomEvent('open-enroll-drawer', { detail: courseData }));
         };
 
+        window.openCourseShareModal = function(courseData) {
+            window.dispatchEvent(new CustomEvent('open-course-share-modal', { detail: courseData }));
+        };
+
         window.toggleWishlist = function(courseId, buttonEl) {
             fetch('/wishlist/' + courseId + '/toggle', {
                 method: 'POST',
@@ -468,5 +486,8 @@
 
     <!-- Global Express Course Enrollment Drawer -->
     <x-express-enroll-drawer />
+
+    <!-- Global Facebook Rich Link Preview & Stylish Share Modal -->
+    <x-course-share-modal />
 </body>
 </html>

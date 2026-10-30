@@ -118,4 +118,25 @@ class CourseShortLinkTest extends TestCase
         $this->assertStringContainsString('linkedin.com/sharing/share-offsite', $course->linkedin_share_url);
         $this->assertStringStartsWith('http', $course->og_image_url);
     }
+
+    public function test_course_card_facebook_share_button_triggers_stylish_share_modal_with_preview_payload()
+    {
+        $course = Course::create([
+            'title' => 'PGD in Supply Chain Management',
+            'short_description' => 'Executive diploma in global supply chain and strategic sourcing.',
+            'thumbnail' => 'course_covers/pgd_scm.png',
+            'price' => 8500,
+            'start_date' => '2026-10-30',
+            'is_published' => true,
+        ]);
+
+        $response = $this->get(route('catalog.index'));
+
+        $response->assertStatus(200);
+        $response->assertSee('id="globalCourseShareModal"', false);
+        $response->assertSee('openCourseShareModal', false);
+        $response->assertSee('course-card-share-btn', false);
+        $response->assertSee(e($course->stylish_post_header), false);
+        $response->assertSee(e($course->stylish_og_title), false);
+    }
 }

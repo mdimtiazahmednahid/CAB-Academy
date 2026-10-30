@@ -18,7 +18,7 @@ class FeedController extends Controller
         $category = $request->query('category');
         $search = $request->query('search');
 
-        $query = CommunityPost::with(['user', 'blogPost', 'comments'])
+        $query = CommunityPost::with(['user.instructorProfile', 'blogPost', 'comments.user.instructorProfile'])
             ->orderBy('is_pinned', 'desc')
             ->latest();
 
@@ -186,6 +186,34 @@ class FeedController extends Controller
         }
 
         return back()->with('success', 'Comment posted! (+5 XP)');
+    }
+
+    /**
+     * Resolve Facebook-style Open Graph rich link preview metadata for a shared or typed URL.
+     */
+    public function previewLink(Request $request)
+    {
+        $rawUrl = $request->input('url') ?: \App\Support\LinkPreviewResolver::extractFirstUrl($request->input('text', ''));
+        if (!$rawUrl) {
+            return response()->json([
+                'success' => false,
+                'preview' => null,
+            ], 422);
+        }
+
+        $preview = \App\Support\LinkPreviewResolver::resolve($rawUrl);
+        if (!$preview) {
+            return response()->json([
+                'success' => false,
+                'preview' => null,
+            ], 422);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'success' => true,
+            'preview' => $preview,
+        ]);
     }
 
     public function destroy(CommunityPost $post)

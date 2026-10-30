@@ -27,33 +27,33 @@
     $attendanceLabel = $course->isOnlineOnly() ? 'Online Live (Zoom)' : ($course->isCampusOnly() ? 'Executive Campus' : 'Live Zoom + Campus');
 @endphp
 <!DOCTYPE html>
-<html lang="en" prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
+<html lang="en" class="overflow-x-hidden" prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <title>{{ $course->title }} - {{ $siteName }}</title>
     <meta name="description" content="{{ $cleanDesc }}">
-    <link rel="canonical" href="{{ $targetUrl }}">
+    <link rel="canonical" href="{{ $shortUrl }}">
 
     <!-- Open Graph / Facebook Meta Tags (1200x630 Large Card Standard) -->
     <meta property="og:site_name" content="{{ $siteName }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ $shortUrl }}">
-    <meta property="og:title" content="{{ $course->title }} - {{ $siteName }}">
+    <meta property="og:title" content="{{ $course->stylish_og_title }}">
     <meta property="og:description" content="{{ $cleanDesc }}">
     <meta property="og:image" content="{!! $imageUrl !!}">
     <meta property="og:image:secure_url" content="{!! $secureImageUrl !!}">
     <meta property="og:image:type" content="{{ $ogMime }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="{{ $course->title }}">
+    <meta property="og:image:alt" content="{{ $course->social_card_headline }}">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ $shortUrl }}">
-    <meta name="twitter:title" content="{{ $course->title }} - {{ $siteName }}">
+    <meta name="twitter:title" content="{{ $course->stylish_og_title }}">
     <meta name="twitter:description" content="{{ $cleanDesc }}">
     <meta name="twitter:image" content="{!! $imageUrl !!}">
     <meta name="twitter:image:alt" content="{{ $course->title }}">
@@ -83,11 +83,11 @@
     <!-- 1. Top Brand & Counseling Bar -->
     <header class="w-full liquid-glass-dark border-b border-white/15 sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-            <a href="{{ url('/') }}" class="flex items-center gap-3 group">
-                <img src="{{ $siteLogoUrl }}" alt="{{ $siteName }}" class="h-8 sm:h-9 w-auto object-contain rounded-lg" onerror="this.onerror=null; this.src='{{ asset('images/logo.png') }}';">
-                <div class="hidden sm:block">
-                    <span class="text-sm font-extrabold text-white tracking-wide block leading-none">{{ $siteName }}</span>
-                    <span class="text-[10px] text-slate-300 font-medium tracking-wider uppercase">Executive Professional Certification</span>
+            <a href="{{ url('/') }}" class="flex items-center gap-3 group min-w-0">
+                <img src="{{ $siteLogoUrl }}" alt="{{ $siteName }}" class="h-8 sm:h-9 w-8 sm:w-9 shrink-0 object-contain rounded-full bg-white p-0.5" onerror="this.onerror=null; this.src='{{ asset('images/logo.png') }}';">
+                <div class="hidden sm:block min-w-0">
+                    <span class="text-xs sm:text-sm font-extrabold text-white tracking-wide block leading-tight uppercase">{!! \App\Models\Setting::formatBrandNameHtml($siteName) !!}</span>
+                    <span class="text-[10px] text-slate-300 font-medium tracking-wider uppercase block mt-0.5">Executive Professional Certification</span>
                 </div>
             </a>
 
@@ -177,14 +177,22 @@
 
             <!-- Course Title, Faculty & Details Content -->
             <div class="p-5 sm:p-8 space-y-6">
-                <div>
-                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-snug mb-3">
-                        {{ $course->title }}
+                <a href="{{ $targetUrl }}" class="block group/cardlink cursor-pointer">
+                    <div class="flex items-center justify-between gap-2 text-[11px] font-bold tracking-wider text-slate-400 mb-1.5">
+                        <span class="flex items-center gap-1.5 lowercase">
+                            <i class="fas fa-globe text-[10px] text-emerald-400"></i>
+                            <span>{{ strtolower(preg_replace('/^www\./i', '', parse_url(config('app.url'), PHP_URL_HOST) ?: 'acsacademy.bd')) }}</span>
+                        </span>
+                        <span class="text-amber-300/90 font-serif">{{ $course->stylish_post_header }}</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-white group-hover/cardlink:text-amber-300 transition-colors tracking-tight leading-snug mb-2">
+                        {{ $course->stylish_og_title }}
+                        <span class="sr-only">{{ $course->title }}</span>
                     </h1>
                     <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-3xl font-normal">
                         {{ $course->short_description ?? ($course->description ?? 'Live interactive professional certification masterclass with authentic practical case simulations, export-import documentation, and verifiable credentials.') }}
                     </p>
-                </div>
+                </a>
 
                 <!-- Instructor Profile Summary -->
                 <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-white/5 border border-white/10">

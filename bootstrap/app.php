@@ -20,30 +20,26 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $exceptions->render(function (\Illuminate\Database\QueryException $e, Request $request) {
+            try {
+                if (class_exists(\App\Support\DatabaseSchemaRepair::class)) {
+                    \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+                }
+            } catch (\Throwable $ignore) {}
+
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
-                    'error' => 'Database Query Error',
-                    'message' => $e->getMessage(),
-                ], 500);
+                    'error' => 'Service temporarily unavailable. Please try again.',
+                ], 503);
             }
-            return response()->view('errors.database', [
-                'exception' => $e,
-                'message' => $e->getMessage(),
-                'code' => $e->getCode(),
-            ], 500);
+            return response()->view('errors.database', [], 503);
         });
 
         $exceptions->render(function (\PDOException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
-                    'error' => 'Database Connection Error',
-                    'message' => $e->getMessage(),
-                ], 500);
+                    'error' => 'Service temporarily unavailable. Please try again.',
+                ], 503);
             }
-            return response()->view('errors.database', [
-                'exception' => $e,
-                'message' => $e->getMessage(),
-                'code' => $e->getCode(),
-            ], 500);
+            return response()->view('errors.database', [], 503);
         });
     })->create();

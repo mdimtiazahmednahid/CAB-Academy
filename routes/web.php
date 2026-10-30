@@ -83,6 +83,7 @@ Route::get('/page/{slug}', [App\Http\Controllers\PageController::class, 'show'])
 // Community Feed & Blogs (Minimal Community Like Facebook)
 Route::get('/feed', [App\Http\Controllers\FeedController::class, 'index'])->name('feed.index');
 Route::post('/feed/posts', [App\Http\Controllers\FeedController::class, 'store'])->name('feed.posts.store');
+Route::match(['get', 'post'], '/link-preview', [App\Http\Controllers\FeedController::class, 'previewLink'])->name('link.preview');
 Route::post('/feed/posts/{post}/like', [App\Http\Controllers\FeedController::class, 'like'])->name('feed.posts.like');
 Route::post('/feed/posts/{post}/comments', [App\Http\Controllers\FeedController::class, 'comment'])->name('feed.posts.comments.store');
 Route::delete('/feed/posts/{post}', [App\Http\Controllers\FeedController::class, 'destroy'])->name('feed.posts.destroy');
@@ -140,12 +141,16 @@ $streamPublicFile = function (string $path) {
         realpath(public_path('uploads')),
         realpath(storage_path('app/public')),
         realpath(public_path('storage')),
+        realpath(public_path('build')),
+        realpath(public_path('images')),
     ]);
 
     $candidates = [
         public_path('uploads/' . $cleanPath),
         storage_path('app/public/' . $cleanPath),
         public_path('storage/' . $cleanPath),
+        public_path('build/' . $cleanPath),
+        public_path('images/' . $cleanPath),
     ];
 
     $resolvedFile = null;
@@ -167,7 +172,19 @@ $streamPublicFile = function (string $path) {
         abort(404);
     }
 
-    $mimeType = @mime_content_type($resolvedFile) ?: 'application/octet-stream';
+    $ext = strtolower(pathinfo($resolvedFile, PATHINFO_EXTENSION));
+    $mimeType = match ($ext) {
+        'css' => 'text/css; charset=utf-8',
+        'js', 'mjs' => 'application/javascript; charset=utf-8',
+        'json' => 'application/json; charset=utf-8',
+        'svg' => 'image/svg+xml',
+        'png' => 'image/png',
+        'jpg', 'jpeg' => 'image/jpeg',
+        'webp' => 'image/webp',
+        'gif' => 'image/gif',
+        'ico' => 'image/x-icon',
+        default => (@mime_content_type($resolvedFile) ?: 'application/octet-stream'),
+    };
     return response()->file($resolvedFile, [
         'Content-Type' => $mimeType,
         'Cache-Control' => 'public, max-age=86400',
@@ -176,6 +193,14 @@ $streamPublicFile = function (string $path) {
 
 Route::get('/storage/{path}', $streamPublicFile)->where('path', '.*')->name('storage.stream');
 Route::get('/uploads/{path}', $streamPublicFile)->where('path', '.*')->name('uploads.stream');
+Route::get('/build/{path}', $streamPublicFile)->where('path', '.*')->name('build.stream');
+Route::get('/images/{path}', $streamPublicFile)->where('path', '.*')->name('images.stream');
+Route::get('/sw.js', function () {
+    return response()->file(public_path('sw.js'), [
+        'Content-Type' => 'application/javascript; charset=utf-8',
+        'Cache-Control' => 'no-cache',
+    ]);
+});
 
 // Dynamic Search Engine XML Sitemap (Strictly public, indexable pages only)
 Route::get('/sitemap.xml', function () {
@@ -428,7 +453,8 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::get('/courses', [AdminCourseController::class, 'index'])->name('admin.courses');
     Route::post('/courses', [AdminCourseController::class, 'store'])->name('admin.courses.store');
     Route::get('/courses/{course}', [AdminCourseController::class, 'show'])->name('admin.courses.show');
-    Route::match(['put', 'post'], '/courses/{course}', [AdminCourseController::class, 'update'])->name('admin.courses.update');
+    Route::match(['patch', 'put', 'post'], '/courses/{course}', [AdminCourseController::class, 'update'])->name('admin.courses.update');
+    Route::match(['patch', 'put', 'post'], '/courses/{course}/quick-update', [AdminCourseController::class, 'update'])->name('admin.courses.quick_update');
     Route::post('/courses/{course}/enrollment-form', [AdminCourseController::class, 'updateEnrollmentForm'])->name('admin.courses.update_enrollment_form');
     Route::get('/courses/{course}/export-registrations', [AdminCourseController::class, 'exportRegistrations'])->name('admin.courses.export_registrations');
     Route::delete('/courses/{course}', [AdminCourseController::class, 'destroy'])->name('admin.courses.destroy');

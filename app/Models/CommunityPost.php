@@ -63,4 +63,56 @@ class CommunityPost extends Model
 
         return false;
     }
+
+    public function getAuthorAvatarUrlAttribute(): ?string
+    {
+        if ($this->user && $this->user->hasCustomProfilePicture()) {
+            return $this->user->profile_picture_url;
+        }
+        if (!empty($this->author_avatar)) {
+            return storage_asset($this->author_avatar);
+        }
+        return null;
+    }
+
+    public function getSharedUrlAttribute(): ?string
+    {
+        return \App\Support\LinkPreviewResolver::extractFirstUrl($this->content);
+    }
+
+    public function getLinkPreviewAttribute(): ?array
+    {
+        $url = $this->shared_url;
+        if (!$url) {
+            return null;
+        }
+        return \App\Support\LinkPreviewResolver::resolve($url);
+    }
+
+    public function getFormattedContentHtmlAttribute(): string
+    {
+        return \App\Support\LinkPreviewResolver::formatTextWithClickableLinks($this->content);
+    }
+
+    /**
+     * Auto-generated or converted Uppercase Bold Serif header for Facebook-style feed posts.
+     * Example: "𝐏𝐆𝐃 𝐈𝐍 𝐒𝐔𝐏𝐏𝐋𝐘 𝐂𝐇𝐀𝐈𝐍 𝐌𝐀𝐍𝐀𝐆𝐄𝐌𝐄𝐍𝐓"
+     */
+    public function getStylishTitleAttribute(): ?string
+    {
+        if (!empty($this->title)) {
+            return \App\Support\StylishTextFormatter::toUpperBoldSerif($this->title);
+        }
+
+        if ($this->blogPost) {
+            return $this->blogPost->stylish_post_header;
+        }
+
+        $preview = $this->link_preview;
+        if (is_array($preview) && !empty($preview['post_header'])) {
+            return $preview['post_header'];
+        }
+
+        return null;
+    }
 }

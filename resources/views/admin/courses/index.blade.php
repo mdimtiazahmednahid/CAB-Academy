@@ -3,7 +3,7 @@
 @section('header_title', 'Courses & Curriculum')
 
 @section('content')
-<div class="space-y-6" x-data="{ search: '', statusFilter: 'all' }">
+<div class="space-y-6" x-data="{ search: '', statusFilter: 'all', quickEditId: null }">
     <!-- Header & Primary Action -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -89,13 +89,28 @@
                         x-show="(statusFilter === 'all' || (statusFilter === 'published' && {{ $c->is_published ? 'true' : 'false' }}) || (statusFilter === 'draft' && {{ !$c->is_published ? 'true' : 'false' }})) && (search === '' || {{ json_encode(strtolower($c->title . ' ' . ($c->category ?? '') . ' ' . ($c->batch ?? ''))) }}.includes(search.toLowerCase()))">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3.5">
-                                <a href="{{ route('admin.courses.show', $c) }}" class="w-16 h-11 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-xs shrink-0 block">
-                                    <img src="{{ $c->cover_image_url }}" alt="{{ $c->title }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';">
-                                </a>
-                                <div class="min-w-0">
-                                    <a href="{{ route('admin.courses.show', $c) }}" class="font-bold text-[#051c45] hover:text-[#c30102] transition-colors line-clamp-1">
-                                        {{ $c->title }}
-                                    </a>
+                                <!-- 1-Click Direct Cover Photo Upload Form -->
+                                <form method="POST" action="{{ route('admin.courses.update', $c) }}" enctype="multipart/form-data" class="shrink-0">
+                                    @csrf
+                                    <input type="hidden" name="_section_label" value="Course Cover Photo">
+                                    <input type="file" id="row_cover_{{ $c->id }}" name="cover_image" accept="image/*" class="hidden" onchange="this.form.submit()">
+                                    <label for="row_cover_{{ $c->id }}" title="Click camera to replace cover photo in 1 click" class="relative w-16 h-11 rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-xs block cursor-pointer group">
+                                        <img src="{{ $c->cover_image_url }}" alt="{{ $c->title }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';">
+                                        <span class="absolute inset-0 bg-slate-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-bold">
+                                            <i class="fas fa-camera"></i>
+                                        </span>
+                                    </label>
+                                </form>
+
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="{{ route('admin.courses.show', $c) }}" class="font-bold text-[#051c45] hover:text-[#c30102] transition-colors line-clamp-1">
+                                            {{ $c->title }}
+                                        </a>
+                                        <button type="button" @click="quickEditId = (quickEditId === {{ $c->id }} ? null : {{ $c->id }})" title="Quick-edit title, price, or batch inline" class="text-slate-400 hover:text-[#051c45] text-[11px] px-1.5 py-0.5 rounded hover:bg-slate-100 transition-colors shrink-0">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                    </div>
                                     <div class="flex items-center gap-2 mt-1 flex-wrap">
                                         @if($c->category)
                                             <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">{{ $c->category }}</span>
@@ -103,7 +118,32 @@
                                         @if($c->level)
                                             <span class="text-[11px] text-slate-400">{{ $c->level }}</span>
                                         @endif
+                                        <span class="text-[10px] text-slate-400">&bull; {{ $c->venue ?: 'Online Live (Zoom)' }}</span>
                                     </div>
+
+                                    <!-- Inline Quick-Edit Micro-Form (Saves ONLY Edited Fields) -->
+                                    <form x-show="quickEditId === {{ $c->id }}" x-cloak method="POST" action="{{ route('admin.courses.update', $c) }}" class="mt-2.5 p-2.5 rounded-xl bg-slate-100/90 border border-slate-200 space-y-2">
+                                        @csrf
+                                        <input type="hidden" name="_section_label" value="Quick Course Info">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Title</label>
+                                            <input type="text" name="title" value="{{ $c->title }}" required class="w-full rounded-lg border-slate-300 text-xs font-bold text-[#051c45] py-1 px-2">
+                                        </div>
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Fee (৳)</label>
+                                                <input type="number" step="0.01" min="0" name="price" value="{{ $c->price }}" class="w-full rounded-lg border-slate-300 text-xs font-bold py-1 px-2">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Batch</label>
+                                                <input type="text" name="batch" value="{{ $c->batch }}" placeholder="e.g. 105th" class="w-full rounded-lg border-slate-300 text-xs py-1 px-2">
+                                            </div>
+                                            <div class="flex items-end gap-1">
+                                                <button type="submit" class="flex-1 py-1.5 px-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-extrabold">Save</button>
+                                                <button type="button" @click="quickEditId = null" class="py-1.5 px-2 rounded-lg bg-white text-slate-600 border border-slate-200 text-[11px] font-bold">&times;</button>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </td>
@@ -116,7 +156,7 @@
                             </td>
                         @endif
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="font-black text-[#051c45] text-sm">
+                            <div class="font-black text-[#051c45] text-sm cursor-pointer hover:text-indigo-600" @click="quickEditId = (quickEditId === {{ $c->id }} ? null : {{ $c->id }})" title="Click to quick-edit price">
                                 {{ $c->price > 0 ? '৳' . number_format($c->price, 0) : 'Free' }}
                             </div>
                             <div class="text-[11px] text-slate-500 mt-0.5">
@@ -136,20 +176,44 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex flex-col items-start gap-1">
-                                @if($c->is_published)
-                                    <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-bold">Published</span>
-                                @else
-                                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 rounded-full text-[11px] font-bold">Draft</span>
-                                @endif
-                                @if($c->certificate_enabled)
-                                    <span class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-                                        <i class="fas fa-award"></i> Certs Active
-                                    </span>
-                                @endif
+                            <div class="flex flex-col items-start gap-1.5">
+                                <!-- 1-Click Publish / Draft Toggle -->
+                                <form method="POST" action="{{ route('admin.courses.update', $c) }}">
+                                    @csrf
+                                    <input type="hidden" name="_section_label" value="Publish Status">
+                                    <input type="hidden" name="is_published" value="{{ $c->is_published ? '0' : '1' }}">
+                                    @if($c->is_published)
+                                        <button type="submit" title="Click to switch to Draft" class="px-2.5 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-bold cursor-pointer transition-colors">
+                                            ● Published
+                                        </button>
+                                    @else
+                                        <button type="submit" title="Click to Publish" class="px-2.5 py-0.5 bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 border border-slate-200 rounded-full text-[11px] font-bold cursor-pointer transition-colors">
+                                            ○ Draft
+                                        </button>
+                                    @endif
+                                </form>
+
+                                <!-- 1-Click Certificate Release Toggle -->
+                                <form method="POST" action="{{ route('admin.courses.update', $c) }}">
+                                    @csrf
+                                    <input type="hidden" name="_section_label" value="Certificate Status">
+                                    <input type="hidden" name="certificate_enabled" value="{{ $c->certificate_enabled ? '0' : '1' }}">
+                                    @if($c->certificate_enabled)
+                                        <button type="submit" title="Click to lock certificates" class="text-[10px] text-emerald-600 hover:text-amber-600 font-semibold flex items-center gap-1 cursor-pointer">
+                                            <i class="fas fa-award"></i> Certs Active
+                                        </button>
+                                    @else
+                                        <button type="submit" title="Click to release certificates" class="text-[10px] text-slate-400 hover:text-emerald-600 font-semibold flex items-center gap-1 cursor-pointer">
+                                            <i class="fas fa-lock text-[9px]"></i> Certs Locked
+                                        </button>
+                                    @endif
+                                </form>
                             </div>
                         </td>
                         <td class="px-6 py-4 text-right whitespace-nowrap space-x-1.5">
+                            <button type="button" @click="quickEditId = (quickEditId === {{ $c->id }} ? null : {{ $c->id }})" title="Quick Inline Edit" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold text-slate-600 hover:text-[#051c45] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                                <i class="fas fa-pen text-[10px]"></i>
+                            </button>
                             <a href="{{ route('courses.show', $c) }}" target="_blank" title="Preview Live Page" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold text-slate-600 hover:text-[#051c45] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
                                 <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
                             </a>
@@ -176,73 +240,37 @@
     </div>
 </div>
 
-<!-- Create Modal -->
-<div id="createModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+<!-- Express Create Course Modal (4 Essentials First + Collapsible Optional Details) -->
+<div id="createModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4" x-data="{ showAdvancedCreate: false, createPrice: '0.00' }">
     <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-2xl border border-slate-200">
         <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-            <h3 class="text-lg font-black text-[#051c45]">New Course</h3>
+            <div>
+                <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600">10-Second Launchpad</span>
+                <h3 class="text-lg font-black text-[#051c45]">Create New Course</h3>
+            </div>
             <button onclick="document.getElementById('createModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
         </div>
-        <form method="POST" action="{{ route('admin.courses') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('admin.courses.store') }}" enctype="multipart/form-data">
             @csrf
-            <div class="space-y-4 max-h-[72vh] overflow-y-auto pr-2">
+            <div class="space-y-4 max-h-[74vh] overflow-y-auto pr-2">
+                <!-- Essential 1: Title -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Title <span class="text-rose-500">*</span></label>
-                    <input type="text" name="title" required class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Course Title <span class="text-rose-500">*</span></label>
+                    <input type="text" name="title" required placeholder="e.g. Communication Skills for Career Success" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm font-bold text-[#051c45]">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Description (Optional)</label>
-                    <textarea name="description" rows="3" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm"></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Short Excerpt / Card Snippet (Optional)</label>
-                    <input type="text" name="short_description" placeholder="Brief 1-2 sentence overview for course card" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
-                </div>
+
+                <!-- Essential 2: Tuition Fee & Category -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Starting Date</label>
-                        <input type="date" name="start_date" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Price (৳ BDT)</label>
-                        <input type="number" step="0.01" name="price" value="0.00" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Duration</label>
-                        <input type="text" name="duration" placeholder="e.g. 8 Days / 2 Months" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Venue / Format</label>
-                        <input type="text" id="create-course-venue" name="venue" value="Online Live (Zoom)" placeholder="e.g. Online Live (Zoom) / Executive Campus" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
-                        <div class="flex flex-wrap gap-1.5 mt-1.5">
-                            <button type="button" onclick="document.getElementById('create-course-venue').value='Online Live (Zoom)'" class="px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold transition-colors">Online Only (Disables Campus)</button>
-                            <button type="button" onclick="document.getElementById('create-course-venue').value='Executive Campus'" class="px-2 py-0.5 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[10px] font-bold transition-colors">Campus Only</button>
-                            <button type="button" onclick="document.getElementById('create-course-venue').value='Hybrid (Online Zoom & Executive Campus)'" class="px-2 py-0.5 rounded-md bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[10px] font-bold transition-colors">Hybrid (Both)</button>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-slate-700">Price (৳ BDT)</label>
+                            <button type="button" @click="createPrice = '0.00'" class="text-[10px] font-bold text-emerald-600 hover:underline">Set Free (৳0)</button>
                         </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Batch / Cohort (Optional)</label>
-                        <input type="text" name="batch" placeholder="e.g. 105th Batch" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
-                    </div>
-                    <div class="flex items-end pb-1">
-                        <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors w-full">
-                            <input type="checkbox" name="show_batch" value="1" class="rounded text-[#051c45] focus:ring-[#051c45]">
-                            <span class="text-xs font-semibold text-slate-700">Show Batch Publicly</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Level (Optional)</label>
-                        <input type="text" name="level" placeholder="e.g. Executive / Certificate" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
+                        <input type="number" step="0.01" min="0" name="price" x-model="createPrice" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm font-bold">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Category</label>
-                        <input list="category-options-create" type="text" name="category" placeholder="Choose or type category..." class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
+                        <input list="category-options-create" type="text" name="category" placeholder="Choose or type..." class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
                         <datalist id="category-options-create">
                             @foreach(\App\Models\Category::active()->ordered()->get() as $cat)
                                 <option value="{{ $cat->name }}"></option>
@@ -250,46 +278,28 @@
                         </datalist>
                     </div>
                 </div>
+
+                <!-- Essential 3: Format -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Who Should Attend / Target Audience (Optional)</label>
-                    <textarea name="target_audience" rows="2" placeholder="e.g. Commercial Executives, Importers, Exporters, Entrepreneurs..." class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm"></textarea>
-                </div>
-                <div class="p-3.5 bg-emerald-50/50 rounded-xl border border-emerald-200/80 space-y-3">
-                    <div class="text-[11px] font-black uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
-                        <i class="fab fa-whatsapp text-emerald-600 text-sm"></i>
-                        <span>Course Counselor WhatsApp & Phone (Optional Override)</span>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Course Counselor WhatsApp / Phone Number</label>
-                        <input type="text" name="counselor_phone" placeholder="Leave blank to use Global Hotline ({{ \App\Models\Setting::getVal('contact_hotline', '01917-054664') }})" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Custom WhatsApp Inquiry Message (Optional)</label>
-                        <textarea name="whatsapp_message" rows="2" placeholder="Assalamu Alaikum! I would like to inquire/enroll in *{title}* (Fee: {price}). Please share batch details and enrollment procedure: {url}" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-xs"></textarea>
-                        <p class="text-[10px] text-slate-500 mt-1">Supports placeholders: <code>{title}</code>, <code>{price}</code>, <code>{batch}</code>, <code>{url}</code></p>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Attendance Format / Venue</label>
+                    <input type="text" id="create-course-venue" name="venue" value="Online Live (Zoom)" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
+                    <div class="flex flex-wrap gap-1.5 mt-1.5">
+                        <button type="button" onclick="document.getElementById('create-course-venue').value='Online Live (Zoom)'" class="px-2.5 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold transition-colors">Online Only (Zoom)</button>
+                        <button type="button" onclick="document.getElementById('create-course-venue').value='Executive Campus'" class="px-2.5 py-1 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[10px] font-bold transition-colors">Campus Only</button>
+                        <button type="button" onclick="document.getElementById('create-course-venue').value='Hybrid (Online Zoom & Executive Campus)'" class="px-2.5 py-1 rounded-md bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[10px] font-bold transition-colors">Hybrid (Both)</button>
                     </div>
                 </div>
-                @if(auth()->user()->isAdmin())
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Instructor (Optional)</label>
-                    <select name="instructor_id" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
-                        <option value="">-- Assign Instructor --</option>
-                        @foreach($instructors as $instructor)
-                            <option value="{{ $instructor->id }}">{{ $instructor->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @endif
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Course Cover Photo (Picture)</label>
+
+                <!-- Essential 4: Cover Photo -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Course Cover Photo (Optional)</label>
                     <div class="flex items-center gap-4">
-                        <div class="w-24 h-16 rounded-lg overflow-hidden border border-slate-300 bg-slate-200 shrink-0 shadow-inner flex items-center justify-center">
-                            <img id="create_course_cover_preview" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80" alt="Preview" class="w-full h-full object-cover">
+                        <div class="w-24 h-14 rounded-lg overflow-hidden border border-slate-300 bg-slate-900 shrink-0 shadow-inner flex items-center justify-center">
+                            <img id="create_course_cover_preview" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80" alt="Preview" class="w-full h-full object-contain">
                         </div>
                         <div class="flex-1">
                             <input type="file" id="create_course_cover_input" name="cover_image" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#051c45] file:text-white hover:file:opacity-90 file:cursor-pointer cursor-pointer border border-slate-300 rounded-lg p-1 bg-white">
                             <input type="hidden" name="cover_image_base64" id="create_course_cover_base64">
-                            <p class="text-[10px] text-slate-400 mt-1">PNG, JPG, WebP (16:10 or 16:9 ratio recommended)</p>
                         </div>
                     </div>
                 </div>
@@ -307,31 +317,82 @@
                         }
                     });
                 </script>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Registration Form Template</label>
-                    <select name="enrollment_template" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
-                        <option value="standard">Standard Professional (Name + Phone + Email Required)</option>
-                        <option value="quick_lead">Quick Lead (Name + Phone Only - Email Disabled/Not Required)</option>
-                        <option value="corporate">Executive & Corporate (Name + Phone + Email + Company + Role)</option>
-                        <option value="comprehensive">Comprehensive Application (Full Fields + Questions)</option>
-                    </select>
-                </div>
-                <div class="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200 flex items-center justify-between">
-                    <div>
-                        <label for="create_certificate_enabled" class="block text-xs font-bold text-emerald-950">Release Digital Certificates</label>
-                        <p class="text-[11px] text-emerald-800 mt-0.5">Allow enrolled students to download their certificate.</p>
+
+                <!-- Collapsible Optional Details -->
+                <div class="border-t border-slate-100 pt-2">
+                    <button type="button" @click="showAdvancedCreate = !showAdvancedCreate" class="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-bold flex items-center justify-between transition-colors">
+                        <span>+ Optional Details (Schedule, Description, Faculty, WhatsApp)</span>
+                        <i class="fas" :class="showAdvancedCreate ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                    </button>
+
+                    <div x-show="showAdvancedCreate" x-cloak class="space-y-3.5 mt-3 pt-2">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Starting Date</label>
+                                <input type="date" name="start_date" class="w-full rounded-xl border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Duration</label>
+                                <input type="text" name="duration" placeholder="e.g. 1.5 Hours / 8 Days" class="w-full rounded-xl border-slate-300 text-xs">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Batch Label</label>
+                                <input type="text" name="batch" placeholder="e.g. 105th Batch" class="w-full rounded-xl border-slate-300 text-xs">
+                            </div>
+                            <div class="flex items-end">
+                                <label class="flex items-center gap-2 cursor-pointer p-2 rounded-xl border border-slate-200 bg-slate-50 w-full">
+                                    <input type="checkbox" name="show_batch" value="1" class="rounded text-[#051c45]">
+                                    <span class="text-xs font-semibold text-slate-700">Show Batch</span>
+                                </label>
+                            </div>
+                        </div>
+                        @if(auth()->user()->isAdmin())
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Assign Faculty / Instructor</label>
+                            <select name="instructor_id" class="w-full rounded-xl border-slate-300 text-xs">
+                                <option value="">-- Assign Instructor Later --</option>
+                                @foreach($instructors as $instructor)
+                                    <option value="{{ $instructor->id }}">{{ $instructor->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Short Excerpt / Card Snippet</label>
+                            <input type="text" name="short_description" placeholder="Brief 1-2 sentence overview" class="w-full rounded-xl border-slate-300 text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Full Description</label>
+                            <textarea name="description" rows="2" class="w-full rounded-xl border-slate-300 text-xs"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Course Counselor WhatsApp Override</label>
+                            <input type="text" name="counselor_phone" placeholder="Leave blank for Global Hotline ({{ \App\Models\Setting::getVal('contact_hotline', '01917-054664') }})" class="w-full rounded-xl border-slate-300 text-xs">
+                        </div>
                     </div>
-                    <div class="ml-4">
-                        <input type="checkbox" name="certificate_enabled" id="create_certificate_enabled" value="1" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300">
-                    </div>
                 </div>
-                <div class="flex items-center pt-1">
-                    <input type="checkbox" name="is_published" id="is_published" value="1" class="rounded text-[#051c45] focus:ring-[#051c45] mr-2">
-                    <label for="is_published" class="text-xs font-bold text-slate-700">Publish immediately</label>
+
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="is_published" value="1" checked class="rounded text-[#051c45] focus:ring-[#051c45]">
+                        <span class="text-xs font-bold text-slate-700">Publish immediately</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="certificate_enabled" value="1" class="rounded text-emerald-600 focus:ring-emerald-500">
+                        <span class="text-xs font-bold text-emerald-800">Enable Certificates</span>
+                    </label>
                 </div>
-                <button type="submit" class="w-full px-4 py-2.5 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl font-bold text-sm transition-colors mt-2">
-                    Create Course
-                </button>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                    <button type="submit" class="w-full px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#051c45] rounded-xl font-bold text-xs transition-colors">
+                        Create & Stay on List
+                    </button>
+                    <button type="submit" name="open_workspace" value="1" class="w-full px-4 py-2.5 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl font-extrabold text-xs transition-colors shadow-xs">
+                        Create & Open Workspace &rarr;
+                    </button>
+                </div>
             </div>
         </form>
     </div>

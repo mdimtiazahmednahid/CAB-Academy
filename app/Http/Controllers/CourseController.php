@@ -61,7 +61,9 @@ class CourseController extends Controller
             return redirect()->route('courses.show', $course);
         }
 
-        return response()->view('courses.share_preview', compact('course'));
+        return response()
+            ->view('courses.share_preview', compact('course'))
+            ->header('Cache-Control', 'public, max-age=3600');
     }
 
     public function enroll(Request $request, Course $course)

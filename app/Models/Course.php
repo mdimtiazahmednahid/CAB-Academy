@@ -95,6 +95,15 @@ class Course extends Model
                 }
             }
         });
+
+        static::saved(function ($course) {
+            try {
+                \Illuminate\Support\Facades\Cache::forget('fb_link_preview_v1_' . md5($course->short_url));
+                \Illuminate\Support\Facades\Cache::forget('fb_link_preview_v1_' . md5(url('/courses/' . $course->id)));
+            } catch (\Throwable $e) {
+                // Ignore cache errors
+            }
+        });
     }
 
     /**
@@ -119,7 +128,7 @@ class Course extends Model
     }
 
     /**
-     * Concise, social-optimized short link for this course (e.g. https://cabacademy.bd/c/5).
+     * Concise, social-optimized short link for this course (e.g. https://acsacademy.bd/c/5).
      */
     public function getShortUrlAttribute(): string
     {
@@ -135,12 +144,81 @@ class Course extends Model
     }
 
     /**
-     * Pre-formatted WhatsApp share link with course title and short URL.
+     * Direct Facebook Sharing Debugger URL to refresh Open Graph scrape cache on demand.
+     */
+    public function getFacebookDebuggerUrlAttribute(): string
+    {
+        return 'https://developers.facebook.com/tools/debug/?q=' . urlencode($this->short_url);
+    }
+
+    /**
+     * Pre-formatted WhatsApp share link with stylish bold serif headline and short URL.
      */
     public function getWhatsappShareUrlAttribute(): string
     {
-        $text = $this->title . " - Explore & Enroll:\n" . $this->short_url;
+        $text = $this->stylish_post_header . "\n\n" . $this->short_url;
         return 'https://api.whatsapp.com/send?text=' . urlencode($text);
+    }
+
+    /**
+     * Auto-detected dynamic start date / batch / duration hook for Facebook & social link preview cards.
+     * Example: "Starting 30 October"
+     */
+    public function getSocialStartSuffixAttribute(): string
+    {
+        if ($this->start_date) {
+            return 'Starting ' . $this->start_date->format('d F');
+        }
+
+        if (!empty($this->batch) && $this->show_batch) {
+            return trim($this->batch) . ' Admission Open';
+        }
+
+        if (!empty($this->duration)) {
+            return trim($this->duration) . ' Live Program';
+        }
+
+        return 'Registration Open';
+    }
+
+    /**
+     * Plain-text combined social card headline: "{Course Title}. {Start Suffix}"
+     * Example: "PGD in Supply Chain Management. Starting 30 October"
+     */
+    public function getSocialCardHeadlineAttribute(): string
+    {
+        $cleanTitle = rtrim(trim((string) $this->title), '. ');
+        $suffix = trim($this->social_start_suffix);
+
+        return $suffix !== '' ? "{$cleanTitle}. {$suffix}" : $cleanTitle;
+    }
+
+    /**
+     * Unicode Mathematical Bold Serif headline for Open Graph (og:title) and Facebook Link Cards.
+     * Example: "𝐏𝐆𝐃 𝐢𝐧 𝐒𝐮𝐩𝐩𝐥𝐲 𝐂𝐡𝐚𝐢𝐧 𝐌𝐚𝐧𝐚𝐠𝐞𝐦𝐞𝐧𝐭. 𝐒𝐭𝐚𝐫𝐭𝐢𝐧𝐠 𝟑𝟎 𝐎𝐜𝐭𝐨𝐛𝐞𝐫"
+     */
+    public function getStylishOgTitleAttribute(): string
+    {
+        return \App\Support\StylishTextFormatter::toBoldSerif($this->social_card_headline);
+    }
+
+    /**
+     * Uppercase Unicode Mathematical Bold Serif post caption header.
+     * Example: "𝐏𝐆𝐃 𝐈𝐍 𝐒𝐔𝐏𝐏𝐋𝐘 𝐂𝐇𝐀𝐈𝐍 𝐌𝐀𝐍𝐀𝐆𝐄𝐌𝐄𝐍𝐓"
+     */
+    public function getStylishPostHeaderAttribute(): string
+    {
+        $cleanTitle = rtrim(trim((string) $this->title), '. ');
+        return \App\Support\StylishTextFormatter::toUpperBoldSerif($cleanTitle);
+    }
+
+    /**
+     * Clean, minimalist Facebook/Social post caption matching executive EdTech feed standards:
+     * Single-line uppercase Mathematical Bold Serif headline + short link (no emoji clutter).
+     */
+    public function getStylishSocialCaptionAttribute(): string
+    {
+        return $this->stylish_post_header . "\n\n" . $this->short_url;
     }
 
     /**

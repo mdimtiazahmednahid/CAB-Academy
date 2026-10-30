@@ -29,6 +29,20 @@
             $isWishlisted = auth()->check() && (auth()->user()->relationLoaded('wishlists')
                 ? auth()->user()->wishlists->contains('course_id', $course->id)
                 : auth()->user()->wishlists()->where('course_id', $course->id)->exists());
+            $shareDisplayDomain = strtolower(preg_replace('/^www\./i', '', parse_url(config('app.url'), PHP_URL_HOST) ?: 'acsacademy.bd'));
+            $courseSharePayload = [
+                'id' => $course->id,
+                'title' => $course->title,
+                'postHeader' => $course->stylish_post_header,
+                'stylishTitle' => $course->stylish_og_title,
+                'socialCaption' => $course->stylish_social_caption,
+                'shortUrl' => $course->short_url,
+                'courseUrl' => route('courses.show', $course),
+                'image' => $course->cover_image_url,
+                'displayDomain' => $shareDisplayDomain,
+                'facebookShareUrl' => $course->facebook_share_url,
+                'whatsappShareUrl' => $course->whatsapp_share_url,
+            ];
         @endphp
         <div class="absolute top-2.5 left-2.5 z-20 flex items-center gap-1.5">
             <button 
@@ -41,9 +55,11 @@
             </button>
             <button 
                 type="button"
-                onclick="window.open('{{ $course->facebook_share_url }}', 'fbshare', 'width=640,height=560,menubar=no,toolbar=no');"
-                class="w-8 h-8 rounded-full bg-slate-900/40 backdrop-blur-md border border-white/20 text-white hover:bg-[#1877F2] hover:border-[#1877F2] hover:text-white hover:scale-110 shadow flex items-center justify-center transition-all cursor-pointer"
-                title="Share on Facebook"
+                data-fb-share-url="{{ $course->facebook_share_url }}"
+                data-share-payload="{{ json_encode($courseSharePayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}"
+                onclick="event.preventDefault(); event.stopPropagation(); openCourseShareModal(JSON.parse(this.dataset.sharePayload));"
+                class="course-card-share-btn w-8 h-8 rounded-full bg-slate-900/40 backdrop-blur-md border border-white/20 text-white hover:bg-[#1877F2] hover:border-[#1877F2] hover:text-white hover:scale-110 shadow flex items-center justify-center transition-all cursor-pointer"
+                title="Copy Stylish Caption & Preview Facebook Share"
             >
                 <i class="fab fa-facebook-f text-[10px]"></i>
             </button>

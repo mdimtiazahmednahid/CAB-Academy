@@ -38,8 +38,93 @@
         </div>
     </div>
 
-    <!-- 2. Facebook-Style Post Composer (Anyone Can Write Anything) -->
-    <div class="bg-white rounded-3xl p-5 sm:p-6 border border-[#e3e7f0] shadow-sm" x-data="{ expanded: false, showImageInput: false }">
+    <!-- 2. Facebook-Style Post Composer (With Live Rich Link Preview) -->
+    <div class="bg-white rounded-3xl p-5 sm:p-6 border border-[#e3e7f0] shadow-sm"
+         x-data="{
+            expanded: false,
+            showImageInput: false,
+            postContent: '',
+            detectedUrl: '',
+            loadingPreview: false,
+            livePreview: null,
+            previewTimer: null,
+            checkUrlInContent() {
+                clearTimeout(this.previewTimer);
+                const match = (this.postContent || '').match(/https?:\/\/[^\s<>'\x22]+/i);
+                const cleanUrl = match ? match[0].replace(/[.,;:!?)\]}'\\x22]+$/, '') : '';
+                if (!cleanUrl) {
+                    this.detectedUrl = '';
+                    this.livePreview = null;
+                    return;
+                }
+                if (cleanUrl === this.detectedUrl && this.livePreview) {
+                    return;
+                }
+                this.detectedUrl = cleanUrl;
+                this.previewTimer = setTimeout(() => {
+                    this.fetchLinkPreview(cleanUrl);
+                }, 320);
+            },
+            async fetchLinkPreview(url) {
+                this.loadingPreview = true;
+                try {
+                    const res = await fetch('{{ route('link.preview') }}?url=' + encodeURIComponent(url), {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    const data = await res.json();
+                    if (data && data.success && data.preview) {
+                        this.livePreview = data.preview;
+                        // If the user only pasted the raw URL so far, auto-prepend the stylish bold serif caption header
+                        if (this.postContent.trim() === url && data.preview.post_header) {
+                            this.postContent = data.preview.post_header + '\n\n' + url;
+                        }
+                    }
+                } catch (e) {
+                    // Fallback client-side preview if network request fails
+                    try {
+                        const parsed = new URL(url);
+                        const domain = parsed.hostname.replace(/^www\./i, '').toUpperCase();
+                        this.livePreview = {
+                            url: url,
+                            domain: domain,
+                            display_domain: domain.toLowerCase(),
+                            title: domain,
+                            stylish_title: domain,
+                            description: url,
+                            image: null,
+                            has_image: false
+                        };
+                    } catch (_) {}
+                } finally {
+                    this.loadingPreview = false;
+                }
+            },
+            stylizeFirstLine() {
+                if (!this.postContent) return;
+                const toUpperBoldSerif = (str) => {
+                    return Array.from(str.toUpperCase()).map(ch => {
+                        const code = ch.codePointAt(0);
+                        if (code >= 65 && code <= 90) return String.fromCodePoint(0x1D400 + (code - 65));
+                        if (code >= 48 && code <= 57) return String.fromCodePoint(0x1D7CE + (code - 48));
+                        return ch;
+                    }).join('');
+                };
+                const lines = this.postContent.split('\n');
+                if (lines.length > 0 && !/^https?:\/\//i.test(lines[0].trim())) {
+                    lines[0] = toUpperBoldSerif(lines[0]);
+                    this.postContent = lines.join('\n');
+                } else if (this.livePreview && this.livePreview.post_header) {
+                    this.postContent = this.livePreview.post_header + '\n\n' + this.postContent;
+                }
+            },
+            insertFullStylishCaption() {
+                if (this.livePreview && this.livePreview.social_caption) {
+                    this.postContent = this.livePreview.social_caption;
+                } else if (this.livePreview && this.livePreview.post_header) {
+                    this.postContent = this.livePreview.post_header + '\n\n' + (this.livePreview.description ? this.livePreview.description + '\n\n' : '') + this.livePreview.url;
+                }
+            }
+         }">
         <form method="POST" action="{{ route('feed.posts.store') }}">
             @csrf
 
@@ -47,8 +132,8 @@
                 <!-- User Avatar -->
                 <div class="w-11 h-11 rounded-full bg-[#f2f4f7] border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center font-bold text-sm text-[#051c45]">
                     @auth
-                        @if(auth()->user()->profile_picture || (auth()->user()->instructorProfile && auth()->user()->instructorProfile->avatar))
-                            <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
+                        @if(auth()->user()->hasCustomProfilePicture())
+                            <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=051c45&color=fff';">
                         @else
                             {{ substr(auth()->user()->name, 0, 1) }}
                         @endif
@@ -58,15 +143,64 @@
                 </div>
 
                 <!-- Textarea -->
-                <div class="flex-1">
+                <div class="flex-1 space-y-3">
                     <textarea 
                         name="content" 
                         rows="2" 
+                        x-model="postContent"
                         @focus="expanded = true"
-                        placeholder="What's on your mind? Share an industry update, ask a trade question, or post a discussion..." 
+                        @input="expanded = true; checkUrlInContent()"
+                        @paste="setTimeout(() => { expanded = true; checkUrlInContent(); }, 50)"
+                        placeholder="What's on your mind? Paste any link (e.g. https://acsacademy.bd/c/18) or share an industry update..." 
                         class="w-full bg-[#f8fafc] border border-slate-200 rounded-2xl p-3.5 text-sm text-[#0f131f] placeholder:text-[#727f9f] focus:outline-none focus:ring-2 focus:ring-[#c30102] focus:bg-white transition-all resize-none"
                         required
                     ></textarea>
+
+                    <!-- Live Loading Indicator for Link Preview -->
+                    <div x-show="loadingPreview" x-cloak class="p-3.5 rounded-2xl bg-[#f0f2f5] border border-[#dadde1] flex items-center gap-3 text-xs text-slate-600 font-semibold animate-pulse">
+                        <i class="fas fa-circle-notch fa-spin text-[#051c45]"></i>
+                        <span>Generating rich link preview...</span>
+                    </div>
+
+                    <!-- Live Facebook-Style Rich Link Preview Card in Composer -->
+                    <template x-if="livePreview && !loadingPreview">
+                        <div class="space-y-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button type="button" @click="stylizeFirstLine()" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#051c45]/10 hover:bg-[#051c45] text-[#051c45] hover:text-white text-[11px] font-bold transition-colors">
+                                    <i class="fas fa-font text-[10px]"></i>
+                                    <span>𝐏𝐆𝐃 Bold Serif Headline</span>
+                                </button>
+                                <button type="button" x-show="livePreview.social_caption || livePreview.post_header" @click="insertFullStylishCaption()" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#c30102]/10 hover:bg-[#c30102] text-[#c30102] hover:text-white text-[11px] font-bold transition-colors">
+                                    <i class="fas fa-wand-magic-sparkles text-[10px]"></i>
+                                    <span>Auto-Fill Full Stylish Caption</span>
+                                </button>
+                            </div>
+                            <div class="relative">
+                                <a :href="livePreview.url"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="fb-link-preview-card group block w-full rounded-2xl overflow-hidden border border-[#dadde1] bg-white hover:bg-[#f7f8fa] transition-all duration-200 shadow-2xs hover:shadow-md text-left no-underline">
+                                    <template x-if="livePreview.post_header">
+                                        <div class="px-4 py-3 bg-white border-b border-[#ebedf0] text-[13px] font-serif font-bold text-[#050505] tracking-wide" x-text="livePreview.post_header"></div>
+                                    </template>
+                                    <template x-if="livePreview.image">
+                                        <div class="relative w-full bg-white overflow-hidden border-b border-[#dadde1]">
+                                            <img :src="livePreview.image" :alt="livePreview.title" class="w-full h-auto max-h-[380px] object-cover" x-on:error="livePreview.image = null">
+                                            <span class="absolute top-3 right-11 w-7 h-7 rounded-full bg-white/95 text-[#1c1e21] border border-black/10 shadow-md flex items-center justify-center font-serif italic font-bold text-xs select-none">i</span>
+                                        </div>
+                                    </template>
+                                    <div class="px-4 py-3 bg-[#f2f3f5]/60 group-hover:bg-[#ebedf0]/70 transition-colors">
+                                        <div class="text-xs font-normal text-[#65676b] truncate" x-text="livePreview.display_domain || livePreview.domain.toLowerCase()"></div>
+                                        <h4 class="text-[15px] font-serif font-bold text-[#050505] group-hover:text-[#c30102] line-clamp-2 leading-snug mt-0.5" x-text="livePreview.stylish_title || livePreview.title"></h4>
+                                        <p x-show="!livePreview.image && livePreview.description" class="text-xs text-[#65676b] line-clamp-2 mt-1 leading-relaxed" x-text="livePreview.description"></p>
+                                    </div>
+                                </a>
+                                <button type="button" @click="livePreview = null" title="Dismiss preview" class="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-slate-900/75 hover:bg-slate-900 text-white text-xs flex items-center justify-center shadow-sm">
+                                    &times;
+                                </button>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -108,15 +242,28 @@
                         </select>
                     </div>
 
-                    <!-- Image Attachment Toggle -->
-                    <button 
-                        type="button" 
-                        @click="showImageInput = !showImageInput" 
-                        class="text-xs font-semibold text-gray-600 hover:text-[#c30102] flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
-                        <i class="far fa-image text-sm text-[#10b981]"></i>
-                        <span>Add Photo / URL</span>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <!-- Bold Serif Stylizer Button -->
+                        <button 
+                            type="button" 
+                            @click="stylizeFirstLine()" 
+                            class="text-xs font-bold text-[#051c45] hover:text-[#c30102] flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
+                            title="Convert first line to Stylish Bold Serif (𝐏𝐆𝐃 𝐈𝐍...)"
+                        >
+                            <span class="font-serif">𝐀𝐁𝐂</span>
+                            <span>Stylish Headline</span>
+                        </button>
+
+                        <!-- Image Attachment Toggle -->
+                        <button 
+                            type="button" 
+                            @click="showImageInput = !showImageInput" 
+                            class="text-xs font-semibold text-gray-600 hover:text-[#c30102] flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                            <i class="far fa-image text-sm text-[#10b981]"></i>
+                            <span>Add Photo / URL</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Image URL Input -->
@@ -219,10 +366,10 @@
                     <div class="flex items-center gap-3">
                         <!-- Avatar -->
                         <div class="w-12 h-12 rounded-full bg-[#051c45]/10 border-2 border-white shadow-sm overflow-hidden shrink-0 flex items-center justify-center font-bold text-base text-[#051c45]">
-                            @if($post->author_avatar)
-                                <img src="{{ storage_asset($post->author_avatar) }}" alt="{{ $post->author_name }}" class="w-full h-full object-cover">
+                            @if($post->author_avatar_url)
+                                <img src="{{ $post->author_avatar_url }}" alt="{{ $post->author_name }}" class="w-full h-full object-cover">
                             @else
-                                {{ substr($post->author_name, 0, 1) }}
+                                {{ strtoupper(substr($post->author_name, 0, 1)) }}
                             @endif
                         </div>
 
@@ -269,38 +416,44 @@
 
                 <!-- Post Body Content -->
                 <div class="space-y-3 mb-5">
-                    @if($post->title)
-                        <h4 class="text-base sm:text-lg font-bold text-[#0f131f] leading-snug">
-                            {{ $post->title }}
+                    @if($post->stylish_title)
+                        <h4 class="text-sm sm:text-base font-serif font-bold text-[#050505] tracking-wide leading-snug">
+                            {{ $post->stylish_title }}
+                            @if($post->title)
+                                <span class="sr-only">{{ $post->title }}</span>
+                            @endif
                         </h4>
                     @endif
 
-                    <div class="text-[#35415b] text-sm leading-relaxed whitespace-pre-line">
-                        {!! nl2br(e($post->content)) !!}
+                    <div class="text-[#35415b] text-sm leading-relaxed whitespace-pre-line break-words">
+                        {!! $post->formatted_content_html !!}
                     </div>
 
                     <!-- Embedded Blog Card (If Linked to an Official BlogPost) -->
                     @if($post->blogPost)
-                        <div class="mt-4 p-4 rounded-2xl bg-[#f8fafc] border border-gray-200 flex flex-col sm:flex-row items-center gap-4">
-                            @if($post->blogPost->featured_image)
-                                <img src="{{ $post->blogPost->featured_image }}" alt="{{ $post->blogPost->title }}" class="w-full sm:w-40 h-28 rounded-xl object-cover">
-                            @endif
-                            <div class="flex-1">
-                                <span class="text-[11px] font-bold uppercase text-[#c30102] tracking-wider block mb-1">
-                                    {{ $post->blogPost->category }}
-                                </span>
-                                <h5 class="font-bold text-sm text-[#0f131f] mb-1 leading-snug">
-                                    {{ $post->blogPost->title }}
-                                </h5>
-                                <a href="{{ route('blog.show', $post->blogPost->slug) }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-[#c30102] hover:text-[#051c45] transition-colors mt-2">
-                                    <span>Read Full Article</span>
-                                    <i class="fas fa-arrow-right text-[10px]"></i>
-                                </a>
-                            </div>
+                        <div class="mt-3">
+                            <x-link-preview-card :preview="[
+                                'url' => route('blog.show', $post->blogPost->slug),
+                                'title' => $post->blogPost->title,
+                                'stylish_title' => $post->blogPost->stylish_og_title,
+                                'post_header' => $post->blogPost->stylish_post_header,
+                                'description' => \Illuminate\Support\Str::limit(strip_tags($post->blogPost->meta_description ?: $post->blogPost->excerpt ?: $post->blogPost->content), 160),
+                                'image' => $post->blogPost->featured_image_url,
+                                'domain' => strtoupper(preg_replace('/^www\./i', '', parse_url(config('app.url'), PHP_URL_HOST) ?: 'acsacademy.bd')),
+                                'display_domain' => strtolower(preg_replace('/^www\./i', '', parse_url(config('app.url'), PHP_URL_HOST) ?: 'acsacademy.bd')),
+                                'site_name' => \App\Models\Setting::getVal('site_name', 'ACS Academy'),
+                                'type' => 'article',
+                            ]" />
                         </div>
                     @elseif($post->image_url)
                         <div class="mt-3 rounded-2xl overflow-hidden max-h-[420px] bg-gray-100 border border-gray-100">
                             <img src="{{ $post->image_url }}" alt="Post image" class="w-full h-full object-cover">
+                        </div>
+                    @endif
+
+                    @if(!$post->blogPost && $post->link_preview)
+                        <div class="mt-3">
+                            <x-link-preview-card :preview="$post->link_preview" />
                         </div>
                     @endif
                 </div>
@@ -367,10 +520,10 @@
                         @foreach($post->comments as $comment)
                             <div class="flex items-start gap-2.5">
                                 <div class="w-8 h-8 rounded-full bg-[#051c45]/10 border border-[#051c45]/20 overflow-hidden shrink-0 flex items-center justify-center font-bold text-xs text-[#051c45]">
-                                    @if($comment->author_avatar)
-                                        <img src="{{ storage_asset($comment->author_avatar) }}" alt="{{ $comment->author_name }}" class="w-full h-full object-cover">
+                                    @if($comment->author_avatar_url)
+                                        <img src="{{ $comment->author_avatar_url }}" alt="{{ $comment->author_name }}" class="w-full h-full object-cover">
                                     @else
-                                        {{ substr($comment->author_name, 0, 1) }}
+                                        {{ strtoupper(substr($comment->author_name, 0, 1)) }}
                                     @endif
                                 </div>
                                 <div class="bg-[#f8fafc] border border-gray-200/80 rounded-2xl px-4 py-2.5 flex-1">
@@ -378,8 +531,8 @@
                                         <span class="text-xs font-bold text-[#0f131f]">{{ $comment->author_name }}</span>
                                         <span class="text-[10px] text-gray-400">{{ $comment->created_at->diffForHumans() }}</span>
                                     </div>
-                                    <p class="text-xs text-[#35415b] leading-relaxed">
-                                        {{ $comment->content }}
+                                    <p class="text-xs text-[#35415b] leading-relaxed break-words">
+                                        {!! $comment->formatted_content_html !!}
                                     </p>
                                 </div>
                             </div>

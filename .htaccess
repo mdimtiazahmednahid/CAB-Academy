@@ -21,7 +21,10 @@
     RewriteCond %{REQUEST_URI} ^/public/
     RewriteRule ^ - [L]
 
-    # If physical file or directory exists in root (e.g. migrate.php, cmd.php, favicon.ico), serve it
+    # Route static asset folders directly to public/ for maximum speed and social crawler reliability
+    RewriteRule ^(uploads|images|build)/(.*)$ public/$1/$2 [L]
+
+    # If physical file or directory exists in root (e.g. cmd.php, favicon.ico), serve it
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]

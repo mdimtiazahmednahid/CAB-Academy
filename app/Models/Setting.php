@@ -50,11 +50,18 @@ class Setting extends Model
             return $defaultLogo;
         }
 
+        // Never return legacy CAB logo hashes; always fall back to official ACS logo
+        if (str_contains((string) $val, '090dXs1BPxkT2d2liIcwLlCwDhpMZYMtHvwucsRP')
+            || str_contains((string) $val, 'sbe5BF8KYOGzI59j3QQIE7BTFnvcT5A3egerT7Go')
+            || str_contains(strtolower((string) $val), 'cab-logo')) {
+            return $defaultLogo;
+        }
+
         // If it's an external third-party URL (e.g. Unsplash or Cloudinary)
         if (str_starts_with($val, 'http://') || str_starts_with($val, 'https://')) {
             $host = parse_url($val, PHP_URL_HOST);
             // If it's a third party CDN domain
-            if ($host && !str_contains($host, '127.0.0.1') && !str_contains($host, 'localhost') && !str_contains($host, 'infinityfree') && !str_contains($host, 'cabacademy')) {
+            if ($host && !str_contains($host, '127.0.0.1') && !str_contains($host, 'localhost') && !str_contains($host, 'infinityfree') && !str_contains($host, 'cabacademy') && !str_contains($host, 'acsacademy')) {
                 return $val;
             }
         }
@@ -118,6 +125,24 @@ class Setting extends Model
     }
 
     /**
+     * Format institution brand name into a clean two-part lockup with <br>
+     * (e.g., "Academy of" <br> "Commercial & Supply Chain (ACS)") when appropriate.
+     */
+    public static function formatBrandNameHtml(?string $customText = null): string
+    {
+        $siteName = trim((string) ($customText ?? self::getVal('site_name', 'Academy of Commercial & Supply Chain (ACS)')));
+        if ($siteName === '' || ($customText === null && in_array(strtolower($siteName), ['acs academy', 'cab academy'], true))) {
+            $siteName = 'Academy of Commercial & Supply Chain (ACS)';
+        }
+
+        if (preg_match('/^(academy\s+of)\s+(.+)$/iu', $siteName, $matches)) {
+            return e($matches[1]) . '<br>' . e($matches[2]);
+        }
+
+        return e($siteName);
+    }
+
+    /**
      * Compute adaptive brand typography styles so short names ("CAB Academy", "ACS Academy")
      * and long names ("Academy of Commercial and Supply Chain") auto-fit every screen cleanly.
      */
@@ -126,6 +151,7 @@ class Setting extends Model
         $siteName = trim((string) ($customText ?? self::getVal('site_name', 'ACS Academy')));
         $len = mb_strlen($siteName);
         $mode = self::getVal('brand_name_size_mode', 'auto');
+        $formattedHtml = self::formatBrandNameHtml($siteName);
 
         $explicitShort = trim((string) self::getVal('site_short_name', ''));
         if ($explicitShort !== '') {
@@ -151,6 +177,7 @@ class Setting extends Model
             return [
                 'name' => $siteName,
                 'site_name' => $siteName,
+                'formatted_html' => $formattedHtml,
                 'short_name' => $shortName,
                 'is_long' => $isLong,
                 'header_style' => 'font-size: clamp(0.75rem, 0.95vw, 0.92rem); line-height: 1.18;',
@@ -163,6 +190,7 @@ class Setting extends Model
             return [
                 'name' => $siteName,
                 'site_name' => $siteName,
+                'formatted_html' => $formattedHtml,
                 'short_name' => $shortName,
                 'is_long' => $isLong,
                 'header_style' => 'font-size: clamp(1.0rem, 1.5vw, 1.35rem); line-height: 1.12;',
@@ -176,6 +204,7 @@ class Setting extends Model
             return [
                 'name' => $siteName,
                 'site_name' => $siteName,
+                'formatted_html' => $formattedHtml,
                 'short_name' => $shortName,
                 'is_long' => false,
                 'header_style' => 'font-size: clamp(0.95rem, 1.35vw, 1.25rem); line-height: 1.1;',
@@ -188,6 +217,7 @@ class Setting extends Model
             return [
                 'name' => $siteName,
                 'site_name' => $siteName,
+                'formatted_html' => $formattedHtml,
                 'short_name' => $shortName,
                 'is_long' => false,
                 'header_style' => 'font-size: clamp(0.82rem, 1.12vw, 1.04rem); line-height: 1.15;',
@@ -199,10 +229,11 @@ class Setting extends Model
         return [
             'name' => $siteName,
             'site_name' => $siteName,
+            'formatted_html' => $formattedHtml,
             'short_name' => $shortName,
             'is_long' => true,
-            'header_style' => 'font-size: clamp(0.72rem, 0.95vw, 0.92rem); line-height: 1.18;',
-            'sidebar_style' => 'font-size: clamp(0.68rem, 0.85vw, 0.78rem); line-height: 1.22;',
+            'header_style' => 'font-size: clamp(0.72rem, 0.82vw, 0.84rem); line-height: 1.16;',
+            'sidebar_style' => 'font-size: clamp(0.68rem, 0.78vw, 0.76rem); line-height: 1.2;',
             'hero_style' => 'font-size: clamp(1.55rem, 3.2vw, 2.55rem); line-height: 1.15;',
         ];
     }
@@ -241,14 +272,18 @@ class Setting extends Model
                 -webkit-text-size-adjust: 100%;
                 -webkit-tap-highlight-color: transparent;
                 scroll-behavior: smooth;
+                max-width: 100vw;
+                overflow-x: clip;
+            }
+            body {
+                max-width: 100vw;
+                overflow-x: clip;
             }
             .brand-adaptive-title {
-                word-break: break-word;
-                overflow-wrap: anywhere;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
+                word-break: normal;
+                overflow-wrap: break-word;
+                line-height: 1.16;
+                display: block;
             }
             @supports (padding-bottom: env(safe-area-inset-bottom)) {
                 .pb-safe {

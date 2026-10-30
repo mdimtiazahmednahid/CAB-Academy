@@ -66,7 +66,7 @@
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 min-w-0">
             <img src="{{ $siteLogo }}" alt="{{ $siteName }}" class="h-8 w-8 shrink-0 rounded-full object-contain bg-white border border-white/20" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
             <div class="min-w-0">
-                <h1 class="font-black tracking-tight uppercase brand-adaptive-title" style="{{ $brandSizing['sidebar_style'] }}">{{ $siteName }}</h1>
+                <h1 class="font-black tracking-tight uppercase brand-adaptive-title leading-tight" style="{{ $brandSizing['sidebar_style'] }}" title="{{ $siteName }}">{!! $brandSizing['formatted_html'] ?? e($siteName) !!}</h1>
                 <span class="text-[9px] font-bold uppercase tracking-widest text-emerald-400 block">Admin Console</span>
             </div>
         </a>
@@ -89,7 +89,7 @@
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 group min-w-0">
                 <img src="{{ $siteLogo }}" alt="{{ $siteName }}" class="h-9 w-9 rounded-xl object-contain bg-white p-0.5 shadow-sm shrink-0" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div class="min-w-0">
-                    <span class="font-black tracking-tight uppercase text-white brand-adaptive-title" style="{{ $brandSizing['sidebar_style'] }}" title="{{ $siteName }}">{{ $siteName }}</span>
+                    <span class="font-black tracking-tight uppercase text-white brand-adaptive-title leading-tight" style="{{ $brandSizing['sidebar_style'] }}" title="{{ $siteName }}">{!! $brandSizing['formatted_html'] ?? e($siteName) !!}</span>
                     <span class="block text-[10px] font-bold uppercase tracking-widest text-emerald-400 mt-0.5">Executive OS</span>
                 </div>
             </a>
@@ -234,15 +234,19 @@
         <!-- Sidebar Footer: User Identity & Logout -->
         <div class="p-3 border-t border-white/[0.07] bg-[#020b1c]">
             <div class="flex items-center justify-between gap-2 px-2 py-1.5">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-lg bg-[#051c45] border border-white/15 text-white flex items-center justify-center font-bold text-xs shrink-0">
-                        {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
-                    </div>
+                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 min-w-0 hover:opacity-90 transition-opacity">
+                    @if(auth()->user()->hasCustomProfilePicture())
+                        <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-lg object-cover border border-white/20 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=051c45&color=fff';">
+                    @else
+                        <div class="w-8 h-8 rounded-lg bg-[#051c45] border border-white/15 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                            {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                        </div>
+                    @endif
                     <div class="min-w-0">
                         <div class="text-xs font-bold text-white truncate">{{ auth()->user()->name }}</div>
                         <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">{{ auth()->user()->role }}</div>
                     </div>
-                </div>
+                </a>
                 <form method="POST" action="{{ route('logout') }}" class="shrink-0">
                     @csrf
                     <button type="submit" title="Log Out" class="p-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-white/5 transition-colors">
@@ -328,6 +332,14 @@
             <a href="{{ url('/') }}" target="_blank" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold transition-colors shadow-xs">
                 <span>Live Site</span>
                 <i class="fas fa-arrow-up-right-from-square text-[10px] text-emerald-400"></i>
+            </a>
+
+            <a href="{{ route('profile.edit') }}" title="Profile & Account Settings" class="w-9 h-9 rounded-xl bg-[#051c45] text-white font-black text-xs flex items-center justify-center shadow-xs hover:bg-[#082860] transition-colors overflow-hidden border border-slate-200/80 shrink-0">
+                @if(auth()->user()->hasCustomProfilePicture())
+                    <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=051c45&color=fff';">
+                @else
+                    {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                @endif
             </a>
         </div>
     </header>

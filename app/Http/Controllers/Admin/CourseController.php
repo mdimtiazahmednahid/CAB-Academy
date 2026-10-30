@@ -76,6 +76,9 @@ class CourseController extends Controller
             $data['instructor_id'] = auth()->id();
         }
 
+        @mkdir(public_path('uploads/course_covers'), 0775, true);
+        @mkdir(public_path('storage/course_covers'), 0775, true);
+
         if ($request->hasFile('cover_image')) {
             $data['cover_image'] = $request->file('cover_image')->store('course_covers', 'public');
             try {
@@ -115,6 +118,10 @@ class CourseController extends Controller
             } catch (\Throwable $e) {
                 \Illuminate\Support\Facades\Log::warning('Course publish notification skipped: ' . $e->getMessage());
             }
+        }
+
+        if ($request->boolean('open_workspace')) {
+            return redirect()->route('admin.courses.show', $course)->with('success', 'Course created! You can now customize any module below.');
         }
 
         return back()->with('success', 'Course created successfully');
@@ -196,45 +203,76 @@ class CourseController extends Controller
             }
         }
 
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'short_description' => 'nullable|string',
-            'is_published' => 'boolean',
-            'duration' => 'nullable|string|max:100',
-            'start_date' => 'nullable|date',
-            'venue' => 'nullable|string|max:255',
-            'target_audience' => 'nullable|string',
-            'price' => 'nullable|numeric|min:0',
-            'cover_image' => 'nullable|image|max:10240',
-            'cover_image_base64' => 'nullable|string',
-            'level' => 'nullable|string|max:100',
-            'category' => 'nullable|string|max:100',
-            'instructor_id' => 'nullable|exists:users,id',
-            'certificate_enabled' => 'nullable|boolean',
-            'batch' => 'nullable|string|max:100',
-            'show_batch' => 'nullable|boolean',
-            'enrollment_fields' => 'nullable',
-            'enrollment_fields_json' => 'nullable|string',
-            'enrollment_template' => 'nullable|string',
-            'counselor_phone' => 'nullable|string|max:50',
-            'whatsapp_message' => 'nullable|string|max:1000',
+        // Non-destructive partial-patch validation: only validate fields actually present in the request
+        $validated = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|nullable|string',
+            'short_description' => 'sometimes|nullable|string',
+            'is_published' => 'sometimes|nullable|boolean',
+            'duration' => 'sometimes|nullable|string|max:100',
+            'start_date' => 'sometimes|nullable|date',
+            'venue' => 'sometimes|nullable|string|max:255',
+            'target_audience' => 'sometimes|nullable|string',
+            'price' => 'sometimes|nullable|numeric|min:0',
+            'cover_image' => 'sometimes|nullable|image|max:10240',
+            'cover_image_base64' => 'sometimes|nullable|string',
+            'remove_cover_image' => 'sometimes|nullable|boolean',
+            'level' => 'sometimes|nullable|string|max:100',
+            'category' => 'sometimes|nullable|string|max:100',
+            'instructor_id' => 'sometimes|nullable|exists:users,id',
+            'certificate_enabled' => 'sometimes|nullable|boolean',
+            'batch' => 'sometimes|nullable|string|max:100',
+            'show_batch' => 'sometimes|nullable|boolean',
+            'enrollment_fields' => 'sometimes|nullable',
+            'enrollment_fields_json' => 'sometimes|nullable|string',
+            'enrollment_template' => 'sometimes|nullable|string',
+            'counselor_phone' => 'sometimes|nullable|string|max:50',
+            'whatsapp_message' => 'sometimes|nullable|string|max:1000',
         ]);
 
-        $data['is_published'] = $request->has('is_published');
-        $data['certificate_enabled'] = $request->boolean('certificate_enabled');
-        $data['show_batch'] = $request->boolean('show_batch');
-        $data['batch'] = $request->input('batch');
-        $data['price'] = $data['price'] ?? 0.00;
+        $data = [];
+        $scalarFields = [
+            'title', 'description', 'short_description', 'duration', 'start_date',
+            'venue', 'target_audience', 'level', 'category', 'batch',
+            'counselor_phone', 'whatsapp_message',
+        ];
 
-        // Process dynamic enrollment form fields if provided in request
-        if ($request->has('enrollment_fields') || $request->filled('enrollment_fields_json') || $request->filled('enrollment_template')) {
-            $data['enrollment_fields'] = $this->parseEnrollmentFields($request);
+        foreach ($scalarFields as $field) {
+            if ($request->exists($field)) {
+                $data[$field] = $validated[$field] ?? null;
+            }
         }
 
-        if (auth()->user()->role === 'instructor' && !auth()->user()->isAdmin()) {
+        if ($request->exists('price')) {
+            $data['price'] = $validated['price'] !== null && $validated['price'] !== '' ? (float) $validated['price'] : 0.00;
+        }
+
+        if ($request->has('is_published')) {
+            $data['is_published'] = $request->boolean('is_published');
+        }
+        if ($request->has('certificate_enabled')) {
+            $data['certificate_enabled'] = $request->boolean('certificate_enabled');
+        }
+        if ($request->has('show_batch')) {
+            $data['show_batch'] = $request->boolean('show_batch');
+        }
+
+        if ($request->exists('instructor_id') && auth()->user()->isAdmin()) {
+            $data['instructor_id'] = $validated['instructor_id'] ?: null;
+        } elseif (auth()->user()->role === 'instructor' && !auth()->user()->isAdmin()) {
             $data['instructor_id'] = auth()->id();
         }
+
+        // Only update enrollment_fields if explicitly requested and non-empty
+        if ($request->has('enrollment_fields') || $request->filled('enrollment_fields_json') || $request->filled('enrollment_template')) {
+            $parsedFields = $this->parseEnrollmentFields($request);
+            if ($parsedFields !== null) {
+                $data['enrollment_fields'] = $parsedFields;
+            }
+        }
+
+        @mkdir(public_path('uploads/course_covers'), 0775, true);
+        @mkdir(public_path('storage/course_covers'), 0775, true);
 
         if ($request->hasFile('cover_image')) {
             $data['cover_image'] = $request->file('cover_image')->store('course_covers', 'public');
@@ -258,12 +296,15 @@ class CourseController extends Controller
                     $data['cover_image'] = 'course_covers/' . $filename;
                 }
             }
+        } elseif ($request->boolean('remove_cover_image')) {
+            $data['cover_image'] = null;
         }
-        unset($data['cover_image_base64']);
 
         $wasPublished = $course->is_published;
-        
-        $course->update($data);
+
+        if (!empty($data)) {
+            $course->update($data);
+        }
 
         if (!$wasPublished && $course->is_published) {
             try {
@@ -279,7 +320,36 @@ class CourseController extends Controller
             }
         }
 
-        return back()->with('success', 'Course updated successfully');
+        $sectionLabel = $request->input('_section_label');
+        $successMessage = $sectionLabel
+            ? "{$sectionLabel} saved successfully."
+            : 'Course updated successfully';
+
+        if ($request->wantsJson() || $request->ajax()) {
+            $fresh = $course->fresh(['instructorProfile', 'instructor']);
+            return response()->json([
+                'success' => true,
+                'message' => $successMessage,
+                'course' => [
+                    'id' => $fresh->id,
+                    'title' => $fresh->title,
+                    'price' => $fresh->price,
+                    'formatted_price' => $fresh->formatted_price,
+                    'is_published' => (bool) $fresh->is_published,
+                    'certificate_enabled' => (bool) $fresh->certificate_enabled,
+                    'venue' => $fresh->venue,
+                    'attendance_mode' => $fresh->attendance_mode,
+                    'batch' => $fresh->batch,
+                    'show_batch' => (bool) $fresh->show_batch,
+                    'cover_image_url' => $fresh->cover_image_url,
+                    'instructor_name' => $fresh->instructor_name,
+                    'instructor_avatar_url' => $fresh->instructor_avatar_url,
+                    'effective_counselor_phone' => $fresh->effective_counselor_phone,
+                ],
+            ]);
+        }
+
+        return back()->with('success', $successMessage);
     }
 
     public function destroy(Course $course)
