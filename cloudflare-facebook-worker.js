@@ -190,9 +190,15 @@ async function fetchAssetSolvingChallenge(reqUrl, request, env, ctx) {
   }
 
   // 2. Tier-2 Cloudflare Global Edge Cache (10-25 ms response time across 300+ edge data centers)
-  const edgeCache = caches.default;
+  const edgeCache = typeof caches !== 'undefined' ? caches.default : null;
   const cacheKey = new Request(cacheKeyStr, { method: 'GET' });
-  const cachedResp = await edgeCache.match(cacheKey);
+  let cachedResp = null;
+  if (edgeCache) {
+    try {
+      cachedResp = await edgeCache.match(cacheKey);
+    } catch (e) {}
+  }
+
   if (cachedResp) {
     try {
       const cloned = cachedResp.clone();
@@ -255,8 +261,10 @@ async function fetchAssetSolvingChallenge(reqUrl, request, env, ctx) {
         });
 
         // Asynchronously populate Cloudflare Edge Cache (Tier-2) without blocking the response
-        if (ctx && typeof ctx.waitUntil === 'function') {
-          ctx.waitUntil(edgeCache.put(cacheKey, edgeResp.clone()));
+        if (edgeCache && ctx && typeof ctx.waitUntil === 'function') {
+          try {
+            ctx.waitUntil(edgeCache.put(cacheKey, edgeResp.clone()).catch(() => {}));
+          } catch (e) {}
         }
 
         return edgeResp;
@@ -317,7 +325,7 @@ async function serveBase64CourseImage(reqUrl) {
 async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx) {
   const isNoCache = reqUrl.searchParams.has('debug_og') || reqUrl.searchParams.has('nocache');
   const cacheKeyStr = `${reqUrl.origin}${reqUrl.pathname}`;
-  const edgeCache = caches.default;
+  const edgeCache = typeof caches !== 'undefined' ? caches.default : null;
   const cacheKey = new Request(cacheKeyStr, { method: 'GET' });
 
   // 1. Tier-1 Instant RAM Cache for Open Graph HTML (0-1 ms response)
@@ -334,11 +342,13 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx
   }
 
   // 2. Tier-2 Cloudflare Global Edge Cache (10-25 ms response)
-  if (!isNoCache) {
-    const cachedHtml = await edgeCache.match(cacheKey);
-    if (cachedHtml) {
-      return cachedHtml;
-    }
+  if (!isNoCache && edgeCache) {
+    try {
+      const cachedHtml = await edgeCache.match(cacheKey);
+      if (cachedHtml) {
+        return cachedHtml;
+      }
+    } catch (e) {}
   }
 
   const originUrl = new URL(`${PRIMARY_ORIGIN}${reqUrl.pathname}${reqUrl.search}`);
@@ -452,19 +462,22 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx
     html = html.replace(/<head[^>]*>/i, (m) => `${m}\n    <meta property="fb:app_id" content="966242223397117">`);
   }
 
-  // Append compact "[𝐄𝐧𝐫𝐨𝐥𝐥]" at the bottom-right of og:title & twitter:title on course links (/c/{id} and /courses/{id})
+  // For course links (/c/{id} and /courses/{id}), ensure clean title without [Enroll]
+  // and clear description text so Facebook always gives full-width prominence to the top banner
   const isCoursePage = /^\/(?:c|courses)\/\d+/i.test(reqUrl.pathname);
   if (isCoursePage) {
-    const enrollWord = ' [𝐄𝐧𝐫𝐨𝐥𝐥]';
     html = html
       .replace(/(<meta\s+property=["']og:title["']\s+content=["'])([^"']*)(["'])/gi, (m, p1, title, p3) => {
-        if (title.includes('𝐄𝐧𝐫𝐨𝐥𝐥') || title.includes('Enroll')) return m;
-        return `${p1}${title.trim()}${enrollWord}${p3}`;
+        const cleanTitle = title.replace(/\s*\[(?:Enroll|𝐄𝐧𝐫𝐨𝐥𝐥)\]/gi, '').trim();
+        return `${p1}${cleanTitle}${p3}`;
       })
       .replace(/(<meta\s+name=["']twitter:title["']\s+content=["'])([^"']*)(["'])/gi, (m, p1, title, p3) => {
-        if (title.includes('𝐄𝐧𝐫𝐨𝐥𝐥') || title.includes('Enroll')) return m;
-        return `${p1}${title.trim()}${enrollWord}${p3}`;
-      });
+        const cleanTitle = title.replace(/\s*\[(?:Enroll|𝐄𝐧𝐫𝐨𝐥𝐥)\]/gi, '').trim();
+        return `${p1}${cleanTitle}${p3}`;
+      })
+      // Clear description tag on course links so Facebook never renders the side-by-side text layout
+      .replace(/(<meta\s+property=["']og:description["']\s+content=["'])[^"']*(["'])/gi, '$1 $2')
+      .replace(/(<meta\s+name=["']twitter:description["']\s+content=["'])[^"']*(["'])/gi, '$1 $2');
   }
 
   // Replace og:image, og:image:secure_url, and twitter:image with the resolved Worker URL + cache-buster
@@ -473,6 +486,25 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx
       .replace(/(<meta\s+property=["']og:image["']\s+content=["'])[^"']*(["'])/gi, `$1${resolvedWorkerOgUrl}$2`)
       .replace(/(<meta\s+property=["']og:image:secure_url["']\s+content=["'])[^"']*(["'])/gi, `$1${resolvedWorkerOgUrl}$2`)
       .replace(/(<meta\s+name=["']twitter:image["']\s+content=["'])[^"']*(["'])/gi, `$1${resolvedWorkerOgUrl}$2`);
+
+    // Explicitly guarantee 1200x630 Large Full-Width Banner dimensions so Facebook always renders full-width on top
+    if (html.includes('og:image:width')) {
+      html = html.replace(/(<meta\s+property=["']og:image:width["']\s+content=["'])[^"']*(["'])/gi, '$11200$2');
+    } else {
+      html = html.replace(/<head[^>]*>/i, (m) => `${m}\n    <meta property="og:image:width" content="1200">`);
+    }
+
+    if (html.includes('og:image:height')) {
+      html = html.replace(/(<meta\s+property=["']og:image:height["']\s+content=["'])[^"']*(["'])/gi, '$1630$2');
+    } else {
+      html = html.replace(/<head[^>]*>/i, (m) => `${m}\n    <meta property="og:image:height" content="630">`);
+    }
+
+    if (html.includes('twitter:card')) {
+      html = html.replace(/(<meta\s+name=["']twitter:card["']\s+content=["'])[^"']*(["'])/gi, '$1summary_large_image$2');
+    } else {
+      html = html.replace(/<head[^>]*>/i, (m) => `${m}\n    <meta name="twitter:card" content="summary_large_image">`);
+    }
   }
 
   if (isWorkersDev) {
@@ -495,8 +527,10 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx
     },
   });
 
-  if (!isNoCache && ctx && typeof ctx.waitUntil === 'function') {
-    ctx.waitUntil(edgeCache.put(cacheKey, finalHtmlResponse.clone()));
+  if (!isNoCache && edgeCache && ctx && typeof ctx.waitUntil === 'function') {
+    try {
+      ctx.waitUntil(edgeCache.put(cacheKey, finalHtmlResponse.clone()).catch(() => {}));
+    } catch (e) {}
   }
 
   return finalHtmlResponse;
