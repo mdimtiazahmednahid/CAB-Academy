@@ -28,6 +28,8 @@ class Course extends Model
         'instructor_id',
         'certificate_enabled',
         'enrollment_fields',
+        'counselor_phone',
+        'whatsapp_message',
         'views'
     ];
 
@@ -137,7 +139,7 @@ class Course extends Model
      */
     public function getWhatsappShareUrlAttribute(): string
     {
-        $text = $this->title . " - Join this program at CAB Academy:\n" . $this->short_url;
+        $text = $this->title . " - Explore & Enroll:\n" . $this->short_url;
         return 'https://api.whatsapp.com/send?text=' . urlencode($text);
     }
 
@@ -173,13 +175,108 @@ class Course extends Model
     }
 
     /**
+     * Dynamic Counselor / Hotline phone number (per-course override -> global settings -> fallback).
+     */
+    public function getEffectiveCounselorPhoneAttribute(): string
+    {
+        $custom = trim((string) ($this->counselor_phone ?? ''));
+        if ($custom !== '') {
+            return $custom;
+        }
+
+        $hotline = trim((string) Setting::getVal('contact_hotline', ''));
+        if ($hotline !== '') {
+            return $hotline;
+        }
+
+        $whatsapp = trim((string) Setting::getVal('contact_whatsapp', ''));
+        if ($whatsapp !== '') {
+            return $whatsapp;
+        }
+
+        $sitePhone = trim((string) Setting::getVal('site_phone', ''));
+        if ($sitePhone !== '') {
+            return $sitePhone;
+        }
+
+        return '01917-054664';
+    }
+
+    /**
+     * Clean tel: URI target for direct phone calls on this course.
+     */
+    public function getEffectiveCounselorTelAttribute(): string
+    {
+        $cleaned = preg_replace('/[^0-9+]/', '', $this->effective_counselor_phone);
+        return $cleaned ?: '01917054664';
+    }
+
+    /**
+     * Normalized WhatsApp digits (with country code 88 for BD 01... numbers) for wa.me links.
+     */
+    public function getEffectiveWhatsappNumberAttribute(): string
+    {
+        $raw = trim((string) ($this->counselor_phone ?? ''));
+        if ($raw === '') {
+            $raw = trim((string) Setting::getVal('contact_whatsapp', ''));
+        }
+        if ($raw === '') {
+            $raw = trim((string) Setting::getVal('landing_counseling_wa_number', ''));
+        }
+        if ($raw === '') {
+            $raw = trim((string) Setting::getVal('contact_hotline', ''));
+        }
+        if ($raw === '') {
+            $raw = trim((string) Setting::getVal('site_phone', ''));
+        }
+
+        $digits = preg_replace('/[^0-9]/', '', $raw);
+        if (!$digits) {
+            return '8801917054664';
+        }
+
+        // Normalize 11-digit Bangladesh mobile numbers (01XXXXXXXXX -> 8801XXXXXXXXX)
+        if (strlen($digits) === 11 && str_starts_with($digits, '01')) {
+            return '88' . $digits;
+        }
+
+        return $digits;
+    }
+
+    /**
+     * Dynamic WhatsApp inquiry message (no hardcoded brand name).
+     */
+    public function getEffectiveWhatsappMessageAttribute(): string
+    {
+        $formattedFee = '৳' . number_format((float) $this->price, 0);
+        $template = trim((string) ($this->whatsapp_message ?? ''));
+        if ($template === '') {
+            $template = trim((string) Setting::getVal('whatsapp_inquiry_template', ''));
+        }
+
+        if ($template !== '') {
+            $msg = str_replace(
+                ['{title}', '{price}', '{fee}', '{batch}', '{url}'],
+                [$this->title, $formattedFee, $formattedFee, (string) ($this->batch ?? ''), $this->short_url],
+                $template
+            );
+            // Strip any legacy hardcoded "CAB Academy" greeting if present
+            $msg = preg_replace('/Assalamu Alaikum\s+(?:CAB|ACS)\s+Academy!/i', 'Assalamu Alaikum!', $msg);
+            if (!str_contains($msg, $this->short_url)) {
+                $msg = rtrim($msg) . ' ' . $this->short_url;
+            }
+            return $msg;
+        }
+
+        return "Assalamu Alaikum! I would like to inquire/enroll in *{$this->title}* (Fee: {$formattedFee}). Please share batch details and enrollment procedure: " . $this->short_url;
+    }
+
+    /**
      * Pre-formatted WhatsApp Academic Counselor direct message URL.
      */
     public function getCounselorWhatsappUrlAttribute(): string
     {
-        $phone = '8801917054664';
-        $message = "Assalamu Alaikum CAB Academy! I would like to inquire/enroll in *{$this->title}* (Fee: ৳" . number_format($this->price, 0) . "). Please share batch details and enrollment procedure: " . $this->short_url;
-        return 'https://wa.me/' . $phone . '?text=' . urlencode($message);
+        return 'https://wa.me/' . $this->effective_whatsapp_number . '?text=' . urlencode($this->effective_whatsapp_message);
     }
 
     /**
@@ -299,7 +396,7 @@ class Course extends Model
     public function getInstructorNameAttribute(): string
     {
         $lead = $this->lead_faculty;
-        return $lead ? $lead->name : 'CAB Academy Senior Faculty';
+        return $lead ? $lead->name : (Setting::getVal('site_name', 'ACS Academy') . ' Senior Faculty');
     }
 
     public function getInstructorTitleAttribute(): string
@@ -408,11 +505,12 @@ class Course extends Model
             'standard' => [
                 'key' => 'standard',
                 'name' => 'Standard Professional',
+                'icon' => 'fa-user-check',
                 'badge' => 'Default',
                 'description' => 'Name, Phone, and Required Email. Optimal for LMS access, notifications, and verifiable digital certificates.',
                 'fields' => [
                     ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
-                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '01917054664'],
+                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '017xxxxxxxx'],
                     ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'name@company.com'],
                     ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
                 ],
@@ -420,11 +518,12 @@ class Course extends Model
             'quick_lead' => [
                 'key' => 'quick_lead',
                 'name' => 'Quick Lead (No Email Required)',
+                'icon' => 'fa-bolt',
                 'badge' => 'Highest Velocity',
-                'description' => 'Fastest conversion: Name + Phone only. Email is not required or asked for. Perfect for urgent workshops.',
+                'description' => 'Fastest 15-sec conversion: Name + Phone only. Email is disabled. Ideal for free workshops & social ad traffic.',
                 'fields' => [
                     ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
-                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '01917054664'],
+                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '017xxxxxxxx'],
                     ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => false, 'is_enabled' => false, 'is_system' => true, 'placeholder' => 'name@company.com'],
                     ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
                 ],
@@ -432,32 +531,172 @@ class Course extends Model
             'corporate' => [
                 'key' => 'corporate',
                 'name' => 'Corporate & Executive',
+                'icon' => 'fa-building',
                 'badge' => 'B2B & Executive',
-                'description' => 'Name, Phone, Email, Organization / Company, and Designation for executive billing.',
+                'description' => 'Name, Phone, Email, Organization / Company, and Designation for corporate cohorts and executive billing.',
                 'fields' => [
                     ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
-                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '01917054664'],
+                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '017xxxxxxxx'],
                     ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'name@company.com'],
                     ['name' => 'organization', 'label' => 'Organization / Company', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Apex Footwear Ltd.'],
-                    ['name' => 'designation', 'label' => 'Designation / Title', 'type' => 'text', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Senior Commercial Manager'],
+                    ['name' => 'designation', 'label' => 'Designation / Job Title', 'type' => 'text', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Senior Commercial Manager'],
                     ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
                 ],
             ],
             'comprehensive' => [
                 'key' => 'comprehensive',
                 'name' => 'Comprehensive Application',
+                'icon' => 'fa-clipboard-list',
                 'badge' => 'Full Dossier',
-                'description' => 'In-depth application: Name, Phone, Email, Organization, Designation, City, and Expectations.',
+                'description' => 'In-depth executive profile: Name, Phone, Email, Company, Role, Experience Level, City, and Expectations.',
                 'fields' => [
                     ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
-                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '01917054664'],
+                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '017xxxxxxxx'],
                     ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'name@company.com'],
                     ['name' => 'organization', 'label' => 'Organization / Company', 'type' => 'text', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Beximco Group'],
                     ['name' => 'designation', 'label' => 'Designation / Role', 'type' => 'text', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Supply Chain Officer'],
+                    ['name' => 'experience_level', 'label' => 'Experience Level', 'type' => 'select', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'Select your experience level', 'options' => ['Fresh Graduate / Entry Level', '1–3 Years Experience', '4–7 Years Experience', '8+ Years (Senior / Leadership)']],
                     ['name' => 'city', 'label' => 'City / District', 'type' => 'text', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. Dhaka / Chattogram'],
                     ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
-                    ['name' => 'comments', 'label' => 'Expectations / Queries', 'type' => 'textarea', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'Any specific customs or tax topics you want covered?'],
+                    ['name' => 'comments', 'label' => 'Expectations / Queries', 'type' => 'textarea', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'Any specific topics or case studies you want covered?'],
                 ],
+            ],
+            'online_webinar' => [
+                'key' => 'online_webinar',
+                'name' => 'Online Masterclass / Webinar',
+                'icon' => 'fa-video',
+                'badge' => 'Live Zoom',
+                'description' => 'Tailored for Live Zoom workshops: Name, WhatsApp Mobile, Optional Email, and 1-Tap Profession Choice Pills.',
+                'fields' => [
+                    ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
+                    ['name' => 'phone', 'label' => 'WhatsApp / Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '017xxxxxxxx'],
+                    ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => false, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'name@company.com (for certificate)'],
+                    ['name' => 'profession', 'label' => 'Current Profile', 'type' => 'radio', 'is_required' => true, 'is_enabled' => true, 'is_system' => false, 'placeholder' => '', 'options' => ['Corporate Professional', 'Business Owner', 'Job Seeker / Graduate', 'University Student']],
+                    ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
+                ],
+            ],
+            'academic_cohort' => [
+                'key' => 'academic_cohort',
+                'name' => 'University & Career Bootcamp',
+                'icon' => 'fa-graduation-cap',
+                'badge' => 'Academic / Youth',
+                'description' => 'Designed for career-readiness programs: Name, Phone, Email, University / Institution, and Academic Status.',
+                'fields' => [
+                    ['name' => 'name', 'label' => 'Full Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'e.g. Tanvir Ahmed'],
+                    ['name' => 'phone', 'label' => 'Mobile (11 Digits)', 'type' => 'tel', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => '017xxxxxxxx'],
+                    ['name' => 'email', 'label' => 'Email Address', 'type' => 'email', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'placeholder' => 'student@university.edu'],
+                    ['name' => 'institution', 'label' => 'University / Institution Name', 'type' => 'text', 'is_required' => true, 'is_enabled' => true, 'is_system' => false, 'placeholder' => 'e.g. University of Dhaka / NSU / BRACU'],
+                    ['name' => 'academic_status', 'label' => 'Current Academic / Career Stage', 'type' => 'radio', 'is_required' => false, 'is_enabled' => true, 'is_system' => false, 'placeholder' => '', 'options' => ['Final Year Student', 'Recent Graduate', 'Early Career Executive']],
+                    ['name' => 'training_mode', 'label' => 'Preferred Attendance Mode', 'type' => 'select', 'is_required' => true, 'is_enabled' => true, 'is_system' => true, 'options' => ['online_zoom' => 'Live Online (Zoom)', 'in_person' => 'Executive Campus']],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Curated 1-click smart question blocks that Admin can add to any course registration form with one click.
+     */
+    public static function getQuickAddQuestions(): array
+    {
+        return [
+            [
+                'name' => 'organization',
+                'label' => 'Organization / Company',
+                'icon' => 'fa-building',
+                'type' => 'text',
+                'is_required' => true,
+                'placeholder' => 'e.g. Square Pharmaceuticals PLC',
+                'options' => null,
+            ],
+            [
+                'name' => 'designation',
+                'label' => 'Designation / Job Title',
+                'icon' => 'fa-briefcase',
+                'type' => 'text',
+                'is_required' => false,
+                'placeholder' => 'e.g. Senior Commercial Manager',
+                'options' => null,
+            ],
+            [
+                'name' => 'experience_level',
+                'label' => 'Experience Level',
+                'icon' => 'fa-chart-line',
+                'type' => 'select',
+                'is_required' => false,
+                'placeholder' => 'Select your experience level',
+                'options' => ['Fresh Graduate / Entry Level', '1–3 Years Experience', '4–7 Years Experience', '8+ Years (Senior / Leadership)'],
+            ],
+            [
+                'name' => 'profession',
+                'label' => 'Current Profile / Role',
+                'icon' => 'fa-user-tie',
+                'type' => 'radio',
+                'is_required' => true,
+                'placeholder' => '',
+                'options' => ['Corporate Professional', 'Business Owner', 'Job Seeker / Graduate', 'University Student'],
+            ],
+            [
+                'name' => 'industry_sector',
+                'label' => 'Industry / Sector',
+                'icon' => 'fa-industry',
+                'type' => 'select',
+                'is_required' => false,
+                'placeholder' => 'Select your industry sector',
+                'options' => ['RMG & Textiles', 'Banking & Financial Services', 'Supply Chain & Freight', 'Manufacturing & FMCG', 'IT & Technology', 'Education / Other'],
+            ],
+            [
+                'name' => 'city',
+                'label' => 'City / District',
+                'icon' => 'fa-map-marker-alt',
+                'type' => 'text',
+                'is_required' => false,
+                'placeholder' => 'e.g. Dhaka / Chattogram',
+                'options' => null,
+            ],
+            [
+                'name' => 'institution',
+                'label' => 'University / Highest Degree',
+                'icon' => 'fa-university',
+                'type' => 'text',
+                'is_required' => false,
+                'placeholder' => 'e.g. MBA, University of Dhaka',
+                'options' => null,
+            ],
+            [
+                'name' => 'linkedin_url',
+                'label' => 'LinkedIn Profile URL',
+                'icon' => 'fa-link',
+                'type' => 'url',
+                'is_required' => false,
+                'placeholder' => 'https://linkedin.com/in/yourprofile',
+                'options' => null,
+            ],
+            [
+                'name' => 'nid_number',
+                'label' => 'National ID (NID) / Passport',
+                'icon' => 'fa-id-card',
+                'type' => 'text',
+                'is_required' => false,
+                'placeholder' => 'For official certificate registry',
+                'options' => null,
+            ],
+            [
+                'name' => 'referral_source',
+                'label' => 'How Did You Hear About Us?',
+                'icon' => 'fa-bullhorn',
+                'type' => 'select',
+                'is_required' => false,
+                'placeholder' => 'Select source',
+                'options' => ['Facebook', 'LinkedIn', 'WhatsApp Group', 'Colleague / Friend Referral', 'Website / Search'],
+            ],
+            [
+                'name' => 'comments',
+                'label' => 'Expectations / Key Questions',
+                'icon' => 'fa-comment-dots',
+                'type' => 'textarea',
+                'is_required' => false,
+                'placeholder' => 'Any specific topics or challenges you want covered in this program?',
+                'options' => null,
             ],
         ];
     }

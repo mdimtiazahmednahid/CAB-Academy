@@ -1,6 +1,6 @@
 @extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
 
-@section('title', 'Saved Courses & Wishlist - ' . \App\Models\Setting::getVal('site_name', 'CAB Academy'))
+@section('title', 'Saved Courses & Wishlist - ' . \App\Models\Setting::getVal('site_name', 'ACS Academy'))
 @section('header_title', 'Saved Wishlist')
 @section('robots', 'noindex, nofollow, noarchive, nosnippet')
 

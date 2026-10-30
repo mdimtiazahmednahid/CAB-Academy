@@ -571,8 +571,8 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Title (H1)</label>
-                            <input type="text" name="landing_hero_title" value="{{ $settings['landing_hero_title'] ?? 'CAB Academy' }}" 
-                                   placeholder="CAB Academy" 
+                            <input type="text" name="landing_hero_title" value="{{ $settings['landing_hero_title'] ?? 'ACS Academy' }}" 
+                                   placeholder="ACS Academy" 
                                    class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
                         </div>
 
@@ -910,8 +910,8 @@
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Subtitle / Faculty Insights Blurb</label>
                         <textarea name="landing_blog_subtitle" rows="2" 
-                                  placeholder="Thought leadership, customs directives, tax reforms, and supply chain insights by CAB Academy Distinguished Faculty." 
-                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_blog_subtitle'] ?? 'Thought leadership, customs directives, tax reforms, and supply chain insights by CAB Academy Distinguished Faculty.' }}</textarea>
+                                  placeholder="Thought leadership, customs directives, tax reforms, and supply chain insights by ACS Academy Distinguished Faculty." 
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_blog_subtitle'] ?? 'Thought leadership, customs directives, tax reforms, and supply chain insights by ACS Academy Distinguished Faculty.' }}</textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1166,8 +1166,8 @@
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Subtitle / Explainer</label>
                         <textarea name="landing_jobs_subtitle" rows="2" 
-                                  placeholder="Explore openings posted exclusively for CAB Academy certified professionals" 
-                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_jobs_subtitle'] ?? 'Explore openings posted exclusively for CAB Academy certified professionals' }}</textarea>
+                                  placeholder="Explore openings posted exclusively for ACS Academy certified professionals" 
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_jobs_subtitle'] ?? 'Explore openings posted exclusively for ACS Academy certified professionals' }}</textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1208,7 +1208,7 @@
                         
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Pill / Badge</label>
-                            <input type="text" name="about_hero_badge" value="{{ $settings['about_hero_badge'] ?? 'Commercial Academy Bangladesh' }}" 
+                            <input type="text" name="about_hero_badge" value="{{ $settings['about_hero_badge'] ?? 'ACS Academy' }}" 
                                    class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
                         </div>
 
@@ -1221,7 +1221,7 @@
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Narrative Description</label>
                             <textarea name="about_hero_desc" rows="3" 
-                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_hero_desc'] ?? 'Commercial Academy Bangladesh (CAB Academy) stands as the gold standard for executive trade education, supply chain logistics, customs clearance, and corporate compliance.' }}</textarea>
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_hero_desc'] ?? 'ACS Academy stands as the gold standard for executive trade education, supply chain logistics, customs clearance, and corporate compliance.' }}</textarea>
                         </div>
                     </div>
 
@@ -1315,7 +1315,7 @@
                     <div class="space-y-4 pt-3 border-t border-gray-100">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Campus Name / Facility Title</label>
-                            <input type="text" name="contact_campus_name" value="{{ $settings['contact_campus_name'] ?? 'CAB Academy Corporate Campus' }}" 
+                            <input type="text" name="contact_campus_name" value="{{ $settings['contact_campus_name'] ?? 'ACS Academy Corporate Campus' }}" 
                                    class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
                         </div>
 
@@ -1367,7 +1367,7 @@
                             <span class="text-xs text-gray-500 font-semibold">Privacy, Terms & Refund Policies</span>
                         </div>
                         <h3 class="text-lg font-black text-gray-900">Legal Policy Overrides</h3>
-                        <p class="text-xs text-gray-500 mt-0.5">Leave any field blank to preserve CAB Academy's default pre-vetted corporate legal policy.</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Leave any field blank to preserve ACS Academy's default pre-vetted corporate legal policy.</p>
                     </div>
 
                     <div class="space-y-5 pt-3 border-t border-gray-100">

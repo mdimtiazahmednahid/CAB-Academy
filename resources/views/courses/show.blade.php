@@ -1,11 +1,16 @@
 @extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
+@php
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
+    $counselorPhone = $course->effective_counselor_phone;
+    $counselorTel = $course->effective_counselor_tel;
+@endphp
 
-@section('title', $course->title . ' - CAB Academy')
+@section('title', $course->title . ' - ' . $siteName)
 @section('header_title', 'Course Overview')
-@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($course->short_description ?: $course->description ?: 'Enroll in ' . $course->title . ' at CAB Academy Dhaka. Professional certification, live masterclasses, and career training.'), 200))
+@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($course->short_description ?: $course->description ?: 'Enroll in ' . $course->title . ' at ' . $siteName . '. Professional certification, live masterclasses, and career training.'), 200))
 @section('canonical_url', route('courses.show', $course))
 @section('og_image', $course->og_image_url)
-@section('og_title', $course->title . ' - CAB Academy')
+@section('og_title', $course->title . ' - ' . $siteName)
 @section('og_type', 'website')
 @section('og_image_width', '1200')
 @section('og_image_height', '630')
@@ -21,7 +26,7 @@
         'description' => $cleanDesc,
         'provider' => [
             '@type' => 'EducationalOrganization',
-            'name' => 'CAB Academy',
+            'name' => $siteName,
             'sameAs' => url('/'),
         ],
         'image' => $course->cover_image_url,
@@ -33,11 +38,11 @@
             'availability' => 'https://schema.org/InStock',
             'url' => route('courses.show', $course),
         ],
-        'educationalCredentialAwarded' => 'CAB Academy Verified Certificate of Completion',
+        'educationalCredentialAwarded' => $siteName . ' Verified Certificate of Completion',
         'hasCourseInstance' => [
             '@type' => 'CourseInstance',
             'courseMode' => 'blended',
-            'location' => $course->venue ?? 'CAB Academy Campus, Mirpur-Pallabi, Dhaka & Online Zoom',
+            'location' => $course->venue ?? ($siteName . ' Campus & Online Zoom'),
             'startDate' => $course->start_date ? $course->start_date->toISOString() : null,
         ],
     ];
@@ -57,7 +62,7 @@
                 'name' => 'How do I receive my verified digital certificate?',
                 'acceptedAnswer' => [
                     '@type' => 'Answer',
-                    'text' => 'Upon completing the course curriculum and cohort evaluation, your digital certificate is officially issued by CAB Academy with a cryptographically verifiable serial number and QR registry link recognized by employers and institutions.',
+                    'text' => 'Upon completing the course curriculum and cohort evaluation, your digital certificate is officially issued by ' . $siteName . ' with a cryptographically verifiable serial number and QR registry link recognized by employers and institutions.',
                 ],
             ],
             [
@@ -125,14 +130,24 @@
 @php
     $allCourseLessons = $course->sections->flatMap->lessons;
     $resumeLesson = $allCourseLessons->first(fn($l) => !in_array($l->id, $completedLessonIds)) ?? $allCourseLessons->first();
+    $canShowEnrollCta = !$isEnrolled || (auth()->check() && auth()->user()->isAdmin());
 @endphp
-<div class="bg-[#f8fafc] min-h-screen pb-16">
+<div class="relative bg-gradient-to-b from-[#eef4fb] via-[#f5f8fc] to-[#eef2f9] min-h-screen pb-20 overflow-hidden">
+    <!-- Ambient Liquid Glass Glow Orbs -->
+    <div class="pointer-events-none absolute inset-0 overflow-hidden z-0">
+        <div class="absolute top-[28rem] -left-24 w-96 h-96 rounded-full bg-blue-500/10 blur-[110px]"></div>
+        <div class="absolute top-[48rem] -right-24 w-96 h-96 rounded-full bg-[#c30102]/8 blur-[120px]"></div>
+        <div class="absolute bottom-24 left-1/3 w-96 h-96 rounded-full bg-emerald-500/8 blur-[110px]"></div>
+    </div>
 
     <!-- 1. Executive Hero Banner Header with Clickable Thumbnail & Direct Action Buttons -->
-    <header class="bg-gradient-to-b from-[#051c45] via-[#082252] to-[#0a275e] text-white pt-6 pb-10 border-b border-slate-800/40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header class="relative z-10 bg-gradient-to-br from-[#03122f] via-[#051c45] to-[#0b2b66] text-white pt-6 pb-12 border-b border-white/15 overflow-hidden">
+        <div class="pointer-events-none absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-blue-400/15 blur-[110px]"></div>
+        <div class="pointer-events-none absolute bottom-0 left-10 w-80 h-80 rounded-full bg-[#c30102]/15 blur-[100px]"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumbs -->
-            <nav class="flex flex-wrap items-center gap-2 text-xs text-slate-300 mb-4">
+            <nav class="flex flex-wrap items-center gap-2 text-xs text-slate-300 mb-5">
                 @auth
                     <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1 text-amber-300 hover:text-white font-bold transition-colors">
                         <i class="fas fa-th-large text-[10px]"></i>
@@ -156,17 +171,17 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 <!-- Left Details & Action Gateway (7 Columns on Desktop) -->
-                <div class="lg:col-span-7 space-y-3.5">
+                <div class="lg:col-span-7 space-y-4">
                     <div class="flex items-center gap-2 flex-wrap text-xs">
-                        <span class="px-2.5 py-0.5 bg-white/10 text-white border border-white/20 rounded-md font-semibold uppercase tracking-wider text-[11px]">
+                        <span class="px-3 py-1 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-full font-bold uppercase tracking-wider text-[11px]">
                             {{ $course->category ?? 'Course' }}
                         </span>
                         @if(!empty($course->batch) && $course->show_batch)
-                            <span class="px-2.5 py-0.5 bg-[#c30102] text-white rounded-md font-bold uppercase tracking-wider text-[11px]">
+                            <span class="px-3 py-1 bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white rounded-full font-bold uppercase tracking-wider text-[11px] shadow-sm">
                                 {{ $course->batch }}
                             </span>
                         @endif
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 backdrop-blur-md">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
                             <span>
                                 @if($course->attendance_mode === 'online')
@@ -185,24 +200,22 @@
                     </h1>
 
                     @if($course->short_description || $course->description)
-                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
+                        <p class="text-slate-200/90 text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
                             {{ $course->short_description ?? \Illuminate\Support\Str::limit($course->description, 160) }}
                         </p>
                     @endif
 
-                    <!-- Inline Quick Meta (Starts, Duration, Format) -->
-                    <div class="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-1">
-                        <span class="flex items-center gap-1.5">
+                    <!-- Inline Quick Meta Pill Strip (Starts, Duration, Format, Hotline) -->
+                    <div class="flex flex-wrap items-center gap-3 text-xs text-slate-200 pt-1">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.07] border border-white/15 backdrop-blur-md">
                             <i class="far fa-calendar-alt text-[#c30102]"></i>
                             <span>Starts: <strong>{{ $course->start_date ? $course->start_date->format('d M, Y') : ($course->duration ?? 'Upcoming') }}</strong></span>
                         </span>
-                        <span>&bull;</span>
-                        <span class="flex items-center gap-1.5">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.07] border border-white/15 backdrop-blur-md">
                             <i class="far fa-clock text-amber-400"></i>
                             <span>Schedule: <strong>{{ $course->duration ?? '8 Weeks' }}</strong></span>
                         </span>
-                        <span>&bull;</span>
-                        <span class="flex items-center gap-1.5">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.07] border border-white/15 backdrop-blur-md">
                             <i class="fas fa-video text-cyan-400"></i>
                             <span>Format: <strong>{{ $course->venue ?? 'Online (Zoom)' }}</strong></span>
                         </span>
@@ -210,6 +223,28 @@
 
                     <!-- Direct Action Buttons in Hero -->
                     <div class="pt-2 flex flex-wrap items-center gap-2.5">
+                        @if($canShowEnrollCta)
+                            <button 
+                                type="button"
+                                onclick="openEnrollDrawer({ 
+                                    id: {{ $course->id }}, 
+                                    title: '{{ addslashes($course->title) }}', 
+                                    price: '{{ number_format($course->price, 2) }}', 
+                                    rawPrice: {{ $course->price }}, 
+                                    batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
+                                    venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                                    attendanceMode: '{{ $course->attendance_mode }}',
+                                    whatsapp: '{{ $course->effective_whatsapp_number }}',
+                                    fields: {{ json_encode($course->effective_enrollment_fields) }}
+                                })"
+                                class="px-5 py-3 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-sm tracking-wide uppercase shadow-[0_6px_25px_rgba(195,1,2,0.45)] flex items-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer border border-white/20"
+                            >
+                                <i class="fas fa-bolt text-amber-300 text-xs"></i>
+                                <span>Enroll Now (30 Sec)</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        @endif
+
                         @if($isEnrolled)
                             @if($resumeLesson)
                                 <a 
@@ -222,41 +257,31 @@
                                 </a>
                             @endif
                             <a 
-                                href="{{ route('dashboard') }}"
-                                class="px-4 py-3 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 text-white font-bold text-xs sm:text-sm tracking-wide flex items-center gap-2 transition-all"
+                                href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}"
+                                class="px-4 py-3 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 text-white font-bold text-xs sm:text-sm tracking-wide flex items-center gap-2 transition-all backdrop-blur-md"
                             >
                                 <i class="fas fa-th-large text-amber-300 text-xs"></i>
                                 <span>My Dashboard</span>
                             </a>
-                        @else
-                            <button 
-                                type="button"
-                                onclick="openEnrollDrawer({ 
-                                    id: {{ $course->id }}, 
-                                    title: '{{ addslashes($course->title) }}', 
-                                    price: '{{ number_format($course->price, 2) }}', 
-                                    rawPrice: {{ $course->price }}, 
-                                    batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                                    venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
-                                    attendanceMode: '{{ $course->attendance_mode }}',
-                                    fields: {{ json_encode($course->effective_enrollment_fields) }}
-                                })"
-                                class="px-5 py-3 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-sm tracking-wide uppercase shadow-[0_4px_20px_rgba(195,1,2,0.4)] flex items-center gap-2 transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer"
-                            >
-                                <i class="fas fa-bolt text-amber-300 text-xs"></i>
-                                <span>Enroll Now (30 Sec)</span>
-                                <i class="fas fa-arrow-right text-[10px]"></i>
-                            </button>
                         @endif
 
                         <a 
                             href="{{ $course->counselor_whatsapp_url }}" 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            class="px-4 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs sm:text-sm tracking-wide shadow flex items-center gap-2 transition-all active:scale-95"
+                            class="px-4 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs sm:text-sm tracking-wide shadow-[0_4px_15px_rgba(37,211,102,0.35)] flex items-center gap-2 transition-all active:scale-95"
                         >
                             <i class="fab fa-whatsapp text-sm"></i>
                             <span>WhatsApp Counselor</span>
+                        </a>
+
+                        <a 
+                            href="tel:{{ $counselorTel }}" 
+                            class="inline-flex items-center gap-1.5 px-3.5 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-xs font-bold transition-all backdrop-blur-md active:scale-95"
+                            title="Call Counselor Directly"
+                        >
+                            <i class="fas fa-phone-alt text-[11px] text-amber-300"></i>
+                            <span>{{ $counselorPhone }}</span>
                         </a>
 
                         <a 
@@ -274,7 +299,7 @@
                         <button 
                             type="button" 
                             onclick="copyShortLink('{{ $course->short_url }}', this)" 
-                            class="inline-flex items-center gap-1.5 px-3 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/15 rounded-xl text-xs font-semibold transition-all active:scale-95 cursor-pointer"
+                            class="inline-flex items-center gap-1.5 px-3 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-xs font-semibold transition-all active:scale-95 cursor-pointer backdrop-blur-md"
                             title="Copy short link"
                         >
                             <i class="far fa-copy text-[11px] text-amber-300"></i>
@@ -283,73 +308,70 @@
                     </div>
                 </div>
 
-                <!-- Right Hero Banner Showcase (Clickable High-Res Thumbnail Banner - 5 Columns on Desktop) -->
+                <!-- Right Hero Banner Showcase (Liquid Glass Framed Uncropped 16:9 Banner - 5 Columns on Desktop) -->
                 <div class="lg:col-span-5">
-                    <div class="relative w-full aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-white/20 group/herobanner bg-slate-900">
-                        <a 
-                            href="javascript:void(0)" 
-                            onclick="openEnrollDrawer({ 
-                                id: {{ $course->id }}, 
-                                title: '{{ addslashes($course->title) }}', 
-                                price: '{{ number_format($course->price, 2) }}', 
-                                rawPrice: {{ $course->price }}, 
-                                batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                                venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
-                                attendanceMode: '{{ $course->attendance_mode }}',
-                                fields: {{ json_encode($course->effective_enrollment_fields) }}
-                            })" 
-                            title="Click to Express Enroll in {{ $course->title }}"
-                            class="block w-full h-full relative cursor-pointer"
-                        >
-                            <img 
-                                src="{{ $course->cover_image_url }}" 
-                                alt="{{ $course->title }}" 
-                                class="w-full h-full object-cover group-hover/herobanner:scale-105 transition-transform duration-700 ease-out"
-                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&h=630&q=85';"
+                    <div class="liquid-glass-dark rounded-3xl p-2 border border-white/25 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.65)] overflow-hidden">
+                        <div class="relative w-full aspect-[16/9] rounded-2xl overflow-hidden group/herobanner bg-slate-950">
+                            <a 
+                                href="javascript:void(0)" 
+                                onclick="openEnrollDrawer({ 
+                                    id: {{ $course->id }}, 
+                                    title: '{{ addslashes($course->title) }}', 
+                                    price: '{{ number_format($course->price, 2) }}', 
+                                    rawPrice: {{ $course->price }}, 
+                                    batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
+                                    venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                                    attendanceMode: '{{ $course->attendance_mode }}',
+                                    whatsapp: '{{ $course->effective_whatsapp_number }}',
+                                    fields: {{ json_encode($course->effective_enrollment_fields) }}
+                                })" 
+                                title="Click to Express Enroll in {{ $course->title }}"
+                                class="block w-full h-full relative cursor-pointer"
                             >
-                            
-                            <!-- Vignette Gradient -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#020b18]/90 via-black/20 to-transparent"></div>
+                                <img 
+                                    src="{{ $course->cover_image_url }}" 
+                                    alt="{{ $course->title }}" 
+                                    class="w-full h-full object-cover object-center group-hover/herobanner:scale-[1.03] transition-transform duration-700 ease-out"
+                                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&h=630&q=85';"
+                                >
 
-                            <!-- Bottom Price Tag on Hero Image -->
-                            <div class="absolute bottom-3 left-3 z-20">
-                                <div class="bg-gradient-to-r from-[#020b18]/95 via-[#041536]/90 to-[#072152]/85 backdrop-blur-md border border-white/20 px-3 py-1 rounded-xl shadow-lg flex items-center gap-1.5">
-                                    <span class="text-[9px] text-slate-300 font-bold uppercase">Price TK:</span>
-                                    <span class="font-black text-xs sm:text-sm text-white tracking-tight">
-                                        {{ $course->price > 0 ? '৳' . number_format($course->price, 2) : 'Free Access' }}
+                                <!-- Center Hover Overlay Pill -->
+                                <div class="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/herobanner:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
+                                    <span class="px-4 py-2 rounded-full bg-[#c30102] text-white font-extrabold text-xs shadow-xl flex items-center gap-1.5 transform group-hover/herobanner:scale-105 transition-transform border border-white/20">
+                                        <i class="fas fa-bolt text-amber-300 text-xs"></i>
+                                        <span>Click to Express Enroll (30 Sec)</span>
                                     </span>
                                 </div>
-                            </div>
+                            </a>
+                        </div>
 
-                            <!-- Bottom Right Synced Instructor Avatar & Name Badge on Hero Image -->
-                            <div class="absolute bottom-3 right-3 z-20 flex items-center gap-2 bg-[#020b18]/90 backdrop-blur-md border border-white/20 pl-1.5 pr-3 py-1 rounded-full shadow-lg">
+                        <!-- Frosted Glass Footer Strip Below Poster (Never Obscures Poster Text) -->
+                        <div class="mt-2 px-3 py-2 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 min-w-0">
                                 <img src="{{ $course->instructor_avatar_url }}" alt="{{ $course->instructor_name }}" class="w-7 h-7 rounded-full object-cover object-top border border-white/60 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($course->instructor_name) }}&background=051c45&color=fff';">
-                                <span class="text-[11px] font-bold text-white truncate max-w-[140px]">{{ $course->instructor_name }}</span>
+                                <div class="min-w-0">
+                                    <span class="text-[9px] uppercase tracking-wider text-slate-300 block leading-none">Lead Faculty</span>
+                                    <span class="text-xs font-bold text-white truncate block">{{ $course->instructor_name }}</span>
+                                </div>
                             </div>
-
-                            <!-- Center Hover Overlay Pill -->
-                            <div class="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/herobanner:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
-                                <span class="px-4 py-2 rounded-full bg-[#c30102] text-white font-extrabold text-xs shadow-xl flex items-center gap-1.5 transform group-hover/herobanner:scale-105 transition-transform">
-                                    <i class="fas fa-bolt text-amber-300 text-xs"></i>
-                                    <span>Click to Express Enroll (30 Sec)</span>
+                            <div class="px-3 py-1 rounded-lg bg-white/10 border border-white/15 shrink-0 flex items-center gap-1.5">
+                                <span class="text-[9px] text-slate-300 font-bold uppercase">Price TK:</span>
+                                <span class="font-black text-xs sm:text-sm text-emerald-300 tracking-tight">
+                                    {{ $course->price > 0 ? '৳' . number_format($course->price, 2) : 'Free Access' }}
                                 </span>
                             </div>
-                        </a>
-                    </div>
-                    <div class="text-center pt-2 text-[11px] text-slate-300 flex items-center justify-center gap-1.5">
-                        <i class="fas fa-hand-pointer text-amber-300 text-[10px] animate-bounce"></i>
-                        <span>Click thumbnail banner to enroll in 30 seconds</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- 2. Clean Two-Column Body -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <!-- 2. Liquid Glass Two-Column Body -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-            <!-- LEFT COLUMN: Simple, Clean Content (8 Columns on Desktop) -->
+            <!-- LEFT COLUMN: Liquid Glass Content Modules (8 Columns on Desktop) -->
             <div class="lg:col-span-8 space-y-6">
 
                 <!-- Enrolled Progress Bar (If Enrolled) -->
@@ -359,12 +381,12 @@
                         $completedCount = count(array_intersect($completedLessonIds, $course->sections->flatMap->lessons->pluck('id')->toArray()));
                         $progress = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0;
                     @endphp
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200">
+                    <div class="liquid-glass-card rounded-3xl p-5">
                         <div class="flex items-center justify-between text-xs font-bold mb-2">
                             <span class="text-[#051c45]">Your Learning Progress</span>
                             <span class="text-[#c30102]">{{ $progress }}% Completed</span>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-2 mb-2 overflow-hidden">
+                        <div class="w-full bg-slate-200/70 rounded-full h-2 mb-2 overflow-hidden">
                             <div class="bg-[#c30102] h-2 rounded-full transition-all" style="width: {{ $progress }}%"></div>
                         </div>
                         <div class="flex justify-between items-center text-xs text-slate-500">
@@ -379,19 +401,19 @@
                 @endif
 
                 <!-- Section 1: Course Overview -->
-                <div class="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs space-y-4">
-                    <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">Course Overview</h2>
-                    <p class="text-slate-600 leading-relaxed text-sm sm:text-base">
+                <div class="liquid-glass-card rounded-3xl p-6 sm:p-7 space-y-4">
+                    <h2 class="text-lg font-extrabold text-[#051c45] border-b border-slate-200/60 pb-3">Course Overview</h2>
+                    <p class="text-slate-700 leading-relaxed text-sm sm:text-base">
                         {{ $course->description ?? 'This program offers deep practical insight, live interactive case studies, and compliance methodologies essential for corporate mastery in international trade finance, letters of credit (L/C), customs regulations, and logistics management.' }}
                     </p>
 
                     @if($course->target_audience)
-                        <div class="pt-3 border-t border-slate-100">
+                        <div class="pt-3 border-t border-slate-200/60">
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Target Participants:</span>
                             <div class="flex flex-wrap gap-2">
                                 @foreach(explode(',', $course->target_audience) as $audience)
                                     @if(trim($audience))
-                                        <span class="px-3 py-1 bg-slate-50 text-slate-700 border border-slate-200 rounded-lg text-xs font-medium">
+                                        <span class="px-3 py-1 bg-white/80 text-slate-700 border border-slate-200/80 rounded-xl text-xs font-semibold shadow-2xs">
                                             {{ trim($audience) }}
                                         </span>
                                     @endif
@@ -402,17 +424,17 @@
                 </div>
 
                 <!-- Section 2: Course Curriculum (Required by Cypress: cy.get('button.bg-[#90c642]')) -->
-                <div class="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs">
-                    <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                        <h2 class="text-lg font-bold text-slate-900">Course Curriculum</h2>
-                        <span class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                <div class="liquid-glass-card rounded-3xl p-6 sm:p-7">
+                    <div class="flex items-center justify-between mb-4 border-b border-slate-200/60 pb-3">
+                        <h2 class="text-lg font-extrabold text-[#051c45]">Course Curriculum</h2>
+                        <span class="text-xs font-bold text-[#051c45] bg-white/80 border border-slate-200/70 px-3 py-1 rounded-full shadow-2xs">
                             {{ $course->sections->count() }} Modules &bull; {{ $course->sections->flatMap->lessons->count() }} Lessons
                         </span>
                     </div>
 
                     <div class="space-y-3">
                         @forelse($course->sections as $index => $section)
-                            <div class="border border-slate-200 rounded-xl overflow-hidden" x-data="{ open: {{ $index === 0 ? 'true' : 'false' }} }">
+                            <div class="border border-slate-200/80 rounded-2xl overflow-hidden shadow-2xs" x-data="{ open: {{ $index === 0 ? 'true' : 'false' }} }">
                                 <!-- Accordion Header: styled in Imperial Navy (#051c45) with Crimson (#c30102) accent, retaining .bg-[#90c642] for Cypress test compatibility -->
                                 <button 
                                     @click="open = !open" 
@@ -434,7 +456,7 @@
 
                                 <!-- Accordion Body (Lessons List) -->
                                 <div x-show="open" x-collapse>
-                                    <div class="divide-y divide-slate-100 bg-white">
+                                    <div class="divide-y divide-slate-100 bg-white/90">
                                         @forelse($section->lessons as $lesson)
                                             @php
                                                 $isCompleted = in_array($lesson->id, $completedLessonIds);
@@ -470,7 +492,7 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="p-5 text-center text-slate-500 text-xs bg-slate-50 rounded-xl">
+                            <div class="p-5 text-center text-slate-500 text-xs bg-white/60 rounded-2xl border border-slate-200/60">
                                 Course syllabus is being compiled for the upcoming cohort.
                             </div>
                         @endforelse
@@ -478,31 +500,31 @@
                 </div>
 
                 <!-- Section 3: Why Corporate Leaders Choose This Masterclass (Required by Cypress: cy.contains('Why Corporate Leaders Choose This Masterclass')) -->
-                <div class="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs space-y-4">
-                    <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">
+                <div class="liquid-glass-card rounded-3xl p-6 sm:p-7 space-y-4">
+                    <h2 class="text-lg font-extrabold text-[#051c45] border-b border-slate-200/60 pb-3">
                         Why Corporate Leaders Choose This Masterclass
                     </h2>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
-                        <!-- CAB Academy Standard -->
-                        <div class="p-4 rounded-xl bg-slate-50 border-l-4 border-l-[#c30102] border-t border-r border-b border-slate-200 space-y-2">
+                        <!-- Academy Standard -->
+                        <div class="p-4 rounded-2xl bg-white/80 border-l-4 border-l-[#c30102] border-t border-r border-b border-slate-200/80 space-y-2 shadow-2xs">
                             <span class="text-[#051c45] font-extrabold uppercase text-[11px] block flex items-center gap-1.5">
                                 <i class="fas fa-check-circle text-[#c30102]"></i>
-                                <span>CAB Academy Standard</span>
+                                <span>{{ $siteName }} Standard</span>
                             </span>
-                            <div class="text-slate-700">Real-world customs, trade disputes, and live L/C case documentation.</div>
+                            <div class="text-slate-700">Real-world practical case simulations and live industry documentation.</div>
                             <div class="text-slate-700">Direct mentoring from seasoned industry practitioners.</div>
-                            <div class="text-slate-700">Cryptographically verifiable certificate recognized across leading conglomerates.</div>
+                            <div class="text-slate-700">Cryptographically verifiable certificate recognized across leading organizations.</div>
                         </div>
 
                         <!-- Conventional Training -->
-                        <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-200 space-y-2 text-slate-500">
+                        <div class="p-4 rounded-2xl bg-white/50 border border-slate-200/70 space-y-2 text-slate-500">
                             <span class="text-slate-500 font-bold uppercase text-[11px] block flex items-center gap-1.5">
                                 <i class="fas fa-times-circle text-slate-400"></i>
                                 <span>Conventional Training</span>
                             </span>
-                            <div>Rote textbook theory without practical customs and port clearance exposure.</div>
-                            <div>Static slides with outdated HS codes, tariffs, and circulars.</div>
+                            <div>Rote textbook theory without practical industry execution exposure.</div>
+                            <div>Static slides with outdated frameworks and generic examples.</div>
                             <div>Unverified paper certificates without digital validation links.</div>
                         </div>
                     </div>
@@ -515,10 +537,10 @@
                     $instructorAvatar = $course->instructor_avatar_url;
                     $instructorBio = $course->instructor_bio;
                 @endphp
-                <div class="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs">
-                    <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">Instructor Profile</h2>
+                <div class="liquid-glass-card rounded-3xl p-6 sm:p-7">
+                    <h2 class="text-lg font-extrabold text-[#051c45] border-b border-slate-200/60 pb-3 mb-4">Instructor Profile</h2>
                     <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-                        <div class="w-[150px] h-[150px] rounded-full border-4 border-slate-100 shadow-sm shrink-0 overflow-hidden bg-slate-100">
+                        <div class="w-[150px] h-[150px] rounded-full border-4 border-white shadow-md shrink-0 overflow-hidden bg-slate-100">
                             @if($instructorAvatar)
                                 <img src="{{ $instructorAvatar }}" alt="{{ $instructorName }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($instructorName) }}&background=051c45&color=fff';">
                             @else
@@ -529,9 +551,9 @@
                         </div>
                         <div class="text-center sm:text-left space-y-1 flex-1">
                             <span class="text-[11px] font-bold uppercase tracking-wider text-[#c30102] block">Lead Instructor</span>
-                            <h3 class="text-base font-bold text-slate-900">{{ $instructorName }}</h3>
-                            <p class="text-xs text-slate-500 font-medium">{{ $instructorTitle }}</p>
-                            <p class="text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                            <h3 class="text-base font-extrabold text-[#051c45]">{{ $instructorName }}</h3>
+                            <p class="text-xs text-slate-600 font-semibold">{{ $instructorTitle }}</p>
+                            <p class="text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-200/60">
                                 {{ $instructorBio }}
                             </p>
                         </div>
@@ -540,13 +562,13 @@
 
                 <!-- Section 5: Quizzes & Downloadable Materials (Rendered Only When Present) -->
                 @if($course->quizzes->count() > 0 || (method_exists($course, 'materials') && $course->materials->count() > 0))
-                    <div class="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs space-y-4">
+                    <div class="liquid-glass-card rounded-3xl p-6 sm:p-7 space-y-4">
                         @if($course->quizzes->count() > 0)
                             <div>
-                                <h3 class="font-bold text-slate-900 text-sm mb-3">Assessments & Quizzes</h3>
+                                <h3 class="font-bold text-[#051c45] text-sm mb-3">Assessments & Quizzes</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     @foreach($course->quizzes as $quiz)
-                                        <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between text-xs">
+                                        <div class="p-3 rounded-2xl border border-slate-200/80 bg-white/80 flex items-center justify-between text-xs">
                                             <div>
                                                 <h4 class="font-bold text-slate-900">{{ $quiz->title }}</h4>
                                                 <span class="text-slate-500">{{ $quiz->questions->count() }} Questions</span>
@@ -564,10 +586,10 @@
 
                         @if(method_exists($course, 'materials') && $course->materials->count() > 0)
                             <div>
-                                <h3 class="font-bold text-slate-900 text-sm mb-3">Course Materials</h3>
+                                <h3 class="font-bold text-[#051c45] text-sm mb-3">Course Materials</h3>
                                 <div class="space-y-2">
                                     @foreach($course->materials as $mat)
-                                        <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between text-xs">
+                                        <div class="p-3 rounded-2xl border border-slate-200/80 bg-white/80 flex items-center justify-between text-xs">
                                             <span class="font-medium text-slate-800">{{ $mat->title }}</span>
                                             @if($isEnrolled)
                                                 <a href="{{ $mat->type === 'link' ? $mat->external_link : storage_asset($mat->file_path) }}" target="_blank" class="font-bold text-[#c30102] hover:underline">
@@ -585,50 +607,50 @@
                 @endif
 
                 <!-- Section 6: Frequently Asked Questions (Required by Cypress: cy.contains('Frequently Asked Questions')) -->
-                <div class="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs">
-                    <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4">Frequently Asked Questions</h2>
+                <div class="liquid-glass-card rounded-3xl p-6 sm:p-7">
+                    <h2 class="text-lg font-extrabold text-[#051c45] border-b border-slate-200/60 pb-3 mb-4">Frequently Asked Questions</h2>
                     <div class="space-y-2.5" x-data="{ activeFaq: 1 }">
                         <!-- FAQ 1 (Required by Cypress: cy.contains('How do I receive my verified digital certificate?')) -->
-                        <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="border border-slate-200/80 bg-white/75 rounded-2xl overflow-hidden">
                             <button 
                                 @click="activeFaq = (activeFaq === 1 ? null : 1)"
                                 type="button"
-                                class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                                class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors"
                             >
                                 <span>How do I receive my verified digital certificate?</span>
                                 <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 1 ? 'rotate-180 text-[#c30102]' : 'text-slate-400'"></i>
                             </button>
-                            <div x-show="activeFaq === 1" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-slate-50/50">
-                                Upon completing the course curriculum and cohort evaluation, your digital certificate is officially issued by CAB Academy with a cryptographically verifiable serial number and QR registry link recognized by employers and institutions.
+                            <div x-show="activeFaq === 1" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
+                                Upon completing the course curriculum and cohort evaluation, your digital certificate is officially issued by {{ $siteName }} with a cryptographically verifiable serial number and QR registry link recognized by employers and institutions.
                             </div>
                         </div>
 
                         <!-- FAQ 2 -->
-                        <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="border border-slate-200/80 bg-white/75 rounded-2xl overflow-hidden">
                             <button 
                                 @click="activeFaq = (activeFaq === 2 ? null : 2)"
                                 type="button"
-                                class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                                class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors"
                             >
                                 <span>What payment methods are supported?</span>
                                 <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 2 ? 'rotate-180 text-[#c30102]' : 'text-slate-400'"></i>
                             </button>
-                            <div x-show="activeFaq === 2" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-slate-50/50">
+                            <div x-show="activeFaq === 2" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
                                 Instant bKash, Nagad, and Rocket mobile banking, as well as institutional bank transfers (BEFTN/NPSB). Official digital tax invoices are generated automatically in your portal.
                             </div>
                         </div>
 
                         <!-- FAQ 3 -->
-                        <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="border border-slate-200/80 bg-white/75 rounded-2xl overflow-hidden">
                             <button 
                                 @click="activeFaq = (activeFaq === 3 ? null : 3)"
                                 type="button"
-                                class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                                class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors"
                             >
                                 <span>What if I miss a live masterclass session?</span>
                                 <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 3 ? 'rotate-180 text-[#c30102]' : 'text-slate-400'"></i>
                             </button>
-                            <div x-show="activeFaq === 3" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-slate-50/50">
+                            <div x-show="activeFaq === 3" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
                                 Full session recordings and course slides are archived within your student learning player for on-demand playback at your convenience.
                             </div>
                         </div>
@@ -637,15 +659,15 @@
 
             </div>
 
-            <!-- RIGHT COLUMN: Clean Purchase Card (4 Columns on Desktop, Sticky on Desktop) -->
+            <!-- RIGHT COLUMN: Liquid Glass Purchase Card (4 Columns on Desktop, Sticky on Desktop) -->
             <aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="liquid-glass-card rounded-3xl overflow-hidden">
                     <!-- Course Image -->
-                    <div class="relative w-full h-44 sm:h-48 bg-slate-900 overflow-hidden">
+                    <div class="relative w-full aspect-[16/9] bg-slate-950 overflow-hidden">
                         <img 
                             src="{{ $course->cover_image_url }}" 
                             alt="{{ $course->title }}" 
-                            class="w-full h-full object-cover" 
+                            class="w-full h-full object-cover object-center" 
                             onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80';"
                         >
                     </div>
@@ -653,11 +675,11 @@
                     <!-- Enrollment & Price -->
                     <div class="p-5 sm:p-6 space-y-4">
                         <!-- Price TK Display (Required by Cypress) -->
-                        <div class="pb-3 border-b border-slate-100 flex items-baseline justify-between">
+                        <div class="pb-3 border-b border-slate-200/60 flex items-baseline justify-between">
                             <div>
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Price TK:</span>
                                 <div class="flex items-baseline gap-2">
-                                    <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                                    <span class="text-2xl sm:text-3xl font-extrabold text-[#051c45]">
                                         {{ $course->price > 0 ? '৳' . number_format($course->price, 2) : 'Free Access' }}
                                     </span>
                                     @if($course->price > 0)
@@ -696,9 +718,10 @@
                                         batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
                                         venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
                                         attendanceMode: '{{ $course->attendance_mode }}',
+                                        whatsapp: '{{ $course->effective_whatsapp_number }}',
                                         fields: {{ json_encode($course->effective_enrollment_fields) }}
                                     })"
-                                    class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
+                                    class="w-full py-2.5 bg-white/90 hover:bg-white text-[#051c45] border border-slate-200/90 font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
                                 >
                                     <i class="fas fa-bolt text-[#c30102] text-xs"></i>
                                     <span>Express Enroll (30 Sec)</span>
@@ -708,7 +731,7 @@
                                 <button 
                                     type="button" 
                                     onclick="toggleWishlist({{ $course->id }}, this)" 
-                                    class="w-full py-2 bg-white hover:bg-slate-50 text-slate-600 font-medium text-xs border border-slate-200 rounded-xl transition-colors flex items-center justify-center gap-1.5 wishlist-btn-{{ $course->id }} {{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'text-[#c30102] border-red-200 bg-red-50/50' : '' }}"
+                                    class="w-full py-2 bg-white/80 hover:bg-white text-slate-600 font-medium text-xs border border-slate-200/80 rounded-xl transition-colors flex items-center justify-center gap-1.5 wishlist-btn-{{ $course->id }} {{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'text-[#c30102] border-red-200 bg-red-50/50' : '' }}"
                                 >
                                     <i class="{{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'fas text-[#c30102]' : 'far' }} fa-heart text-xs"></i>
                                     <span>{{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'Saved in Wishlist' : 'Save to Wishlist' }}</span>
@@ -727,6 +750,26 @@
                                         Continue Learning
                                     </a>
                                 @endif
+                                @if(auth()->check() && auth()->user()->isAdmin())
+                                    <button 
+                                        type="button"
+                                        onclick="openEnrollDrawer({ 
+                                            id: {{ $course->id }}, 
+                                            title: '{{ addslashes($course->title) }}', 
+                                            price: '{{ number_format($course->price, 2) }}', 
+                                            rawPrice: {{ $course->price }}, 
+                                            batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
+                                            venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                                            attendanceMode: '{{ $course->attendance_mode }}',
+                                            whatsapp: '{{ $course->effective_whatsapp_number }}',
+                                            fields: {{ json_encode($course->effective_enrollment_fields) }}
+                                        })"
+                                        class="w-full py-2.5 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5"
+                                    >
+                                        <i class="fas fa-bolt text-amber-300 text-xs"></i>
+                                        <span>Preview Express Enroll (Admin)</span>
+                                    </button>
+                                @endif
                                 @if($course->isCertificateAvailableFor(auth()->user()))
                                     <a 
                                         href="{{ route('courses.certificate', $course) }}" 
@@ -737,13 +780,36 @@
                                     </a>
                                 @endif
                                 <a 
-                                    href="{{ route('dashboard') }}" 
+                                    href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" 
                                     class="block w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-center text-xs transition-colors"
                                 >
                                     &larr; Back to My Dashboard
                                 </a>
                             </div>
                         @endif
+
+                        <!-- Direct Course Counselor Box (Dynamic Per-Course WhatsApp & Phone) -->
+                        <div class="pt-3 border-t border-slate-200/60 space-y-2">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Need Admission Assistance?</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <a 
+                                    href="{{ $course->counselor_whatsapp_url }}" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    class="py-2.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all"
+                                >
+                                    <i class="fab fa-whatsapp text-sm"></i>
+                                    <span>WhatsApp</span>
+                                </a>
+                                <a 
+                                    href="tel:{{ $counselorTel }}" 
+                                    class="py-2.5 px-3 rounded-xl bg-[#051c45] hover:bg-[#082860] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all"
+                                >
+                                    <i class="fas fa-phone-alt text-[10px] text-amber-300"></i>
+                                    <span class="truncate">{{ $counselorPhone }}</span>
+                                </a>
+                            </div>
+                        </div>
 
                         <!-- Social Sharing & Facebook Short Link Module -->
                         <div class="pt-4 border-t border-slate-100">
@@ -867,6 +933,7 @@
                     batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
                     venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
                     attendanceMode: '{{ $course->attendance_mode }}',
+                    whatsapp: '{{ $course->effective_whatsapp_number }}',
                     fields: {{ json_encode($course->effective_enrollment_fields) }}
                 })"
                 class="block w-full py-2.5 px-4 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-full shadow-xl text-center text-xs tracking-wide flex items-center justify-center gap-1.5"
@@ -892,6 +959,7 @@
                             batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
                             venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
                             attendanceMode: '{{ $course->attendance_mode }}',
+                            whatsapp: '{{ $course->effective_whatsapp_number }}',
                             fields: {{ json_encode($course->effective_enrollment_fields) }}
                         });
                     }

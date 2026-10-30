@@ -413,7 +413,7 @@
                 </div>
                 <h3 class="text-lg font-bold text-[#0f131f] mb-1">No community posts yet</h3>
                 <p class="text-xs sm:text-sm text-[#727f9f] max-w-md mx-auto mb-6">
-                    Be the first to share an industry insight, ask a question, or start a discussion with CAB Academy learners!
+                    Be the first to share an industry insight, ask a question, or start a discussion with ACS Academy learners!
                 </p>
             </div>
         @endforelse

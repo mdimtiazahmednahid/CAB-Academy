@@ -123,7 +123,7 @@ class Setting extends Model
      */
     public static function getBrandSizing(?string $customText = null): array
     {
-        $siteName = trim((string) ($customText ?? self::getVal('site_name', 'CAB Academy')));
+        $siteName = trim((string) ($customText ?? self::getVal('site_name', 'ACS Academy')));
         $len = mb_strlen($siteName);
         $mode = self::getVal('brand_name_size_mode', 'auto');
 

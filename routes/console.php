@@ -86,5 +86,21 @@ Artisan::command('schema:repair', function () {
     return 0;
 })->purpose('Verify and auto-repair missing database tables, columns, and MySQL ENUM types without data loss');
 
+Artisan::command('db:purge-demo', function () {
+    $this->info("Purging demo / seeded courses, faculty chairs, jobs, and sample posts (keeping all real courses & users)...");
+    $result = \App\Support\DatabaseSchemaRepair::purgeDemoData();
+    $purged = $result['purged'] ?? [];
+    if (!empty($purged)) {
+        foreach ($purged as $item) {
+            $this->line(" ✓ " . $item);
+        }
+    } else {
+        $this->line(" ✓ No demo/seeded courses or sample posts found. Your database is already clean!");
+    }
+    $this->info("Demo data cleanup completed! (status: " . ($result['status'] ?? 'ok') . ")");
+    return 0;
+})->purpose('Remove demo/seeded courses, faculty chairs, jobs, and blog posts while preserving real courses and users');
+
+
 
 

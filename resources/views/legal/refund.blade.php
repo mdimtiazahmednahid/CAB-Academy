@@ -1,13 +1,16 @@
 @extends('layouts.public')
+@php
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
+@endphp
 
-@section('title', 'Refund & Returns Policy - CAB Academy')
-@section('meta_description', 'Tuition Refund, Cohort Rescheduling, and Cancellation Policy at CAB Academy.')
+@section('title', 'Refund & Returns Policy - ' . $siteName)
+@section('meta_description', 'Tuition Refund, Cohort Rescheduling, and Cancellation Policy at ' . $siteName . '.')
 @section('canonical_url', route('legal.refund'))
 
 @section('content')
 <div class="bg-[#f2f4f7] py-12 lg:py-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white rounded-3xl p-8 sm:p-12 border border-[#e3e7f0] shadow-sm">
+        <div class="liquid-glass-card rounded-3xl p-8 sm:p-12">
             
             <div class="border-b border-gray-100 pb-6 mb-8">
                 <h1 class="text-3xl font-black text-[#0f131f] tracking-tight">Refund & Cancellation Policy</h1>
@@ -35,7 +38,7 @@
                 <section>
                     <h2 class="text-lg font-bold text-[#0f131f] mb-2">2. Academy Cancellation or Rescheduling</h2>
                     <p>
-                        In the event that CAB Academy postpones or cancels a scheduled batch due to instructor illness, national holidays, or unforeseen force majeure events, enrolled students will be offered the choice of:
+                        In the event that {{ $siteName }} postpones or cancels a scheduled batch due to instructor illness, national holidays, or unforeseen force majeure events, enrolled students will be offered the choice of:
                     </p>
                     <ul class="list-disc list-inside space-y-1 text-gray-600 mt-2">
                         <li>Priority seat enrollment in the revised reschedule dates, OR</li>
@@ -64,7 +67,7 @@
                         If you have questions regarding payment transfers or refund verification, please reach out directly:
                     </p>
                     <div class="mt-3 p-4 bg-gray-50 rounded-xl border border-gray-200 text-xs sm:text-sm">
-                        <p class="font-bold text-[#0f131f]">CAB Academy Finance & Accounts Wing</p>
+                        <p class="font-bold text-[#0f131f]">{{ $siteName }} Finance & Accounts Wing</p>
                         <p class="text-gray-600">Hotline: {{ \App\Models\Setting::getVal('contact_hotline', '01917-054664') }}</p>
                         <p class="text-gray-600">Email: {{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}</p>
                         <p class="text-gray-600">Campus: {{ \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216') }}</p>

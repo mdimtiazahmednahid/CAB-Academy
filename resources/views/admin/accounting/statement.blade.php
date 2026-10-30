@@ -1,5 +1,5 @@
 @php
-    $siteName = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
     $institutionName = \App\Models\Setting::getVal('accounting_institution_name') ?: $siteName;
     $ledgerSubtitle = \App\Models\Setting::getVal('accounting_ledger_subtitle') ?: 'Institutional Financial Ledger & Tuition Realization Audit';
     $fiscalYear = \App\Models\Setting::getVal('accounting_fiscal_year') ?: ('FY ' . date('Y') . '-' . date('y', strtotime('+1 year')));

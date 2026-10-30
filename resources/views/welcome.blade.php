@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'Executive Training & Professional Certifications')
-@section('meta_description', 'CAB Academy is Bangladesh\'s premier executive certification institute for Commercial Banking, Letter of Credit (LC), Customs Clearance, and Supply Chain Management.')
+@section('meta_description', 'ACS Academy is Bangladesh\'s premier executive certification institute for Commercial Banking, Letter of Credit (LC), Customs Clearance, and Supply Chain Management.')
 @section('canonical_url', url('/'))
 
 @section('content')
@@ -31,7 +31,7 @@
                     </div>
 
                     @php
-                        $heroTitleText = \App\Models\Setting::getVal('landing_hero_title', \App\Models\Setting::getVal('site_name', 'CAB Academy'));
+                        $heroTitleText = \App\Models\Setting::getVal('landing_hero_title', \App\Models\Setting::getVal('site_name', 'ACS Academy'));
                         $heroTitleSizing = \App\Models\Setting::getBrandSizing($heroTitleText);
                     @endphp
                     <div class="space-y-3">
@@ -71,7 +71,7 @@
                             @endphp
                             <img 
                                 src="{{ $heroMediaImg }}" 
-                                alt="{{ \App\Models\Setting::getVal('landing_hero_title', 'CAB Academy') }} Executive Training" 
+                                alt="{{ \App\Models\Setting::getVal('landing_hero_title', 'ACS Academy') }} Executive Training" 
                                 class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1000&q=80';"
                             >
@@ -416,7 +416,7 @@
                         {{ \App\Models\Setting::getVal('landing_jobs_title', 'Career & Placement Opportunities') }}
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium max-w-2xl">
-                        {{ \App\Models\Setting::getVal('landing_jobs_subtitle', 'Explore active corporate openings, commercial executive roles, and direct recruitment pathways for CAB Academy certified professionals.') }}
+                        {{ \App\Models\Setting::getVal('landing_jobs_subtitle', 'Explore active corporate openings, commercial executive roles, and direct recruitment pathways for ACS Academy certified professionals.') }}
                     </p>
                 </div>
                 <div class="flex items-center gap-3 shrink-0">
@@ -552,7 +552,7 @@
                             Are You Hiring Commercial, Supply Chain, or Tax Professionals?
                         </h4>
                         <p class="text-xs sm:text-sm text-slate-500 font-medium">
-                            Partner with CAB Academy Corporate Placement Cell to access verified, pre-screened alumni and certified practitioners.
+                            Partner with ACS Academy Corporate Placement Cell to access verified, pre-screened alumni and certified practitioners.
                         </p>
                     </div>
                 </div>
@@ -758,7 +758,7 @@
                         {{ \App\Models\Setting::getVal('landing_blog_title', 'Knowledge Hub & Publications') }}
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
-                        {{ \App\Models\Setting::getVal('landing_blog_subtitle', 'Thought leadership, customs directives, tax reforms, and supply chain insights by CAB Academy Distinguished Faculty.') }}
+                        {{ \App\Models\Setting::getVal('landing_blog_subtitle', 'Thought leadership, customs directives, tax reforms, and supply chain insights by ACS Academy Distinguished Faculty.') }}
                     </p>
                 </div>
                 <a href="{{ \App\Models\Setting::getVal('landing_blog_btn_url', route('blog.index')) }}" class="text-xs sm:text-sm font-bold text-[#c30102] hover:text-[#041536] transition-colors inline-flex items-center gap-1.5 group shrink-0">

@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 
-        <title>{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
+        <title>{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}</title>
         <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
 
         <!-- Fonts -->

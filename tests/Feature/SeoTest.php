@@ -125,7 +125,7 @@ class SeoTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('index, follow', false);
         $response->assertSee('"@type": "EducationalOrganization"', false);
-        $response->assertSee('"name": "CAB Academy"', false);
+        $response->assertSee('"name": "ACS Academy"', false);
         $response->assertSee('<link rel="canonical"', false);
     }
 

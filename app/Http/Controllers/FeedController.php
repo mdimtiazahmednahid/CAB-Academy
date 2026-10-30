@@ -76,7 +76,7 @@ class FeedController extends Controller
 
         if ($user) {
             $authorTitle = match ($user->role) {
-                'admin' => 'CAB Academy Director',
+                'admin' => \App\Models\Setting::getVal('site_name', 'ACS Academy') . ' Director',
                 'instructor' => 'Distinguished Faculty',
                 default => 'Student Member',
             };

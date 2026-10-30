@@ -100,7 +100,7 @@ class AccountingController extends Controller
         $allPaymentMethods = PaymentMethod::where('is_active', true)->get();
 
         // Accounting & Invoice Template Settings (fallback to global site_name)
-        $siteName = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+        $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
         $templateSettings = [
             'accounting_institution_name' => \App\Models\Setting::getVal('accounting_institution_name', ''),
             'effective_institution_name' => \App\Models\Setting::getVal('accounting_institution_name') ?: $siteName,

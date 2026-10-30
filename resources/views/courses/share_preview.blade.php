@@ -1,8 +1,8 @@
 @php
-    $siteName = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
     $siteLogo = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png');
     $siteLogoUrl = (str_starts_with($siteLogo, 'http://') || str_starts_with($siteLogo, 'https://')) ? $siteLogo : url($siteLogo);
-    $cleanDesc = \Illuminate\Support\Str::limit(strip_tags($course->short_description ?: $course->description ?: 'Enroll in ' . $course->title . ' at CAB Academy Dhaka. Executive certification, practical industry training, and career advancement.'), 220);
+    $cleanDesc = \Illuminate\Support\Str::limit(strip_tags($course->short_description ?: $course->description ?: 'Enroll in ' . $course->title . ' at ' . $siteName . '. Executive certification, practical industry training, and career advancement.'), 220);
     $imageUrl = $course->og_image_url;
     while (str_contains($imageUrl, '&amp;')) {
         $imageUrl = html_entity_decode($imageUrl, ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -21,6 +21,10 @@
     $instName = $course->instructor_name;
     $instAvatar = $course->instructor_avatar_url;
     $instTitle = $course->instructor_title;
+    $counselorPhone = $course->effective_counselor_phone;
+    $counselorTel = $course->effective_counselor_tel;
+    $contactAddress = \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka');
+    $attendanceLabel = $course->isOnlineOnly() ? 'Online Live (Zoom)' : ($course->isCampusOnly() ? 'Executive Campus' : 'Live Zoom + Campus');
 @endphp
 <!DOCTYPE html>
 <html lang="en" prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb#">
@@ -68,13 +72,19 @@
         }
     </style>
 </head>
-<body class="bg-[#020b18] text-white min-h-screen flex flex-col justify-between antialiased selection:bg-[#c30102] selection:text-white">
+<body class="bg-[#020b18] text-white min-h-screen flex flex-col justify-between antialiased selection:bg-[#c30102] selection:text-white relative overflow-x-hidden">
+    <!-- Ambient Liquid Glass Glow Orbs -->
+    <div class="pointer-events-none fixed inset-0 overflow-hidden z-0">
+        <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blue-600/20 blur-[120px]"></div>
+        <div class="absolute top-1/3 -right-32 w-96 h-96 rounded-full bg-[#c30102]/15 blur-[130px]"></div>
+        <div class="absolute -bottom-32 left-1/3 w-96 h-96 rounded-full bg-emerald-500/10 blur-[120px]"></div>
+    </div>
 
     <!-- 1. Top Brand & Counseling Bar -->
-    <header class="w-full bg-[#051c45]/90 backdrop-blur-md border-b border-white/10 sticky top-0 z-40">
+    <header class="w-full liquid-glass-dark border-b border-white/15 sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
             <a href="{{ url('/') }}" class="flex items-center gap-3 group">
-                <img src="{{ $siteLogoUrl }}" alt="{{ $siteName }}" class="h-8 sm:h-9 w-auto object-contain" onerror="this.onerror=null; this.src='{{ asset('images/logo.png') }}';">
+                <img src="{{ $siteLogoUrl }}" alt="{{ $siteName }}" class="h-8 sm:h-9 w-auto object-contain rounded-lg" onerror="this.onerror=null; this.src='{{ asset('images/logo.png') }}';">
                 <div class="hidden sm:block">
                     <span class="text-sm font-extrabold text-white tracking-wide block leading-none">{{ $siteName }}</span>
                     <span class="text-[10px] text-slate-300 font-medium tracking-wider uppercase">Executive Professional Certification</span>
@@ -87,18 +97,18 @@
                     href="{{ $course->counselor_whatsapp_url }}" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#25D366]/15 text-[#25D366] hover:bg-[#25D366] hover:text-white border border-[#25D366]/30 text-xs font-bold transition-all shadow-sm"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#25D366]/20 text-[#25D366] hover:bg-[#25D366] hover:text-white border border-[#25D366]/40 text-xs font-bold transition-all shadow-sm backdrop-blur-md"
                 >
                     <i class="fab fa-whatsapp text-sm"></i>
                     <span class="hidden md:inline">WhatsApp Counselor</span>
                     <span class="md:hidden">WhatsApp</span>
                 </a>
                 <a 
-                    href="tel:01917054664" 
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold transition-all"
+                    href="tel:{{ $counselorTel }}" 
+                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all backdrop-blur-md"
                 >
                     <i class="fas fa-phone-alt text-[10px] text-amber-300"></i>
-                    <span class="hidden sm:inline">01917054664</span>
+                    <span class="hidden sm:inline">{{ $counselorPhone }}</span>
                     <span class="sm:hidden">Call</span>
                 </a>
             </div>
@@ -106,59 +116,48 @@
     </header>
 
     <!-- 2. Main Executive Course Showcase Banner -->
-    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-center">
+    <main class="relative z-10 flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex flex-col justify-center">
         
-        <div class="bg-gradient-to-b from-[#051c45] via-[#072152] to-[#041536] rounded-3xl border border-white/15 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] overflow-hidden">
+        <div class="liquid-glass-dark rounded-3xl border border-white/20 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.75)] overflow-hidden">
             
-            <!-- Clickable Course Thumbnail Banner (Large 16:9 Screen Format) -->
-            <div class="relative w-full aspect-[16/9] sm:aspect-[21/9] bg-slate-900 overflow-hidden group/thumb">
+            <!-- Top Liquid Glass Meta Ribbon (Unobstructed Poster View Below) -->
+            <div class="px-4 sm:px-6 py-3 bg-white/[0.04] border-b border-white/10 flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[11px] font-black uppercase tracking-wider shadow-xs">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#c30102] inline-block mr-1.5"></span>
+                        {{ $course->category ?? 'Professional Training' }}
+                    </span>
+                    <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[11px] font-black uppercase tracking-wider backdrop-blur-md flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span>{{ $attendanceLabel }}</span>
+                    </span>
+                    @if(!empty($course->batch) && $course->show_batch)
+                        <span class="px-3 py-1 rounded-full bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white text-[11px] font-black uppercase tracking-wider shadow-sm border border-white/20">
+                            {{ $course->batch }}
+                        </span>
+                    @endif
+                </div>
+                <div class="px-3.5 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md flex items-center gap-2">
+                    <span class="text-[10px] text-slate-300 font-bold uppercase">Tuition:</span>
+                    <span class="font-black text-xs sm:text-sm text-emerald-300 tracking-tight">
+                        {{ $course->price > 0 ? '৳' . number_format($course->price, 0) : 'Free Access' }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Clickable Course Thumbnail Banner (True Uncropped 16:9 Format) -->
+            <div class="relative w-full aspect-[16/9] bg-slate-950 overflow-hidden group/thumb">
                 <a href="{{ $enrollUrl }}" title="Click to Enroll in {{ $course->title }}" class="block w-full h-full relative cursor-pointer">
                     <img 
                         src="{{ $imageUrl }}" 
                         alt="{{ $course->title }}" 
-                        class="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-700 ease-out"
+                        class="w-full h-full object-cover object-center group-hover/thumb:scale-[1.02] transition-transform duration-700 ease-out"
                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&h=630&q=85';"
                     >
 
-                    <!-- Gradient Scrim Vignette -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#041536] via-[#041536]/30 to-black/30 pointer-events-none transition-opacity duration-300"></div>
-
-                    <!-- Floating Badges: Top-Left Category & Top-Right Batch -->
-                    <div class="absolute top-3 sm:top-4 left-3 sm:left-4 z-20 flex items-center gap-2 flex-wrap">
-                        <span class="px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-white text-[11px] font-black uppercase tracking-wider shadow">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#c30102] inline-block mr-1.5"></span>
-                            {{ $course->category ?? 'Professional Training' }}
-                        </span>
-                        <span class="px-3 py-1 rounded-full bg-emerald-500/90 text-white text-[11px] font-black uppercase tracking-wider shadow backdrop-blur-md flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                            <span>Live Zoom + Campus</span>
-                        </span>
-                    </div>
-
-                    @if(!empty($course->batch) && $course->show_batch)
-                        <div class="absolute top-3 sm:top-4 right-3 sm:right-4 z-20">
-                            <span class="px-3 py-1 rounded-full bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white text-[11px] font-black uppercase tracking-wider shadow-lg border border-white/20 backdrop-blur-md">
-                                {{ $course->batch }}
-                            </span>
-                        </div>
-                    @endif
-
-                    <!-- Bottom Price Shield over Thumbnail -->
-                    <div class="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 z-20">
-                        <div class="bg-gradient-to-r from-[#020b18]/95 via-[#041536]/90 to-[#072152]/85 backdrop-blur-md border border-white/20 px-3.5 py-1.5 rounded-xl shadow-lg flex items-center gap-2">
-                            <span class="text-[10px] text-slate-300 font-bold uppercase">Price TK:</span>
-                            <span class="font-black text-sm sm:text-base text-white tracking-tight">
-                                {{ $course->price > 0 ? '৳' . number_format($course->price, 2) : 'Free Access' }}
-                            </span>
-                            @if($course->price > 0)
-                                <span class="text-[10px] text-slate-400 line-through hidden sm:inline">৳{{ number_format($course->price * 1.25, 0) }}</span>
-                            @endif
-                        </div>
-                    </div>
-
                     <!-- Center Hover Action Pill Overlay -->
                     <div class="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
-                        <span class="px-5 py-2.5 rounded-full bg-[#c30102] text-white font-extrabold text-xs sm:text-sm shadow-2xl flex items-center gap-2 transform group-hover/thumb:scale-105 transition-transform duration-200">
+                        <span class="px-5 py-2.5 rounded-full bg-[#c30102] text-white font-extrabold text-xs sm:text-sm shadow-2xl flex items-center gap-2 transform group-hover/thumb:scale-105 transition-transform duration-200 border border-white/20">
                             <i class="fas fa-bolt text-amber-300"></i>
                             <span>Click Thumbnail to Express Enroll (30 Sec)</span>
                             <i class="fas fa-arrow-right text-xs"></i>
@@ -285,11 +284,11 @@
 
                         <!-- 4. Direct Call Hotline -->
                         <a 
-                            href="tel:01917054664" 
+                            href="tel:{{ $counselorTel }}" 
                             class="py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs border border-white/15 flex items-center justify-center gap-1.5 transition-all active:scale-95 text-center"
                         >
                             <i class="fas fa-phone text-amber-300 text-[11px]"></i>
-                            <span>Call Hotline</span>
+                            <span>{{ $counselorPhone }}</span>
                         </a>
 
                         <!-- 5. Copy Short Link -->
@@ -338,13 +337,13 @@
     </main>
 
     <!-- 4. Minimalist Trust Footer -->
-    <footer class="w-full border-t border-white/10 py-4 text-center text-xs text-slate-400">
+    <footer class="relative z-10 w-full border-t border-white/10 py-4 text-center text-xs text-slate-400">
         <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span>&copy; {{ date('Y') }} {{ $siteName }}. All rights reserved. Mirpur-Pallabi, Dhaka.</span>
+            <span>&copy; {{ date('Y') }} {{ $siteName }}. All rights reserved. {{ $contactAddress }}</span>
             <div class="flex items-center gap-4 text-slate-300">
                 <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
                 <a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Courses</a>
-                <a href="tel:01917054664" class="hover:text-white transition-colors">Hotline: 01917054664</a>
+                <a href="tel:{{ $counselorTel }}" class="hover:text-white transition-colors">Hotline: {{ $counselorPhone }}</a>
             </div>
         </div>
     </footer>

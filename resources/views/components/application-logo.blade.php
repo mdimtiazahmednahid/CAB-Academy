@@ -2,4 +2,4 @@
     $logo = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png');
 @endphp
 
-<img src="{{ $logo }}" alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';" {{ $attributes }}>
+<img src="{{ $logo }}" alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';" {{ $attributes }}>

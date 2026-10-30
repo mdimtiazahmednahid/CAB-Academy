@@ -1,4 +1,19 @@
 <!-- Express Course Enrollment Drawer (30-Second Rapid Conversion Engine - Liquid Glass Edition) -->
+@php
+    $drawerMerchantAccount = '01917-054664';
+    try {
+        $activeMethodAccount = \App\Models\PaymentMethod::where('is_active', true)->orderBy('id')->value('account_number');
+        $drawerMerchantAccount = $activeMethodAccount ?: \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+    } catch (\Throwable $e) {
+        $drawerMerchantAccount = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+    }
+    $drawerMerchantDigits = preg_replace('/[^0-9]/', '', (string) $drawerMerchantAccount) ?: '01917054664';
+    $rawDrawerWa = \App\Models\Setting::getVal('contact_whatsapp', \App\Models\Setting::getVal('contact_hotline', '8801917054664'));
+    $drawerWaDigits = preg_replace('/[^0-9]/', '', (string) $rawDrawerWa) ?: '8801917054664';
+    if (strlen($drawerWaDigits) === 11 && str_starts_with($drawerWaDigits, '01')) {
+        $drawerWaDigits = '88' . $drawerWaDigits;
+    }
+@endphp
 <script>
 (function() {
     function initDrawer() {
@@ -16,6 +31,7 @@
             courseRawPrice: 0,
             courseBatch: '',
             courseVenue: 'Online Live (Zoom)',
+            courseWhatsapp: '{{ $drawerWaDigits }}',
             attendanceMode: 'online', // 'online' | 'in_person' | 'hybrid'
             isOnlineOnly: true,
             isCampusOnly: false,
@@ -58,6 +74,7 @@
                 this.courseRawPrice = data.rawPrice || 0;
                 this.courseBatch = data.batch || '';
                 this.courseVenue = data.venue || 'Online Live (Zoom)';
+                this.courseWhatsapp = data.whatsapp || '{{ $drawerWaDigits }}';
 
                 // Determine whether course is Online-Only, Campus-Only, or Hybrid
                 this.attendanceMode = this.resolveAttendanceMode(this.courseVenue, data.attendanceMode);
@@ -100,6 +117,29 @@
                 this.isOpen = true;
                 document.body.style.overflow = 'hidden';
             },
+            fieldLabel(name, fallback) {
+                const f = this.fields.find(x => x.name === name);
+                return (f && f.label) ? f.label : fallback;
+            },
+            fieldPlaceholder(name, fallback) {
+                const f = this.fields.find(x => x.name === name);
+                return (f && f.placeholder) ? f.placeholder : fallback;
+            },
+            isTrainingModeEnabled() {
+                const f = this.fields.find(x => x.name === 'training_mode');
+                return f ? f.is_enabled !== false : true;
+            },
+            fieldOptions(field) {
+                if (!field || !field.options) return [];
+                if (Array.isArray(field.options)) return field.options;
+                if (typeof field.options === 'string') {
+                    return field.options.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+                }
+                if (typeof field.options === 'object') {
+                    return Object.values(field.options);
+                }
+                return [];
+            },
             selectTrainingMode(mode) {
                 if (mode === 'in_person' && this.isOnlineOnly) {
                     return;
@@ -114,7 +154,7 @@
                 document.body.style.overflow = 'auto';
             },
             copyBkash() {
-                navigator.clipboard.writeText('01917054664');
+                navigator.clipboard.writeText('{{ $drawerMerchantDigits }}');
                 this.copied = true;
                 setTimeout(() => this.copied = false, 2500);
             },
@@ -129,7 +169,7 @@
                 let candidatePhone = this.phone || (this.isLoggedIn ? this.senderNumber : '');
                 const cleanPhone = (candidatePhone || '').replace(/[^0-9]/g, '');
                 if (!cleanPhone || !/^01[3-9]\d{8}$/.test(cleanPhone)) {
-                    this.errorMessage = 'Please enter a valid 11-digit mobile number (e.g., 01917054664).';
+                    this.errorMessage = 'Please enter a valid 11-digit mobile number (e.g., 017xxxxxxxx).';
                     return;
                 }
 
@@ -440,7 +480,7 @@
                                             type="tel" 
                                             x-model="phone"
                                             @input="if (!senderNumber || senderNumber.length < 11) senderNumber = phone"
-                                            placeholder="01917054664" 
+                                            placeholder="017xxxxxxxx" 
                                             class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
                                             required
                                         >
@@ -455,7 +495,7 @@
                         <div class="space-y-3.5">
                             <!-- Full Name -->
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Full Name <span class="text-[#c30102]">*</span></label>
+                                <label class="block text-xs font-bold text-slate-700 mb-1"><span x-text="fieldLabel('name', 'Full Name')">Full Name</span> <span class="text-[#c30102]">*</span></label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
                                         <i class="far fa-user text-xs"></i>
@@ -463,6 +503,7 @@
                                     <input 
                                         type="text" 
                                         x-model="name"
+                                        :placeholder="fieldPlaceholder('name', 'e.g. Tanvir Ahmed')"
                                         placeholder="e.g. Tanvir Ahmed" 
                                         class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
                                         required
@@ -473,7 +514,7 @@
                             <!-- Mobile & Email Grid -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div :class="isEmailEnabled ? '' : 'sm:col-span-2'">
-                                    <label class="block text-xs font-bold text-slate-700 mb-1">Mobile (11 Digits) <span class="text-[#c30102]">*</span></label>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1"><span x-text="fieldLabel('phone', 'Mobile (11 Digits)')">Mobile (11 Digits)</span> <span class="text-[#c30102]">*</span></label>
                                     <div class="relative">
                                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
                                             <i class="fas fa-mobile-alt text-xs"></i>
@@ -482,7 +523,8 @@
                                             type="tel" 
                                             x-model="phone"
                                             @input="if (!senderNumber || senderNumber.length < 11) senderNumber = phone"
-                                            placeholder="01917054664" 
+                                            :placeholder="fieldPlaceholder('phone', '017xxxxxxxx')"
+                                            placeholder="017xxxxxxxx" 
                                             class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
                                             required
                                         >
@@ -491,7 +533,7 @@
                                 <template x-if="isEmailEnabled">
                                     <div>
                                         <label class="block text-xs font-bold text-slate-700 mb-1">
-                                            <span>Email Address</span>
+                                            <span x-text="fieldLabel('email', 'Email Address')">Email Address</span>
                                             <span x-show="isEmailRequired" class="text-[#c30102] font-bold">*</span>
                                             <span x-show="!isEmailRequired" class="text-slate-400 font-normal text-[10px]">(Optional)</span>
                                         </label>
@@ -502,6 +544,7 @@
                                             <input 
                                                 type="email" 
                                                 x-model="email"
+                                                :placeholder="fieldPlaceholder('email', 'name@company.com')"
                                                 placeholder="name@company.com" 
                                                 class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
                                                 :required="isEmailRequired"
@@ -547,34 +590,78 @@
                     <!-- Dynamic Custom Fields Configured for this Course -->
                     <template x-for="field in fields.filter(f => !['name', 'phone', 'email', 'training_mode'].includes(f.name) && (f.is_enabled !== false))" :key="field.name">
                         <div class="pt-0.5">
-                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">
                                 <span x-text="field.label || field.name"></span>
                                 <span x-show="field.is_required" class="text-[#c30102] font-bold">*</span>
                                 <span x-show="!field.is_required" class="text-slate-400 font-normal text-[10px]">(Optional)</span>
                             </label>
+
+                            <!-- Multi-line Textarea -->
                             <template x-if="field.type === 'textarea'">
                                 <textarea 
                                     x-model="customFields[field.name]"
                                     :placeholder="field.placeholder || ''"
                                     rows="2"
-                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none"
+                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
                                 ></textarea>
                             </template>
-                            <template x-if="field.type !== 'textarea'">
+
+                            <!-- Dropdown Select -->
+                            <template x-if="field.type === 'select'">
+                                <select
+                                    x-model="customFields[field.name]"
+                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
+                                >
+                                    <option value="" x-text="field.placeholder || ('Select ' + (field.label || field.name))"></option>
+                                    <template x-for="opt in fieldOptions(field)" :key="opt">
+                                        <option :value="opt" x-text="opt"></option>
+                                    </template>
+                                </select>
+                            </template>
+
+                            <!-- 1-Tap Choice Pills (Radio) -->
+                            <template x-if="field.type === 'radio'">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <template x-for="opt in fieldOptions(field)" :key="opt">
+                                        <button
+                                            type="button"
+                                            @click="customFields[field.name] = opt"
+                                            class="px-3 py-2 rounded-xl border text-left text-[11px] font-bold transition-all flex items-center justify-between gap-1.5 cursor-pointer"
+                                            :class="customFields[field.name] === opt
+                                                ? 'border-[#051c45] bg-[#051c45] text-white shadow-xs'
+                                                : 'border-slate-200 bg-[#f8fafc] hover:bg-white hover:border-slate-300 text-slate-700'"
+                                        >
+                                            <span class="truncate" x-text="opt"></span>
+                                            <i class="fas fa-check-circle text-[10px] shrink-0" :class="customFields[field.name] === opt ? 'text-[#10b981]' : 'text-transparent'"></i>
+                                        </button>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- Checkbox Toggle -->
+                            <template x-if="field.type === 'checkbox'">
+                                <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 bg-[#f8fafc] hover:bg-white cursor-pointer transition-all">
+                                    <input type="checkbox" x-model="customFields[field.name]" true-value="Yes" false-value="" class="rounded border-slate-300 text-[#051c45] focus:ring-[#051c45]">
+                                    <span class="text-xs font-medium text-slate-700" x-text="field.placeholder || field.label"></span>
+                                </label>
+                            </template>
+
+                            <!-- Standard Input (text, tel, email, number, date, url) -->
+                            <template x-if="!['textarea', 'select', 'radio', 'checkbox'].includes(field.type)">
                                 <input 
                                     :type="field.type || 'text'" 
                                     x-model="customFields[field.name]"
                                     :placeholder="field.placeholder || ''"
-                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none"
+                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
                                 >
                             </template>
                         </div>
                     </template>
 
                     <!-- Upgraded Preferred Attendance Mode Selector (Auto-disables Executive Campus when Course is Online) -->
-                    <div class="pt-1">
+                    <div class="pt-1" x-show="isTrainingModeEnabled()">
                         <div class="flex items-center justify-between mb-1.5">
-                            <label class="block text-xs font-bold text-slate-700">Preferred Attendance Mode</label>
+                            <label class="block text-xs font-bold text-slate-700" x-text="fieldLabel('training_mode', 'Preferred Attendance Mode')">Preferred Attendance Mode</label>
                             <template x-if="isOnlineOnly">
                                 <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full flex items-center gap-1">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -686,7 +773,7 @@
                                     </button>
                                 </div>
                                 <div class="text-xs font-mono font-bold text-slate-800 bg-white px-3 py-2 rounded-xl border border-pink-100 flex items-center justify-between">
-                                    <span>Account Number: <strong class="text-[#051c45]">01917-054664</strong></span>
+                                    <span>Account Number: <strong class="text-[#051c45]">{{ $drawerMerchantAccount }}</strong></span>
                                     <span class="text-[10px] text-[#e2136e] font-sans font-bold">Instant Verify</span>
                                 </div>
                             </div>
@@ -726,7 +813,7 @@
                 <!-- WhatsApp Alternative 1-Tap Link -->
                 <div class="pt-1 text-center">
                     <a 
-                        :href="'https://wa.me/8801917054664?text=' + encodeURIComponent('Hello, I want to reserve my seat for: ' + courseTitle + (courseBatch ? ' (' + courseBatch + ')' : '') + '. My name is: ' + name)"
+                        :href="'https://wa.me/' + courseWhatsapp + '?text=' + encodeURIComponent('Assalamu Alaikum! I would like to inquire/enroll in *' + courseTitle + '* (Fee: ৳' + courseRawPrice + '). Please share batch details and enrollment procedure: ' + window.location.origin + '/c/' + courseId)"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 text-xs font-bold text-emerald-700 transition-colors"

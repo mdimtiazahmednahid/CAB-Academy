@@ -135,342 +135,547 @@
     </button>
 </div>
 
-<!-- Dynamic Course Registration & Enrollment Form Builder -->
+<!-- Dynamic Course Registration & Enrollment Form Builder Studio -->
 <div id="formBuilderCard" 
      x-show="wsTab === 'all' || wsTab === 'form'"
      x-data="courseFormBuilder({
         initialFields: @json($course->effective_enrollment_fields),
-        templates: @json(\App\Models\Course::getBuiltinTemplates())
+        templates: @json(\App\Models\Course::getBuiltinTemplates()),
+        quickQuestions: @json(\App\Models\Course::getQuickAddQuestions()),
+        isOnlineOnly: {{ $course->isOnlineOnly() ? 'true' : 'false' }},
+        isCampusOnly: {{ $course->isCampusOnly() ? 'true' : 'false' }}
      })" 
-     class="mb-8 bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+     class="mb-8 bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
      
-    <!-- Card Header -->
-    <div class="p-5 sm:p-6 bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <div class="flex items-center gap-2.5 flex-wrap">
-                <span class="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 text-[10px] font-black uppercase tracking-wider">
-                    Dynamic Enrollment Engine
+    <!-- Studio Header -->
+    <div class="p-5 sm:p-6 bg-gradient-to-r from-[#020b18] via-[#051c45] to-[#0a2540] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative overflow-hidden">
+        <div class="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-indigo-500/15 blur-3xl"></div>
+        <div class="relative z-10">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fas fa-bolt text-amber-400"></i>
+                    <span>Dynamic Enrollment Engine</span>
                 </span>
-                <span class="text-xs text-slate-300 font-medium" x-text="activeFieldsCount + ' Active Fields'"></span>
+                <span class="px-2.5 py-0.5 rounded-full bg-white/10 text-white border border-white/15 text-[10px] font-bold" x-text="activeFieldsCount + ' Active Questions (' + requiredFieldsCount + ' Mandatory)'"></span>
                 <template x-if="isEmailEnabled">
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold" :class="isEmailRequired ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30' : 'bg-amber-500/20 text-amber-300 border border-amber-400/30'" x-text="isEmailRequired ? 'Email: Required (*)' : 'Email: Optional'"></span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold" :class="isEmailRequired ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30' : 'bg-amber-500/20 text-amber-300 border border-amber-400/30'" x-text="isEmailRequired ? '✉ Email: Required (*)' : '✉ Email: Optional'"></span>
                 </template>
                 <template x-if="!isEmailEnabled">
-                    <span class="px-2.5 py-0.5 rounded bg-rose-500/25 text-rose-300 border border-rose-400/40 text-[10px] font-bold flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                        <span>Email: Not Required / Disabled</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-rose-500/25 text-rose-300 border border-rose-400/40 text-[10px] font-bold flex items-center gap-1">
+                        <i class="fas fa-ban text-[9px]"></i>
+                        <span>Email: Disabled (Phone-Only Mode)</span>
                     </span>
                 </template>
             </div>
-            <h2 class="text-lg sm:text-xl font-bold mt-1.5 tracking-tight text-white flex items-center gap-2">
-                <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                <span>Per-Course Registration Form Builder</span>
+            <h2 class="text-lg sm:text-xl font-black mt-2 tracking-tight text-white flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-xl bg-white/10 border border-white/15 inline-flex items-center justify-center text-indigo-300 text-sm">
+                    <i class="fas fa-sliders-h"></i>
+                </span>
+                <span>Per-Course Registration Form Studio</span>
             </h2>
             <p class="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                Configure which fields students must fill when registering for this course. Switch between 1-click basic templates (such as Name + Phone only without email, or Executive with Company and Role) or customize individual questions.
+                Switch between 6 instant conversion templates, add smart 1-click question blocks (dropdowns, choice pills, company/role, expectations), and test the live student checkout drawer side-by-side.
             </p>
         </div>
-        <div class="flex items-center gap-2.5 shrink-0">
-            <button type="button" @click="activeTab = (activeTab === 'preview' ? 'editor' : 'preview')" class="px-3.5 py-2 rounded-xl text-xs font-bold border border-white/20 bg-white/10 hover:bg-white/20 text-white transition-all flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                <span x-text="activeTab === 'preview' ? 'Back to Field Editor' : 'Live Student Preview'"></span>
+
+        <div class="relative z-10 flex items-center gap-2.5 flex-wrap shrink-0">
+            <a href="{{ route('admin.courses.export_registrations', $course) }}" class="px-3.5 py-2 rounded-xl text-xs font-bold border border-white/20 bg-white/10 hover:bg-white/20 text-white transition-all flex items-center gap-1.5" title="Download all student registrations & custom question answers as CSV">
+                <i class="fas fa-file-csv text-emerald-400"></i>
+                <span>Export Responses CSV</span>
+            </a>
+
+            <button type="button" @click="isCollapsed = !isCollapsed" class="px-3.5 py-2 rounded-xl text-xs font-bold border border-white/20 bg-white/10 hover:bg-white/20 text-white transition-all flex items-center gap-1.5 cursor-pointer">
+                <i class="fas" :class="isCollapsed ? 'fa-expand-alt' : 'fa-compress-alt'"></i>
+                <span x-text="isCollapsed ? 'Expand Studio' : 'Compact View'"></span>
             </button>
-            <button type="button" @click="saveForm()" :disabled="isSaving" class="px-4 py-2 bg-[#c30102] hover:bg-[#a50102] disabled:opacity-50 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-md flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+
+            <button type="button" @click="saveForm(false)" :disabled="isSaving" class="px-4 py-2.5 bg-gradient-to-r from-[#c30102] to-[#a50102] hover:from-[#a50102] hover:to-[#8b0001] disabled:opacity-50 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg flex items-center gap-1.5 cursor-pointer">
+                <i class="fas" :class="isSaving ? 'fa-spinner fa-spin' : 'fa-check-circle'"></i>
                 <span x-text="isSaving ? 'Saving...' : 'Save Form Setup'"></span>
             </button>
         </div>
     </div>
 
     <!-- Alert / Toast Messages -->
-    <div x-show="saveMessage" x-transition class="p-3.5 bg-emerald-50 border-b border-emerald-200 text-xs text-emerald-800 font-bold flex items-center gap-2" style="display: none;">
-        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        <span x-text="saveMessage"></span>
-    </div>
-    <div x-show="saveError" x-transition class="p-3.5 bg-rose-50 border-b border-rose-200 text-xs text-rose-800 font-bold flex items-center gap-2" style="display: none;">
-        <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <span x-text="saveError"></span>
-    </div>
-
-    <!-- 1-Click Basic Templates Selector Bar -->
-    <div class="p-4 sm:p-5 bg-slate-50/90 border-b border-gray-100">
-        <div class="text-[11px] font-black uppercase tracking-wider text-slate-600 mb-2.5 flex items-center justify-between">
-            <span class="flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                <span>Choose 1-Click Basic Template</span>
-            </span>
-            <span class="text-[10px] text-gray-400 font-normal">Clicking a template populates the form below instantly</span>
+    <div x-show="saveMessage" x-transition class="p-3.5 bg-emerald-50 border-b border-emerald-200 text-xs text-emerald-800 font-bold flex items-center justify-between gap-2" style="display: none;">
+        <div class="flex items-center gap-2">
+            <i class="fas fa-check-circle text-emerald-600 text-sm"></i>
+            <span x-text="saveMessage"></span>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <template x-for="(tpl, key) in templates" :key="key">
-                <button type="button" 
-                        @click="applyTemplate(key)"
-                        class="text-left p-3.5 rounded-xl border transition-all relative group flex flex-col justify-between"
-                        :class="currentTemplateKey === key ? 'border-indigo-600 bg-indigo-50/60 shadow-xs ring-2 ring-indigo-500/20' : 'border-gray-200 bg-white hover:border-indigo-300 hover:bg-slate-50/60'">
-                    <div>
-                        <div class="flex items-center justify-between gap-1 mb-1">
-                            <span class="text-xs font-bold text-gray-900 group-hover:text-indigo-600 transition-colors" x-text="tpl.name"></span>
-                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded uppercase" 
-                                  :class="tpl.key === 'quick_lead' ? 'bg-amber-100 text-amber-800' : (tpl.key === 'corporate' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800')"
-                                  x-text="tpl.badge || 'Preset'"></span>
-                        </div>
-                        <p class="text-[11px] text-gray-500 leading-tight" x-text="tpl.description"></p>
-                    </div>
-                    <div class="mt-2.5 pt-2 border-t border-gray-100 flex items-center justify-between text-[10px]">
-                        <span class="text-indigo-600 font-bold flex items-center gap-1">
-                            <span>Use Template</span>
-                            <svg class="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </span>
-                        <template x-if="tpl.key === 'quick_lead'">
-                            <span class="text-amber-700 font-black uppercase text-[9px] bg-amber-50 px-1 rounded border border-amber-200/50">Email Off</span>
-                        </template>
-                        <template x-if="tpl.key !== 'quick_lead'">
-                            <span class="text-emerald-700 font-black uppercase text-[9px] bg-emerald-50 px-1 rounded border border-emerald-200/50">Email Req.</span>
-                        </template>
-                    </div>
-                </button>
-            </template>
+        <button type="button" @click="saveMessage = ''" class="text-emerald-600 hover:text-emerald-900 text-xs font-black">&times;</button>
+    </div>
+    <div x-show="saveError" x-transition class="p-3.5 bg-rose-50 border-b border-rose-200 text-xs text-rose-800 font-bold flex items-center justify-between gap-2" style="display: none;">
+        <div class="flex items-center gap-2">
+            <i class="fas fa-exclamation-circle text-rose-600 text-sm"></i>
+            <span x-text="saveError"></span>
         </div>
+        <button type="button" @click="saveError = ''" class="text-rose-600 hover:text-rose-900 text-xs font-black">&times;</button>
     </div>
 
-    <!-- TAB 1: FIELD EDITOR -->
-    <div x-show="activeTab === 'editor'" class="p-5 sm:p-6 space-y-6">
-        <!-- Interactive Fields Table -->
-        <div class="overflow-x-auto rounded-xl border border-gray-200">
-            <table class="w-full text-left border-collapse text-xs">
-                <thead class="bg-gray-50 text-gray-600 font-bold uppercase tracking-wider text-[11px] border-b border-gray-200">
-                    <tr>
-                        <th class="px-4 py-3 w-14 text-center">Order</th>
-                        <th class="px-4 py-3">Field Key</th>
-                        <th class="px-4 py-3">Display Label</th>
-                        <th class="px-4 py-3">Input Type</th>
-                        <th class="px-4 py-3 text-center">Required Status</th>
-                        <th class="px-4 py-3 text-center">Field Status</th>
-                        <th class="px-4 py-3 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 bg-white">
-                    <template x-for="(field, idx) in fields" :key="field.name">
-                        <tr class="hover:bg-slate-50/70 transition-colors" :class="field.is_enabled === false ? 'opacity-50 bg-slate-50/50' : ''">
-                            <!-- Reorder buttons -->
-                            <td class="px-3 py-3 text-center whitespace-nowrap">
-                                <div class="inline-flex items-center gap-1">
-                                    <button type="button" @click="moveField(idx, -1)" :disabled="idx === 0" class="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-20" title="Move Up">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                    </button>
-                                    <button type="button" @click="moveField(idx, 1)" :disabled="idx === fields.length - 1" class="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-20" title="Move Down">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </button>
-                                </div>
-                            </td>
-
-                            <!-- Field Key identifier -->
-                            <td class="px-4 py-3 font-mono font-bold text-gray-800">
-                                <div class="flex items-center gap-1.5">
-                                    <span x-text="field.name"></span>
-                                    <template x-if="['name', 'phone'].includes(field.name)">
-                                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[9px] font-sans font-bold">System Core</span>
-                                    </template>
-                                    <template x-if="field.name === 'email'">
-                                        <span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[9px] font-sans font-bold">Core Channel</span>
-                                    </template>
-                                </div>
-                            </td>
-
-                            <!-- Display Label (Inline Editable) -->
-                            <td class="px-4 py-3">
-                                <input type="text" 
-                                       x-model="field.label" 
-                                       placeholder="Label shown to student"
-                                       class="w-full rounded-lg border-gray-300 text-xs py-1.5 px-2.5 focus:border-indigo-500 focus:ring-indigo-500">
-                            </td>
-
-                            <!-- Input Type -->
-                            <td class="px-4 py-3">
-                                <select x-model="field.type" 
-                                        :disabled="['name', 'phone', 'email', 'training_mode'].includes(field.name)"
-                                        class="rounded-lg border-gray-300 text-xs py-1.5 pl-2.5 pr-7 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-500">
-                                    <option value="text">Text Input</option>
-                                    <option value="email">Email</option>
-                                    <option value="tel">Telephone / Mobile</option>
-                                    <option value="textarea">Textarea (Multi-line)</option>
-                                    <option value="select">Dropdown Select</option>
-                                    <option value="number">Number</option>
-                                </select>
-                            </td>
-
-                            <!-- Required Toggle -->
-                            <td class="px-4 py-3 text-center whitespace-nowrap">
-                                <template x-if="['name', 'phone'].includes(field.name)">
-                                    <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider">
-                                        * Mandatory
-                                    </span>
-                                </template>
-                                <template x-if="!['name', 'phone'].includes(field.name)">
-                                    <button type="button" 
-                                            @click="toggleRequired(idx)"
-                                            class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all"
-                                            :class="field.is_required ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200' : 'bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200'">
-                                        <span x-text="field.is_required ? '* Required' : 'Optional'"></span>
-                                    </button>
-                                </template>
-                            </td>
-
-                            <!-- Enabled / Visible Toggle -->
-                            <td class="px-4 py-3 text-center whitespace-nowrap">
-                                <template x-if="['name', 'phone'].includes(field.name)">
-                                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold">Always Active</span>
-                                </template>
-                                <template x-if="!['name', 'phone'].includes(field.name)">
-                                    <button type="button" 
-                                            @click="toggleEnabled(idx)"
-                                            class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all"
-                                            :class="field.is_enabled !== false ? 'bg-indigo-100 text-indigo-700 border border-indigo-200 hover:bg-indigo-200' : 'bg-rose-100 text-rose-700 border border-rose-200 hover:bg-rose-200'">
-                                        <span x-text="field.is_enabled !== false ? 'Active' : 'Disabled / Hidden'"></span>
-                                    </button>
-                                </template>
-                            </td>
-
-                            <!-- Actions -->
-                            <td class="px-4 py-3 text-right whitespace-nowrap">
-                                <template x-if="!['name', 'phone', 'email', 'training_mode'].includes(field.name)">
-                                    <button type="button" @click="removeField(idx)" class="text-rose-600 hover:text-rose-800 p-1 hover:bg-rose-50 rounded transition-colors" title="Delete custom field">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    </button>
-                                </template>
-                                <template x-if="['name', 'phone', 'email', 'training_mode'].includes(field.name)">
-                                    <span class="text-[10px] text-gray-400 italic">Locked</span>
-                                </template>
-                            </td>
-                        </tr>
-                    </template>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Add Custom Field Inline Box -->
-        <div class="p-4 bg-slate-50 rounded-xl border border-gray-200">
-            <div class="text-xs font-bold text-gray-800 mb-2 flex items-center gap-1.5">
-                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                <span>Add Custom Field to this Course</span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
-                <div class="sm:col-span-3">
-                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Field Key (variable)</label>
-                    <input type="text" x-model="newField.name" placeholder="e.g. organization, nid" class="w-full rounded-lg border-gray-300 text-xs py-1.5 px-2.5 focus:border-indigo-500 focus:ring-indigo-500">
+    <!-- Collapsible Studio Workspace -->
+    <div x-show="!isCollapsed" x-transition>
+        <!-- 1. 1-Click Conversion Templates Bar (6 Presets) -->
+        <div class="p-4 sm:p-5 bg-slate-50/90 border-b border-slate-200/80">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                <div class="text-[11px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                    <i class="fas fa-magic text-indigo-600"></i>
+                    <span>Step 1: Choose a 1-Click Registration Template (or Customize Below)</span>
                 </div>
-                <div class="sm:col-span-4">
-                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Display Label</label>
-                    <input type="text" x-model="newField.label" placeholder="e.g. Company / Institution" class="w-full rounded-lg border-gray-300 text-xs py-1.5 px-2.5 focus:border-indigo-500 focus:ring-indigo-500">
-                </div>
-                <div class="sm:col-span-2">
-                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Type</label>
-                    <select x-model="newField.type" class="w-full rounded-lg border-gray-300 text-xs py-1.5 pl-2 pr-7 focus:border-indigo-500 focus:ring-indigo-500">
-                        <option value="text">Text</option>
-                        <option value="textarea">Textarea</option>
-                        <option value="tel">Telephone</option>
-                        <option value="number">Number</option>
-                    </select>
-                </div>
-                <div class="sm:col-span-2 flex items-center pb-2">
-                    <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-gray-700">
-                        <input type="checkbox" x-model="newField.is_required" class="rounded text-indigo-600 focus:ring-indigo-500">
-                        <span>Mandatory *</span>
-                    </label>
-                </div>
-                <div class="sm:col-span-1">
-                    <button type="button" @click="addCustomField()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-colors">
-                        + Add
+                <div class="flex items-center gap-3">
+                    <button type="button" @click="toggleEmailQuick()" class="px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                            :class="isEmailEnabled ? 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100' : 'bg-amber-50 border-amber-200 text-amber-800'">
+                        <i class="fas" :class="isEmailEnabled ? 'fa-envelope-open text-emerald-600' : 'fa-envelope-slash text-amber-600'"></i>
+                        <span x-text="isEmailEnabled ? '1-Click Disable Email Field' : '1-Click Enable Email Field'"></span>
+                    </button>
+                    <button type="button" @click="saveForm(true)" :disabled="isSaving" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1" title="Apply this form setup across all courses in your catalog">
+                        <i class="fas fa-clone text-[10px]"></i>
+                        <span>Apply to All Courses</span>
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- TAB 2: LIVE STUDENT DRAWER PREVIEW -->
-    <div x-show="activeTab === 'preview'" class="p-6 bg-slate-100/70" style="display: none;">
-        <div class="max-w-md mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-            <!-- Simulated Drawer Header -->
-            <div class="p-5 bg-[#051c45] text-white">
-                <div class="flex items-center gap-2 mb-1.5">
-                    @if(!empty($course->batch) && $course->show_batch)
-                        <span class="px-2 py-0.5 rounded bg-[#c30102] text-white text-[9px] font-black uppercase">
-                            {{ $course->batch }}
-                        </span>
-                    @endif
-                    <span class="text-xs text-[#10b981] font-semibold flex items-center gap-1">
-                        <i class="fas fa-bolt text-xs"></i> 30-Second Express Enroll
-                    </span>
-                </div>
-                <h3 class="text-sm font-bold text-white leading-tight">{{ $course->title }}</h3>
-                <div class="mt-2 pt-2 border-t border-white/10 flex justify-between text-xs">
-                    <span class="text-gray-300">Investment:</span>
-                    <span class="font-bold text-white">৳{{ number_format($course->price, 2) }}</span>
-                </div>
-            </div>
-
-            <!-- Simulated Form Body -->
-            <div class="p-5 space-y-3.5 bg-white">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-[#051c45] uppercase tracking-wider">Step 1: Student Information</span>
-                    <span class="text-[10px] text-gray-400">Live Simulation</span>
-                </div>
-
-                <!-- Always Name -->
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Full Name *</label>
-                    <input type="text" disabled placeholder="e.g. Tanvir Ahmed" class="w-full bg-slate-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-500">
-                </div>
-
-                <!-- Mobile & Email Dynamic Simulation -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <div :class="isEmailEnabled ? '' : 'sm:col-span-2'">
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">Mobile (11 Digits) *</label>
-                        <input type="tel" disabled placeholder="01917054664" class="w-full bg-slate-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-500">
-                    </div>
-                    <template x-if="isEmailEnabled">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <template x-for="(tpl, key) in templates" :key="key">
+                    <div class="text-left p-3.5 rounded-2xl border transition-all relative group flex flex-col justify-between"
+                         :class="currentTemplateKey === key ? 'border-[#051c45] bg-[#051c45]/[0.04] shadow-sm ring-2 ring-[#051c45]/15' : 'border-slate-200/90 bg-white hover:border-indigo-300 hover:shadow-xs'">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-700 mb-1">
-                                <span>Email Address</span>
-                                <span x-show="isEmailRequired" class="text-red-500 font-bold">*</span>
-                                <span x-show="!isEmailRequired" class="text-gray-400 font-normal text-[10px]">(Optional)</span>
-                            </label>
-                            <input type="email" disabled placeholder="name@company.com" class="w-full bg-slate-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-500">
+                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <span class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs"
+                                          :class="currentTemplateKey === key ? 'bg-[#051c45] text-white' : 'bg-slate-100 text-slate-700 group-hover:bg-indigo-50 group-hover:text-indigo-600'">
+                                        <i class="fas" :class="tpl.icon || 'fa-layer-group'"></i>
+                                    </span>
+                                    <span class="text-xs font-extrabold text-slate-900 truncate" x-text="tpl.name"></span>
+                                </div>
+                                <span class="text-[9px] font-black px-2 py-0.5 rounded-full uppercase shrink-0" 
+                                      :class="tpl.key === 'quick_lead' ? 'bg-amber-100 text-amber-800' : (tpl.key === 'corporate' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800')"
+                                      x-text="tpl.badge || 'Preset'"></span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 leading-snug mb-2.5" x-text="tpl.description"></p>
+                            <!-- Field Pill Tags inside Preset -->
+                            <div class="flex items-center gap-1 flex-wrap mb-2">
+                                <template x-for="f in tpl.fields.filter(x => x.is_enabled !== false)" :key="f.name">
+                                    <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[9px] font-semibold border border-slate-200/70" x-text="f.label"></span>
+                                </template>
+                            </div>
                         </div>
-                    </template>
-                </div>
-
-                <!-- Dynamic Custom Fields Simulation -->
-                <template x-for="field in fields.filter(f => !['name', 'phone', 'email', 'training_mode'].includes(f.name) && (f.is_enabled !== false))" :key="field.name">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">
-                            <span x-text="field.label"></span>
-                            <span x-show="field.is_required" class="text-red-500 font-bold">*</span>
-                            <span x-show="!field.is_required" class="text-gray-400 font-normal text-[10px]">(Optional)</span>
-                        </label>
-                        <input type="text" disabled :placeholder="field.placeholder || ('Enter ' + field.label)" class="w-full bg-slate-50 border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-500">
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[10px]">
+                            <button type="button" @click="applyTemplate(key, false)" class="text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1 cursor-pointer">
+                                <span>Load Preset</span>
+                                <i class="fas fa-arrow-right text-[9px]"></i>
+                            </button>
+                            <button type="button" @click="applyTemplate(key, true)" class="px-2.5 py-1 rounded-lg bg-[#051c45] hover:bg-[#0a2540] text-white font-bold text-[10px] transition-colors cursor-pointer flex items-center gap-1">
+                                <i class="fas fa-bolt text-amber-400 text-[9px]"></i>
+                                <span>1-Click Apply & Save</span>
+                            </button>
+                        </div>
                     </div>
                 </template>
+            </div>
+        </div>
 
-                <!-- Attendance Mode Simulation -->
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Preferred Attendance Mode</label>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div class="p-2 rounded-lg border border-[#051c45] bg-[#051c45]/5 text-[#051c45] font-bold text-center">Live Online Zoom</div>
-                        <div class="p-2 rounded-lg border border-gray-200 text-gray-500 text-center">Campus In-Person</div>
+        <!-- 2. 1-Click Smart Question Bank Bar -->
+        <div class="px-5 py-3.5 bg-indigo-50/50 border-b border-indigo-100/80">
+            <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-[11px] font-black uppercase tracking-wider text-indigo-950 flex items-center gap-1.5">
+                    <i class="fas fa-plus-circle text-indigo-600"></i>
+                    <span>Step 2: 1-Click Quick-Add Smart Questions (Click any chip to add/remove)</span>
+                </span>
+                <span class="text-[10px] text-indigo-600 font-semibold hidden sm:inline">Includes pre-built Dropdowns, Choice Pills & Executive Fields</span>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+                <template x-for="q in quickQuestions" :key="q.name">
+                    <button type="button"
+                            @click="toggleQuickQuestion(q)"
+                            class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1.5 cursor-pointer border"
+                            :class="hasActiveField(q.name)
+                                ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                                : 'bg-white hover:bg-indigo-50 text-slate-700 border-slate-200/90 hover:border-indigo-300'">
+                        <i class="fas text-[10px]" :class="hasActiveField(q.name) ? 'fa-check' : (q.icon || 'fa-plus')"></i>
+                        <span x-text="q.label"></span>
+                        <template x-if="q.type === 'select' || q.type === 'radio'">
+                            <span class="text-[9px] px-1 py-0.2 rounded uppercase font-black"
+                                  :class="hasActiveField(q.name) ? 'bg-white/20 text-white' : 'bg-indigo-100 text-indigo-700'"
+                                  x-text="q.type === 'radio' ? 'Pills' : 'Dropdown'"></span>
+                        </template>
+                    </button>
+                </template>
+            </div>
+        </div>
+
+        <!-- 3. Split-Pane Interactive Studio: Left = Visual Field Cards, Right = Live Interactive Student Drawer -->
+        <div class="p-5 sm:p-6 grid grid-cols-1 xl:grid-cols-12 gap-6 items-start bg-slate-50/30">
+            
+            <!-- LEFT COLUMN (7 Cols): Visual Question Cards & Custom Question Creator -->
+            <div class="xl:col-span-7 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                        <i class="fas fa-list-check text-[#051c45]"></i>
+                        <span>Configured Registration Questions (<span x-text="fields.length"></span>)</span>
+                    </h3>
+                    <span class="text-[11px] text-slate-400">Changes reflect immediately in the live preview &rarr;</span>
+                </div>
+
+                <!-- Interactive Field Cards List -->
+                <div class="space-y-3">
+                    <template x-for="(field, idx) in fields" :key="field.name + '_' + idx">
+                        <div class="rounded-2xl border transition-all p-3.5 sm:p-4 bg-white"
+                             :class="field.is_enabled === false ? 'border-slate-200/70 bg-slate-50/60 opacity-60' : 'border-slate-200/90 shadow-2xs hover:border-slate-300'">
+                            
+                            <!-- Top Row: Order, Icon, Question Label, Type Selector, Required & Active Toggles -->
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                                
+                                <!-- Reorder & Field Key Badge (3 Cols) -->
+                                <div class="sm:col-span-3 flex items-center gap-2">
+                                    <div class="flex flex-col gap-0.5 shrink-0">
+                                        <button type="button" @click="moveField(idx, -1)" :disabled="idx === 0" class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-700 disabled:opacity-20 cursor-pointer" title="Move Up">
+                                            <i class="fas fa-chevron-up text-[10px]"></i>
+                                        </button>
+                                        <button type="button" @click="moveField(idx, 1)" :disabled="idx === fields.length - 1" class="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-700 disabled:opacity-20 cursor-pointer" title="Move Down">
+                                            <i class="fas fa-chevron-down text-[10px]"></i>
+                                        </button>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="font-mono text-[11px] font-bold text-[#051c45] truncate" x-text="field.name"></span>
+                                            <template x-if="['name', 'phone'].includes(field.name)">
+                                                <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[9px] font-bold">Core</span>
+                                            </template>
+                                        </div>
+                                        <span class="text-[10px] text-slate-400 block" x-text="field.is_system ? 'System Field' : 'Custom Question'"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Question Display Label (4 Cols) -->
+                                <div class="sm:col-span-4">
+                                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Question Label</label>
+                                    <input type="text" 
+                                           x-model="field.label" 
+                                           placeholder="Label shown to student"
+                                           class="w-full rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white text-xs font-semibold text-slate-800 py-1.5 px-2.5 focus:border-[#051c45] focus:ring-[#051c45]/20">
+                                </div>
+
+                                <!-- Field Input Type (3 Cols) -->
+                                <div class="sm:col-span-3">
+                                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Input Type</label>
+                                    <select x-model="field.type" 
+                                            @change="onFieldTypeChange(field)"
+                                            :disabled="['name', 'phone', 'email', 'training_mode'].includes(field.name)"
+                                            class="w-full rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white text-xs font-semibold text-slate-700 py-1.5 pl-2.5 pr-7 focus:border-[#051c45] focus:ring-[#051c45]/20 disabled:opacity-60">
+                                        <option value="text">Short Text</option>
+                                        <option value="select">Dropdown Select</option>
+                                        <option value="radio">Choice Pills (1-Tap)</option>
+                                        <option value="textarea">Paragraph Textarea</option>
+                                        <option value="tel">Mobile / Phone</option>
+                                        <option value="email">Email Address</option>
+                                        <option value="number">Number</option>
+                                        <option value="date">Date Picker</option>
+                                        <option value="url">Website / LinkedIn URL</option>
+                                        <option value="checkbox">Checkbox Consent</option>
+                                    </select>
+                                </div>
+
+                                <!-- Toggles & Delete (2 Cols) -->
+                                <div class="sm:col-span-2 flex items-center justify-end gap-1.5">
+                                    <!-- Required / Optional Pill -->
+                                    <template x-if="['name', 'phone'].includes(field.name)">
+                                        <span class="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black uppercase">Req *</span>
+                                    </template>
+                                    <template x-if="!['name', 'phone'].includes(field.name)">
+                                        <button type="button" 
+                                                @click="toggleRequired(idx)"
+                                                class="px-2 py-1 rounded-lg text-[10px] font-black uppercase transition-all cursor-pointer"
+                                                :class="field.is_required ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200'"
+                                                title="Toggle Mandatory vs Optional">
+                                            <span x-text="field.is_required ? 'Req *' : 'Opt'"></span>
+                                        </button>
+                                    </template>
+
+                                    <!-- Enable / Disable Toggle -->
+                                    <template x-if="!['name', 'phone'].includes(field.name)">
+                                        <button type="button" 
+                                                @click="toggleEnabled(idx)"
+                                                class="px-2 py-1 rounded-lg text-[10px] font-black uppercase transition-all cursor-pointer"
+                                                :class="field.is_enabled !== false ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-rose-100 text-rose-700 border border-rose-200'"
+                                                title="Show or Hide this field on the registration form">
+                                            <i class="fas" :class="field.is_enabled !== false ? 'fa-eye' : 'fa-eye-slash'"></i>
+                                        </button>
+                                    </template>
+
+                                    <!-- Remove Custom Field -->
+                                    <template x-if="!['name', 'phone', 'email', 'training_mode'].includes(field.name)">
+                                        <button type="button" @click="removeField(idx)" class="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer" title="Delete question">
+                                            <i class="fas fa-trash-alt text-xs"></i>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Second Row: Placeholder & Dropdown/Choice Options Editor -->
+                            <div x-show="field.is_enabled !== false && field.name !== 'training_mode'" class="mt-2.5 pt-2.5 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
+                                <div :class="['select', 'radio'].includes(field.type) ? 'sm:col-span-5' : 'sm:col-span-12'">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase whitespace-nowrap">Placeholder:</span>
+                                        <input type="text"
+                                               x-model="field.placeholder"
+                                               placeholder="Helper text inside input (e.g. Square Group)"
+                                               class="w-full rounded-lg border-slate-200 bg-slate-50/60 focus:bg-white text-[11px] text-slate-600 py-1 px-2.5 focus:border-[#051c45] focus:ring-[#051c45]/15">
+                                    </div>
+                                </div>
+
+                                <!-- Options Editor when type is Select or Radio -->
+                                <template x-if="['select', 'radio'].includes(field.type)">
+                                    <div class="sm:col-span-7">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-bold text-indigo-600 uppercase whitespace-nowrap">
+                                                <i class="fas fa-list-ul mr-0.5"></i> Choices (comma-separated):
+                                            </span>
+                                            <input type="text"
+                                                   :value="formatOptionsInput(field)"
+                                                   @input="updateFieldOptions(field, $event.target.value)"
+                                                   placeholder="Option 1, Option 2, Option 3"
+                                                   class="w-full rounded-lg border-indigo-200 bg-indigo-50/40 focus:bg-white text-[11px] font-semibold text-indigo-950 py-1 px-2.5 focus:border-indigo-500 focus:ring-indigo-500/20">
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Create Custom Question Builder Box -->
+                <div class="p-4 sm:p-5 bg-gradient-to-br from-slate-50 to-indigo-50/30 rounded-2xl border border-indigo-100 shadow-2xs space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="text-xs font-black text-[#051c45] uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fas fa-plus-square text-indigo-600"></i>
+                            <span>Create Your Own Custom Question</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-mono" x-show="newField.label" x-text="'ID: ' + autoSlug(newField.name || newField.label)"></span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                        <div class="sm:col-span-5">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Question Label <span class="text-[#c30102]">*</span></label>
+                            <input type="text" 
+                                   x-model="newField.label" 
+                                   @input="if (!newField.customKeyEdited) newField.name = autoSlug(newField.label)"
+                                   placeholder="e.g. Years of Banking Experience" 
+                                   class="w-full rounded-xl border-slate-300 bg-white text-xs font-medium py-2 px-3 focus:border-[#051c45] focus:ring-[#051c45]/20">
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Question Type</label>
+                            <select x-model="newField.type" class="w-full rounded-xl border-slate-300 bg-white text-xs font-semibold py-2 pl-3 pr-7 focus:border-[#051c45] focus:ring-[#051c45]/20">
+                                <option value="text">Short Text</option>
+                                <option value="select">Dropdown Select</option>
+                                <option value="radio">Choice Pills (1-Tap)</option>
+                                <option value="textarea">Multi-line Textarea</option>
+                                <option value="tel">Mobile / Phone</option>
+                                <option value="number">Number</option>
+                                <option value="date">Date Picker</option>
+                                <option value="url">Website / URL</option>
+                                <option value="checkbox">Checkbox Consent</option>
+                            </select>
+                        </div>
+
+                        <div class="sm:col-span-2 pb-2">
+                            <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                                <input type="checkbox" x-model="newField.is_required" class="rounded text-[#051c45] focus:ring-[#051c45]">
+                                <span>Mandatory *</span>
+                            </label>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <button type="button" @click="addCustomField()" class="w-full py-2 px-3 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1">
+                                <i class="fas fa-plus text-[10px]"></i>
+                                <span>Add</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Extra row for Dropdown/Radio choices or Placeholder when creating a new field -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
+                        <div :class="['select', 'radio'].includes(newField.type) ? 'sm:col-span-5' : 'sm:col-span-12'">
+                            <input type="text" x-model="newField.placeholder" placeholder="Optional placeholder / hint text (e.g. Enter your current department)" class="w-full rounded-xl border-slate-200 bg-white/80 text-xs py-1.5 px-3 focus:border-[#051c45]">
+                        </div>
+                        <template x-if="['select', 'radio'].includes(newField.type)">
+                            <div class="sm:col-span-7">
+                                <input type="text" x-model="newField.optionsText" placeholder="Enter choices separated by comma (e.g. Beginner, Intermediate, Advanced)" class="w-full rounded-xl border-indigo-300 bg-indigo-50/50 focus:bg-white text-xs font-semibold text-indigo-950 py-1.5 px-3 focus:border-indigo-600">
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN (5 Cols): Always-On Live Interactive Student Drawer Simulator -->
+            <div class="xl:col-span-5 xl:sticky xl:top-6">
+                <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>Live Interactive Student Drawer Preview</span>
+                    </span>
+                    <div class="inline-flex rounded-lg bg-slate-200/80 p-0.5 text-[10px] font-bold">
+                        <button type="button" @click="previewAsLoggedIn = false" :class="!previewAsLoggedIn ? 'bg-white text-[#051c45] shadow-2xs' : 'text-slate-600'" class="px-2 py-0.5 rounded-md transition-all cursor-pointer">Guest View</button>
+                        <button type="button" @click="previewAsLoggedIn = true" :class="previewAsLoggedIn ? 'bg-white text-[#051c45] shadow-2xs' : 'text-slate-600'" class="px-2 py-0.5 rounded-md transition-all cursor-pointer">Logged-In View</button>
                     </div>
                 </div>
 
-                <div class="pt-2">
-                    <button type="button" disabled class="w-full py-2.5 bg-[#c30102] text-white font-bold rounded-xl text-xs text-center opacity-90 cursor-not-allowed">
-                        Proceed to Payment / Confirmation
-                    </button>
+                <div class="bg-white rounded-3xl shadow-xl border border-slate-200/90 overflow-hidden">
+                    <!-- Simulated Drawer Header -->
+                    <div class="p-5 bg-gradient-to-br from-[#020b18] via-[#051c45] to-[#0a2a66] text-white">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            @if(!empty($course->batch) && $course->show_batch)
+                                <span class="px-2 py-0.5 rounded bg-[#c30102] text-white text-[9px] font-black uppercase">
+                                    {{ $course->batch }}
+                                </span>
+                            @endif
+                            <span class="text-[11px] text-[#10b981] font-bold flex items-center gap-1">
+                                <i class="fas fa-bolt text-xs"></i> 30-Second Express Enroll
+                            </span>
+                        </div>
+                        <h3 class="text-sm font-extrabold text-white leading-snug">{{ $course->title }}</h3>
+                        <div class="mt-3 pt-2.5 border-t border-white/10 flex justify-between items-center text-xs">
+                            <span class="text-slate-300">Total Investment:</span>
+                            <span class="font-black text-base text-white">
+                                {{ (float) $course->price > 0 ? '৳' . number_format($course->price, 0) : 'Free Access (৳0)' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Interactive Form Body -->
+                    <div class="p-5 space-y-3.5 bg-white max-h-[540px] overflow-y-auto">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <span class="text-[11px] font-black text-[#051c45] uppercase tracking-wider">1. Student Information</span>
+                            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Interactive Test Mode</span>
+                        </div>
+
+                        <!-- Logged-In Banner Simulation -->
+                        <template x-if="previewAsLoggedIn">
+                            <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/80 flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-lg bg-[#051c45] text-white font-black text-xs flex items-center justify-center">S</div>
+                                    <div>
+                                        <div class="text-xs font-extrabold text-[#0f131f]">Enrolling as Logged-In Student</div>
+                                        <div class="text-[10px] text-slate-500">Name & Email auto-filled from profile</div>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-black uppercase">Verified</span>
+                            </div>
+                        </template>
+
+                        <!-- Guest Name, Phone, Email Simulation -->
+                        <template x-if="!previewAsLoggedIn">
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                                        <span x-text="getFieldProp('name', 'label', 'Full Name')"></span>
+                                        <span class="text-[#c30102]">*</span>
+                                    </label>
+                                    <input type="text" :placeholder="getFieldProp('name', 'placeholder', 'e.g. Tanvir Ahmed')" class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700">
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <div :class="isEmailEnabled ? '' : 'sm:col-span-2'">
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                                            <span x-text="getFieldProp('phone', 'label', 'Mobile (11 Digits)')"></span>
+                                            <span class="text-[#c30102]">*</span>
+                                        </label>
+                                        <input type="tel" :placeholder="getFieldProp('phone', 'placeholder', '017xxxxxxxx')" class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700">
+                                    </div>
+                                    <template x-if="isEmailEnabled">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1">
+                                                <span x-text="getFieldProp('email', 'label', 'Email Address')"></span>
+                                                <span x-show="isEmailRequired" class="text-[#c30102] font-bold">*</span>
+                                                <span x-show="!isEmailRequired" class="text-slate-400 font-normal text-[10px]">(Optional)</span>
+                                            </label>
+                                            <input type="email" :placeholder="getFieldProp('email', 'placeholder', 'name@company.com')" class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700">
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Dynamic Custom Fields Simulation (Select, Radio Pills, Textarea, Checkbox, Text) -->
+                        <template x-for="field in fields.filter(f => !['name', 'phone', 'email', 'training_mode'].includes(f.name) && (f.is_enabled !== false))" :key="'sim_' + field.name">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">
+                                    <span x-text="field.label || field.name"></span>
+                                    <span x-show="field.is_required" class="text-[#c30102] font-bold">*</span>
+                                    <span x-show="!field.is_required" class="text-slate-400 font-normal text-[10px]">(Optional)</span>
+                                </label>
+
+                                <template x-if="field.type === 'textarea'">
+                                    <textarea rows="2" :placeholder="field.placeholder || ('Enter ' + field.label)" class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700"></textarea>
+                                </template>
+
+                                <template x-if="field.type === 'select'">
+                                    <select class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-700">
+                                        <option value="" x-text="field.placeholder || ('Select ' + field.label)"></option>
+                                        <template x-for="opt in getOptionsList(field)" :key="opt">
+                                            <option :value="opt" x-text="opt"></option>
+                                        </template>
+                                    </select>
+                                </template>
+
+                                <template x-if="field.type === 'radio'">
+                                    <div class="grid grid-cols-2 gap-1.5">
+                                        <template x-for="opt in getOptionsList(field)" :key="opt">
+                                            <button type="button"
+                                                    @click="simValues[field.name] = opt"
+                                                    class="px-2.5 py-2 rounded-xl border text-left text-[11px] font-bold transition-all flex items-center justify-between gap-1 cursor-pointer"
+                                                    :class="simValues[field.name] === opt ? 'border-[#051c45] bg-[#051c45] text-white' : 'border-slate-200 bg-[#f8fafc] text-slate-700 hover:bg-white'">
+                                                <span class="truncate" x-text="opt"></span>
+                                                <i class="fas fa-check-circle text-[10px]" :class="simValues[field.name] === opt ? 'text-[#10b981]' : 'text-transparent'"></i>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <template x-if="field.type === 'checkbox'">
+                                    <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-[#f8fafc] text-xs font-medium text-slate-700 cursor-pointer">
+                                        <input type="checkbox" class="rounded text-[#051c45]">
+                                        <span x-text="field.placeholder || field.label"></span>
+                                    </label>
+                                </template>
+
+                                <template x-if="!['textarea', 'select', 'radio', 'checkbox'].includes(field.type)">
+                                    <input :type="field.type || 'text'" :placeholder="field.placeholder || ('Enter ' + field.label)" class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700">
+                                </template>
+                            </div>
+                        </template>
+
+                        <!-- Attendance Mode Simulation -->
+                        <div x-show="isTrainingModeEnabled">
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="block text-xs font-bold text-slate-700" x-text="getFieldProp('training_mode', 'label', 'Preferred Attendance Mode')"></label>
+                                <template x-if="isOnlineOnly">
+                                    <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">Online Only</span>
+                                </template>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="p-2.5 rounded-xl border border-[#051c45] bg-[#051c45]/5 text-[#051c45] font-bold text-center flex items-center justify-center gap-1.5">
+                                    <i class="fas fa-video text-[10px]"></i>
+                                    <span>Live Online Zoom</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl border border-slate-200 text-slate-400 text-center flex items-center justify-center gap-1.5"
+                                     :class="isOnlineOnly ? 'opacity-50 line-through bg-slate-100' : ''">
+                                    <i class="fas fa-building text-[10px]"></i>
+                                    <span>Executive Campus</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="button" @click="saveForm(false)" class="w-full py-3 bg-gradient-to-r from-[#c30102] to-[#a50102] text-white font-black uppercase tracking-wider rounded-xl text-xs text-center shadow-md cursor-pointer">
+                                {{ (float) $course->price > 0 ? '→ Complete Express Enrollment' : '→ Enroll in Free Course' }}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
-        <p class="text-center text-xs text-gray-400 mt-3">
-            This is an interactive simulation of the student enrollment drawer based on your active fields above.
-        </p>
     </div>
 
     <!-- Hidden form for standard fallbacks -->
@@ -485,8 +690,13 @@ function courseFormBuilder(config) {
     return {
         fields: JSON.parse(JSON.stringify(config.initialFields || [])),
         templates: config.templates || {},
+        quickQuestions: config.quickQuestions || [],
+        isOnlineOnly: !!config.isOnlineOnly,
+        isCampusOnly: !!config.isCampusOnly,
         currentTemplateKey: '',
-        activeTab: 'editor',
+        isCollapsed: false,
+        previewAsLoggedIn: false,
+        simValues: {},
         isSaving: false,
         saveMessage: '',
         saveError: '',
@@ -494,11 +704,23 @@ function courseFormBuilder(config) {
             name: '',
             label: '',
             type: 'text',
-            is_required: false
+            placeholder: '',
+            optionsText: '',
+            is_required: false,
+            customKeyEdited: false
         },
 
         init() {
             this.detectCurrentTemplate();
+        },
+
+        autoSlug(text) {
+            return (text || '')
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, '_')
+                .replace(/^_+|_+$/g, '')
+                .substring(0, 32);
         },
 
         get isEmailEnabled() {
@@ -511,8 +733,109 @@ function courseFormBuilder(config) {
             return f ? (f.is_enabled !== false && !!f.is_required) : true;
         },
 
+        get isTrainingModeEnabled() {
+            const f = this.fields.find(field => field.name === 'training_mode');
+            return f ? f.is_enabled !== false : true;
+        },
+
         get activeFieldsCount() {
             return this.fields.filter(f => f.is_enabled !== false).length;
+        },
+
+        get requiredFieldsCount() {
+            return this.fields.filter(f => f.is_enabled !== false && !!f.is_required).length;
+        },
+
+        getFieldProp(name, prop, fallback) {
+            const f = this.fields.find(x => x.name === name);
+            return (f && f[prop]) ? f[prop] : fallback;
+        },
+
+        hasActiveField(name) {
+            const f = this.fields.find(x => x.name === name);
+            return !!(f && f.is_enabled !== false);
+        },
+
+        getOptionsList(field) {
+            if (!field || !field.options) return ['Option 1', 'Option 2'];
+            if (Array.isArray(field.options)) return field.options;
+            if (typeof field.options === 'string') {
+                return field.options.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+            }
+            if (typeof field.options === 'object') {
+                return Object.values(field.options);
+            }
+            return [];
+        },
+
+        formatOptionsInput(field) {
+            if (!field || !field.options) return '';
+            if (Array.isArray(field.options)) return field.options.join(', ');
+            if (typeof field.options === 'string') return field.options;
+            if (typeof field.options === 'object') return Object.values(field.options).join(', ');
+            return '';
+        },
+
+        updateFieldOptions(field, rawText) {
+            field.options = (rawText || '')
+                .split(',')
+                .map(s => s.trim())
+                .filter(Boolean);
+        },
+
+        onFieldTypeChange(field) {
+            if (['select', 'radio'].includes(field.type) && (!field.options || field.options.length === 0)) {
+                field.options = ['Option 1', 'Option 2', 'Option 3'];
+            }
+            this.detectCurrentTemplate();
+        },
+
+        toggleEmailQuick() {
+            let f = this.fields.find(x => x.name === 'email');
+            if (!f) {
+                this.fields.splice(2, 0, {
+                    name: 'email',
+                    label: 'Email Address',
+                    type: 'email',
+                    is_required: true,
+                    is_enabled: true,
+                    is_system: true,
+                    placeholder: 'name@company.com'
+                });
+            } else {
+                f.is_enabled = !(f.is_enabled !== false);
+            }
+            this.detectCurrentTemplate();
+        },
+
+        toggleQuickQuestion(q) {
+            const existingIdx = this.fields.findIndex(f => f.name === q.name);
+            if (existingIdx !== -1) {
+                if (this.fields[existingIdx].is_enabled === false) {
+                    this.fields[existingIdx].is_enabled = true;
+                } else {
+                    this.fields.splice(existingIdx, 1);
+                }
+            } else {
+                // Insert right before training_mode if present, otherwise at end
+                const tmIdx = this.fields.findIndex(f => f.name === 'training_mode');
+                const newObj = {
+                    name: q.name,
+                    label: q.label,
+                    type: q.type || 'text',
+                    is_required: !!q.is_required,
+                    is_enabled: true,
+                    is_system: false,
+                    placeholder: q.placeholder || '',
+                    options: q.options ? JSON.parse(JSON.stringify(q.options)) : null
+                };
+                if (tmIdx !== -1) {
+                    this.fields.splice(tmIdx, 0, newObj);
+                } else {
+                    this.fields.push(newObj);
+                }
+            }
+            this.detectCurrentTemplate();
         },
 
         detectCurrentTemplate() {
@@ -520,7 +843,7 @@ function courseFormBuilder(config) {
                 if (tpl.fields.length === this.fields.length) {
                     const match = tpl.fields.every((tf, idx) => {
                         const cur = this.fields[idx];
-                        return cur && cur.name === tf.name && (!!cur.is_required === !!tf.is_required) && (cur.is_enabled !== false === tf.is_enabled !== false);
+                        return cur && cur.name === tf.name && (!!cur.is_required === !!tf.is_required) && ((cur.is_enabled !== false) === (tf.is_enabled !== false));
                     });
                     if (match) {
                         this.currentTemplateKey = key;
@@ -531,18 +854,21 @@ function courseFormBuilder(config) {
             this.currentTemplateKey = 'custom';
         },
 
-        applyTemplate(key) {
+        applyTemplate(key, autoSave = false) {
             if (!this.templates[key]) return;
             this.fields = JSON.parse(JSON.stringify(this.templates[key].fields));
             this.currentTemplateKey = key;
-            this.saveMessage = 'Applied "' + this.templates[key].name + '" template. Click "Save Form Setup" to confirm.';
-            setTimeout(() => this.saveMessage = '', 4500);
+            if (autoSave) {
+                this.saveForm(false);
+            } else {
+                this.saveMessage = 'Loaded "' + this.templates[key].name + '" preset into the studio. Click "Save Form Setup" to publish.';
+                setTimeout(() => this.saveMessage = '', 4500);
+            }
         },
 
         toggleEnabled(idx) {
             const f = this.fields[idx];
             if (f.name === 'name' || f.name === 'phone') {
-                alert('Full Name and Mobile Phone are mandatory student contact identifiers and cannot be disabled.');
                 return;
             }
             f.is_enabled = !(f.is_enabled !== false);
@@ -552,7 +878,6 @@ function courseFormBuilder(config) {
         toggleRequired(idx) {
             const f = this.fields[idx];
             if (f.name === 'name' || f.name === 'phone') {
-                alert('Full Name and Mobile Phone must remain mandatory.');
                 return;
             }
             f.is_required = !f.is_required;
@@ -571,42 +896,60 @@ function courseFormBuilder(config) {
         removeField(idx) {
             const f = this.fields[idx];
             if (['name', 'phone', 'email', 'training_mode'].includes(f.name)) {
-                alert('System fields cannot be deleted. You can disable the field instead using the toggle.');
                 return;
             }
-            if (confirm('Remove field "' + (f.label || f.name) + '"?')) {
-                this.fields.splice(idx, 1);
-                this.detectCurrentTemplate();
-            }
+            this.fields.splice(idx, 1);
+            this.detectCurrentTemplate();
         },
 
         addCustomField() {
-            if (!this.newField.name.trim()) {
-                alert('Please enter a Field ID / Name (e.g., organization, designation, city).');
+            const rawLabel = (this.newField.label || '').trim();
+            const rawName = (this.newField.name || this.autoSlug(rawLabel)).trim();
+            if (!rawLabel && !rawName) {
+                this.saveError = 'Please enter a Question Label (e.g. Years of Experience).';
                 return;
             }
-            const cleanName = this.newField.name.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+            const cleanName = this.autoSlug(rawName || rawLabel);
             if (this.fields.some(f => f.name === cleanName)) {
-                alert('A field with ID "' + cleanName + '" already exists.');
+                this.saveError = 'A question with ID "' + cleanName + '" already exists in this form.';
                 return;
             }
-            const label = this.newField.label.trim() || cleanName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            const label = rawLabel || cleanName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            let options = null;
+            if (['select', 'radio'].includes(this.newField.type)) {
+                options = (this.newField.optionsText || 'Option 1, Option 2')
+                    .split(',')
+                    .map(s => s.trim())
+                    .filter(Boolean);
+            }
 
-            this.fields.push({
+            const newObj = {
                 name: cleanName,
                 label: label,
                 type: this.newField.type || 'text',
                 is_required: !!this.newField.is_required,
                 is_enabled: true,
                 is_system: false,
-                placeholder: 'Enter ' + label
-            });
+                placeholder: (this.newField.placeholder || '').trim() || ('Enter ' + label),
+                options: options
+            };
 
-            this.newField = { name: '', label: '', type: 'text', is_required: false };
+            const tmIdx = this.fields.findIndex(f => f.name === 'training_mode');
+            if (tmIdx !== -1) {
+                this.fields.splice(tmIdx, 0, newObj);
+            } else {
+                this.fields.push(newObj);
+            }
+
+            this.newField = { name: '', label: '', type: 'text', placeholder: '', optionsText: '', is_required: false, customKeyEdited: false };
+            this.saveError = '';
             this.detectCurrentTemplate();
         },
 
-        async saveForm() {
+        async saveForm(applyToAll = false) {
+            if (applyToAll && !confirm('Apply this registration form configuration to ALL courses in your catalog?')) {
+                return;
+            }
             this.isSaving = true;
             this.saveMessage = '';
             this.saveError = '';
@@ -621,7 +964,8 @@ function courseFormBuilder(config) {
                         'X-CSRF-TOKEN': token
                     },
                     body: JSON.stringify({
-                        enrollment_fields: this.fields
+                        enrollment_fields: this.fields,
+                        apply_to_all_courses: applyToAll
                     })
                 });
 
@@ -630,8 +974,8 @@ function courseFormBuilder(config) {
                     throw new Error(data.message || 'Failed to save form settings.');
                 }
 
-                this.saveMessage = 'Registration form settings saved successfully for this course!';
-                setTimeout(() => this.saveMessage = '', 4500);
+                this.saveMessage = data.message || 'Registration form settings saved successfully!';
+                setTimeout(() => this.saveMessage = '', 5000);
             } catch (err) {
                 this.saveError = err.message || 'An error occurred while saving form settings.';
             } finally {
@@ -1244,6 +1588,21 @@ function courseFormBuilder(config) {
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Who Should Attend / Target Audience (Optional)</label>
                     <textarea name="target_audience" rows="2" placeholder="e.g. Commercial Executives, Importers, Exporters, Entrepreneurs..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm">{{ $course->target_audience }}</textarea>
+                </div>
+                <div class="p-3.5 bg-emerald-50/50 rounded-xl border border-emerald-200/80 space-y-3">
+                    <div class="text-[11px] font-black uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
+                        <i class="fab fa-whatsapp text-emerald-600 text-sm"></i>
+                        <span>Course Counselor WhatsApp & Phone (Optional Override)</span>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Course Counselor WhatsApp / Phone Number</label>
+                        <input type="text" name="counselor_phone" value="{{ $course->counselor_phone }}" placeholder="Leave blank to use Global Hotline ({{ \App\Models\Setting::getVal('contact_hotline', '01917-054664') }})" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Custom WhatsApp Inquiry Message (Optional)</label>
+                        <textarea name="whatsapp_message" rows="2" placeholder="Assalamu Alaikum! I would like to inquire/enroll in *{title}* (Fee: {price}). Please share batch details and enrollment procedure: {url}" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-xs">{{ $course->whatsapp_message }}</textarea>
+                        <p class="text-[10px] text-gray-500 mt-1">Supports placeholders: <code>{title}</code>, <code>{price}</code>, <code>{batch}</code>, <code>{url}</code></p>
+                    </div>
                 </div>
                 @if(auth()->user()->role === 'admin' && isset($instructors))
                 <div>

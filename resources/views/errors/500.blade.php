@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Server Error (500) - CAB Academy</title>
+    <title>Server Error (500) - ACS Academy</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -136,7 +136,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="badge">CAB Academy • HTTP 500</div>
+        <div class="badge">ACS Academy • HTTP 500</div>
         <div class="header">
             <div class="icon-wrap">⚠️</div>
             <div>

@@ -6,7 +6,7 @@
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
         <h1 class="text-xl sm:text-2xl font-black text-gray-900 mb-1">Manage Jobs</h1>
-        <p class="text-gray-500 text-xs sm:text-sm">Manage executive and commercial placement postings for CAB Academy alumni & students.</p>
+        <p class="text-gray-500 text-xs sm:text-sm">Manage executive and commercial placement postings for ACS Academy alumni & students.</p>
     </div>
     <button onclick="document.getElementById('createModal').classList.remove('hidden')" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl font-bold text-xs sm:text-sm hover:opacity-90 transition-all shadow-sm shrink-0 cursor-pointer">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>

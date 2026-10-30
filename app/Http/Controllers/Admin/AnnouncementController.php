@@ -70,7 +70,7 @@ class AnnouncementController extends Controller
 
         // If requested, also broadcast and pin to Community Feed (/feed)
         if ($request->has('post_to_feed')) {
-            $siteName = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+            $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
             \App\Models\CommunityPost::create([
                 'user_id' => auth()->id(),
                 'author_name' => $siteName . ' Directorate',

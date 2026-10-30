@@ -430,6 +430,7 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::get('/courses/{course}', [AdminCourseController::class, 'show'])->name('admin.courses.show');
     Route::match(['put', 'post'], '/courses/{course}', [AdminCourseController::class, 'update'])->name('admin.courses.update');
     Route::post('/courses/{course}/enrollment-form', [AdminCourseController::class, 'updateEnrollmentForm'])->name('admin.courses.update_enrollment_form');
+    Route::get('/courses/{course}/export-registrations', [AdminCourseController::class, 'exportRegistrations'])->name('admin.courses.export_registrations');
     Route::delete('/courses/{course}', [AdminCourseController::class, 'destroy'])->name('admin.courses.destroy');
     
     Route::post('/courses/{course}/sections', [AdminCourseController::class, 'storeSection'])->name('admin.courses.sections.store');

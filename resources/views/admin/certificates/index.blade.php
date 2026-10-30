@@ -6,7 +6,7 @@
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
         <h1 class="text-xl sm:text-2xl font-black text-gray-900 mb-1">Certificates & Template Customizer</h1>
-        <p class="text-gray-500 text-xs sm:text-sm">Customize institution name (default: Commercial Academy Bangladesh), wording, signatures, and design templates.</p>
+        <p class="text-gray-500 text-xs sm:text-sm">Customize institution name (default: ACS Academy), wording, signatures, and design templates.</p>
     </div>
     <div class="flex items-center gap-2.5">
         <a href="{{ route('admin.certificates.preview') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 hover:text-primary hover:border-primary rounded-xl font-bold text-xs sm:text-sm shadow-xs hover:shadow-md transition-all">
@@ -81,7 +81,7 @@
                         <div class="h-10 rounded-lg border-2 border-[#051c45] bg-[#880102] flex items-center justify-center text-[10px] font-serif text-[#ffe4e6] font-bold tracking-widest uppercase">
                             Regal Crimson
                         </div>
-                        <p class="text-[10px] text-gray-500 mt-2">CAB conversion crimson border with obsidian navy and gilded gold stamp.</p>
+                        <p class="text-[10px] text-gray-500 mt-2">ACS conversion crimson border with obsidian navy and gilded gold stamp.</p>
                     </label>
 
                     <!-- Template 4: Minimalist Corporate -->
@@ -104,19 +104,19 @@
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-amber-900 mb-1 flex items-center justify-between">
                         <span>Institution Name on Certificates <span class="text-red-500">*</span></span>
-                        <span class="text-[10px] text-amber-700 font-semibold">(Default: Commercial Academy Bangladesh)</span>
+                        <span class="text-[10px] text-amber-700 font-semibold">(Default: ACS Academy)</span>
                     </label>
                     <input 
                         type="text" 
                         name="certificate_institution_name" 
                         id="form_inst_name"
                         value="{{ old('certificate_institution_name', $settings['institution_name']) }}" 
-                        placeholder="Commercial Academy Bangladesh"
+                        placeholder="ACS Academy"
                         required 
                         class="w-full text-xs sm:text-sm font-bold rounded-xl border-amber-300 bg-white focus:border-[#051c45] focus:ring-[#051c45] py-2.5 px-3 shadow-xs"
                     >
                     <p class="text-[11px] text-amber-800/80 mt-1">
-                        You can keep it as <strong>Commercial Academy Bangladesh</strong> or customize it to <strong>CAB Academy</strong> or any corporate entity name whenever you prefer.
+                        You can keep it as <strong>ACS Academy</strong> or customize it to <strong>ACS Academy</strong> or any corporate entity name whenever you prefer.
                     </p>
                 </div>
 
@@ -128,7 +128,7 @@
                             name="certificate_tagline" 
                             id="form_tagline"
                             value="{{ old('certificate_tagline', $settings['tagline']) }}" 
-                            placeholder="CAB Academy • Learn, Grow, Lead."
+                            placeholder="ACS Academy • Learn, Grow, Lead."
                             class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3"
                         >
                     </div>
@@ -193,7 +193,7 @@
                         name="certificate_faculty_endorsement" 
                         id="form_faculty"
                         value="{{ old('certificate_faculty_endorsement', $settings['faculty_endorsement']) }}" 
-                        placeholder="Delivered under the auspices of the CAB Academy Executive Faculty Board."
+                        placeholder="Delivered under the auspices of the ACS Academy Executive Faculty Board."
                         class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3"
                     >
                 </div>
@@ -322,7 +322,7 @@
                 ">
                     <!-- Crest / Logo -->
                     <div class="flex justify-center">
-                        <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" class="w-10 h-10 object-contain" alt="CAB Crest">
+                        <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" class="w-10 h-10 object-contain" alt="ACS Crest">
                     </div>
 
                     <!-- Institution Name (Live Updated) -->
@@ -359,7 +359,7 @@
                     <div class="pt-3 border-t border-gray-200 flex items-end justify-between text-[8px] text-gray-600">
                         <div class="text-left">
                             <span class="font-mono block text-gray-400">Issue: {{ now()->format('M d, Y') }}</span>
-                            <span class="font-mono block font-bold text-[#051c45]">Serial: CAB-2026-DEMO</span>
+                            <span class="font-mono block font-bold text-[#051c45]">Serial: ACS-2026-DEMO</span>
                         </div>
                         <div class="w-10 h-10 rounded-full border-2 border-[#b89758] bg-amber-100 flex items-center justify-center text-[6px] font-bold text-amber-800 text-center leading-none">
                             SEAL
@@ -393,7 +393,7 @@
     <div class="p-5 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h2 class="text-base sm:text-lg font-black text-gray-900">Issued Certificates Registry</h2>
-            <p class="text-gray-500 text-xs sm:text-sm">Publicly verifiable credentials issued across all CAB Academy cohorts.</p>
+            <p class="text-gray-500 text-xs sm:text-sm">Publicly verifiable credentials issued across all ACS Academy cohorts.</p>
         </div>
 
         <form method="GET" action="{{ route('admin.certificates.index') }}" class="flex items-center gap-2">
@@ -504,7 +504,7 @@
     const prevName = document.getElementById('prev_inst_name');
     if (nameInput && prevName) {
         nameInput.addEventListener('input', function() {
-            prevName.innerText = this.value || 'Commercial Academy Bangladesh';
+            prevName.innerText = this.value || 'ACS Academy';
         });
     }
 
@@ -512,7 +512,7 @@
     const prevTag = document.getElementById('prev_tagline');
     if (tagInput && prevTag) {
         tagInput.addEventListener('input', function() {
-            prevTag.innerText = this.value || 'CAB Academy • Learn, Grow, Lead.';
+            prevTag.innerText = this.value || 'ACS Academy • Learn, Grow, Lead.';
         });
     }
 

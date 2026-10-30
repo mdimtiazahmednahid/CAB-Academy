@@ -34,7 +34,7 @@ class Payment extends Model
 
         static::creating(function ($payment) {
             if (empty($payment->invoice_number)) {
-                $payment->invoice_number = 'CAB-' . date('Y') . '-' . strtoupper(substr(uniqid(), -6));
+                $payment->invoice_number = 'ACS-' . date('Y') . '-' . strtoupper(substr(uniqid(), -6));
             }
         });
     }

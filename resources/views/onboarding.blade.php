@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 
-    <title>Welcome to {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
+    <title>Welcome to {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}</title>
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -16,7 +16,7 @@
         <!-- Top Brand + Skip Option -->
         <div class="flex items-center justify-between mb-6">
             <span class="text-xs font-extrabold uppercase tracking-widest text-[#051c45]">
-                {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} &bull; Setup
+                {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} &bull; Setup
             </span>
             <button type="button" @click="skip()" class="text-xs font-bold text-slate-500 hover:text-[#c30102] transition-colors cursor-pointer">
                 Skip to Dashboard &rarr;

@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', $page['title'] ?? 'Executive Page')
-@section('meta_description', $page['meta_description'] ?? ($page['subtitle'] ?? 'Official institutional page at ' . \App\Models\Setting::getVal('site_name', 'CAB Academy')))
+@section('meta_description', $page['meta_description'] ?? ($page['subtitle'] ?? 'Official institutional page at ' . \App\Models\Setting::getVal('site_name', 'ACS Academy')))
 
 @section('content')
 <div>

@@ -1,11 +1,14 @@
 @extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
+@php
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
+@endphp
 
 @section('title', $post->title)
 @section('header_title', 'Article & Insights')
 @section('meta_description', \Illuminate\Support\Str::limit(strip_tags($post->meta_description ?: $post->excerpt ?: $post->content), 160))
 @section('canonical_url', route('blog.show', $post->slug))
 @section('og_image', $post->featured_image_url)
-@section('og_title', $post->title . ' - CAB Academy')
+@section('og_title', $post->title . ' - ' . $siteName)
 @section('og_type', 'article')
 
 @section('schema')
@@ -20,12 +23,12 @@
         'dateModified' => $post->updated_at ? $post->updated_at->toISOString() : now()->toISOString(),
         'author' => [
             '@type' => 'Person',
-            'name' => $post->author_name ?: 'CAB Academy Editorial Team',
+            'name' => $post->author_name ?: ($siteName . ' Editorial Team'),
             'jobTitle' => $post->author_title ?: 'Faculty & Industry Specialist',
         ],
         'publisher' => [
             '@type' => 'EducationalOrganization',
-            'name' => 'CAB Academy',
+            'name' => $siteName,
             'logo' => [
                 '@type' => 'ImageObject',
                 'url' => \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png'),
@@ -84,7 +87,7 @@
         </nav>
 
         <!-- Article Card Container -->
-        <article class="bg-white rounded-3xl border border-[#e3e7f0] shadow-xl overflow-hidden p-6 sm:p-10 mb-12">
+        <article class="liquid-glass-card rounded-3xl overflow-hidden p-6 sm:p-10 mb-12">
             
             <!-- Category & Metadata Header -->
             <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
@@ -129,7 +132,7 @@
                 >
                 <div>
                     <span class="text-sm font-bold text-[#0f131f] block">{{ $post->author_name }}</span>
-                    <span class="text-xs text-slate-500 block">{{ $post->author_title }} &bull; CAB Academy Faculty</span>
+                    <span class="text-xs text-slate-500 block">{{ $post->author_title }} &bull; ACS Academy Faculty</span>
                 </div>
             </div>
 
@@ -177,7 +180,7 @@
         <!-- Related Articles Section -->
         @if(isset($relatedPosts) && $relatedPosts->count() > 0)
             <div class="mt-12">
-                <h3 class="text-xl font-bold text-[#0f131f] mb-6">More from CAB Academy Faculty</h3>
+                <h3 class="text-xl font-bold text-[#0f131f] mb-6">More from ACS Academy Faculty</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @foreach($relatedPosts as $rel)
                         <div class="bg-white p-5 rounded-3xl border border-[#e3e7f0] shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group">

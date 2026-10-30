@@ -1,6 +1,6 @@
 <?php
 /**
- * CAB Academy - Web Migration & Database Setup Wizard
+ * ACS Academy - Web Migration & Database Setup Wizard
  * Designed for InfinityFree and Shared Hosting environments without SSH terminal access.
  */
 
@@ -115,7 +115,7 @@ if ($action) {
                     $commandOutput .= "\n - " . implode("\n - ", $repairedItems);
                 }
             }
-            $notification = ['type' => 'success', 'text' => 'Database tables migrated and verified successfully!'];
+            $notification = ['type' => 'success', 'text' => 'Database tables migrated and verified (without demo seed data)!'];
         } elseif ($action === 'schema_repair') {
             $repairResult = \App\Support\DatabaseSchemaRepair::ensureSchema(true);
             $repairedItems = $repairResult['repaired'] ?? [];
@@ -124,6 +124,14 @@ if ($action) {
                 ? " - Repaired: " . implode("\n - Repaired: ", $repairedItems)
                 : " ✓ All required tables, columns, and ENUM statuses are already intact.";
             $notification = ['type' => 'success', 'text' => 'All database tables, columns, and ENUM statuses verified & repaired!'];
+        } elseif ($action === 'purge_demo') {
+            $purgeResult = \App\Support\DatabaseSchemaRepair::purgeDemoData();
+            $purgedItems = $purgeResult['purged'] ?? [];
+            $commandOutput = "Demo / Seeded Data Cleanup Summary:\n===================================\n";
+            $commandOutput .= !empty($purgedItems)
+                ? " ✓ " . implode("\n ✓ ", $purgedItems)
+                : " ✓ No demo/seeded courses, faculty, jobs, or posts found. Your production data is clean!";
+            $notification = ['type' => 'success', 'text' => 'Demo / seeded data purged! All real courses, real instructors, and real users were preserved.'];
         } elseif ($action === 'seed') {
             \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
             $commandOutput = \Illuminate\Support\Facades\Artisan::output();
@@ -197,7 +205,7 @@ $allPermsOk = ($permViews && $permSessions && $permLogs && $permBootstrap);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Database Setup & Migration Wizard - CAB Academy</title>
+    <title>Database Setup & Migration Wizard - ACS Academy</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -412,7 +420,7 @@ $allPermsOk = ($permViews && $permSessions && $permLogs && $permBootstrap);
 <body>
     <div class="wrapper">
         <div class="header">
-            <div class="logo-badge">⚡ CAB Academy System Engine</div>
+            <div class="logo-badge">⚡ ACS Academy System Engine</div>
             <h1>Database Setup & Migration Wizard</h1>
             <p class="subtitle">Complete installation and self-healing tools for InfinityFree and Shared Hosting environments.</p>
         </div>
@@ -458,31 +466,34 @@ $allPermsOk = ($permViews && $permSessions && $permLogs && $permBootstrap);
         <div class="card">
             <div class="card-title">🚀 Fast Installation & Migration Actions</div>
             <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.25rem;">
-                Click one of the actions below to automatically construct database tables and import initial admin credentials and courses:
+                Use <strong>Run Migrations Only (No Seed Data)</strong> on production so your live database never gets demo courses. If demo data was seeded earlier, click <strong>Purge Demo / Seeded Data</strong> to remove only the demo courses/faculty while keeping all your real courses intact:
             </p>
             <div class="button-group">
-                <a href="?action=fresh_seed" class="btn btn-primary" onclick="return confirm('This will build all database tables and seed initial courses and admin accounts. Proceed?');">
-                    ⚡ Complete Clean Setup (Migrate & Seed)
+                <a href="?action=migrate" class="btn btn-primary">
+                    🔄 Run Migrations & Schema Repair (No Seed Data)
                 </a>
-                <a href="?action=migrate" class="btn btn-secondary">
-                    🔄 Run Migrations Only
+                <a href="?action=purge_demo" class="btn btn-success" onclick="return confirm('This will remove only the 8 demo courses, 4 demo faculty chairs, and demo blog/job posts while keeping all your real courses, real instructors, and users intact. Proceed?');">
+                    🧹 Purge Demo / Seeded Data (Keep Real Courses)
                 </a>
                 <a href="?action=schema_repair" class="btn btn-secondary">
                     🛠️ Auto-Repair Schema & Columns (Fix 500 Errors)
-                </a>
-                <a href="?action=seed" class="btn btn-secondary">
-                    🌱 Seed Data Only
                 </a>
                 <a href="?action=fix_instructors" class="btn btn-secondary">
                     👥 Fix Instructor Accounts & Duplicates
                 </a>
                 <a href="?action=optimize_clear" class="btn btn-secondary">
-                    🧹 Clear Cache
+                    ⚡ Clear Cache
+                </a>
+                <a href="?action=seed" class="btn btn-secondary" onclick="return confirm('Are you sure you want to seed demo courses and sample data into this database?');">
+                    🌱 Seed Demo Data (Optional)
+                </a>
+                <a href="?action=fresh_seed" class="btn btn-secondary" style="border-color: rgba(239,68,68,0.4); color: #fca5a5;" onclick="return confirm('WARNING: This will wipe all database tables and seed demo courses from scratch. Proceed?');">
+                    ⚠️ Fresh Reset + Demo Seed (Wipes DB)
                 </a>
             </div>
 
             <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                <a href="/" class="btn btn-success">🌐 Launch CAB Academy Website</a>
+                <a href="/" class="btn btn-success">🌐 Launch ACS Academy Website</a>
                 <a href="cmd.php?pin=cab2026" class="btn btn-secondary">💻 Command Terminal (PIN: cab2026)</a>
             </div>
         </div>
@@ -531,7 +542,7 @@ $allPermsOk = ($permViews && $permSessions && $permLogs && $permBootstrap);
         </div>
 
         <div style="text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 2rem;">
-            CAB Academy Deployment Architecture • Compatible with InfinityFree, cPanel & VPS
+            ACS Academy Deployment Architecture • Compatible with InfinityFree, cPanel & VPS
         </div>
     </div>
 </body>

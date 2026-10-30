@@ -179,6 +179,7 @@
                     batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
                     venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
                     attendanceMode: '{{ $course->attendance_mode }}',
+                    whatsapp: '{{ $course->effective_whatsapp_number }}',
                     fields: {{ json_encode($course->effective_enrollment_fields) }}
                 })"
                 class="btn-ipdp-primary w-full py-3 sm:py-3.5 min-h-[46px] px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase shadow-[0_4px_16px_rgba(195,1,2,0.32)] hover:shadow-[0_8px_24px_rgba(195,1,2,0.48)] flex items-center justify-center gap-2 cursor-pointer group/btn transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center"

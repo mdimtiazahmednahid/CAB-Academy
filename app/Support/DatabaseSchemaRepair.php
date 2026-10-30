@@ -15,7 +15,7 @@ class DatabaseSchemaRepair
      */
     public static function ensureSchema(bool $force = false): array
     {
-        $lockFile = storage_path('framework/schema_verified_v4.lock');
+        $lockFile = storage_path('framework/schema_verified_v6.lock');
         if (!$force && file_exists($lockFile)) {
             return ['status' => 'cached', 'repaired' => []];
         }
@@ -131,6 +131,14 @@ class DatabaseSchemaRepair
                     if (!Schema::hasColumn('courses', 'enrollment_fields')) {
                         $table->json('enrollment_fields')->nullable();
                         $repaired[] = 'courses.enrollment_fields';
+                    }
+                    if (!Schema::hasColumn('courses', 'counselor_phone')) {
+                        $table->string('counselor_phone', 50)->nullable();
+                        $repaired[] = 'courses.counselor_phone';
+                    }
+                    if (!Schema::hasColumn('courses', 'whatsapp_message')) {
+                        $table->text('whatsapp_message')->nullable();
+                        $repaired[] = 'courses.whatsapp_message';
                     }
                     if (!Schema::hasColumn('courses', 'deleted_at')) {
                         $table->softDeletes();
@@ -263,7 +271,7 @@ class DatabaseSchemaRepair
                     $table->text('meta_description')->nullable();
                     $table->longText('content');
                     $table->string('featured_image')->nullable();
-                    $table->string('author_name')->default('CAB Academy Faculty');
+                    $table->string('author_name')->default('ACS Academy Faculty');
                     $table->string('author_title')->default('Senior Industry Fellow');
                     $table->string('author_avatar')->nullable();
                     $table->string('read_time')->default('5 min read');
@@ -367,6 +375,7 @@ class DatabaseSchemaRepair
             }
 
             self::repairInstructorCourseLinks($repaired);
+            self::ensureEssentialAdminAndPaymentMethods();
 
             @file_put_contents($lockFile, json_encode([
                 'verified_at' => date('c'),
@@ -428,5 +437,302 @@ class DatabaseSchemaRepair
         } catch (\Throwable $e) {
             Log::warning('DatabaseSchemaRepair::repairInstructorCourseLinks warning: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Ensure essential Admin account and default payment methods exist even when migrating WITHOUT demo seed data.
+     */
+    public static function ensureEssentialAdminAndPaymentMethods(): void
+    {
+        if (app()->runningUnitTests()) {
+            return;
+        }
+
+        // Normalize any legacy "CAB Academy" / "Commercial Academy Bangladesh" branding in settings table to "ACS Academy"
+        try {
+            if (Schema::hasTable('settings')) {
+                $legacySettings = \App\Models\Setting::where('value', 'like', '%CAB Academy%')
+                    ->orWhere('value', 'like', '%Commercial Academy Bangladesh%')
+                    ->orWhere('value', 'like', '%INV-CAB%')
+                    ->get();
+                foreach ($legacySettings as $s) {
+                    $newVal = str_replace(
+                        ['Commercial Academy Bangladesh (CAB Academy)', 'Commercial Academy Bangladesh', 'CAB Academy', 'INV-CAB'],
+                        ['ACS Academy', 'ACS Academy', 'ACS Academy', 'INV-ACS'],
+                        (string) $s->value
+                    );
+                    if ($newVal !== $s->value) {
+                        $s->value = $newVal;
+                        $s->saveQuietly();
+                    }
+                }
+                \Illuminate\Support\Facades\Cache::forget('global_settings');
+            }
+        } catch (\Throwable $e) {
+            // Ignore during initial migration
+        }
+
+        try {
+            if (Schema::hasTable('users')) {
+                $hasAdmin = \App\Models\User::where('role', 'admin')->exists();
+                if (!$hasAdmin) {
+                    \App\Models\User::firstOrCreate(
+                        ['email' => 'admin@cab-academy.com'],
+                        [
+                            'name' => 'Academy Administrator',
+                            'password' => bcrypt('password'),
+                            'role' => 'admin',
+                            'email_verified_at' => now(),
+                        ]
+                    );
+                }
+            }
+
+            if (Schema::hasTable('payment_methods') && \App\Models\PaymentMethod::count() === 0) {
+                $hotline = Schema::hasTable('settings')
+                    ? \App\Models\Setting::getVal('contact_hotline', '01917-054664')
+                    : '01917-054664';
+
+                \App\Models\PaymentMethod::firstOrCreate(
+                    ['provider_name' => 'bKash Merchant'],
+                    [
+                        'account_number' => $hotline,
+                        'account_type' => 'Merchant',
+                        'instructions' => "Send the exact Course Fee via bKash and enter your Sender Mobile Number & TrxID.",
+                        'is_active' => true,
+                    ]
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::warning('DatabaseSchemaRepair::ensureEssentialAdminAndPaymentMethods warning: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Safely purge seeded demo courses, demo faculty chairs, demo job posts, demo blogs, and demo community posts
+     * while preserving all real admin-created courses, real instructors, real users, payments, and settings.
+     */
+    public static function purgeDemoData(): array
+    {
+        $summary = [
+            'restored_real_courses' => 0,
+            'deleted_demo_courses' => 0,
+            'deleted_demo_instructors' => 0,
+            'deleted_demo_jobs' => 0,
+            'deleted_demo_blogs' => 0,
+            'deleted_demo_posts' => 0,
+        ];
+
+        $demoCourseTitles = [
+            'Certificate Course in L/C, Banking, Customs & Shipping for Import – Export',
+            'Certificate Course in Supply Chain Management & Strategic Sourcing',
+            'Certificate Course in Financial Accounting, VAT & Corporate Tax Management',
+            'Certificate Course in Corporate Governance, Company Law & Secretarial Practice',
+            'Commercial Guideline with Customs, C&F Agent & Shipping Procedures (Day-Long)',
+            'Labor Law, HR Compliance & Industrial Disputes Masterclass (Day-Long)',
+            'Civil Construction Project Planning, BOQ & Cost Estimation (Day-Long)',
+            'Fire Safety, Disaster Management & Factory Compliance Masterclass (Day-Long)',
+            'PGD in Supply Chain Management (PGDSCM)',
+        ];
+
+        $demoFacultyEmails = [
+            'trade.faculty@cab-academy.com',
+            'scm.faculty@cab-academy.com',
+            'tax.faculty@cab-academy.com',
+            'law.faculty@cab-academy.com',
+        ];
+
+        $demoJobTitles = [
+            'Commercial & Shipping Operations Specialist',
+            'Supply Chain & Sourcing Analyst',
+            'Corporate VAT & Tax Compliance Specialist',
+        ];
+
+        $demoBlogSlugs = [
+            'complete-roadmap-to-lc-customs-clearance',
+            'strategic-sourcing-warehouse-safety-stock-modeling',
+            'corporate-vat-rebates-withholding-tax-deductions',
+        ];
+
+        $demoDiscussionTitles = [
+            'Updated HS Code Mandatory Guidelines for L/C Applications',
+            'Excited to complete my first Bill of Entry simulation!',
+            'Corporate VAT Rebate Checklist: Month-End Guidelines',
+            'Complete Roadmap to Letter of Credit (L/C) & Customs Clearance Under Regulatory Directives',
+            'Strategic Sourcing & Warehouse Safety Stock Modeling for Industrial Enterprises',
+            'Corporate VAT Rebates & Withholding Tax Deductions: Finance Act Best Practices',
+        ];
+
+        // 1. Restore any real (non-demo) courses that were soft-deleted by an earlier seeder run
+        if (Schema::hasTable('courses')) {
+            $restored = \App\Models\Course::onlyTrashed()
+                ->whereNotIn('title', $demoCourseTitles)
+                ->restore();
+            $summary['restored_real_courses'] = (int) $restored;
+
+            // Delete the 8 demo courses
+            $demoCourses = \App\Models\Course::withTrashed()
+                ->whereIn('title', $demoCourseTitles)
+                ->get();
+
+            foreach ($demoCourses as $dc) {
+                foreach ($dc->sections as $sec) {
+                    $sec->lessons()->delete();
+                    $sec->delete();
+                }
+                foreach ($dc->quizzes as $quiz) {
+                    foreach ($quiz->questions as $q) {
+                        $q->options()->delete();
+                        $q->delete();
+                    }
+                    $quiz->delete();
+                }
+                $dc->forceDelete();
+                $summary['deleted_demo_courses']++;
+            }
+        }
+
+        // 2. Delete the 4 demo Faculty Chair instructors & re-link real courses to active real instructor
+        if (Schema::hasTable('instructors') && Schema::hasTable('users')) {
+            $demoInstructors = \App\Models\Instructor::withTrashed()
+                ->where(function ($q) use ($demoFacultyEmails) {
+                    $q->whereIn('email', $demoFacultyEmails)
+                      ->orWhere('name', 'like', 'Faculty Chair%');
+                })
+                ->get();
+
+            $demoUserIds = \App\Models\User::withTrashed()
+                ->where(function ($q) use ($demoFacultyEmails) {
+                    $q->whereIn('email', $demoFacultyEmails)
+                      ->orWhere('name', 'like', 'Faculty Chair%');
+                })
+                ->pluck('id')
+                ->toArray();
+
+            foreach ($demoInstructors as $di) {
+                if ($di->user_id) {
+                    $demoUserIds[] = $di->user_id;
+                }
+                $di->forceDelete();
+                $summary['deleted_demo_instructors']++;
+            }
+
+            $demoUserIds = array_unique(array_filter($demoUserIds));
+
+            // Find a real remaining instructor or admin to own any real courses
+            $realInstructor = \App\Models\Instructor::where('is_active', true)->orderBy('order', 'asc')->first();
+            $fallbackUserId = $realInstructor?->user_id
+                ?? \App\Models\User::where('role', 'admin')->value('id');
+
+            if (!empty($demoUserIds)) {
+                if (Schema::hasTable('courses') && $fallbackUserId) {
+                    \App\Models\Course::withTrashed()
+                        ->whereIn('instructor_id', $demoUserIds)
+                        ->update(['instructor_id' => $fallbackUserId]);
+                }
+                \App\Models\User::withTrashed()->whereIn('id', $demoUserIds)->forceDelete();
+            }
+
+            // Also remove demo student account if it has no real payments
+            $demoStudent = \App\Models\User::withTrashed()->where('email', 'student@cab-academy.com')->first();
+            if ($demoStudent && (!$demoStudent->payments()->exists())) {
+                $demoStudent->forceDelete();
+            }
+        }
+
+        // 3. Delete demo JobPosts
+        if (Schema::hasTable('job_posts')) {
+            $summary['deleted_demo_jobs'] = (int) \App\Models\JobPost::withTrashed()
+                ->whereIn('title', $demoJobTitles)
+                ->forceDelete();
+        }
+
+        // 4. Delete demo BlogPosts & CommunityPosts
+        if (Schema::hasTable('blog_posts')) {
+            $demoBlogIds = \App\Models\BlogPost::withTrashed()
+                ->whereIn('slug', $demoBlogSlugs)
+                ->pluck('id')
+                ->toArray();
+
+            if (!empty($demoBlogIds) && Schema::hasTable('community_posts')) {
+                $postIds = \App\Models\CommunityPost::withTrashed()
+                    ->whereIn('blog_post_id', $demoBlogIds)
+                    ->pluck('id')
+                    ->toArray();
+                if (!empty($postIds) && Schema::hasTable('community_comments')) {
+                    \App\Models\CommunityComment::whereIn('community_post_id', $postIds)->delete();
+                }
+                $summary['deleted_demo_posts'] += (int) \App\Models\CommunityPost::withTrashed()
+                    ->whereIn('blog_post_id', $demoBlogIds)
+                    ->forceDelete();
+            }
+
+            $summary['deleted_demo_blogs'] = (int) \App\Models\BlogPost::withTrashed()
+                ->whereIn('slug', $demoBlogSlugs)
+                ->forceDelete();
+        }
+
+        if (Schema::hasTable('community_posts')) {
+            $discPostIds = \App\Models\CommunityPost::withTrashed()
+                ->whereIn('title', $demoDiscussionTitles)
+                ->pluck('id')
+                ->toArray();
+            if (!empty($discPostIds) && Schema::hasTable('community_comments')) {
+                \App\Models\CommunityComment::whereIn('community_post_id', $discPostIds)->delete();
+            }
+            $summary['deleted_demo_posts'] += (int) \App\Models\CommunityPost::withTrashed()
+                ->whereIn('title', $demoDiscussionTitles)
+                ->forceDelete();
+        }
+
+        // 5. Normalize any legacy "CAB Academy" / "Commercial Academy Bangladesh" in settings to "ACS Academy"
+        $rebrandedSettings = 0;
+        if (Schema::hasTable('settings')) {
+            $legacySettings = \App\Models\Setting::where('value', 'like', '%CAB Academy%')
+                ->orWhere('value', 'like', '%Commercial Academy Bangladesh%')
+                ->orWhere('value', 'like', '%INV-CAB%')
+                ->get();
+            foreach ($legacySettings as $s) {
+                $newVal = str_replace(
+                    ['Commercial Academy Bangladesh (CAB Academy)', 'Commercial Academy Bangladesh', 'CAB Academy', 'INV-CAB'],
+                    ['ACS Academy', 'ACS Academy', 'ACS Academy', 'INV-ACS'],
+                    (string) $s->value
+                );
+                if ($newVal !== $s->value) {
+                    $s->value = $newVal;
+                    $s->saveQuietly();
+                    $rebrandedSettings++;
+                }
+            }
+            \Illuminate\Support\Facades\Cache::forget('global_settings');
+        }
+
+        $purgedLines = [];
+        if ($summary['restored_real_courses'] > 0) {
+            $purgedLines[] = "Restored {$summary['restored_real_courses']} real course(s) that were soft-deleted.";
+        }
+        if ($summary['deleted_demo_courses'] > 0) {
+            $purgedLines[] = "Removed {$summary['deleted_demo_courses']} seeded demo course(s).";
+        }
+        if ($summary['deleted_demo_instructors'] > 0) {
+            $purgedLines[] = "Removed {$summary['deleted_demo_instructors']} seeded demo faculty chair(s).";
+        }
+        if ($summary['deleted_demo_jobs'] > 0) {
+            $purgedLines[] = "Removed {$summary['deleted_demo_jobs']} seeded demo job listing(s).";
+        }
+        if ($summary['deleted_demo_blogs'] > 0) {
+            $purgedLines[] = "Removed {$summary['deleted_demo_blogs']} seeded demo blog post(s).";
+        }
+        if ($summary['deleted_demo_posts'] > 0) {
+            $purgedLines[] = "Removed {$summary['deleted_demo_posts']} seeded demo community post(s).";
+        }
+        if ($rebrandedSettings > 0) {
+            $purgedLines[] = "Updated {$rebrandedSettings} setting(s) from legacy CAB branding to ACS Academy.";
+        }
+
+        $summary['status'] = 'ok';
+        $summary['purged'] = $purgedLines;
+
+        return $summary;
     }
 }

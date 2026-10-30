@@ -605,4 +605,185 @@ class PwaTypographyAndCmsTest extends TestCase
         $adminDash->assertSee('Recent Career Applications');
         $adminDash->assertSee('Pending Payment Approvals');
     }
+
+    public function test_dynamic_per_course_counselor_whatsapp_phone_liquid_glass_and_demo_purge(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        // 1. Configure global hotline & WhatsApp settings
+        Setting::updateOrCreate(['key' => 'site_name'], ['value' => 'ACS Academy']);
+        Setting::updateOrCreate(['key' => 'contact_hotline'], ['value' => '01744542955']);
+        Setting::updateOrCreate(['key' => 'contact_whatsapp'], ['value' => '8801744542955']);
+
+        // 2. Create a course using global counselor phone fallback
+        $courseGlobal = \App\Models\Course::create([
+            'title' => 'Communication Skills for Career Success.',
+            'description' => 'Master professional communication and workplace etiquette.',
+            'venue' => 'Online Live (Zoom)',
+            'price' => 0,
+            'is_published' => true,
+            'instructor_id' => $admin->id,
+        ]);
+
+        // Verify WhatsApp counselor message does NOT contain "CAB Academy"
+        $this->assertStringNotContainsString('CAB Academy', $courseGlobal->effective_whatsapp_message);
+        $this->assertStringContainsString(
+            'Assalamu Alaikum! I would like to inquire/enroll in *Communication Skills for Career Success.* (Fee: ৳0). Please share batch details and enrollment procedure:',
+            $courseGlobal->effective_whatsapp_message
+        );
+        $this->assertEquals('01744542955', $courseGlobal->effective_counselor_phone);
+        $this->assertEquals('8801744542955', $courseGlobal->effective_whatsapp_number);
+
+        // Verify /courses/{course} and /c/{course} render dynamic phone & Liquid Glass and zero hardcoded 01917054664
+        $showGlobal = $this->get(route('courses.show', $courseGlobal));
+        $showGlobal->assertStatus(200);
+        $showGlobal->assertSee('01744542955');
+        $showGlobal->assertDontSee('01917054664');
+        $showGlobal->assertSee('liquid-glass-card');
+        $showGlobal->assertSee('liquid-glass-dark');
+
+        $shareGlobal = $this->get('/c/' . $courseGlobal->id);
+        $shareGlobal->assertStatus(200);
+        $shareGlobal->assertSee('01744542955');
+        $shareGlobal->assertDontSee('01917054664');
+        $shareGlobal->assertSee('liquid-glass-dark');
+
+        // 3. Configure per-course counselor_phone and custom whatsapp_message via Admin update
+        $this->actingAs($admin)->put(route('admin.courses.update', $courseGlobal), [
+            'title' => 'Communication Skills for Career Success.',
+            'description' => 'Master professional communication and workplace etiquette.',
+            'venue' => 'Online Live (Zoom)',
+            'price' => 0,
+            'counselor_phone' => '01888999000',
+            'whatsapp_message' => 'Assalamu Alaikum! Please enroll me in *{title}* ({price}) -> {url}',
+            'is_published' => 1,
+        ])->assertRedirect();
+
+        $courseGlobal->refresh();
+        $this->assertEquals('01888999000', $courseGlobal->effective_counselor_phone);
+        $this->assertEquals('8801888999000', $courseGlobal->effective_whatsapp_number);
+        $this->assertStringContainsString('wa.me/8801888999000', $courseGlobal->counselor_whatsapp_url);
+        $this->assertStringNotContainsString('CAB%20Academy', $courseGlobal->counselor_whatsapp_url);
+
+        $shareOverride = $this->get('/c/' . $courseGlobal->id);
+        $shareOverride->assertStatus(200);
+        $shareOverride->assertSee('01888999000');
+
+        // 4. Verify Demo Data Purge removes demo courses/faculty while keeping real courses intact
+        $demoCourse = \App\Models\Course::create([
+            'title' => 'PGD in Supply Chain Management (PGDSCM)',
+            'description' => 'Seeded demo course',
+            'price' => 5000,
+            'is_published' => true,
+            'instructor_id' => $admin->id,
+        ]);
+        $demoInstructor = \App\Models\Instructor::create([
+            'name' => 'Faculty Chair — Trade & Banking',
+            'title' => 'Senior Trade Faculty',
+            'expertise' => 'Trade & Banking',
+            'bio' => 'Demo bio',
+            'is_active' => true,
+        ]);
+        $realInstructor = \App\Models\Instructor::create([
+            'name' => 'MD. Shahneoage Hossain',
+            'title' => 'Lead Faculty & Consultant',
+            'expertise' => 'Communication & Leadership',
+            'bio' => 'Real faculty bio',
+            'is_active' => true,
+        ]);
+
+        $purgeResult = \App\Support\DatabaseSchemaRepair::purgeDemoData();
+        $this->assertEquals('ok', $purgeResult['status']);
+        $this->assertNull(\App\Models\Course::withTrashed()->find($demoCourse->id));
+        $this->assertNotNull(\App\Models\Course::find($courseGlobal->id));
+        $this->assertNull(\App\Models\Instructor::find($demoInstructor->id));
+        $this->assertNotNull(\App\Models\Instructor::find($realInstructor->id));
+    }
+
+    public function test_dynamic_enrollment_form_studio_and_csv_export(): void
+    {
+        $admin = \App\Models\User::factory()->create(['role' => 'admin']);
+        $course1 = \App\Models\Course::create([
+            'title' => 'Executive Leadership Masterclass',
+            'description' => 'Testing dynamic form studio',
+            'price' => 0,
+            'is_published' => true,
+            'instructor_id' => $admin->id,
+        ]);
+        $course2 = \App\Models\Course::create([
+            'title' => 'Corporate Finance Strategy',
+            'description' => 'Second course for apply_to_all_courses',
+            'price' => 3000,
+            'is_published' => true,
+            'instructor_id' => $admin->id,
+        ]);
+
+        // Verify built-in presets and quick-add question blocks
+        $templates = \App\Models\Course::getBuiltinTemplates();
+        $this->assertArrayHasKey('standard', $templates);
+        $this->assertArrayHasKey('quick_lead', $templates);
+        $this->assertArrayHasKey('corporate', $templates);
+        $this->assertArrayHasKey('comprehensive', $templates);
+        $this->assertArrayHasKey('online_webinar', $templates);
+        $this->assertArrayHasKey('academic_cohort', $templates);
+
+        $quickBlocks = \App\Models\Course::getQuickAddQuestions();
+        $this->assertGreaterThanOrEqual(10, count($quickBlocks));
+
+        // Update enrollment form with radio/select options and apply_to_all_courses = 1
+        $fieldsPayload = [
+            ['name' => 'name', 'label' => 'Participant Name', 'type' => 'text', 'is_enabled' => true, 'is_required' => true],
+            ['name' => 'phone', 'label' => 'WhatsApp Mobile', 'type' => 'tel', 'is_enabled' => true, 'is_required' => true],
+            ['name' => 'email', 'label' => 'Email', 'type' => 'email', 'is_enabled' => false, 'is_required' => false],
+            ['name' => 'organization', 'label' => 'Organization', 'type' => 'text', 'is_enabled' => true, 'is_required' => true],
+            ['name' => 'experience_level', 'label' => 'Experience Level', 'type' => 'radio', 'is_enabled' => true, 'is_required' => true, 'options' => 'Fresh Graduate, 1-3 Years, 3-7 Years, 8+ Years'],
+            ['name' => 'industry_sector', 'label' => 'Industry Sector', 'type' => 'select', 'is_enabled' => true, 'is_required' => false, 'options' => ['Banking & Finance', 'RMG & Textile', 'IT & Telecom']],
+        ];
+
+        $this->actingAs($admin)->post(route('admin.courses.update_enrollment_form', $course1), [
+            'enrollment_fields' => $fieldsPayload,
+            'apply_to_all_courses' => '1',
+        ])->assertRedirect();
+
+        $course1->refresh();
+        $course2->refresh();
+
+        $resolved1 = collect($course1->effective_enrollment_fields)->keyBy('name');
+        $resolved2 = collect($course2->effective_enrollment_fields)->keyBy('name');
+        $this->assertFalse($resolved1['email']['is_enabled']);
+        $this->assertFalse($resolved2['email']['is_enabled']);
+        $this->assertEquals('radio', $resolved1['experience_level']['type']);
+        $this->assertEquals(['Fresh Graduate', '1-3 Years', '3-7 Years', '8+ Years'], $resolved1['experience_level']['options']);
+        $this->assertEquals('select', $resolved1['industry_sector']['type']);
+        $this->assertCount(3, $resolved1['industry_sector']['options']);
+        $this->assertEquals('select', $resolved2['industry_sector']['type']);
+
+        // Record a registration with custom form_data and export CSV
+        $student = \App\Models\User::factory()->create(['role' => 'student', 'name' => 'Rahim Uddin', 'phone' => '01712345678']);
+        \App\Models\Payment::create([
+            'user_id' => $student->id,
+            'course_id' => $course1->id,
+            'amount' => 0,
+            'sender_number' => '01712345678',
+            'status' => 'approved',
+            'transaction_id' => 'FREE-TEST-001',
+            'form_data' => [
+                'name' => 'Rahim Uddin',
+                'phone' => '01712345678',
+                'training_mode' => 'online_zoom',
+                'organization' => 'Apex Group',
+                'experience_level' => '3-7 Years',
+                'industry_sector' => 'RMG & Textile',
+            ],
+        ]);
+
+        $csvResponse = $this->actingAs($admin)->get(route('admin.courses.export_registrations', $course1));
+        $csvResponse->assertStatus(200);
+        $this->assertStringContainsString('text/csv', $csvResponse->headers->get('Content-Type'));
+        $csvContent = $csvResponse->streamedContent();
+        $this->assertStringContainsString('Rahim Uddin', $csvContent);
+        $this->assertStringContainsString('Apex Group', $csvContent);
+        $this->assertStringContainsString('3-7 Years', $csvContent);
+        $this->assertStringContainsString('RMG & Textile', $csvContent);
+    }
 }

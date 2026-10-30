@@ -2,7 +2,7 @@
 
 @section('title', 'Insights & Knowledge Hub')
 @section('header_title', 'Insights & Knowledge Hub')
-@section('meta_description', 'Official CAB Academy Blog & Trade Knowledge Hub. In-depth research papers, LC operational guides, HS code updates, and NBR customs gazettes.')
+@section('meta_description', 'Official ACS Academy Blog & Trade Knowledge Hub. In-depth research papers, LC operational guides, HS code updates, and NBR customs gazettes.')
 @section('canonical_url', route('blog.index'))
 
 @section('content')
@@ -19,7 +19,7 @@
                 Insights & Research
             </h1>
             <p class="text-xs sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                Industry-standard research, regulatory frameworks, commercial guidelines, and executive insights curated by CAB Academy faculty.
+                Industry-standard research, regulatory frameworks, commercial guidelines, and executive insights curated by ACS Academy faculty.
             </p>
             <div class="flex items-center justify-center gap-2 text-xs sm:text-sm text-slate-300 font-medium mt-5">
                 <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
@@ -137,7 +137,7 @@
                     <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-dashed border-[#e3e7f0] shadow-sm">
                         <i class="fas fa-newspaper text-4xl text-[#727f9f] mb-3"></i>
                         <h3 class="text-lg font-bold text-[#0f131f] mb-1">No Articles Found</h3>
-                        <p class="text-xs text-[#727f9f] mb-4">Check back soon for latest publications from CAB Academy faculty.</p>
+                        <p class="text-xs text-[#727f9f] mb-4">Check back soon for latest publications from ACS Academy faculty.</p>
                         <a href="{{ route('blog.index') }}" class="btn-ipdp-primary px-5 py-2.5 rounded-xl text-xs font-bold inline-block shadow-sm">
                             Reset Filters
                         </a>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to ACS Academy...</title>
+    <meta name="robots" content="noindex, follow">
+
+    <!-- Canonical & Instant Meta Refresh Fallback (0 seconds) -->
+    <link rel="canonical" href="https://acsacademy.bd/">
+    <meta http-equiv="refresh" content="0; url=https://acsacademy.bd/">
+
+    <script>
+        (function () {
+            // Preserve the current path, query string, and hash (e.g. /c/18 or /courses/18)
+            var path = window.location.pathname || '/';
+            // If hosted as /index.html or /redirect-to-acsacademy.html, normalize to root '/'
+            if (/\/(index|redirect-to-acsacademy)\.html?$/i.test(path)) {
+                path = path.replace(/\/(index|redirect-to-acsacademy)\.html?$/i, '/');
+            }
+            var query = window.location.search || '';
+            var hash = window.location.hash || '';
+
+            // Match protocol or default to https://acsacademy.bd
+            var protocol = window.location.protocol === 'http:' ? 'http:' : 'https:';
+            var targetUrl = 'https://acsacademy.bd' + path + query + hash;
+            var fallbackHttpUrl = 'http://acsacademy.bd' + path + query + hash;
+
+            window.__acsTargetHttps = targetUrl;
+            window.__acsTargetHttp = fallbackHttpUrl;
+
+            // Instant redirect replacing browser history entry
+            try {
+                window.location.replace(targetUrl);
+            } catch (e) {
+                window.location.href = targetUrl;
+            }
+        })();
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Segoe UI", Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 20%, #0d2b6b 0%, #051c45 55%, #020d24 100%);
+            color: #ffffff;
+            text-align: center;
+        }
+        .card {
+            max-width: 440px;
+            width: 100%;
+            padding: 36px 28px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+        }
+        .spinner {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 20px;
+            border: 3px solid rgba(255, 255, 255, 0.18);
+            border-top-color: #c30102;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(147, 197, 253, 0.3);
+            padding: 5px 12px;
+            border-radius: 999px;
+            margin-bottom: 14px;
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+        p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 24px;
+        }
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #c30102 0%, #9b0000 100%);
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(195, 1, 2, 0.35);
+            margin-bottom: 10px;
+        }
+        .btn-secondary {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.65);
+            text-decoration: underline;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="spinner"></div>
+        <span class="badge">ACS Academy</span>
+        <h1>Redirecting to ACS Academy</h1>
+        <p>You are being automatically transferred to our official portal at <strong>acsacademy.bd</strong>.</p>
+        <a id="https-link" href="https://acsacademy.bd/" class="btn-primary">Continue to https://acsacademy.bd/ &rarr;</a>
+        <a id="http-link" href="http://acsacademy.bd/" class="btn-secondary">Or open via http://acsacademy.bd/</a>
+    </div>
+
+    <script>
+        if (window.__acsTargetHttps) {
+            document.getElementById('https-link').href = window.__acsTargetHttps;
+        }
+        if (window.__acsTargetHttp) {
+            document.getElementById('http-link').href = window.__acsTargetHttp;
+        }
+    </script>
+</body>
+</html>
+

@@ -1,6 +1,6 @@
 <?php
 /**
- * CAB Academy - Web Terminal & Command Center (cmd.php)
+ * ACS Academy - Web Terminal & Command Center (cmd.php)
  * Specially designed for cPanel / InfinityFree shared hosting environments without SSH access.
  *
  * Security Notice:
@@ -133,7 +133,7 @@ if (!$isAuthenticated) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CAB Command Center &bull; Authentication</title>
+        <title>ACS Command Center &bull; Authentication</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
@@ -143,7 +143,7 @@ if (!$isAuthenticated) {
                 <div class="w-16 h-16 rounded-2xl bg-[#051c45] text-white flex items-center justify-center text-2xl mx-auto mb-4 shadow-lg ring-4 ring-slate-100">
                     <i class="fas fa-terminal text-[#c30102]"></i>
                 </div>
-                <h1 class="text-2xl font-black text-[#0f131f] tracking-tight">CAB Command Center</h1>
+                <h1 class="text-2xl font-black text-[#0f131f] tracking-tight">ACS Command Center</h1>
                 <p class="text-xs text-gray-500 mt-1 font-semibold uppercase tracking-wider">Shared Hosting Artisan & Migration Runner</p>
             </div>
 
@@ -172,7 +172,7 @@ if (!$isAuthenticated) {
             </form>
 
             <div class="mt-8 pt-6 border-t border-gray-100 text-center">
-                <p class="text-[11px] text-gray-400 font-medium">&copy; <?= date('Y') ?> Commercial Academy Bangladesh. Protected Environment.</p>
+                <p class="text-[11px] text-gray-400 font-medium">&copy; <?= date('Y') ?> ACS Academy. Protected Environment.</p>
             </div>
         </div>
     </body>
@@ -194,8 +194,9 @@ if (!empty($_REQUEST['cmd_b64'])) {
         'test_db' => 'test:db',
         'migrate' => 'migrate --force',
         'schema_repair' => 'schema:repair',
+        'purge_demo' => 'db:purge-demo',
         'seed' => 'db:seed --force',
-        'fresh' => 'migrate:fresh --seed --force',
+        'fresh' => 'migrate:fresh --force',
         'clear' => 'optimize:clear',
         'diag' => 'sys:diag',
         'env_fix' => 'env:fix',
@@ -221,7 +222,7 @@ if ($rawCommand !== '') {
 
     // 1. Direct System Diagnostics (Independent of Laravel/DB)
     if ($cleanCommand === 'sys:diag') {
-        $commandOutput = "CAB Academy System & Hosting Diagnostics\n";
+        $commandOutput = "ACS Academy System & Hosting Diagnostics\n";
         $commandOutput .= "========================================\n";
         $commandOutput .= "PHP Version        : " . PHP_VERSION . "\n";
         $commandOutput .= "Operating System   : " . PHP_OS . "\n";
@@ -333,9 +334,9 @@ if ($rawCommand !== '') {
         $symlinkOk = function_exists('symlink') ? 'ENABLED' : 'DISABLED (InfinityFree Limitation)';
         $procOpenOk = function_exists('proc_open') ? 'ENABLED' : 'DISABLED (InfinityFree Limitation)';
 
-        $commandOutput = "CAB Academy & Laravel Framework Overview\n";
+        $commandOutput = "ACS Academy & Laravel Framework Overview\n";
         $commandOutput .= "==================================================\n";
-        $commandOutput .= sprintf("%-22s: %s\n", "Application Name", "CAB Academy");
+        $commandOutput .= sprintf("%-22s: %s\n", "Application Name", "ACS Academy");
         $commandOutput .= sprintf("%-22s: %s\n", "Laravel Version", "11.45.1");
         $commandOutput .= sprintf("%-22s: %s\n", "PHP Version", PHP_VERSION);
         $commandOutput .= sprintf("%-22s: %s\n", "Composer Runtime", "Shared Hosting (proc_open disabled)");
@@ -367,7 +368,7 @@ if ($rawCommand !== '') {
             $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
             $kernel->bootstrap();
 
-            $output = "CAB Academy Instructor & User Account Integrity Check\n";
+            $output = "ACS Academy Instructor & User Account Integrity Check\n";
             $output .= "========================================================\n";
             $instructors = \App\Models\Instructor::all();
             $repaired = 0;
@@ -406,7 +407,7 @@ if ($rawCommand !== '') {
             $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
             $kernel->bootstrap();
 
-            $output = "CAB Academy Self-Healing Schema & Column Verifier\n";
+            $output = "ACS Academy Self-Healing Schema & Column Verifier\n";
             $output .= "========================================================\n";
             $result = \App\Support\DatabaseSchemaRepair::ensureSchema(true);
             $repaired = $result['repaired'] ?? [];
@@ -422,6 +423,34 @@ if ($rawCommand !== '') {
             $executionStatus = 'success';
         } catch (\Throwable $e) {
             $commandOutput = "Error repairing schema: " . $e->getMessage() . "\n" . $e->getTraceAsString();
+            $executionStatus = 'error';
+        }
+    }
+    // 6c. Purge Demo / Seeded Data (Preserves Real Courses, Real Instructors, and Real Users)
+    elseif (in_array($cleanCommand, ['db:purge-demo', 'purge:demo', 'demo:purge'])) {
+        try {
+            $autoloadFile = $baseDir . '/vendor/autoload.php';
+            require_once $autoloadFile;
+            $app = require_once $baseDir . '/bootstrap/app.php';
+            $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+            $kernel->bootstrap();
+
+            $output = "ACS Academy Demo / Seeded Data Cleanup\n";
+            $output .= "========================================================\n";
+            $result = \App\Support\DatabaseSchemaRepair::purgeDemoData();
+            $purged = $result['purged'] ?? [];
+            if (!empty($purged)) {
+                foreach ($purged as $line) {
+                    $output .= " ✓ {$line}\n";
+                }
+            } else {
+                $output .= " ✓ No demo/seeded courses, faculty chairs, or sample posts found. Production database is clean!\n";
+            }
+            $output .= "\nCleanup status: " . strtoupper($result['status'] ?? 'OK') . "\n";
+            $commandOutput = $output;
+            $executionStatus = 'success';
+        } catch (\Throwable $e) {
+            $commandOutput = "Error purging demo data: " . $e->getMessage() . "\n" . $e->getTraceAsString();
             $executionStatus = 'error';
         }
     }
@@ -554,7 +583,7 @@ ob_end_clean();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAB Academy &bull; Web Artisan & Command Center</title>
+    <title>ACS Academy &bull; Web Artisan & Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -575,7 +604,7 @@ ob_end_clean();
                 </div>
                 <div>
                     <h1 class="font-extrabold text-base tracking-tight flex items-center gap-2">
-                        <span>CAB Command Center</span>
+                        <span>ACS Command Center</span>
                         <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Live Terminal</span>
                     </h1>
                     <p class="text-[11px] text-slate-400">cPanel / InfinityFree Web Artisan Runner</p>
@@ -667,6 +696,18 @@ ob_end_clean();
                             <i class="fas fa-chevron-right text-xs text-sky-400 group-hover:text-sky-700 group-hover:translate-x-1 transition-all"></i>
                         </button>
 
+                        <button onclick="runCommand('db:purge-demo')" class="w-full p-3.5 text-left rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all flex items-center justify-between group">
+                            <div>
+                                <div class="text-xs font-bold text-amber-900 flex items-center gap-2">
+                                    <i class="fas fa-broom text-amber-600"></i>
+                                    <span>Purge Demo / Seeded Data (Keep Real Courses)</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900 font-mono">db:purge-demo</span>
+                                </div>
+                                <p class="text-[11px] text-amber-700 mt-0.5">Removes the 8 seeded demo courses & demo faculty while restoring/keeping all real courses</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs text-amber-400 group-hover:text-amber-700 group-hover:translate-x-1 transition-all"></i>
+                        </button>
+
                         <button onclick="runCommand('db:seed --force')" class="w-full p-3.5 text-left rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all flex items-center justify-between group">
                             <div>
                                 <div class="text-xs font-bold text-slate-800 flex items-center gap-2">
@@ -707,9 +748,9 @@ ob_end_clean();
                             <div>
                                 <div class="text-xs font-bold text-red-700 flex items-center gap-2">
                                     <i class="fas fa-radiation text-red-600"></i>
-                                    <span>Fresh Migration & Seed (Reset DB)</span>
+                                    <span>Fresh Migration Only (Reset DB Without Seed Data)</span>
                                 </div>
-                                <p class="text-[11px] text-red-600/80 mt-0.5">Drops all tables, re-runs migrations and re-seeds database</p>
+                                <p class="text-[11px] text-red-600/80 mt-0.5">Drops all tables and re-runs clean migrations without demo seed data</p>
                             </div>
                             <i class="fas fa-exclamation-triangle text-xs text-red-400 group-hover:text-red-700 transition-all"></i>
                         </button>
@@ -781,7 +822,7 @@ ob_end_clean();
 
                     <!-- Terminal Output Window -->
                     <div id="terminalScreen" class="flex-1 p-5 font-mono text-xs text-slate-200 overflow-y-auto terminal-scroll leading-relaxed whitespace-pre-wrap selection:bg-[#c30102] selection:text-white">
-<span class="text-emerald-400 font-bold">CAB Academy Cloud Terminal [Version 2026.1]</span>
+<span class="text-emerald-400 font-bold">ACS Academy Cloud Terminal [Version 2026.1]</span>
 <span class="text-slate-400">cPanel / InfinityFree Native Transport Runner Ready.</span>
 <span class="text-slate-500">Security PIN active. Type or click any pre-set command below to begin.</span>
 --------------------------------------------------------
@@ -856,8 +897,8 @@ ob_end_clean();
         }
 
         function confirmFresh() {
-            if (confirm("WARNING: This will drop all database tables and re-seed from scratch. Are you sure?")) {
-                runCommand('migrate:fresh --seed --force');
+            if (confirm("WARNING: This will drop all database tables and run clean migrations (WITHOUT demo seed data). Are you sure?")) {
+                runCommand('migrate:fresh --force');
             }
         }
 

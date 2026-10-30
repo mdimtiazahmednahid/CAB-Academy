@@ -1,7 +1,13 @@
 @extends('layouts.public')
+@php
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
+    $aboutHotline = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+    $aboutHotlineTel = preg_replace('/[^0-9+]/', '', $aboutHotline) ?: '01917054664';
+    $aboutAddress = \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216');
+@endphp
 
-@section('title', 'About CAB Academy - Institutional Excellence & Trade Leadership')
-@section('meta_description', 'Learn about CAB Academy, Bangladesh\'s premier executive certification institute in commercial banking, supply chain operations, and international trade law.')
+@section('title', 'About ' . $siteName . ' - Institutional Excellence & Trade Leadership')
+@section('meta_description', 'Learn about ' . $siteName . ', Bangladesh\'s premier executive certification institute.')
 @section('canonical_url', route('about.index'))
 
 @section('content')
@@ -18,7 +24,7 @@
                     {{ \App\Models\Setting::getVal('about_hero_title', "Empowering Bangladesh's Next Generation of Global Trade Leaders") }}
                 </h1>
                 <p class="mt-5 text-base sm:text-lg text-[#35415b] leading-relaxed">
-                    {{ \App\Models\Setting::getVal('about_hero_desc', 'Commercial Academy Bangladesh (CAB Academy) is the national vanguard in specialized executive development. Founded to bridge the critical gap between theoretical academia and high-stakes commercial reality, we provide rigorous, practical masterclasses in Export-Import Management, Supply Chain Logistics, Customs VAT & Tax, and Corporate Governance.') }}
+                    {{ \App\Models\Setting::getVal('about_hero_desc', 'ACS Academy is the national vanguard in specialized executive development. Founded to bridge the critical gap between theoretical academia and high-stakes commercial reality, we provide rigorous, practical masterclasses in Export-Import Management, Supply Chain Logistics, Customs VAT & Tax, and Corporate Governance.') }}
                 </p>
                 <div class="mt-8 flex flex-wrap gap-4">
                     <a href="{{ route('catalog.index') }}" class="btn-ipdp-primary px-6 py-3.5 rounded-xl font-bold shadow-md inline-flex items-center gap-2 text-sm">
@@ -33,11 +39,11 @@
             <div class="lg:col-span-5">
                 <div class="relative">
                     <div class="absolute -inset-2 bg-gradient-to-r from-[#c30102] to-[#051c45] rounded-3xl blur-xl opacity-20 transform -rotate-1"></div>
-                    <div class="relative bg-white rounded-3xl p-8 border border-[#e3e7f0] shadow-xl space-y-6">
+                    <div class="relative liquid-glass-card rounded-3xl p-8 space-y-6">
                         <div class="flex items-center gap-4">
-                            <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} Crest" class="w-16 h-16 rounded-2xl p-1 bg-white border border-gray-100 shadow-sm object-contain" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                            <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $siteName }} Crest" class="w-16 h-16 rounded-2xl p-1 bg-white border border-gray-100 shadow-sm object-contain" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                             <div>
-                                <h3 class="text-xl font-black text-[#0f131f] uppercase tracking-tight">{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</h3>
+                                <h3 class="text-xl font-black text-[#0f131f] uppercase tracking-tight">{{ $siteName }}</h3>
                                 <span class="text-xs font-black text-[#c30102] uppercase tracking-widest">{{ \App\Models\Setting::getVal('site_tagline', 'Learn, Grow, Lead.') }}</span>
                             </div>
                         </div>
@@ -66,7 +72,7 @@
 
         <!-- Mission, Vision & Core Values -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-            <div class="bg-white rounded-3xl p-8 border border-[#e3e7f0] shadow-sm hover:shadow-xl transition-all">
+            <div class="liquid-glass-card rounded-3xl p-8 hover:shadow-xl transition-all">
                 <div class="w-12 h-12 rounded-2xl bg-[#c30102]/10 text-[#c30102] flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-bullseye"></i>
                 </div>
@@ -76,7 +82,7 @@
                 </p>
             </div>
 
-            <div class="bg-white rounded-3xl p-8 border border-[#e3e7f0] shadow-sm hover:shadow-xl transition-all">
+            <div class="liquid-glass-card rounded-3xl p-8 hover:shadow-xl transition-all">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-[#10b981] flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-eye"></i>
                 </div>
@@ -86,7 +92,7 @@
                 </p>
             </div>
 
-            <div class="bg-white rounded-3xl p-8 border border-[#e3e7f0] shadow-sm hover:shadow-xl transition-all">
+            <div class="liquid-glass-card rounded-3xl p-8 hover:shadow-xl transition-all">
                 <div class="w-12 h-12 rounded-2xl bg-blue-100 text-[#051c45] flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-shield-alt"></i>
                 </div>
@@ -97,11 +103,11 @@
             </div>
         </div>
 
-        <!-- Why Choose CAB Academy -->
-        <div class="bg-white rounded-3xl p-8 sm:p-12 border border-[#e3e7f0] shadow-sm mb-20">
+        <!-- Why Choose Academy -->
+        <div class="liquid-glass-card rounded-3xl p-8 sm:p-12 mb-20">
             <div class="text-center max-w-2xl mx-auto mb-12">
                 <span class="text-xs font-black tracking-widest text-[#c30102] uppercase block mb-1">Institutional Excellence</span>
-                <h2 class="text-2xl sm:text-3xl font-black text-[#0f131f]">The CAB Academy Distinct Advantage</h2>
+                <h2 class="text-2xl sm:text-3xl font-black text-[#0f131f]">The {{ $siteName }} Distinct Advantage</h2>
                 <p class="text-sm text-[#727f9f] mt-2">What sets our executive diploma and day-long masterclasses apart.</p>
             </div>
 
@@ -157,21 +163,21 @@
         </div>
 
         <!-- Campus & Executive Headquarters Banner -->
-        <div class="bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row justify-between items-center gap-8 shadow-2xl relative overflow-hidden border border-[#1e2d4a]">
+        <div class="liquid-glass-dark rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row justify-between items-center gap-8 shadow-2xl relative overflow-hidden border border-white/15">
             <div class="absolute -right-16 -top-16 w-64 h-64 bg-[#c30102]/20 rounded-full blur-3xl pointer-events-none"></div>
             <div class="max-w-2xl relative z-10">
                 <span class="text-xs font-black uppercase tracking-widest text-[#10b981] block mb-2">Visit Our Campus</span>
-                <h3 class="text-2xl sm:text-3xl font-black">Experience the Campus at Mirpur-Pallabi</h3>
+                <h3 class="text-2xl sm:text-3xl font-black">Experience Our Executive Campus</h3>
                 <p class="text-sm text-slate-300 mt-2 leading-relaxed">
-                    Mirpur-Pallabi, Dhaka, Bangladesh, 1216. Our admissions counselors are available for in-person consultation Saturday through Thursday.
+                    {{ $aboutAddress }}. Our admissions counselors are available for consultation Saturday through Thursday.
                 </p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3 shrink-0 relative z-10">
                 <a href="{{ route('contact.index') }}" class="btn-ipdp-primary px-6 py-3 rounded-xl font-bold text-center text-sm shadow-md">
                     Schedule a Visit
                 </a>
-                <a href="tel:01917054664" class="px-6 py-3 rounded-xl font-bold text-center text-sm bg-white/10 hover:bg-white/20 text-white transition-colors border border-white/20">
-                    Call 01917-054664
+                <a href="tel:{{ $aboutHotlineTel }}" class="px-6 py-3 rounded-xl font-bold text-center text-sm bg-white/10 hover:bg-white/20 text-white transition-colors border border-white/20">
+                    Call {{ $aboutHotline }}
                 </a>
             </div>
         </div>

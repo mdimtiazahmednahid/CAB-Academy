@@ -1,17 +1,17 @@
 @php
     $template = request('template') ?: \App\Models\Setting::getVal('certificate_template', 'classic_navy');
 
-    // Configurable Institution Branding & Content (defaults to Commercial Academy Bangladesh)
-    $institutionName = \App\Models\Setting::getVal('certificate_institution_name', 'Commercial Academy Bangladesh');
-    $tagline = \App\Models\Setting::getVal('certificate_tagline', 'CAB Academy • Learn, Grow, Lead.');
+    // Configurable Institution Branding & Content (defaults to ACS Academy)
+    $institutionName = \App\Models\Setting::getVal('certificate_institution_name', 'ACS Academy');
+    $tagline = \App\Models\Setting::getVal('certificate_tagline', 'ACS Academy • Learn, Grow, Lead.');
     $campusAddress = \App\Models\Setting::getVal('certificate_campus_address', 'Mirpur-Pallabi Campus • Dhaka, Bangladesh');
     $certTitle = \App\Models\Setting::getVal('certificate_title', 'Executive Certification of Mastery');
     $confermentText = \App\Models\Setting::getVal('certificate_conferment_text', 'This is proudly presented and conferred upon');
     $completionText = \App\Models\Setting::getVal('certificate_completion_text', 'for having successfully completed all prescribed coursework, simulated trade laboratories, case examinations, and demonstrating professional competence in');
-    $facultyEndorsement = \App\Models\Setting::getVal('certificate_faculty_endorsement', 'Delivered under the auspices of the CAB Academy Executive Faculty Board.');
+    $facultyEndorsement = \App\Models\Setting::getVal('certificate_faculty_endorsement', 'Delivered under the auspices of the ACS Academy Executive Faculty Board.');
     $primarySignatoryName = \App\Models\Setting::getVal('certificate_primary_signatory_name', 'Academic Director');
     $primarySignatoryTitle = \App\Models\Setting::getVal('certificate_primary_signatory_title', 'Academic Director');
-    $primarySignatoryBoard = \App\Models\Setting::getVal('certificate_primary_signatory_board', 'CAB Academy Governing Council');
+    $primarySignatoryBoard = \App\Models\Setting::getVal('certificate_primary_signatory_board', 'ACS Academy Governing Council');
     $showSecondary = \App\Models\Setting::getVal('certificate_show_secondary_signature', '1') == '1';
     $secondarySignatoryName = \App\Models\Setting::getVal('certificate_secondary_signatory_name', 'Lead Executive Trainer');
     $secondarySignatoryTitle = \App\Models\Setting::getVal('certificate_secondary_signatory_title', 'Course Director & Faculty Chair');
@@ -293,7 +293,7 @@
                 <div class="inline-flex items-center justify-center gap-2 mb-1 sm:mb-2">
                     <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $institutionName }} Crest" class="w-12 h-12 sm:w-16 sm:h-16 object-contain" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 </div>
-                <!-- Institution Name (Configurable with default Commercial Academy Bangladesh) -->
+                <!-- Institution Name (Configurable with default ACS Academy) -->
                 <h1 class="font-cinzel text-xl sm:text-3xl lg:text-4xl font-black tracking-widest {{ $theme['inst_color'] }} uppercase">
                     {{ $institutionName }}
                 </h1>

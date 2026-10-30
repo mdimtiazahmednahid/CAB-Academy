@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Course Catalog') - {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
+    <title>@yield('title', 'Course Catalog') - {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}</title>
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="manifest" href="{{ route('pwa.manifest') }}">
@@ -24,9 +24,9 @@
     <meta name="bingbot" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
 
     <!-- Meta Description & Keywords -->
-    <meta name="description" content="@yield('meta_description', 'CAB Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import (EXIM) Procedures, Letter of Credit (LC) Operations, Customs Clearance, and Supply Chain Management in Dhaka.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'Commercial Banking course Dhaka, Export Import training Bangladesh, Letter of Credit LC course Dhaka, Customs clearance training NBR, Supply chain certification Dhaka, professional training Mirpur Pallabi, CAB Academy')">
-    <meta name="author" content="CAB Academy">
+    <meta name="description" content="@yield('meta_description', 'ACS Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import (EXIM) Procedures, Letter of Credit (LC) Operations, Customs Clearance, and Supply Chain Management in Dhaka.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'Commercial Banking course Dhaka, Export Import training Bangladesh, Letter of Credit LC course Dhaka, Customs clearance training NBR, Supply chain certification Dhaka, professional training Mirpur Pallabi, ACS Academy')">
+    <meta name="author" content="ACS Academy">
 
     <!-- Geo & Local SEO Tags (Dhaka, Bangladesh) -->
     <meta name="geo.region" content="BD-13">
@@ -36,10 +36,10 @@
 
     <!-- Open Graph (Facebook, LinkedIn, Social Previews) -->
     <meta property="og:type" content="@yield('og_type', 'website')">
-    <meta property="og:site_name" content="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}">
+    <meta property="og:site_name" content="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}">
     <meta property="og:locale" content="en_US">
-    <meta property="og:title" content="@yield('og_title', View::hasSection('title') ? View::getSection('title') . ' - CAB Academy' : 'CAB Academy | Commercial Banking & Trade Training')">
-    <meta property="og:description" content="@yield('meta_description', 'CAB Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
+    <meta property="og:title" content="@yield('og_title', View::hasSection('title') ? View::getSection('title') . ' - ACS Academy' : 'ACS Academy | Commercial Banking & Trade Training')">
+    <meta property="og:description" content="@yield('meta_description', 'ACS Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
     <meta property="og:url" content="@yield('canonical_url', url()->current())">
     @php
         $rawOgImg = trim(View::getSection('og_image') ?: (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')));
@@ -60,30 +60,32 @@
     <meta property="og:image:type" content="{{ $ogMime }}">
     <meta property="og:image:width" content="@yield('og_image_width', '1200')">
     <meta property="og:image:height" content="@yield('og_image_height', '630')">
-    <meta property="og:image:alt" content="@yield('og_image_alt', \App\Models\Setting::getVal('site_name', 'CAB Academy'))">
+    <meta property="og:image:alt" content="@yield('og_image_alt', \App\Models\Setting::getVal('site_name', 'ACS Academy'))">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('og_title', View::hasSection('title') ? View::getSection('title') . ' - CAB Academy' : 'CAB Academy | Commercial Banking & Trade Training')">
-    <meta name="twitter:description" content="@yield('meta_description', 'CAB Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
+    <meta name="twitter:title" content="@yield('og_title', View::hasSection('title') ? View::getSection('title') . ' - ACS Academy' : 'ACS Academy | Commercial Banking & Trade Training')">
+    <meta name="twitter:description" content="@yield('meta_description', 'ACS Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import Procedures, and Supply Chain Operations.')">
     <meta name="twitter:image" content="{!! $fullOgImg !!}">
-    <meta name="twitter:image:alt" content="@yield('og_image_alt', \App\Models\Setting::getVal('site_name', 'CAB Academy'))">
+    <meta name="twitter:image:alt" content="@yield('og_image_alt', \App\Models\Setting::getVal('site_name', 'ACS Academy'))">
 
     <!-- Schema.org EducationalOrganization JSON-LD -->
     @php
         $siteLogoUrl = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png');
-        $siteNameVal = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+        $siteNameVal = \App\Models\Setting::getVal('site_name', 'ACS Academy');
+        $sitePhoneVal = \App\Models\Setting::getVal('contact_hotline', '+8801917054664');
+        $siteEmailVal = \App\Models\Setting::getVal('contact_email', 'info@cab-academy.com');
         $orgSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'EducationalOrganization',
             'name' => $siteNameVal,
-            'alternateName' => 'Commercial Academy Bangladesh',
+            'alternateName' => $siteNameVal,
             'url' => url('/'),
             'logo' => $siteLogoUrl,
             'image' => $siteLogoUrl,
-            'description' => "CAB Academy is Bangladesh's premier executive training and professional certification academy for commercial banking, export-import procedures, LC operations, and supply chain management.",
-            'telephone' => '+8801917054664',
-            'email' => 'info@cab-academy.com',
+            'description' => $siteNameVal . " is Bangladesh's premier executive training and professional certification academy.",
+            'telephone' => $sitePhoneVal,
+            'email' => $siteEmailVal,
             'address' => [
                 '@type' => 'PostalAddress',
                 'streetAddress' => 'House 28, Road 2, Block B, Pallabi, Mirpur 12',
@@ -330,12 +332,12 @@
                     <div class="relative shrink-0">
                         <img class="h-10 w-10 sm:h-12 sm:w-12 xl:h-13 xl:w-13 object-contain rounded-full shadow-sm bg-white border border-slate-100 ring-2 ring-slate-100 group-hover:ring-[#c30102]/30 group-hover:scale-105 transition-all duration-300" 
                              src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" 
-                             alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}"
+                             alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                     </div>
                     <div class="flex flex-col min-w-0">
-                        <span class="brand-adaptive-title font-black tracking-tight text-[#041536] uppercase" style="{{ $brandSizing['header_style'] ?? '' }}" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'CAB Academy' }}">
-                            {{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'CAB Academy' }}
+                        <span class="brand-adaptive-title font-black tracking-tight text-[#041536] uppercase" style="{{ $brandSizing['header_style'] ?? '' }}" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}">
+                            {{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}
                         </span>
                         <span class="text-[8px] sm:text-[9.5px] tracking-widest uppercase font-black text-[#c30102] mt-0.5 truncate">{{ \App\Models\Setting::getVal('site_tagline', \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) }}</span>
                     </div>
@@ -704,15 +706,15 @@
                     <div class="flex items-center gap-3 mb-4">
                         <img class="h-11 w-11 shrink-0 object-contain rounded-full bg-white p-0.5 shadow-md" 
                              src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" 
-                             alt="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}"
+                             alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                         <div class="min-w-0">
-                            <h3 class="text-white font-black uppercase tracking-tight brand-adaptive-title" style="{{ $brandSizing['sidebar_style'] ?? '' }}">{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'CAB Academy' }}</h3>
+                            <h3 class="text-white font-black uppercase tracking-tight brand-adaptive-title" style="{{ $brandSizing['sidebar_style'] ?? '' }}">{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}</h3>
                             <span class="text-[10px] text-[#c30102] font-black tracking-widest uppercase block truncate mt-0.5">{{ \App\Models\Setting::getVal('site_tagline', \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) }}</span>
                         </div>
                     </div>
                     <p class="leading-relaxed mb-6 text-xs sm:text-sm text-slate-300">
-                        {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} is a specialized professional training institute delivering practical, industry-standard certification programs in Export-Import, Supply Chain, VAT & Tax, and Corporate Leadership.
+                        {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} is a specialized professional training institute delivering practical, industry-standard certification programs in Export-Import, Supply Chain, VAT & Tax, and Corporate Leadership.
                     </p>
                     <div class="flex items-center gap-3">
                         <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#c30102] transition-colors">
@@ -799,7 +801,7 @@
 
             <!-- Subfooter (With NeuraSoft Attribution) -->
             <div class="border-t border-white/10 pt-6 pb-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-3">
-                <p>© {{ date('Y') }} CAB Academy. All Rights Reserved.</p>
+                <p>© {{ date('Y') }} {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}. All Rights Reserved.</p>
                 <p class="sm:mr-20">
                     Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[#c30102] font-bold underline underline-offset-4 transition-colors">NeuraSoft</a>
                 </p>
@@ -808,8 +810,15 @@
     </footer>
 
     <!-- Floating WhatsApp Action Button (Matches Reference Screenshot) -->
+    @php
+        $globalWaRaw = \App\Models\Setting::getVal('contact_whatsapp', \App\Models\Setting::getVal('contact_hotline', '8801917054664'));
+        $globalWaDigits = preg_replace('/[^0-9]/', '', (string) $globalWaRaw) ?: '8801917054664';
+        if (strlen($globalWaDigits) === 11 && str_starts_with($globalWaDigits, '01')) {
+            $globalWaDigits = '88' . $globalWaDigits;
+        }
+    @endphp
     <a 
-        href="https://wa.me/{{ \App\Models\Setting::getVal('contact_whatsapp', '8801917054664') }}" 
+        href="https://wa.me/{{ $globalWaDigits }}" 
         target="_blank" 
         rel="noopener noreferrer" 
         class="fixed bottom-20 lg:bottom-5 right-4 sm:right-5 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300"

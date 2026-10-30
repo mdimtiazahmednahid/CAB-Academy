@@ -41,7 +41,7 @@ class Certificate extends Model
             return $existing;
         }
 
-        $certificateNumber = 'CAB-' . date('Y') . '-' . strtoupper(substr(md5($user->id . '_' . $course->id . '_' . time()), 0, 8));
+        $certificateNumber = 'ACS-' . date('Y') . '-' . strtoupper(substr(md5($user->id . '_' . $course->id . '_' . time()), 0, 8));
 
         return self::create([
             'certificate_number' => $certificateNumber,

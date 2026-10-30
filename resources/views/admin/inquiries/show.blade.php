@@ -45,7 +45,7 @@
 
             <!-- Quick Communication Actions -->
             <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
-                <a href="mailto:{{ $inquiry->email }}?subject={{ urlencode('Re: ' . $inquiry->subject . ' - CAB Academy') }}" class="px-4 py-2.5 bg-gray-900 hover:bg-black text-white rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-2">
+                <a href="mailto:{{ $inquiry->email }}?subject={{ urlencode('Re: ' . $inquiry->subject . ' - ACS Academy') }}" class="px-4 py-2.5 bg-gray-900 hover:bg-black text-white rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     Reply via Email
                 </a>
@@ -53,7 +53,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                     Call {{ $inquiry->phone }}
                 </a>
-                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $inquiry->phone) }}?text={{ urlencode('Hello ' . $inquiry->name . ', regarding your inquiry with CAB Academy: ') }}" target="_blank" class="px-4 py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-2">
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $inquiry->phone) }}?text={{ urlencode('Hello ' . $inquiry->name . ', regarding your inquiry with ACS Academy: ') }}" target="_blank" class="px-4 py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-2">
                     <i class="fab fa-whatsapp"></i> Chat on WhatsApp
                 </a>
             </div>

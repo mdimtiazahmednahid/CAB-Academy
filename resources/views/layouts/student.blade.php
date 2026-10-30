@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="@yield('robots', 'noindex, nofollow, noarchive, nosnippet')">
 
-    <title>@hasSection('title') @yield('title') - @endif{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}</title>
+    <title>@hasSection('title') @yield('title') - @endif{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}</title>
     @hasSection('meta_description')
         <meta name="description" content="@yield('meta_description')">
     @endif
@@ -174,9 +174,9 @@
         <!-- Brand Header (Always stays inside Student Portal) -->
         <div class="p-4 lg:px-5 lg:py-4 border-b border-slate-100 flex items-center justify-center lg:justify-start gap-3 min-h-[4.25rem]">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 min-w-0 group" title="Student Portal Dashboard">
-                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'CAB Academy' }}" class="h-9 w-9 shrink-0 rounded-xl object-contain bg-white border border-slate-200/80 p-0.5 shadow-2xs group-hover:scale-105 transition-transform" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}" class="h-9 w-9 shrink-0 rounded-xl object-contain bg-white border border-slate-200/80 p-0.5 shadow-2xs group-hover:scale-105 transition-transform" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div class="hidden lg:flex flex-col min-w-0">
-                    <span class="font-black tracking-tight text-[#051c45] uppercase brand-adaptive-title leading-tight" style="{{ $brandSizing['sidebar_style'] ?? '' }}" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'CAB Academy' }}">{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'CAB Academy' }}</span>
+                    <span class="font-black tracking-tight text-[#051c45] uppercase brand-adaptive-title leading-tight" style="{{ $brandSizing['sidebar_style'] ?? '' }}" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}">{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}</span>
                     <span class="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest text-[#c30102] mt-0.5">
                         <span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>
                         <span>Student Portal</span>

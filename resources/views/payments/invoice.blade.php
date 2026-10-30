@@ -1,8 +1,8 @@
 @php
-    $siteName = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
     $institutionName = \App\Models\Setting::getVal('accounting_institution_name') ?: $siteName;
     $shortSealName = \App\Models\Setting::getVal('site_short_name') ?: $siteName;
-    $invPrefix = \App\Models\Setting::getVal('accounting_invoice_prefix') ?: 'INV-CAB';
+    $invPrefix = \App\Models\Setting::getVal('accounting_invoice_prefix') ?: 'INV-ACS';
     $ledgerSubtitle = \App\Models\Setting::getVal('accounting_ledger_subtitle') ?: ($siteName . ' • Official Tuition Invoice');
     $signatoryTitle = \App\Models\Setting::getVal('accounting_signatory_title') ?: 'Authorized Registrar & Treasury';
     $footerNote = \App\Models\Setting::getVal('accounting_footer_note') ?: ('Thank you for your enrollment with ' . $institutionName . '!');

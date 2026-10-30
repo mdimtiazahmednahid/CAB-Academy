@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Database Setup Required - CAB Academy</title>
+    <title>Database Setup Required - ACS Academy</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -158,7 +158,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="badge">CAB Academy Diagnostic Center</div>
+        <div class="badge">ACS Academy Diagnostic Center</div>
         <div class="header">
             <div class="icon-wrap">⚙️</div>
             <div>

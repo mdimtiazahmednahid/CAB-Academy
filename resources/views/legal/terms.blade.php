@@ -1,13 +1,16 @@
 @extends('layouts.public')
+@php
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
+@endphp
 
-@section('title', 'Terms of Service - CAB Academy')
-@section('meta_description', 'Terms of Service, Enrollment Agreement, and Institutional Policies for students and corporate trainees at CAB Academy.')
+@section('title', 'Terms of Service - ' . $siteName)
+@section('meta_description', 'Terms of Service, Enrollment Agreement, and Institutional Policies for students and corporate trainees at ' . $siteName . '.')
 @section('canonical_url', route('legal.terms'))
 
 @section('content')
 <div class="bg-[#f2f4f7] py-12 lg:py-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white rounded-3xl p-8 sm:p-12 border border-[#e3e7f0] shadow-sm">
+        <div class="liquid-glass-card rounded-3xl p-8 sm:p-12">
             
             <div class="border-b border-gray-100 pb-6 mb-8">
                 <h1 class="text-3xl font-black text-[#0f131f] tracking-tight">Terms of Service</h1>
@@ -23,7 +26,7 @@
                 <section>
                     <h2 class="text-lg font-bold text-[#0f131f] mb-2">1. Acceptance of Terms</h2>
                     <p>
-                        By enrolling in any program, workshop, day-long course, or accessing the CAB Academy online portal, you agree to comply with and be legally bound by these Terms of Service. If you do not accept these terms, you should not register or submit payment.
+                        By enrolling in any program, workshop, day-long course, or accessing the {{ $siteName }} online portal, you agree to comply with and be legally bound by these Terms of Service. If you do not accept these terms, you should not register or submit payment.
                     </p>
                 </section>
 
@@ -39,14 +42,14 @@
                 <section>
                     <h2 class="text-lg font-bold text-[#0f131f] mb-2">3. Intellectual Property Rights</h2>
                     <p>
-                        All course syllabi, lecture presentations, trade simulation worksheets, sample L/C documentation templates, and videos provided by CAB Academy are protected under copyright law. Unauthorized distribution or public commercial exploitation is strictly prohibited and subject to legal action.
+                        All course syllabi, lecture presentations, trade simulation worksheets, sample documentation templates, and videos provided by {{ $siteName }} are protected under copyright law. Unauthorized distribution or public commercial exploitation is strictly prohibited and subject to legal action.
                     </p>
                 </section>
 
                 <section>
                     <h2 class="text-lg font-bold text-[#0f131f] mb-2">4. Certificate Issuance & Authenticity</h2>
                     <p>
-                        Official CAB Academy Executive Certificates are awarded exclusively upon satisfactory completion of required attendance, course assignments, and passing scores on the module evaluation quiz. Certificates include a unique alphanumeric verification hash verifiable on the official CAB Academy registry.
+                        Official {{ $siteName }} Executive Certificates are awarded exclusively upon satisfactory completion of required attendance, course assignments, and passing scores on the module evaluation quiz. Certificates include a unique alphanumeric verification hash verifiable on the official {{ $siteName }} registry.
                     </p>
                 </section>
 

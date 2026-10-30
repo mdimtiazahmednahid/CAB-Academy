@@ -1,7 +1,12 @@
 @extends('layouts.public')
+@php
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
+    $certEmail = \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com');
+    $certHotline = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+@endphp
 
-@section('title', 'Public Credential Verification Registry - CAB Academy')
-@section('meta_description', 'Public Credential Verification Registry at CAB Academy. Verify the authenticity of professional trade certificates and graduate credentials.')
+@section('title', 'Public Credential Verification Registry - ' . $siteName)
+@section('meta_description', 'Public Credential Verification Registry at ' . $siteName . '. Verify the authenticity of professional trade certificates and graduate credentials.')
 @section('canonical_url', url()->current())
 
 @section('content')
@@ -17,7 +22,7 @@
                 Certificate Verification Engine
             </h1>
             <p class="mt-2 text-sm text-[#727f9f]">
-                Authenticating professional qualifications issued by {{ \App\Models\Setting::getVal('certificate_institution_name', 'Commercial Academy Bangladesh') }} ({{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}).
+                Authenticating professional qualifications issued by {{ \App\Models\Setting::getVal('certificate_institution_name', 'ACS Academy') }} ({{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}).
             </p>
         </div>
 
@@ -64,12 +69,12 @@
                             {{ $certificate->verification_hash }}
                         </div>
                         <p class="text-[11px] text-gray-400 mt-2">
-                            This hash represents an immutable digital signature verified against CAB Academy institutional servers.
+                            This hash represents an immutable digital signature verified against {{ $siteName }} institutional servers.
                         </p>
                     </div>
 
                     <div class="pt-4 flex flex-wrap gap-4 items-center justify-between text-xs text-gray-500">
-                        <span>Issuing Body: <strong>{{ \App\Models\Setting::getVal('certificate_institution_name', 'Commercial Academy Bangladesh') }}</strong></span>
+                        <span>Issuing Body: <strong>{{ \App\Models\Setting::getVal('certificate_institution_name', 'ACS Academy') }}</strong></span>
                         <span>Campus: <strong>{{ \App\Models\Setting::getVal('certificate_campus_address', 'Mirpur-Pallabi Campus • Dhaka, Bangladesh') }}</strong></span>
                     </div>
                 </div>
@@ -91,7 +96,7 @@
                         <input 
                             type="text" 
                             id="searchCert" 
-                            placeholder="Enter Serial (e.g. CAB-2026-XXXXXXXX)" 
+                            placeholder="Enter Serial (e.g. ACS-2026-XXXXXXXX)" 
                             required
                             class="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#c30102]"
                         >
@@ -109,7 +114,7 @@
                 </div>
                 <h2 class="text-2xl font-black text-[#0f131f]">Authenticate Official Credential</h2>
                 <p class="text-sm text-gray-600 mt-2 max-w-md mx-auto leading-relaxed">
-                    Enter the unique certificate identification number issued by {{ \App\Models\Setting::getVal('certificate_institution_name', 'Commercial Academy Bangladesh') }} to verify graduate authenticity and accreditation status.
+                    Enter the unique certificate identification number issued by {{ \App\Models\Setting::getVal('certificate_institution_name', 'ACS Academy') }} to verify graduate authenticity and accreditation status.
                 </p>
 
                 <!-- Search Form -->
@@ -118,7 +123,7 @@
                         <input 
                             type="text" 
                             id="searchCertInit" 
-                            placeholder="Enter Serial Number (e.g. CAB-2026-XXXXXXXX)" 
+                            placeholder="Enter Serial Number (e.g. ACS-2026-XXXXXXXX)" 
                             required
                             class="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#c30102]"
                         >
@@ -131,11 +136,11 @@
         @endif
 
         <!-- Manual Registry Lookup Widget -->
-        <div class="mt-12 bg-white rounded-2xl p-6 border border-[#e3e7f0] shadow-sm text-center">
+        <div class="mt-12 liquid-glass-card rounded-2xl p-6 text-center">
             <h4 class="font-bold text-sm text-[#0f131f] mb-1">Employers & HR Verification Desk</h4>
             <p class="text-xs text-gray-500 mb-4">
                 To request formal verification letters or bulk credential audits, please contact our registry desk directly at 
-                <a href="mailto:commercialacademy868@gmail.com" class="text-[#c30102] font-bold">commercialacademy868@gmail.com</a> or call <strong>01917-054664</strong>.
+                <a href="mailto:{{ $certEmail }}" class="text-[#c30102] font-bold">{{ $certEmail }}</a> or call <strong>{{ $certHotline }}</strong>.
             </p>
         </div>
 

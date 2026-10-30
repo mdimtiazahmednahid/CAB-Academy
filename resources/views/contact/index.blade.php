@@ -1,7 +1,10 @@
 @extends('layouts.public')
+@php
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
+@endphp
 
 @section('title', 'Contact Us & Corporate Training Hub')
-@section('meta_description', 'Contact CAB Academy campus in Mirpur-Pallabi, Dhaka. Official hotlines, corporate training inquiries, admissions counseling, and WhatsApp support.')
+@section('meta_description', 'Contact ' . $siteName . '. Official hotlines, corporate training inquiries, admissions counseling, and WhatsApp support.')
 @section('canonical_url', route('contact.index'))
 
 @section('content')
@@ -14,7 +17,7 @@
                 <i class="fas fa-headset text-xs"></i> Executive Helpdesk & Corporate Advisory
             </span>
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0f131f] tracking-tight">
-                Connect With <span class="text-[#c30102]">CAB Academy</span>
+                Connect With <span class="text-[#c30102]">{{ $siteName }}</span>
             </h1>
             <p class="mt-4 text-base sm:text-lg text-[#35415b] leading-relaxed">
                 Have questions about our professional certification programs, enterprise corporate training, or admission enrollment? Our advisory team is ready to assist you.
@@ -52,7 +55,7 @@
             <div class="lg:col-span-5 space-y-6">
                 
                 <!-- Quick Contact Card -->
-                <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#e3e7f0] shadow-sm">
+                <div class="liquid-glass-card rounded-3xl p-6 sm:p-8">
                     <h3 class="text-xl font-bold text-[#0f131f] mb-6 flex items-center gap-2.5">
                         <span class="w-8 h-8 rounded-lg bg-[#051c45] text-white flex items-center justify-center text-sm">
                             <i class="fas fa-map-marker-alt"></i>
@@ -113,9 +116,15 @@
                         </div>
 
                         <!-- WhatsApp Instant Chat -->
+                        @php
+                            $contactWaDigits = preg_replace('/[^0-9]/', '', (string) $contactWhatsapp) ?: '8801917054664';
+                            if (strlen($contactWaDigits) === 11 && str_starts_with($contactWaDigits, '01')) {
+                                $contactWaDigits = '88' . $contactWaDigits;
+                            }
+                        @endphp
                         <div class="pt-2">
                             <a 
-                                href="https://wa.me/{{ $contactWhatsapp }}?text=Hello%20CAB%20Academy%2C%20I%20am%20inquiring%20about%20your%20executive%20courses." 
+                                href="https://wa.me/{{ $contactWaDigits }}?text={{ urlencode('Assalamu Alaikum! I am inquiring about your executive courses.') }}" 
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20ba59] transition-colors shadow-sm text-sm"
@@ -128,7 +137,7 @@
                 </div>
 
                 <!-- Executive Corporate Brief -->
-                <div class="bg-gradient-to-br from-[#031330] via-[#051c45] to-[#0a2540] rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-[#1e2d4a]">
+                <div class="liquid-glass-dark rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-white/15">
                     <span class="px-2.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-[#c30102] text-white">B2B Customized Programs</span>
                     <h3 class="text-xl font-bold mt-3 mb-2">Corporate Workforce Upskilling</h3>
                     <p class="text-xs sm:text-sm text-slate-200 leading-relaxed mb-4">
@@ -143,7 +152,7 @@
 
             <!-- Right Column: Interactive Inquiry Form (7 cols) -->
             <div class="lg:col-span-7" x-data="{ inquiryType: 'course_admission' }">
-                <div class="bg-white rounded-3xl p-6 sm:p-10 border border-[#e3e7f0] shadow-xl">
+                <div class="liquid-glass-card rounded-3xl p-6 sm:p-10">
                     
                     <div class="mb-6">
                         <h2 class="text-2xl font-black text-[#0f131f]">Send an Executive Inquiry</h2>
@@ -319,7 +328,7 @@
             <!-- Stylized Campus Map Frame -->
             <div class="w-full h-72 sm:h-96 rounded-xl overflow-hidden border border-gray-200 bg-slate-100 relative">
                 <iframe 
-                    title="CAB Academy Mirpur-Pallabi Campus"
+                    title="ACS Academy Mirpur-Pallabi Campus"
                     src="https://maps.google.com/maps?q=Mirpur-Pallabi,%20Dhaka%201216,%20Bangladesh&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                     width="100%" 
                     height="100%" 

@@ -10,7 +10,7 @@
         <div>
             <div class="flex items-center gap-2 mb-1">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#051c45] text-white">
-                    <i class="fas fa-coins text-[#10b981] mr-1.5"></i> {{ $templateSettings['effective_institution_name'] ?? \App\Models\Setting::getVal('site_name', 'CAB Academy') }} &bull; Treasury
+                    <i class="fas fa-coins text-[#10b981] mr-1.5"></i> {{ $templateSettings['effective_institution_name'] ?? \App\Models\Setting::getVal('site_name', 'ACS Academy') }} &bull; Treasury
                 </span>
                 <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider">{{ $templateSettings['accounting_fiscal_year'] ?? 'FY 2026-2027' }}</span>
             </div>
@@ -258,7 +258,7 @@
                         <tr class="hover:bg-gray-50/80 transition-colors">
                             <td class="px-6 py-4 font-mono font-bold text-gray-900 whitespace-nowrap">
                                 <span class="px-2 py-1 rounded bg-slate-100 border border-slate-200">
-                                    {{ $tx->invoice_number ?? 'CAB-INV-'.$tx->id }}
+                                    {{ $tx->invoice_number ?? 'ACS-INV-'.$tx->id }}
                                 </span>
                                 <div class="text-[10px] text-gray-400 mt-1 font-sans">{{ $tx->created_at->format('d M Y, h:i A') }}</div>
                             </td>
@@ -569,13 +569,13 @@
                 @csrf
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-1">
-                        Template Institution Name <span class="text-[10px] font-normal text-gray-400">(Leave blank to auto-use Global Site Name: "{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}")</span>
+                        Template Institution Name <span class="text-[10px] font-normal text-gray-400">(Leave blank to auto-use Global Site Name: "{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}")</span>
                     </label>
                     <input
                         type="text"
                         name="accounting_institution_name"
                         value="{{ $templateSettings['accounting_institution_name'] ?? '' }}"
-                        placeholder="{{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }}"
+                        placeholder="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}"
                         class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
                     >
                 </div>

@@ -51,7 +51,7 @@ class CertificateAndInvoiceTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee($user->name);
         $response->assertSee($course->title);
-        $response->assertSee('CAB-');
+        $response->assertSee('ACS-');
 
         $this->assertDatabaseHas('certificates', [
             'user_id' => $user->id,
@@ -147,7 +147,7 @@ class CertificateAndInvoiceTest extends TestCase
         $response = $this->actingAs($user)->get("/payments/{$payment->id}/invoice");
 
         $response->assertStatus(200);
-        $response->assertSee('INV-CAB-');
+        $response->assertSee('INV-ACS-');
         $response->assertSee('TXN99887766');
         $response->assertSee($course->title);
     }
@@ -195,8 +195,8 @@ class CertificateAndInvoiceTest extends TestCase
 
         $response = $this->actingAs($admin)->get("/courses/{$course->id}/certificate");
         $response->assertStatus(200);
-        $response->assertSee('Commercial Academy Bangladesh');
-        $response->assertSee('CAB Academy • Learn, Grow, Lead.');
+        $response->assertSee('ACS Academy');
+        $response->assertSee('ACS Academy • Learn, Grow, Lead.');
     }
 
     public function test_admin_can_access_certificate_customizer_hub_and_update_institution_name_and_template()
@@ -208,7 +208,7 @@ class CertificateAndInvoiceTest extends TestCase
         $hubRes = $this->actingAs($admin)->get('/admin/certificates');
         $hubRes->assertStatus(200);
         $hubRes->assertSee('Template Customizer');
-        $hubRes->assertSee('Commercial Academy Bangladesh');
+        $hubRes->assertSee('ACS Academy');
 
         // 2. Admin customizes institution name, template, title, and signatories
         $postRes = $this->actingAs($admin)->post('/admin/certificates/settings', [

@@ -76,7 +76,7 @@ class FeedController extends Controller
 
         CommunityPost::create([
             'user_id' => auth()->id(),
-            'author_name' => 'CAB Academy Directorate',
+            'author_name' => \App\Models\Setting::getVal('site_name', 'ACS Academy') . ' Directorate',
             'author_title' => $validated['author_title'] ?? 'Official Academic Notice',
             'author_avatar' => '/images/logo.png',
             'category' => $validated['category'],

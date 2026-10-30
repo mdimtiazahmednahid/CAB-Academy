@@ -164,7 +164,7 @@ class AdminAccountingFeedsBlogsTest extends TestCase
         $response->assertRedirect('/admin/feeds');
         $this->assertDatabaseHas('community_posts', [
             'title' => 'Official Notice: Semester Batch Commencement',
-            'author_name' => 'CAB Academy Directorate',
+            'author_name' => 'ACS Academy Directorate',
             'is_pinned' => true,
         ]);
     }

@@ -1,7 +1,7 @@
 @extends(auth()->check() && !auth()->user()->isAdmin() ? 'layouts.student' : 'layouts.public')
 
 @php
-    $siteName = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+    $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
     $totalOpenings = $totalActiveJobs ?? $jobs->count();
     $partnerCount = max($distinctCompaniesCount ?? 1, 1);
     $appliedIds = $appliedJobIds ?? [];

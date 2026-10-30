@@ -15,7 +15,7 @@ return new class extends Migration
             ->whereIn(DB::raw('LOWER(role)'), ['admin', 'superadmin', 'super_admin', 'super admin', 'manager'])
             ->update(['role' => 'admin']);
 
-        // 2. Ensure official CAB Academy admin and owner emails have role = 'admin'
+        // 2. Ensure official ACS Academy admin and owner emails have role = 'admin'
         DB::table('users')
             ->whereIn(DB::raw('LOWER(email)'), [
                 'admin@cab-academy.com',

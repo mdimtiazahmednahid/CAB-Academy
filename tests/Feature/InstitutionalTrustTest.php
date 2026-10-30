@@ -45,7 +45,7 @@ class InstitutionalTrustTest extends TestCase
     {
         $response = $this->get('/about');
         $response->assertStatus(200);
-        $response->assertSee('CAB Academy');
+        $response->assertSee('ACS Academy');
         $response->assertSee('Mirpur-Pallabi');
     }
 

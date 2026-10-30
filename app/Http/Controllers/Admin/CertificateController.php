@@ -36,16 +36,16 @@ class CertificateController extends Controller
 
         // Certificate Global Customization Settings with sensible defaults
         $settings = [
-            'institution_name' => Setting::getVal('certificate_institution_name', 'Commercial Academy Bangladesh'),
-            'tagline' => Setting::getVal('certificate_tagline', 'CAB Academy • Learn, Grow, Lead.'),
+            'institution_name' => Setting::getVal('certificate_institution_name', 'ACS Academy'),
+            'tagline' => Setting::getVal('certificate_tagline', 'ACS Academy • Learn, Grow, Lead.'),
             'campus_address' => Setting::getVal('certificate_campus_address', 'Mirpur-Pallabi Campus • Dhaka, Bangladesh'),
             'title' => Setting::getVal('certificate_title', 'Executive Certification of Mastery'),
             'conferment_text' => Setting::getVal('certificate_conferment_text', 'This is proudly presented and conferred upon'),
             'completion_text' => Setting::getVal('certificate_completion_text', 'for having successfully completed all prescribed coursework, simulated trade laboratories, case examinations, and demonstrating professional competence in'),
-            'faculty_endorsement' => Setting::getVal('certificate_faculty_endorsement', 'Delivered under the auspices of the CAB Academy Executive Faculty Board.'),
+            'faculty_endorsement' => Setting::getVal('certificate_faculty_endorsement', 'Delivered under the auspices of the ACS Academy Executive Faculty Board.'),
             'primary_signatory_name' => Setting::getVal('certificate_primary_signatory_name', 'Academic Director'),
             'primary_signatory_title' => Setting::getVal('certificate_primary_signatory_title', 'Academic Director'),
-            'primary_signatory_board' => Setting::getVal('certificate_primary_signatory_board', 'CAB Academy Governing Council'),
+            'primary_signatory_board' => Setting::getVal('certificate_primary_signatory_board', 'ACS Academy Governing Council'),
             'show_secondary_signature' => Setting::getVal('certificate_show_secondary_signature', '1'),
             'secondary_signatory_name' => Setting::getVal('certificate_secondary_signatory_name', 'Lead Executive Trainer'),
             'secondary_signatory_title' => Setting::getVal('certificate_secondary_signatory_title', 'Course Director & Faculty Chair'),
@@ -57,7 +57,7 @@ class CertificateController extends Controller
         $sampleUser = (object)[
             'id' => 1,
             'name' => 'Tanvir Ahmed, Lead Commercial Specialist',
-            'email' => 'student@cab-academy.com',
+            'email' => 'student@acs-academy.com',
         ];
         $sampleCourse = Course::where('is_published', true)->first() ?: (object)[
             'id' => 1,
@@ -67,7 +67,7 @@ class CertificateController extends Controller
         ];
         $sampleCertificate = (object)[
             'id' => 999,
-            'certificate_number' => 'CAB-2026-DEMO88',
+            'certificate_number' => 'ACS-2026-DEMO88',
             'issue_date' => now()->format('Y-m-d'),
             'verification_hash' => hash('sha256', 'sample_certificate_verification_hash'),
         ];
@@ -120,7 +120,7 @@ class CertificateController extends Controller
 
         $certificate = (object)[
             'id' => 0,
-            'certificate_number' => 'CAB-' . date('Y') . '-PREVIEW',
+            'certificate_number' => 'ACS-' . date('Y') . '-PREVIEW',
             'issue_date' => now()->format('Y-m-d'),
             'verification_hash' => hash('sha256', 'preview_' . time()),
         ];

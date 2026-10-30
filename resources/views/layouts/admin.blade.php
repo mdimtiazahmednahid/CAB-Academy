@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 
-    <title>@yield('header_title', 'Command Center') — {{ \App\Models\Setting::getVal('site_name', 'CAB Academy') }} Admin</title>
+    <title>@yield('header_title', 'Command Center') — {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} Admin</title>
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="manifest" href="{{ route('pwa.manifest') }}">
     <meta name="theme-color" content="#051c45">
@@ -56,7 +56,7 @@
     @php
         $pendingPayCount = \App\Models\Payment::where('status', 'pending')->count();
         $pendingInqCount = \App\Models\ContactInquiry::where('status', 'pending')->count();
-        $siteName = \App\Models\Setting::getVal('site_name', 'CAB Academy');
+        $siteName = \App\Models\Setting::getVal('site_name', 'ACS Academy');
         $siteLogo = \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png');
         $brandSizing = \App\Models\Setting::getBrandSizing($siteName);
     @endphp

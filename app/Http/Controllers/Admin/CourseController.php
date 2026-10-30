@@ -59,6 +59,8 @@ class CourseController extends Controller
             'enrollment_fields' => 'nullable',
             'enrollment_fields_json' => 'nullable|string',
             'enrollment_template' => 'nullable|string',
+            'counselor_phone' => 'nullable|string|max:50',
+            'whatsapp_message' => 'nullable|string|max:1000',
         ]);
         
         $data['is_published'] = $request->has('is_published');
@@ -215,6 +217,8 @@ class CourseController extends Controller
             'enrollment_fields' => 'nullable',
             'enrollment_fields_json' => 'nullable|string',
             'enrollment_template' => 'nullable|string',
+            'counselor_phone' => 'nullable|string|max:50',
+            'whatsapp_message' => 'nullable|string|max:1000',
         ]);
 
         $data['is_published'] = $request->has('is_published');
@@ -361,15 +365,126 @@ class CourseController extends Controller
             'enrollment_fields' => $fields
         ]);
 
+        // Optionally apply this registration form configuration to all courses
+        $appliedCount = 1;
+        if ($request->boolean('apply_to_all_courses') && auth()->user()->isAdmin()) {
+            $appliedCount = Course::query()->update([
+                'enrollment_fields' => json_encode($fields),
+            ]);
+        }
+
+        $msg = $appliedCount > 1
+            ? "Registration form saved and applied across all {$appliedCount} courses!"
+            : 'Course registration form updated successfully.';
+
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Course registration form updated successfully.',
+                'message' => $msg,
                 'fields' => $course->fresh()->effective_enrollment_fields
             ]);
         }
 
-        return back()->with('success', 'Course registration form updated successfully.');
+        return back()->with('success', $msg);
+    }
+
+    /**
+     * Export all course registrations & custom form responses as a CSV file.
+     */
+    public function exportRegistrations(Course $course)
+    {
+        if (!auth()->user()->isAdmin() && auth()->user()->role === 'instructor' && $course->instructor_id && $course->instructor_id !== auth()->id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $course->load(['payments.user', 'payments.paymentMethod', 'students']);
+        $configuredFields = $course->effective_enrollment_fields;
+        $customFieldMap = [];
+        foreach ($configuredFields as $f) {
+            $fName = $f['name'] ?? '';
+            if ($fName && !in_array($fName, ['name', 'phone', 'email', 'training_mode'])) {
+                $customFieldMap[$fName] = $f['label'] ?? ucfirst(str_replace('_', ' ', $fName));
+            }
+        }
+
+        // Also discover any custom keys already stored in payments form_data
+        foreach ($course->payments as $p) {
+            if (is_array($p->form_data)) {
+                foreach ($p->form_data as $k => $v) {
+                    if (!in_array($k, ['name', 'phone', 'email', 'training_mode']) && !isset($customFieldMap[$k])) {
+                        $customFieldMap[$k] = ucfirst(str_replace('_', ' ', $k));
+                    }
+                }
+            }
+        }
+
+        $headers = array_merge(
+            ['Student Name', 'Phone Number', 'Email Address', 'Attendance Mode', 'Payment Status', 'Amount (BDT)', 'Transaction ID', 'Registered At'],
+            array_values($customFieldMap)
+        );
+
+        $rows = [];
+        $seenUserIds = [];
+
+        foreach ($course->payments as $payment) {
+            $u = $payment->user;
+            if ($u) {
+                $seenUserIds[$u->id] = true;
+            }
+            $fd = is_array($payment->form_data) ? $payment->form_data : [];
+            $row = [
+                $fd['name'] ?? ($u->name ?? 'N/A'),
+                $fd['phone'] ?? ($u->phone ?? $payment->sender_number ?? 'N/A'),
+                $fd['email'] ?? ($u->email ?? 'N/A'),
+                ($fd['training_mode'] ?? 'online_zoom') === 'in_person' ? 'Executive Campus' : 'Live Online (Zoom)',
+                strtoupper($payment->status ?? 'pending'),
+                number_format((float) $payment->amount, 2, '.', ''),
+                $payment->transaction_id ?? 'FREE',
+                $payment->created_at ? $payment->created_at->format('Y-m-d H:i') : '',
+            ];
+            foreach (array_keys($customFieldMap) as $cKey) {
+                $val = $fd[$cKey] ?? '';
+                $row[] = is_array($val) ? implode(', ', $val) : (string) $val;
+            }
+            $rows[] = $row;
+        }
+
+        // Include any directly enrolled students who don't have a payment row
+        foreach ($course->students as $student) {
+            if (isset($seenUserIds[$student->id])) {
+                continue;
+            }
+            $row = [
+                $student->name,
+                $student->phone ?? 'N/A',
+                $student->email,
+                $course->isOnlineOnly() ? 'Live Online (Zoom)' : 'Enrolled',
+                'ENROLLED',
+                '0.00',
+                'DIRECT / FREE',
+                $student->pivot && $student->pivot->created_at ? $student->pivot->created_at->format('Y-m-d H:i') : '',
+            ];
+            foreach (array_keys($customFieldMap) as $cKey) {
+                $row[] = '';
+            }
+            $rows[] = $row;
+        }
+
+        $filename = 'registrations-course-' . $course->id . '-' . date('Y-m-d') . '.csv';
+
+        $callback = function () use ($headers, $rows) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, $headers);
+            foreach ($rows as $r) {
+                fputcsv($out, $r);
+            }
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 
     /**
@@ -408,7 +523,9 @@ class CourseController extends Controller
             return null;
         }
 
+        $allowedTypes = ['text', 'email', 'tel', 'select', 'radio', 'checkbox', 'textarea', 'number', 'date', 'url'];
         $sanitized = [];
+
         foreach ($rawFields as $field) {
             if (!is_array($field)) continue;
             $name = trim($field['name'] ?? '');
@@ -416,9 +533,20 @@ class CourseController extends Controller
 
             $name = strtolower(preg_replace('/[^a-zA-Z0-9_]/', '_', $name));
             $label = trim($field['label'] ?? ucfirst(str_replace('_', ' ', $name)));
-            $type = in_array($field['type'] ?? '', ['text', 'email', 'tel', 'select', 'textarea', 'number']) 
-                ? $field['type'] 
+            $type = in_array($field['type'] ?? '', $allowedTypes, true)
+                ? $field['type']
                 : 'text';
+
+            $options = $field['options'] ?? null;
+            if (is_string($options)) {
+                $parts = array_values(array_filter(array_map('trim', preg_split('/[,;\r\n]+/', $options) ?: [])));
+                $options = !empty($parts) ? $parts : null;
+            } elseif (is_array($options)) {
+                // Keep associative options for system training_mode, or clean string values for custom select/radio
+                if ($name !== 'training_mode') {
+                    $options = array_values(array_filter(array_map(fn ($v) => trim((string) $v), $options), fn ($v) => $v !== ''));
+                }
+            }
 
             $sanitized[] = [
                 'name' => $name,
@@ -426,9 +554,9 @@ class CourseController extends Controller
                 'type' => $type,
                 'is_required' => !empty($field['is_required']),
                 'is_enabled' => isset($field['is_enabled']) ? !empty($field['is_enabled']) : true,
-                'is_system' => !empty($field['is_system']),
+                'is_system' => !empty($field['is_system']) || in_array($name, ['name', 'phone', 'email', 'training_mode'], true),
                 'placeholder' => trim($field['placeholder'] ?? ''),
-                'options' => $field['options'] ?? null,
+                'options' => $options,
             ];
         }
 

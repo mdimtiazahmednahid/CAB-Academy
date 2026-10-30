@@ -16,13 +16,11 @@ class CommunityFeedSeeder extends Seeder
         $instructor = User::where('email', 'faculty@cab-academy.com')->first() ?: User::where('role', 'instructor')->first();
         $student = User::where('email', 'student@cab-academy.com')->first();
 
-        // 0. Ensure default BlogPosts exist (Strictly Institutional Authors - No Personal / Real Names)
-        BlogPost::query()->forceDelete();
-        CommunityComment::query()->forceDelete();
-        CommunityPost::query()->forceDelete();
-            BlogPost::create([
+        // 0. Ensure default BlogPosts exist without deleting real user articles
+        BlogPost::updateOrCreate(
+            ['slug' => 'complete-roadmap-to-lc-customs-clearance'],
+            [
                 'title' => 'Complete Roadmap to Letter of Credit (L/C) & Customs Clearance Under Regulatory Directives',
-                'slug' => 'complete-roadmap-to-lc-customs-clearance',
                 'category' => 'Export – Import',
                 'excerpt' => 'Practical blueprint for commercial managers and entrepreneurs navigating shipping documents, Bill of Entry, and HS Code harmonization.',
                 'content' => "In international commercial trade, an irrevocable Letter of Credit (L/C) remains the bedrock of cross-border payment security. However, minor discrepancies in commercial invoices, packing lists, bills of lading, and certificate of origin documents routinely trigger costly demurrage and customs delays at port terminals.\n\n### Essential Checkpoints for Flawless Customs Clearance\n\n1. **HS Code Precision**: Ensure harmonization between the HS Code specified in the Proforma Invoice (PI) and the customs tariff schedule.\n2. **UCP 600 Alignment**: Verify that credit terms strictly observe ICC Uniform Customs and Practice standards.\n3. **Bonded Warehouse Discrepancies**: Maintain accurate utilization declarations (UD) to prevent audit notices and export duty liabilities.",
@@ -33,11 +31,13 @@ class CommunityFeedSeeder extends Seeder
                 'read_time' => '6 min read',
                 'is_published' => true,
                 'published_at' => now()->subDays(2),
-            ]);
+            ]
+        );
 
-            BlogPost::create([
+        BlogPost::updateOrCreate(
+            ['slug' => 'strategic-sourcing-warehouse-safety-stock-modeling'],
+            [
                 'title' => 'Strategic Sourcing & Warehouse Safety Stock Modeling for Industrial Enterprises',
-                'slug' => 'strategic-sourcing-warehouse-safety-stock-modeling',
                 'category' => 'Supply Chain Management',
                 'excerpt' => 'How to optimize vendor lead times, safety stock calculations, and warehouse storage costs in fluctuating supply markets.',
                 'content' => "Optimizing inventory is a critical lever for corporate liquidity. When supply chain disruptions ripple through global shipping lanes, industrial manufacturers face stock-outs or excessive carrying costs.\n\n### Key Strategies for Lean Inventory\n\n1. **Safety Stock Formula**: Calculate safety stock based on standard deviation of lead time and demand variability.\n2. **Supplier Scorecards**: Audit vendor on-time-in-full (OTIF) metrics quarterly to negotiate preferential container rates.\n3. **Warehouse Space Utilization**: Implement ABC classification to place fast-moving raw materials near dispatch docks.",
@@ -48,11 +48,13 @@ class CommunityFeedSeeder extends Seeder
                 'read_time' => '5 min read',
                 'is_published' => true,
                 'published_at' => now()->subDays(5),
-            ]);
+            ]
+        );
 
-            BlogPost::create([
+        BlogPost::updateOrCreate(
+            ['slug' => 'corporate-vat-rebates-withholding-tax-deductions'],
+            [
                 'title' => 'Corporate VAT Rebates & Withholding Tax Deductions: Finance Act Best Practices',
-                'slug' => 'corporate-vat-rebates-withholding-tax-deductions',
                 'category' => 'Tax & Legal Compliance',
                 'excerpt' => 'Step-by-step guidance on input tax credits, tax invoice issuance, and withholding tax certificates under statutory tax regulations.',
                 'content' => "Under the Value Added Tax and Supplementary Duty regulations, maximizing allowable input tax rebates directly impacts the corporate bottom line. Proper documentation is paramount during audits.\n\n### Critical Compliance Procedures\n\n1. **Tax Invoice Issuance**: Must be generated prior to dispatch of goods; retroactive invoices are disqualified for rebates.\n2. **Banking Channel Records**: Ensure transactions over statutory limits are routed through formal banking channels.\n3. **Withholding Certificates**: Upload withholding certificates within the mandated statutory window.",
@@ -63,7 +65,8 @@ class CommunityFeedSeeder extends Seeder
                 'read_time' => '7 min read',
                 'is_published' => true,
                 'published_at' => now()->subDays(8),
-            ]);
+            ]
+        );
 
         // 1. Sync official BlogPosts into featured CommunityPosts
         $blogPosts = BlogPost::all();
@@ -72,7 +75,7 @@ class CommunityFeedSeeder extends Seeder
                 ['blog_post_id' => $blog->id],
                 [
                     'user_id' => $instructor?->id ?: $admin?->id,
-                    'author_name' => $blog->author_name ?: 'CAB Academy Faculty',
+                    'author_name' => $blog->author_name ?: 'ACS Academy Faculty',
                     'author_title' => $blog->author_title ?: 'Faculty Fellow',
                     'author_avatar' => null,
                     'category' => $blog->category ?: 'Official Insights',
@@ -131,7 +134,7 @@ class CommunityFeedSeeder extends Seeder
                 'author_avatar' => null,
                 'category' => 'General Discussion',
                 'title' => 'Excited to complete my first Bill of Entry simulation!',
-                'content' => "Just wrapped up practical module 3 of the L/C and Customs documentation program on CAB Academy! The step-by-step breakdown of customs duty, regulatory duty, and tax calculation clarified so much confusion. Networking with fellow batchmates in Dhaka has been great. Who else is preparing for the upcoming assessment?",
+                'content' => "Just wrapped up practical module 3 of the L/C and Customs documentation program on ACS Academy! The step-by-step breakdown of customs duty, regulatory duty, and tax calculation clarified so much confusion. Networking with fellow batchmates in Dhaka has been great. Who else is preparing for the upcoming assessment?",
                 'image_url' => null,
                 'likes_count' => 24,
                 'comments_count' => 2,

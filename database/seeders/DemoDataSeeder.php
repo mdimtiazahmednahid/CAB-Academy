@@ -405,9 +405,6 @@ class DemoDataSeeder extends Seeder
             ],
         ];
 
-        // Prune legacy courses not in the canonical 8
-        Course::whereNotIn('title', array_column($courses, 'title'))->delete();
-
         foreach ($courses as $courseData) {
             $instEmail = $courseData['instructor_email'] ?? 'trade.faculty@cab-academy.com';
             unset($courseData['instructor_email']);
@@ -475,39 +472,44 @@ class DemoDataSeeder extends Seeder
         }
 
         // 7. Create Job Posts (Generic Institutional Employers - No Real Company Names)
-        JobPost::query()->delete();
-        JobPost::create([
-            'title' => 'Commercial & Shipping Operations Specialist',
-            'company' => 'Global Logistics & Trade Solutions Ltd.',
-            'location' => 'Dhaka (Mirpur-Pallabi)',
-            'salary_range' => '৳50,000 - ৳70,000',
-            'description' => 'Seeking an experienced commercial officer with practical background in Import-Export operations, L/C handling, and port customs clearance.',
-            'apply_link' => '#',
-            'is_active' => true,
-        ]);
+        JobPost::updateOrCreate(
+            ['title' => 'Commercial & Shipping Operations Specialist'],
+            [
+                'company' => 'Global Logistics & Trade Solutions Ltd.',
+                'location' => 'Dhaka (Mirpur-Pallabi)',
+                'salary_range' => '৳50,000 - ৳70,000',
+                'description' => 'Seeking an experienced commercial officer with practical background in Import-Export operations, L/C handling, and port customs clearance.',
+                'apply_link' => '#',
+                'is_active' => true,
+            ]
+        );
 
-        JobPost::create([
-            'title' => 'Supply Chain & Sourcing Analyst',
-            'company' => 'National Supply Chain & Freight Enterprise',
-            'location' => 'Dhaka / Hybrid',
-            'salary_range' => '৳40,000 - ৳60,000',
-            'description' => 'Responsible for procurement tracking, vendor audit coordination, inventory modeling, and shipping schedule verification.',
-            'apply_link' => '#',
-            'is_active' => true,
-        ]);
+        JobPost::updateOrCreate(
+            ['title' => 'Supply Chain & Sourcing Analyst'],
+            [
+                'company' => 'National Supply Chain & Freight Enterprise',
+                'location' => 'Dhaka / Hybrid',
+                'salary_range' => '৳40,000 - ৳60,000',
+                'description' => 'Responsible for procurement tracking, vendor audit coordination, inventory modeling, and shipping schedule verification.',
+                'apply_link' => '#',
+                'is_active' => true,
+            ]
+        );
 
-        JobPost::create([
-            'title' => 'Corporate VAT & Tax Compliance Specialist',
-            'company' => 'Industrial Advisory & Compliance Group',
-            'location' => 'Dhaka (Motijheel C/A)',
-            'salary_range' => '৳45,000 - ৳65,000',
-            'description' => 'Manage monthly Mushak returns, withholding tax deduction certificates, and coordinate statutory audit compliance.',
-            'apply_link' => '#',
-            'is_active' => true,
-        ]);
+        JobPost::updateOrCreate(
+            ['title' => 'Corporate VAT & Tax Compliance Specialist'],
+            [
+                'company' => 'Industrial Advisory & Compliance Group',
+                'location' => 'Dhaka (Motijheel C/A)',
+                'salary_range' => '৳45,000 - ৳65,000',
+                'description' => 'Manage monthly Mushak returns, withholding tax deduction certificates, and coordinate statutory audit compliance.',
+                'apply_link' => '#',
+                'is_active' => true,
+            ]
+        );
 
         // 8. Create Payment Methods (bKash, Nagad, Corporate Bank Transfer)
-        PaymentMethod::updateOrCreate(
+        PaymentMethod::firstOrCreate(
             ['provider_name' => 'bKash Merchant'],
             [
                 'account_number' => '01917-054664',
@@ -517,7 +519,7 @@ class DemoDataSeeder extends Seeder
             ]
         );
 
-        PaymentMethod::updateOrCreate(
+        PaymentMethod::firstOrCreate(
             ['provider_name' => 'Nagad Personal / Merchant'],
             [
                 'account_number' => '01917-054664',
@@ -527,26 +529,26 @@ class DemoDataSeeder extends Seeder
             ]
         );
 
-        PaymentMethod::updateOrCreate(
+        PaymentMethod::firstOrCreate(
             ['provider_name' => 'Bank Transfer'],
             [
                 'account_number' => '000-000-000000',
                 'account_type' => 'Corporate Account',
-                'instructions' => "Bank Name: Corporate Commercial Bank PLC\nBranch: Principal Corporate Branch, Dhaka\nAccount Name: CAB Academy\nA/C Number: 000-000-000000\nRouting: 000000000\nPlease upload deposit slip or bank receipt.",
+                'instructions' => "Bank Name: Corporate Commercial Bank PLC\nBranch: Principal Corporate Branch, Dhaka\nAccount Name: ACS Academy\nA/C Number: 000-000-000000\nRouting: 000000000\nPlease upload deposit slip or bank receipt.",
                 'is_active' => true,
             ]
         );
         
-        // 9. Default Global Settings
-        Setting::updateOrCreate(['key' => 'site_name'], ['value' => 'CAB Academy']);
-        Setting::updateOrCreate(['key' => 'site_logo'], ['value' => '/images/logo.png']);
-        Setting::updateOrCreate(['key' => 'primary_color'], ['value' => '#051c45']);
-        Setting::updateOrCreate(['key' => 'contact_email'], ['value' => 'commercialacademy868@gmail.com']);
-        Setting::updateOrCreate(['key' => 'contact_phone'], ['value' => '01917-054664']);
-        Setting::updateOrCreate(['key' => 'contact_address'], ['value' => 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216']);
-        Setting::updateOrCreate(['key' => 'landing_cert_count'], ['value' => '4']);
-        Setting::updateOrCreate(['key' => 'landing_daylong_count'], ['value' => '4']);
-        Setting::updateOrCreate(['key' => 'landing_clients_title'], ['value' => 'Industry Sectors & Enterprise Training']);
-        Setting::updateOrCreate(['key' => 'landing_clients_data'], ['value' => "International Trade & L/C\nSupply Chain Management\nCustoms & Freight Clearance\nCorporate Tax & VAT\nCommercial Banking & Finance\nIndustrial HR & Labor Laws\nCorporate Law & Compliance\nProject Planning & BOQ"]);
+        // 9. Default Global Settings (firstOrCreate so existing production settings are never overwritten)
+        Setting::firstOrCreate(['key' => 'site_name'], ['value' => 'ACS Academy']);
+        Setting::firstOrCreate(['key' => 'site_logo'], ['value' => '/images/logo.png']);
+        Setting::firstOrCreate(['key' => 'primary_color'], ['value' => '#051c45']);
+        Setting::firstOrCreate(['key' => 'contact_email'], ['value' => 'commercialacademy868@gmail.com']);
+        Setting::firstOrCreate(['key' => 'contact_phone'], ['value' => '01917-054664']);
+        Setting::firstOrCreate(['key' => 'contact_address'], ['value' => 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216']);
+        Setting::firstOrCreate(['key' => 'landing_cert_count'], ['value' => '4']);
+        Setting::firstOrCreate(['key' => 'landing_daylong_count'], ['value' => '4']);
+        Setting::firstOrCreate(['key' => 'landing_clients_title'], ['value' => 'Industry Sectors & Enterprise Training']);
+        Setting::firstOrCreate(['key' => 'landing_clients_data'], ['value' => "International Trade & L/C\nSupply Chain Management\nCustoms & Freight Clearance\nCorporate Tax & VAT\nCommercial Banking & Finance\nIndustrial HR & Labor Laws\nCorporate Law & Compliance\nProject Planning & BOQ"]);
     }
 }
