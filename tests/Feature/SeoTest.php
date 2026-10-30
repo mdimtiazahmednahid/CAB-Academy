@@ -20,6 +20,11 @@ class SeoTest extends TestCase
 
         $content = file_get_contents($robotsPath);
 
+        // Explicit Meta / Facebook & Social Crawler Allowlist
+        $this->assertStringContainsString('User-agent: facebookexternalhit', $content);
+        $this->assertStringContainsString('User-agent: Facebot', $content);
+        $this->assertStringContainsString('User-agent: meta-externalagent', $content);
+
         // Strict sensitive disallows
         $this->assertStringContainsString('Disallow: /admin/', $content);
         $this->assertStringContainsString('Disallow: /dashboard', $content);
@@ -127,6 +132,13 @@ class SeoTest extends TestCase
         $response->assertSee('"@type": "EducationalOrganization"', false);
         $response->assertSee('"name": "ACS Academy"', false);
         $response->assertSee('<link rel="canonical"', false);
+        $response->assertSee('https://www.facebook.com/academyofcommercialandsupplychain', false);
+        $response->assertSee('<meta property="article:publisher" content="https://www.facebook.com/academyofcommercialandsupplychain">', false);
+
+        $contactResponse = $this->get('/contact');
+        $contactResponse->assertStatus(200);
+        $contactResponse->assertSee('https://www.facebook.com/academyofcommercialandsupplychain', false);
+        $contactResponse->assertSee('Official Facebook Page', false);
     }
 
     public function test_course_show_page_includes_course_faq_and_breadcrumb_schemas(): void
@@ -154,5 +166,73 @@ class SeoTest extends TestCase
         $response->assertSee('"priceCurrency": "BDT"', false);
         $response->assertSee('"@type": "FAQPage"', false);
         $response->assertSee('"@type": "BreadcrumbList"', false);
+    }
+
+    public function test_admin_can_connect_search_console_and_configure_selective_non_sensitive_auto_indexing(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'email' => 'admin@cab-academy.com',
+        ]);
+
+        $course = Course::create([
+            'title' => 'Certified Supply Chain Director',
+            'is_published' => true,
+            'price' => 9500,
+        ]);
+
+        // Admin pastes full HTML meta tag for Google Search Console & disables job portal indexing
+        $response = $this->actingAs($admin)->post(route('admin.settings.store'), [
+            'site_name' => 'ACS Academy',
+            'google_site_verification' => '<meta name="google-site-verification" content="GSC_VERIFY_TOKEN_98765" />',
+            'bing_site_verification' => 'BING_VERIFY_TOKEN_54321',
+            'google_analytics_id' => 'G-ACS1234567',
+            'seo_auto_index_enabled' => '1',
+            'seo_index_courses' => '1',
+            'seo_index_catalog' => '1',
+            'seo_index_blog' => '1',
+            'seo_index_instructors' => '1',
+            'seo_index_jobs' => '0',
+            'seo_index_about_contact' => '1',
+            'seo_index_legal' => '1',
+        ]);
+
+        $response->assertRedirect();
+
+        // 1. Clean token extracted and rendered on public home page
+        $home = $this->get('/');
+        $home->assertStatus(200);
+        $home->assertSee('<meta name="google-site-verification" content="GSC_VERIFY_TOKEN_98765">', false);
+        $home->assertSee('<meta name="msvalidate.01" content="BING_VERIFY_TOKEN_54321">', false);
+        $home->assertSee('G-ACS1234567', false);
+
+        // 2. Google HTML file verification endpoint works automatically
+        $googleFile = $this->get('/googleGSC_VERIFY_TOKEN_98765.html');
+        $googleFile->assertStatus(200);
+        $googleFile->assertSee('google-site-verification: googleGSC_VERIFY_TOKEN_98765.html', false);
+
+        // 3. IndexNow key file endpoint works automatically
+        $indexNowKey = \App\Support\SeoIndexingManager::getIndexNowKey();
+        $indexNowResp = $this->get('/' . $indexNowKey . '.txt');
+        $indexNowResp->assertStatus(200);
+        $this->assertSame($indexNowKey, trim($indexNowResp->getContent()));
+
+        // 4. Sitemap includes enabled public courses, excludes disabled /jobs section, and excludes all sensitive routes
+        $sitemap = $this->get('/sitemap.xml');
+        $sitemap->assertStatus(200);
+        $this->assertStringContainsString(route('courses.show', $course), $sitemap->getContent());
+        $this->assertStringNotContainsString(route('jobs.index'), $sitemap->getContent());
+        $this->assertStringNotContainsString('/admin', $sitemap->getContent());
+        $this->assertStringNotContainsString('/cmd.php', $sitemap->getContent());
+
+        // 5. Disabled public section (/jobs) receives noindex, nofollow directive
+        $jobsPage = $this->get('/jobs');
+        $jobsPage->assertStatus(200);
+        $jobsPage->assertSee('<meta name="robots" content="noindex, nofollow">', false);
+
+        // 6. Admin can trigger manual Search Console / IndexNow sync ping
+        $pingResp = $this->actingAs($admin)->post(route('admin.settings.seo_ping'));
+        $pingResp->assertRedirect();
+        $this->assertNotEmpty(\App\Models\Setting::getVal('seo_last_ping_at'));
     }
 }

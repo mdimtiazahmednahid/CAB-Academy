@@ -100,8 +100,14 @@ class Course extends Model
             try {
                 \Illuminate\Support\Facades\Cache::forget('fb_link_preview_v1_' . md5($course->short_url));
                 \Illuminate\Support\Facades\Cache::forget('fb_link_preview_v1_' . md5(url('/courses/' . $course->id)));
+                if ($course->is_published && !$course->wasChanged('views') && app()->environment('production')) {
+                    \App\Support\SeoIndexingManager::pingSearchEngines([
+                        url('/courses/' . $course->id),
+                        url('/catalog'),
+                    ]);
+                }
             } catch (\Throwable $e) {
-                // Ignore cache errors
+                // Ignore cache/indexing errors
             }
         });
     }

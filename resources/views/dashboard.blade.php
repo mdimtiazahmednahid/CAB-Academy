@@ -33,6 +33,20 @@
 @endphp
 
 <div class="space-y-6">
+    @if(session('success'))
+        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-2xs">
+            <i class="fas fa-check-circle text-emerald-600 text-base shrink-0"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-2xs">
+            <i class="fas fa-exclamation-circle text-[#c30102] text-base shrink-0"></i>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
     <!-- 1. Executive Student Command Hero Banner (With Integrated Active Classroom Spotlight) -->
     <div class="bg-gradient-to-br from-[#020c21] via-[#051c45] to-[#0b2d6b] rounded-3xl p-5 sm:p-7 text-white shadow-xl border border-white/10 relative overflow-hidden">
         <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#c30102]/20 blur-3xl pointer-events-none"></div>
@@ -209,10 +223,10 @@
                                 <span>TrxID: <strong class="font-mono text-[#c30102]">{{ $pendPay->transaction_id }}</strong></span>
                             </div>
                         </div>
-                        <a href="{{ route('payments.invoice', $pendPay) }}" target="_blank" class="px-3 py-1.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-[11px] font-bold shrink-0 inline-flex items-center gap-1.5 transition-colors">
-                            <i class="fas fa-file-invoice text-[10px]"></i>
-                            <span>Receipt</span>
-                        </a>
+                        <span class="px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-800 text-[10px] font-bold shrink-0 inline-flex items-center gap-1.5 select-none" title="Official invoice download unlocks once payment is verified by an administrator">
+                            <i class="fas fa-lock text-[9px] text-amber-600"></i>
+                            <span>Awaiting Approval</span>
+                        </span>
                     </div>
                 @endforeach
             </div>
@@ -509,10 +523,22 @@
                                             @endif
                                         </td>
                                         <td class="px-5 py-3.5 text-right">
-                                            <a href="{{ route('payments.invoice', $payment) }}" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-[#051c45] bg-slate-100 hover:bg-[#051c45] hover:text-white transition-colors">
-                                                <i class="fas fa-file-invoice text-[10px]"></i>
-                                                <span>Invoice</span>
-                                            </a>
+                                            @if($payment->status === 'verified')
+                                                <a href="{{ route('payments.invoice', $payment) }}" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold text-[#051c45] bg-slate-100 hover:bg-[#051c45] hover:text-white transition-colors">
+                                                    <i class="fas fa-file-invoice text-[10px]"></i>
+                                                    <span>Invoice</span>
+                                                </a>
+                                            @elseif($payment->status === 'rejected')
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-rose-500 bg-rose-50/70 border border-rose-100 select-none" title="Payment was declined">
+                                                    <i class="fas fa-ban text-[9px]"></i>
+                                                    <span>Unavailable</span>
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-slate-400 bg-slate-50 border border-slate-200/70 select-none cursor-not-allowed" title="Invoice download unlocks after admin approves payment">
+                                                    <i class="fas fa-lock text-[9px]"></i>
+                                                    <span>Pending Approval</span>
+                                                </span>
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach

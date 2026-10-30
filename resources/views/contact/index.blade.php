@@ -115,14 +115,15 @@
                             </div>
                         </div>
 
-                        <!-- WhatsApp Instant Chat -->
+                        <!-- WhatsApp Instant Chat & Official Facebook Page -->
                         @php
                             $contactWaDigits = preg_replace('/[^0-9]/', '', (string) $contactWhatsapp) ?: '8801917054664';
                             if (strlen($contactWaDigits) === 11 && str_starts_with($contactWaDigits, '01')) {
                                 $contactWaDigits = '88' . $contactWaDigits;
                             }
+                            $contactFacebookUrl = trim((string) \App\Models\Setting::getVal('social_facebook_url', 'https://www.facebook.com/academyofcommercialandsupplychain')) ?: 'https://www.facebook.com/academyofcommercialandsupplychain';
                         @endphp
-                        <div class="pt-2">
+                        <div class="pt-2 space-y-2.5">
                             <a 
                                 href="https://wa.me/{{ $contactWaDigits }}?text={{ urlencode('Assalamu Alaikum! I am inquiring about your executive courses.') }}" 
                                 target="_blank"
@@ -131,6 +132,16 @@
                             >
                                 <i class="fab fa-whatsapp text-lg"></i>
                                 Instant WhatsApp Advisory
+                            </a>
+                            <a 
+                                href="{{ $contactFacebookUrl }}" 
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Visit Academy of Commercial & Supply Chain (ACS) on Facebook"
+                                class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[#1877F2] text-white font-bold rounded-xl hover:bg-[#166fe5] transition-colors shadow-sm text-sm"
+                            >
+                                <i class="fab fa-facebook text-lg"></i>
+                                Official Facebook Page
                             </a>
                         </div>
                     </div>

@@ -18,14 +18,38 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="@yield('canonical_url', url()->current())">
 
-    <!-- Search Engine Indexing & Crawl Directives -->
-    <meta name="robots" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
-    <meta name="googlebot" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
-    <meta name="bingbot" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')">
+    @php
+        $computedRobots = \App\Support\SeoIndexingManager::getRobotsDirectiveForRequest(
+            request(),
+            View::hasSection('robots') ? View::getSection('robots') : null
+        );
+        $googleVerifyToken = \App\Support\SeoIndexingManager::extractVerificationCode(\App\Models\Setting::getVal('google_site_verification', ''));
+        $bingVerifyToken = \App\Support\SeoIndexingManager::extractVerificationCode(\App\Models\Setting::getVal('bing_site_verification', ''));
+        $yandexVerifyToken = \App\Support\SeoIndexingManager::extractVerificationCode(\App\Models\Setting::getVal('yandex_site_verification', ''));
+        $gaMeasurementId = trim((string) \App\Models\Setting::getVal('google_analytics_id', ''));
+        $fbPixelId = trim((string) \App\Models\Setting::getVal('facebook_pixel_id', ''));
+        $defaultSeoKeywords = \App\Models\Setting::getVal('seo_keywords', 'Commercial Banking course Dhaka, Export Import training Bangladesh, Letter of Credit LC course Dhaka, Customs clearance training NBR, Supply chain certification Dhaka, professional training Mirpur Pallabi, ACS Academy');
+    @endphp
+
+    <!-- Search Engine Indexing & Crawl Directives (Non-Sensitive Pages Only) -->
+    <meta name="robots" content="{{ $computedRobots }}">
+    <meta name="googlebot" content="{{ $computedRobots }}">
+    <meta name="bingbot" content="{{ $computedRobots }}">
+
+    <!-- Search Console & Webmaster Verification Tags -->
+    @if($googleVerifyToken !== '')
+    <meta name="google-site-verification" content="{{ $googleVerifyToken }}">
+    @endif
+    @if($bingVerifyToken !== '')
+    <meta name="msvalidate.01" content="{{ $bingVerifyToken }}">
+    @endif
+    @if($yandexVerifyToken !== '')
+    <meta name="yandex-verification" content="{{ $yandexVerifyToken }}">
+    @endif
 
     <!-- Meta Description & Keywords -->
     <meta name="description" content="@yield('meta_description', 'ACS Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import (EXIM) Procedures, Letter of Credit (LC) Operations, Customs Clearance, and Supply Chain Management in Dhaka.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'Commercial Banking course Dhaka, Export Import training Bangladesh, Letter of Credit LC course Dhaka, Customs clearance training NBR, Supply chain certification Dhaka, professional training Mirpur Pallabi, ACS Academy')">
+    <meta name="keywords" content="@yield('meta_keywords', $defaultSeoKeywords)">
     <meta name="author" content="ACS Academy">
 
     <!-- Geo & Local SEO Tags (Dhaka, Bangladesh) -->
@@ -75,6 +99,10 @@
         $siteNameVal = \App\Models\Setting::getVal('site_name', 'ACS Academy');
         $sitePhoneVal = \App\Models\Setting::getVal('contact_hotline', '+8801917054664');
         $siteEmailVal = \App\Models\Setting::getVal('contact_email', 'info@acsacademy.bd');
+        $officialFacebookUrl = trim((string) \App\Models\Setting::getVal('social_facebook_url', 'https://www.facebook.com/academyofcommercialandsupplychain')) ?: 'https://www.facebook.com/academyofcommercialandsupplychain';
+        $officialLinkedinUrl = trim((string) \App\Models\Setting::getVal('social_linkedin_url', 'https://www.linkedin.com/company/acs-academy-bd')) ?: 'https://www.linkedin.com/company/acs-academy-bd';
+        $officialYoutubeUrl = trim((string) \App\Models\Setting::getVal('social_youtube_url', ''));
+        $sameAsLinks = array_values(array_filter([$officialFacebookUrl, $officialLinkedinUrl, $officialYoutubeUrl]));
         $orgSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'EducationalOrganization',
@@ -98,10 +126,7 @@
                 'latitude' => 23.8223,
                 'longitude' => 90.3654,
             ],
-            'sameAs' => [
-                'https://www.facebook.com/acsacademybd',
-                'https://www.linkedin.com/company/acs-academy-bd',
-            ],
+            'sameAs' => $sameAsLinks,
             'potentialAction' => [
                 '@type' => 'SearchAction',
                 'target' => [
@@ -112,10 +137,21 @@
             ],
         ];
     @endphp
+    <meta property="article:publisher" content="{{ $officialFacebookUrl }}">
     <script type="application/ld+json">
     {!! json_encode($orgSchema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
     @yield('schema')
+
+    @if($gaMeasurementId !== '' && preg_match('/^(G|UA|AW|GTM)-[A-Z0-9\-]+$/i', $gaMeasurementId))
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaMeasurementId }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ $gaMeasurementId }}');
+    </script>
+    @endif
 
     <!-- Google Fonts: Inter & Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -317,6 +353,11 @@
                 <a href="https://wa.me/{{ $topWhatsapp }}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors font-semibold">
                     <i class="fab fa-whatsapp text-sm"></i>
                     <span>WhatsApp Support</span>
+                </a>
+                <span class="text-white/30">&bull;</span>
+                <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Visit Academy of Commercial & Supply Chain (ACS) on Facebook" title="Official Facebook Page — Academy of Commercial & Supply Chain (ACS)" class="text-[#60a5fa] hover:text-white flex items-center gap-1.5 transition-colors font-semibold">
+                    <i class="fab fa-facebook text-sm text-[#1877F2] bg-white rounded-full leading-none"></i>
+                    <span>Facebook Page</span>
                 </a>
             </div>
         </div>
@@ -639,6 +680,10 @@
                         @if(\App\Models\Setting::isPageEnabled('contact'))
                         <a href="{{ route('contact.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Contact & Support</a>
                         @endif
+                        <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between py-2 hover:text-[#1877F2] border-b border-slate-100 text-[#1877F2] font-bold">
+                            <span class="inline-flex items-center gap-2"><i class="fab fa-facebook text-sm"></i> Official Facebook Page</span>
+                            <i class="fas fa-external-link-alt text-[10px] opacity-70"></i>
+                        </a>
                         <div class="pt-2 pb-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Institutional Policies</div>
                         <div class="grid grid-cols-3 gap-2 pb-2 border-b border-slate-100 text-[11px]">
                             <a href="{{ route('legal.privacy') }}" class="text-slate-600 hover:text-[#c30102]">Privacy</a>
@@ -726,15 +771,19 @@
                         {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} is a specialized professional training institute delivering practical, industry-standard certification programs in Export-Import, Supply Chain, VAT & Tax, and Corporate Leadership.
                     </p>
                     <div class="flex items-center gap-3">
-                        <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#c30102] transition-colors">
+                        <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Follow {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} on Facebook" title="Official Facebook Page — {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" class="w-9 h-9 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:bg-[#166fe5] shadow-md transition-all hover:scale-105">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#c30102] transition-colors">
+                        @if(!empty($officialLinkedinUrl))
+                        <a href="{{ $officialLinkedinUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Follow {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} on LinkedIn" title="Official LinkedIn — {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#0A66C2] transition-colors">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
-                        <a href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#c30102] transition-colors">
+                        @endif
+                        @if(!empty($officialYoutubeUrl))
+                        <a href="{{ $officialYoutubeUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Subscribe to {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} on YouTube" title="Official YouTube — {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#FF0000] transition-colors">
                             <i class="fab fa-youtube"></i>
                         </a>
+                        @endif
                     </div>
                 </div>
 
@@ -792,6 +841,12 @@
                             @endphp
                             <a href="tel:{{ $ftHotlineTel }}" class="hover:text-white transition-colors">
                                 {{ $ftHotline }}
+                            </a>
+                        </p>
+                        <p class="pt-1">
+                            <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#60a5fa] hover:text-white font-semibold transition-colors">
+                                <i class="fab fa-facebook text-[#1877F2] bg-white rounded-full leading-none"></i>
+                                <span>facebook.com/academyofcommercialandsupplychain</span>
                             </a>
                         </p>
                     </div>

@@ -35,6 +35,22 @@ class BlogPost extends Model
         'published_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(function ($post) {
+            try {
+                if ($post->is_published && !$post->wasChanged('views_count') && app()->environment('production')) {
+                    \App\Support\SeoIndexingManager::pingSearchEngines([
+                        url('/blog/' . $post->slug),
+                        url('/blog'),
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                // Ignore indexing errors
+            }
+        });
+    }
+
     public function scopePublished($query)
     {
         return $query->where('is_published', true);

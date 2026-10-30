@@ -33,10 +33,14 @@ class PaymentController extends Controller
                 if ($payment->user) {
                     $payment->user->enrolledCourses()->syncWithoutDetaching([$payment->course_id]);
                 }
-            } elseif ($validated['status'] === 'rejected') {
-                $payment->update(['status' => 'rejected']);
+            } else {
+                $payment->update([
+                    'status' => $validated['status'],
+                    'verified_at' => null,
+                    'verified_by' => null,
+                ]);
 
-                // Safely detach enrollment only if the user has no other verified payment for this course
+                // Safely detach enrollment if the user has no other verified payment for this course
                 if ($payment->user) {
                     $hasOtherVerifiedPayment = Payment::where('user_id', $payment->user_id)
                         ->where('course_id', $payment->course_id)
@@ -48,8 +52,6 @@ class PaymentController extends Controller
                         $payment->user->enrolledCourses()->detach($payment->course_id);
                     }
                 }
-            } else {
-                $payment->update(['status' => $validated['status']]);
             }
         });
 

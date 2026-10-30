@@ -13,6 +13,13 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
+    # Direct zero-symlink static resolution for /storage/* -> uploads/*
+    RewriteCond %{DOCUMENT_ROOT}/public/uploads/$1 -f
+    RewriteRule ^storage/(.*)$ uploads/$1 [L]
+
+    RewriteCond %{DOCUMENT_ROOT}/uploads/$1 -f
+    RewriteRule ^storage/(.*)$ uploads/$1 [L]
+
     # Redirect Trailing Slashes If Not A Folder (GET/HEAD only so POST payload is preserved)...
     RewriteCond %{REQUEST_METHOD} !POST
     RewriteCond %{REQUEST_FILENAME} !-d

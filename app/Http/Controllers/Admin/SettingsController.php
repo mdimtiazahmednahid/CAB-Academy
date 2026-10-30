@@ -44,6 +44,12 @@ class SettingsController extends Controller
             unset($data['registration_fields']);
         }
 
+        foreach (['google_site_verification', 'bing_site_verification', 'yandex_site_verification'] as $verifyKey) {
+            if (array_key_exists($verifyKey, $data)) {
+                $data[$verifyKey] = \App\Support\SeoIndexingManager::extractVerificationCode((string) $data[$verifyKey]);
+            }
+        }
+
         foreach ($data as $key => $value) {
             Setting::updateOrCreate(
                 ['key' => $key],
@@ -110,7 +116,21 @@ class SettingsController extends Controller
         }
 
         Cache::forget('global_settings');
+        \App\Support\SeoIndexingManager::syncPhysicalRobotsTxt();
+        \App\Support\SeoIndexingManager::pingSearchEngines();
 
         return redirect()->back()->with('success', 'Settings updated successfully.');
+    }
+
+    public function pingSeo(Request $request)
+    {
+        Cache::forget('global_settings');
+        \App\Support\SeoIndexingManager::syncPhysicalRobotsTxt();
+        $result = \App\Support\SeoIndexingManager::pingSearchEngines(null, true);
+
+        return redirect()->back()->with(
+            'success',
+            ($result['message'] ?? 'SEO Sitemap & IndexNow synchronized.') . ' Strictly non-sensitive public pages only.'
+        );
     }
 }

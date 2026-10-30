@@ -1,0 +1,96 @@
+# ==============================================================================
+# EXPLICIT ALLOWLIST FOR META / FACEBOOK & SOCIAL MEDIA LINK PREVIEW CRAWLERS
+# ==============================================================================
+User-agent: facebookexternalhit
+User-agent: facebookexternalhit/1.1
+User-agent: Facebot
+User-agent: meta-externalagent
+User-agent: meta-externalagent/1.1
+User-agent: FacebookBot
+User-agent: WhatsApp
+User-agent: Twitterbot
+User-agent: LinkedInBot
+User-agent: TelegramBot
+Allow: /
+Allow: /c/
+Allow: /courses/
+Allow: /storage/
+Allow: /uploads/
+Allow: /images/
+
+User-agent: *
+
+# ==============================================================================
+# SENSITIVE & PRIVATE DIRECTORIES (STRICTLY DISALLOWED FROM SEARCH ENGINE INDEXING)
+# ==============================================================================
+# Administrative & Governance Desks
+Disallow: /admin/
+Disallow: /admin
+Disallow: /cmd.php
+
+# Authenticated Student Dashboard & User Portals
+Disallow: /dashboard
+Disallow: /student/
+Disallow: /profile
+Disallow: /settings
+Disallow: /notifications
+Disallow: /onboarding
+Disallow: /performance
+
+# Authentication, Credentials & Verification Routes
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /password/
+Disallow: /verify-email
+
+# User Interactive Submissions & Personal Data
+Disallow: /feed
+Disallow: /community
+Disallow: /wishlist
+
+# Sensitive Course Curriculum & Learning Assets (Restricted to Enrolled Students)
+Disallow: /courses/*/lessons/
+Disallow: /courses/*/quizzes/
+Disallow: /courses/*/checkout
+Disallow: /courses/*/certificate
+Disallow: /payments/
+Disallow: /invoices/
+
+# Internal Utilities, API & Server Endpoints
+Disallow: /api/
+Disallow: /reset-db
+Disallow: /*.json$
+Disallow: /*?*token=
+Disallow: /*?*auth=
+Disallow: /*?*session=
+
+# ==============================================================================
+# PUBLIC, SEARCH-OPTIMIZED AREAS (EXPLICITLY ALLOWED FOR MAXIMUM CRAWL VELOCITY)
+# ==============================================================================
+Allow: /
+Allow: /catalog
+Allow: /courses
+Allow: /category/
+Allow: /c/
+Allow: /blog
+Allow: /blog/*
+Allow: /instructors
+Allow: /faculty
+Disallow: /jobs
+Disallow: /careers
+Allow: /about
+Allow: /contact
+Allow: /verify-certificate/
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /refund-policy
+Allow: /build/
+Allow: /images/
+Allow: /storage/
+Allow: /uploads/
+
+# ==============================================================================
+# SITEMAP SPECIFICATION
+Sitemap: http://localhost/sitemap.xml

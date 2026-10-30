@@ -24,6 +24,7 @@
     $counselorPhone = $course->effective_counselor_phone;
     $counselorTel = $course->effective_counselor_tel;
     $contactAddress = \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka');
+    $officialFacebookUrl = trim((string) \App\Models\Setting::getVal('social_facebook_url', 'https://www.facebook.com/academyofcommercialandsupplychain')) ?: 'https://www.facebook.com/academyofcommercialandsupplychain';
     $attendanceLabel = $course->isOnlineOnly() ? 'Online Live (Zoom)' : ($course->isCampusOnly() ? 'Executive Campus' : 'Live Zoom + Campus');
 @endphp
 <!DOCTYPE html>
@@ -38,6 +39,7 @@
 
     <!-- Open Graph / Facebook Meta Tags (1200x630 Large Card Standard) -->
     <meta property="og:site_name" content="{{ $siteName }}">
+    <meta property="article:publisher" content="{{ $officialFacebookUrl }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ $shortUrl }}">
     <meta property="og:title" content="{{ $course->stylish_og_title }}">
@@ -57,6 +59,13 @@
     <meta name="twitter:description" content="{{ $cleanDesc }}">
     <meta name="twitter:image" content="{!! $imageUrl !!}">
     <meta name="twitter:image:alt" content="{{ $course->title }}">
+
+    <!-- Instant Direct Course Landing for Facebook Click Visitors (?fbclid=...) while keeping 200 OK OG tags for Meta Scraper -->
+    <script>
+        if (window.location.search && window.location.search.indexOf('fbclid=') !== -1) {
+            window.location.replace({!! json_encode($targetUrl, JSON_UNESCAPED_SLASHES) !!});
+        }
+    </script>
 
     <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -351,6 +360,7 @@
             <div class="flex items-center gap-4 text-slate-300">
                 <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
                 <a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Courses</a>
+                <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors inline-flex items-center gap-1.5 text-[#60a5fa]"><i class="fab fa-facebook"></i><span>Official Facebook</span></a>
                 <a href="tel:{{ $counselorTel }}" class="hover:text-white transition-colors">Hotline: {{ $counselorPhone }}</a>
             </div>
         </div>

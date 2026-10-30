@@ -278,11 +278,210 @@
                        class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base">
             </div>
 
+            <!-- Official Facebook Page URL & Social Channels -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                <div class="focus-ring-primary rounded-lg">
+                    <label for="social_facebook_url" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fab fa-facebook text-[#1877F2] mr-1"></i> Official Facebook Page URL
+                    </label>
+                    <input type="url" id="social_facebook_url" name="social_facebook_url"
+                           value="{{ $settings['social_facebook_url']->value ?? 'https://www.facebook.com/academyofcommercialandsupplychain' }}"
+                           placeholder="https://www.facebook.com/academyofcommercialandsupplychain"
+                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-sm">
+                    <p class="text-[11px] text-gray-500 mt-1">Linked in Header, Footer, Contact Page, Open Graph <code>article:publisher</code> & Schema.org <code>sameAs</code>.</p>
+                </div>
+
+                <div class="focus-ring-primary rounded-lg">
+                    <label for="social_linkedin_url" class="block text-sm font-medium text-gray-700 mb-1">
+                        <i class="fab fa-linkedin text-[#0A66C2] mr-1"></i> Official LinkedIn Page URL
+                    </label>
+                    <input type="url" id="social_linkedin_url" name="social_linkedin_url"
+                           value="{{ $settings['social_linkedin_url']->value ?? 'https://www.linkedin.com/company/acs-academy-bd' }}"
+                           placeholder="https://www.linkedin.com/company/acs-academy-bd"
+                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-sm">
+                </div>
+            </div>
+
             <!-- SEO Meta Description -->
             <div class="focus-ring-primary rounded-lg">
                 <label for="seo_description" class="block text-sm font-medium text-gray-700 mb-1">SEO Meta Description</label>
                 <textarea id="seo_description" name="seo_description" rows="3"
-                          class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base resize-none">{{ $settings['seo_description']->value ?? 'Learn anywhere, anytime.' }}</textarea>
+                          class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-base resize-none">{{ $settings['seo_description']->value ?? 'ACS Academy is Bangladesh\'s premier professional training institute offering executive certifications in Commercial Banking, Export-Import (EXIM) Procedures, Letter of Credit (LC) Operations, Customs Clearance, and Supply Chain Management in Dhaka.' }}</textarea>
+            </div>
+
+            <!-- SEO Keywords -->
+            <div class="focus-ring-primary rounded-lg">
+                <label for="seo_keywords" class="block text-sm font-medium text-gray-700 mb-1">Global SEO Keywords</label>
+                <input type="text" id="seo_keywords" name="seo_keywords"
+                       value="{{ $settings['seo_keywords']->value ?? 'Commercial Banking course Dhaka, Export Import training Bangladesh, Letter of Credit LC course Dhaka, Customs clearance training NBR, Supply chain certification Dhaka, ACS Academy' }}"
+                       placeholder="Comma-separated target keywords..."
+                       class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-transparent transition-shadow text-sm">
+            </div>
+        </div>
+    </div>
+
+    <!-- 3b. Google Search Console, Webmaster Verification & Smart Non-Sensitive Auto-Indexing Engine -->
+    @php
+        $indexableUrlCount = count(\App\Support\SeoIndexingManager::getSitemapUrls());
+        $indexNowKey = \App\Support\SeoIndexingManager::getIndexNowKey();
+        $lastPingAt = $settings['seo_last_ping_at']->value ?? null;
+        $lastPingCount = $settings['seo_last_ping_count']->value ?? $indexableUrlCount;
+        $autoIndexEnabled = ($settings['seo_auto_index_enabled']->value ?? '1') !== '0';
+    @endphp
+    <div class="bg-white rounded-2xl shadow-xs border border-slate-200/80 p-5 md:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-5">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full {{ $autoIndexEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500' }}"></span>
+                    <h3 class="text-base md:text-lg font-extrabold text-[#051c45]">Google Search Console & Smart Non-Sensitive Auto-Indexing</h3>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">Connect Google Search Console, Bing Webmaster Tools & IndexNow to automatically index public pages while strictly shielding all admin, student, checkout & sensitive routes.</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black uppercase tracking-wider">
+                    {{ $indexableUrlCount }} Public URLs Active
+                </span>
+                <button type="submit" form="seoPingForm" class="px-3.5 py-2 rounded-xl bg-[#051c45] hover:bg-[#082860] text-white text-xs font-extrabold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
+                    <i class="fas fa-satellite-dish text-emerald-400"></i>
+                    <span>Ping Search Engines Now</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Live Sitemap & Robots Quick-Connect Bar for Google Search Console -->
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">1. Submit This Sitemap URL in Google Search Console</span>
+                    <div class="flex items-center gap-2">
+                        <input type="text" readonly value="{{ url('/sitemap.xml') }}" id="gsc_sitemap_url_input" class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono font-bold text-[#051c45] select-all">
+                        <button type="button" onclick="navigator.clipboard?.writeText(document.getElementById('gsc_sitemap_url_input').value); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 1800);" class="px-3 py-2 rounded-xl bg-[#051c45] text-white text-xs font-bold hover:bg-[#082860] cursor-pointer">Copy</button>
+                        <a href="{{ url('/sitemap.xml') }}" target="_blank" class="px-3 py-2 rounded-xl bg-slate-200/80 hover:bg-slate-300 text-slate-700 text-xs font-bold">Open</a>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">2. Live Crawl Guard (robots.txt) & IndexNow Key</span>
+                    <div class="flex items-center justify-between gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2">
+                        <div class="text-xs truncate">
+                            <span class="font-bold text-emerald-700">Sensitive Routes Blocked</span>
+                            @if($lastPingAt)
+                                <span class="text-slate-400 text-[11px] ml-1">• Last synced: {{ $lastPingAt }} ({{ $lastPingCount }} URLs)</span>
+                            @endif
+                        </div>
+                        <a href="{{ url('/robots.txt') }}" target="_blank" class="text-xs font-extrabold text-[#c30102] hover:underline shrink-0">View robots.txt →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Engine Ownership Verification Codes -->
+            <div>
+                <h4 class="text-xs font-black uppercase tracking-wider text-[#051c45] mb-3">Search Engine Ownership Verification & Analytics</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="google_site_verification" class="block text-xs font-bold text-slate-700 mb-1">
+                            <i class="fab fa-google text-[#4285F4] mr-1"></i> Google Search Console Verification Code
+                        </label>
+                        <input type="text" id="google_site_verification" name="google_site_verification"
+                               value="{{ $settings['google_site_verification']->value ?? '' }}"
+                               placeholder="Paste verification code or full <meta name=&quot;google-site-verification&quot; ...> tag"
+                               class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:border-[#051c45]">
+                        <p class="text-[11px] text-slate-400 mt-1">Supports both HTML meta tag token and <code>/googleXXXX.html</code> file verification automatically.</p>
+                    </div>
+
+                    <div>
+                        <label for="bing_site_verification" class="block text-xs font-bold text-slate-700 mb-1">
+                            <i class="fab fa-microsoft text-[#00A4EF] mr-1"></i> Bing Webmaster Verification (msvalidate.01)
+                        </label>
+                        <input type="text" id="bing_site_verification" name="bing_site_verification"
+                               value="{{ $settings['bing_site_verification']->value ?? '' }}"
+                               placeholder="Paste Bing verification code or <meta name=&quot;msvalidate.01&quot; ...> tag"
+                               class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:border-[#051c45]">
+                        <p class="text-[11px] text-slate-400 mt-1">Injects <code>&lt;meta name="msvalidate.01"&gt;</code> into public pages.</p>
+                    </div>
+
+                    <div>
+                        <label for="google_analytics_id" class="block text-xs font-bold text-slate-700 mb-1">
+                            <i class="fas fa-chart-line text-emerald-600 mr-1"></i> Google Analytics 4 (GA4) Measurement ID
+                        </label>
+                        <input type="text" id="google_analytics_id" name="google_analytics_id"
+                               value="{{ $settings['google_analytics_id']->value ?? '' }}"
+                               placeholder="e.g. G-XXXXXXXXXX"
+                               class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:border-[#051c45]">
+                    </div>
+
+                    <div>
+                        <label for="yandex_site_verification" class="block text-xs font-bold text-slate-700 mb-1">
+                            <i class="fas fa-globe text-[#c30102] mr-1"></i> Yandex Verification / IndexNow Key
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="yandex_site_verification" name="yandex_site_verification"
+                                   value="{{ $settings['yandex_site_verification']->value ?? '' }}"
+                                   placeholder="Yandex token (optional)"
+                                   class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:border-[#051c45]">
+                            <input type="text" id="seo_indexnow_key" name="seo_indexnow_key"
+                                   value="{{ $settings['seo_indexnow_key']->value ?? $indexNowKey }}"
+                                   placeholder="IndexNow Key"
+                                   title="IndexNow Instant Indexing Key"
+                                   class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:border-[#051c45]">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Granular Non-Sensitive Auto-Indexing Controls -->
+            <div class="pt-4 border-t border-slate-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <div>
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#051c45]">Selective Auto-Indexing Policy (Non-Sensitive Pages Only)</h4>
+                        <p class="text-[11px] text-slate-500">Choose which public sections are automatically indexed and included in <code>/sitemap.xml</code>. Unchecked sections receive <code>noindex, nofollow</code> automatically.</p>
+                    </div>
+                    <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 cursor-pointer">
+                        <input type="hidden" name="seo_auto_index_enabled" value="0">
+                        <input type="checkbox" name="seo_auto_index_enabled" value="1"
+                               {{ ($settings['seo_auto_index_enabled']->value ?? '1') !== '0' ? 'checked' : '' }}
+                               class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500">
+                        <span class="text-xs font-extrabold text-emerald-900">Enable Auto-Indexing</span>
+                    </label>
+                </div>
+
+                @php
+                    $seoSections = [
+                        ['key' => 'seo_index_courses', 'label' => 'Published Courses & Share Cards', 'desc' => '/courses/{id}, /c/{id} (Draft courses excluded)'],
+                        ['key' => 'seo_index_catalog', 'label' => 'Course Catalog & Categories', 'desc' => '/catalog, /courses, /category/{slug}'],
+                        ['key' => 'seo_index_blog', 'label' => 'Published Blog & Articles', 'desc' => '/blog, /blog/{slug} (Drafts excluded)'],
+                        ['key' => 'seo_index_instructors', 'label' => 'Faculty & Instructors', 'desc' => '/instructors, /faculty'],
+                        ['key' => 'seo_index_jobs', 'label' => 'Careers & Job Portal', 'desc' => '/jobs, /careers'],
+                        ['key' => 'seo_index_about_contact', 'label' => 'About, Contact & Certificate Verification', 'desc' => '/about, /contact, /verify-certificate'],
+                        ['key' => 'seo_index_legal', 'label' => 'Institutional Policies', 'desc' => '/privacy-policy, /terms-of-service, /refund-policy'],
+                    ];
+                @endphp
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    @foreach($seoSections as $sec)
+                        @php
+                            $secChecked = ($settings[$sec['key']]->value ?? '1') !== '0';
+                        @endphp
+                        <label class="flex items-start gap-2.5 p-3 rounded-xl border border-slate-200/80 hover:border-[#051c45]/40 bg-slate-50/50 cursor-pointer transition-colors">
+                            <input type="hidden" name="{{ $sec['key'] }}" value="0">
+                            <input type="checkbox" name="{{ $sec['key'] }}" value="1"
+                                   {{ $secChecked ? 'checked' : '' }}
+                                   class="mt-0.5 w-4 h-4 rounded text-[#051c45] focus:ring-[#051c45]">
+                            <div class="min-w-0">
+                                <span class="block text-xs font-extrabold text-[#051c45]">{{ $sec['label'] }}</span>
+                                <span class="block text-[11px] text-slate-500 font-mono truncate">{{ $sec['desc'] }}</span>
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+
+                <!-- Strictly Shielded Sensitive Routes Notice -->
+                <div class="mt-4 p-3.5 rounded-xl bg-[#051c45]/[0.03] border border-[#051c45]/15 flex items-start gap-2.5">
+                    <i class="fas fa-shield-halved text-[#c30102] mt-0.5"></i>
+                    <div class="text-[11px] text-slate-600 leading-relaxed">
+                        <span class="font-extrabold text-[#051c45]">Permanent Sensitive Route Shield Active:</span>
+                        Admin Console (<code>/admin/*</code>), Cloud Terminal (<code>/cmd.php</code>), Student Dashboard (<code>/dashboard</code>, <code>/profile</code>, <code>/onboarding</code>, <code>/performance</code>), Login & Registration (<code>/login</code>, <code>/register</code>, <code>/password/*</code>), Course Classrooms & Quizzes (<code>/courses/*/lessons/*</code>, <code>/courses/*/quizzes/*</code>), Checkout & Payments (<code>/courses/*/checkout</code>, <code>/payments/*</code>, <code>/invoices/*</code>), Wishlist (<code>/wishlist</code>), and Community Feed (<code>/feed</code>) are <strong>permanently excluded</strong> from sitemaps and protected with <code>noindex, nofollow, noarchive, nosnippet</code> + <code>robots.txt</code> disallow rules.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -412,6 +611,10 @@
             Save Settings
         </button>
     </div>
+</form>
+
+<form id="seoPingForm" action="{{ route('admin.settings.seo_ping') }}" method="POST" class="hidden">
+    @csrf
 </form>
 
 @php

@@ -5,9 +5,8 @@
 
     RewriteEngine On
 
-    # Block access to hidden files and folders (.env, .git, etc.)
-    RewriteCond %{REQUEST_URI} (^|/)\. [NC]
-    RewriteRule ^ - [F,L]
+    # Block access to sensitive dotfiles (.env, .git, .htaccess, .sqlite) while allowing /.well-known/
+    RewriteRule (^|/)\.(env|git|htaccess|htpasswd|sqlite|svn|idea|vscode|agents)(/|$) - [F,L]
 
     # Block direct web access to sensitive internal Laravel folders
     RewriteRule ^(app|bootstrap|config|database|resources|routes|tests|vendor)(/|$) - [F,L]
@@ -17,9 +16,23 @@
     RewriteRule ^(composer|package)\.(json|lock)$ - [F,L]
     RewriteRule \.(env|sqlite|log)$ - [F,L]
 
+    # Explicitly serve robots.txt directly for Meta/Facebook & Search Console crawlers
+    RewriteCond %{DOCUMENT_ROOT}/public/robots.txt -f
+    RewriteRule ^robots\.txt$ public/robots.txt [L]
+
     # Prevent loop if already under public/
     RewriteCond %{REQUEST_URI} ^/public/
     RewriteRule ^ - [L]
+
+    # Direct zero-symlink static resolution for /storage/* across public/uploads, public/storage, and storage/app/public
+    RewriteCond %{DOCUMENT_ROOT}/public/uploads/$1 -f
+    RewriteRule ^storage/(.*)$ public/uploads/$1 [L]
+
+    RewriteCond %{DOCUMENT_ROOT}/public/storage/$1 -f
+    RewriteRule ^storage/(.*)$ public/storage/$1 [L]
+
+    RewriteCond %{DOCUMENT_ROOT}/storage/app/public/$1 -f
+    RewriteRule ^storage/(.*)$ storage/app/public/$1 [L]
 
     # Route static asset folders directly to public/ for maximum speed and social crawler reliability
     RewriteRule ^(uploads|images|build)/(.*)$ public/$1/$2 [L]

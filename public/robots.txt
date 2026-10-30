@@ -1,3 +1,23 @@
+# ==============================================================================
+# EXPLICIT ALLOWLIST FOR META / FACEBOOK & SOCIAL MEDIA LINK PREVIEW CRAWLERS
+# ==============================================================================
+User-agent: facebookexternalhit
+User-agent: facebookexternalhit/1.1
+User-agent: Facebot
+User-agent: meta-externalagent
+User-agent: meta-externalagent/1.1
+User-agent: FacebookBot
+User-agent: WhatsApp
+User-agent: Twitterbot
+User-agent: LinkedInBot
+User-agent: TelegramBot
+Allow: /
+Allow: /c/
+Allow: /courses/
+Allow: /storage/
+Allow: /uploads/
+Allow: /images/
+
 User-agent: *
 
 # ==============================================================================
@@ -6,9 +26,11 @@ User-agent: *
 # Administrative & Governance Desks
 Disallow: /admin/
 Disallow: /admin
+Disallow: /cmd.php
 
 # Authenticated Student Dashboard & User Portals
 Disallow: /dashboard
+Disallow: /student/
 Disallow: /profile
 Disallow: /settings
 Disallow: /notifications
@@ -34,6 +56,7 @@ Disallow: /courses/*/quizzes/
 Disallow: /courses/*/checkout
 Disallow: /courses/*/certificate
 Disallow: /payments/
+Disallow: /invoices/
 
 # Internal Utilities, API & Server Endpoints
 Disallow: /api/
@@ -50,18 +73,19 @@ Allow: /
 Allow: /catalog
 Allow: /courses
 Allow: /category/
+Allow: /c/
 Allow: /blog
 Allow: /blog/*
 Allow: /instructors
 Allow: /faculty
-Allow: /jobs
-Allow: /careers
+Disallow: /jobs
+Disallow: /careers
 Allow: /about
 Allow: /contact
+Allow: /verify-certificate/
 Allow: /privacy-policy
 Allow: /terms-of-service
 Allow: /refund-policy
-Allow: /verify-certificate/
 Allow: /build/
 Allow: /images/
 Allow: /storage/
@@ -69,4 +93,4 @@ Allow: /uploads/
 
 # ==============================================================================
 # SITEMAP SPECIFICATION
-Sitemap: https://acsacademy.bd/sitemap.xml
+Sitemap: http://localhost/sitemap.xml

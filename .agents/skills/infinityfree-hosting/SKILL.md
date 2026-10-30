@@ -99,7 +99,7 @@ Since `symlink()` is disabled on InfinityFree, calls to `Storage::url('photos/ab
 ## 4. Production Environment Checklist (`.env.production`)
 
 ```ini
-APP_NAME="CAB Academy"
+APP_NAME="ACS Academy"
 APP_ENV=production
 APP_KEY=base64:... # Generate locally with php artisan key:generate --show
 APP_DEBUG=false

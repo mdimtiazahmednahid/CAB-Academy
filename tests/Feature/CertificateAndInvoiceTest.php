@@ -152,6 +152,64 @@ class CertificateAndInvoiceTest extends TestCase
         $response->assertSee($course->title);
     }
 
+    public function test_student_cannot_view_or_download_invoice_until_admin_approves_payment()
+    {
+        $admin = User::where('role', 'admin')->first();
+        $student = User::factory()->create([
+            'preferences' => ['level' => 'Executive', 'subjects' => ['Supply Chain'], 'goals' => ['Certification']],
+        ]);
+        $course = Course::where('is_published', true)->first();
+
+        $payment = Payment::create([
+            'user_id' => $student->id,
+            'course_id' => $course->id,
+            'amount' => 6500,
+            'status' => 'pending',
+            'sender_number' => '01711223344',
+            'transaction_id' => 'TRX-PENDING-7788',
+        ]);
+
+        // 1. Dashboard hides invoice download link while payment is pending
+        $dashPending = $this->actingAs($student)->get(route('dashboard'));
+        $dashPending->assertStatus(200);
+        $dashPending->assertDontSee(route('payments.invoice', $payment), false);
+        $dashPending->assertSee('Awaiting Approval');
+        $dashPending->assertSee('Pending Approval');
+
+        // 2. Direct access to /payments/{id}/invoice is blocked for pending payment
+        $invPending = $this->actingAs($student)->get(route('payments.invoice', $payment));
+        $invPending->assertRedirect(route('dashboard'));
+        $invPending->assertSessionHas('error');
+
+        // 3. Direct access is also blocked for processing or rejected payments
+        $payment->update(['status' => 'processing']);
+        $this->actingAs($student)->get(route('payments.invoice', $payment))->assertRedirect(route('dashboard'));
+
+        $payment->update(['status' => 'rejected']);
+        $this->actingAs($student)->get(route('payments.invoice', $payment))->assertRedirect(route('dashboard'));
+
+        // 4. Admin approves/verifies payment -> Invoice download button unlocks and invoice renders
+        $this->actingAs($admin)->post(route('admin.payments.updateStatus', $payment), [
+            'status' => 'verified',
+        ])->assertRedirect();
+
+        $dashVerified = $this->actingAs($student)->get(route('dashboard'));
+        $dashVerified->assertStatus(200);
+        $dashVerified->assertSee(route('payments.invoice', $payment), false);
+
+        $invVerified = $this->actingAs($student)->get(route('payments.invoice', $payment));
+        $invVerified->assertStatus(200);
+        $invVerified->assertSee('TRX-PENDING-7788');
+
+        // 5. If Admin reverts payment back to pending, enrollment and invoice access are revoked
+        $this->actingAs($admin)->post(route('admin.payments.updateStatus', $payment), [
+            'status' => 'pending',
+        ])->assertRedirect();
+
+        $this->assertFalse($student->fresh()->enrolledCourses()->where('courses.id', $course->id)->exists());
+        $this->actingAs($student)->get(route('payments.invoice', $payment))->assertRedirect(route('dashboard'));
+    }
+
     public function test_batch_number_is_hidden_by_default_and_only_shown_when_admin_enables_it()
     {
         $admin = User::where('role', 'admin')->first();

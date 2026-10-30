@@ -202,161 +202,42 @@ Route::get('/sw.js', function () {
     ]);
 });
 
-// Dynamic Search Engine XML Sitemap (Strictly public, indexable pages only)
+// Dynamic Search Engine XML Sitemap (Strictly public, non-sensitive indexable pages only)
 Route::get('/sitemap.xml', function () {
-    $urls = [];
-
-    // 1. Core Landing & Public Discovery Portals (Highest Priority)
-    $urls[] = [
-        'loc' => url('/'),
-        'lastmod' => now()->startOfDay()->toAtomString(),
-        'changefreq' => 'daily',
-        'priority' => '1.0',
-    ];
-    $urls[] = [
-        'loc' => route('catalog.index'),
-        'lastmod' => now()->startOfDay()->toAtomString(),
-        'changefreq' => 'daily',
-        'priority' => '0.9',
-    ];
-    $urls[] = [
-        'loc' => route('courses.index'),
-        'lastmod' => now()->startOfDay()->toAtomString(),
-        'changefreq' => 'daily',
-        'priority' => '0.9',
-    ];
-    $urls[] = [
-        'loc' => route('catalog.certificate'),
-        'lastmod' => now()->startOfWeek()->toAtomString(),
-        'changefreq' => 'weekly',
-        'priority' => '0.8',
-    ];
-    $urls[] = [
-        'loc' => route('catalog.day_long'),
-        'lastmod' => now()->startOfWeek()->toAtomString(),
-        'changefreq' => 'weekly',
-        'priority' => '0.8',
-    ];
-
-    // 2. Published Courses (Only Active, Non-Draft Courses)
-    $courses = \App\Models\Course::where('is_published', true)->get();
-    foreach ($courses as $c) {
-        $urls[] = [
-            'loc' => route('courses.show', $c),
-            'lastmod' => $c->updated_at ? $c->updated_at->toAtomString() : now()->toAtomString(),
-            'changefreq' => 'weekly',
-            'priority' => '0.9',
-        ];
-    }
-
-    // 3. Active Categories
-    $categories = \App\Models\Category::active()->get();
-    if ($categories->isNotEmpty()) {
-        foreach ($categories as $cat) {
-            $urls[] = [
-                'loc' => route('catalog.category', $cat->slug),
-                'lastmod' => $cat->updated_at ? $cat->updated_at->toAtomString() : now()->toAtomString(),
-                'changefreq' => 'weekly',
-                'priority' => '0.8',
-            ];
-        }
-    } else {
-        $catNames = \App\Models\Course::where('is_published', true)
-            ->whereNotNull('category')
-            ->where('category', '!=', '')
-            ->distinct()
-            ->pluck('category');
-        foreach ($catNames as $cName) {
-            $urls[] = [
-                'loc' => route('catalog.category', \Illuminate\Support\Str::slug($cName)),
-                'lastmod' => now()->startOfWeek()->toAtomString(),
-                'changefreq' => 'weekly',
-                'priority' => '0.8',
-            ];
-        }
-    }
-
-    // 4. Executive Faculty & Instructors
-    $urls[] = [
-        'loc' => route('instructors.index'),
-        'lastmod' => now()->startOfMonth()->toAtomString(),
-        'changefreq' => 'monthly',
-        'priority' => '0.7',
-    ];
-    $urls[] = [
-        'loc' => route('faculty.index'),
-        'lastmod' => now()->startOfMonth()->toAtomString(),
-        'changefreq' => 'monthly',
-        'priority' => '0.7',
-    ];
-
-    // 5. Blog & Knowledge Hub Articles (Published Only)
-    $urls[] = [
-        'loc' => route('blog.index'),
-        'lastmod' => now()->startOfDay()->toAtomString(),
-        'changefreq' => 'daily',
-        'priority' => '0.8',
-    ];
-    $blogs = \App\Models\BlogPost::published()->get();
-    foreach ($blogs as $b) {
-        $urls[] = [
-            'loc' => route('blog.show', $b->slug),
-            'lastmod' => $b->updated_at ? $b->updated_at->toAtomString() : now()->toAtomString(),
-            'changefreq' => 'monthly',
-            'priority' => '0.7',
-        ];
-    }
-
-    // 6. Placement & Career Portal
-    $urls[] = [
-        'loc' => route('jobs.index'),
-        'lastmod' => now()->startOfWeek()->toAtomString(),
-        'changefreq' => 'weekly',
-        'priority' => '0.7',
-    ];
-    $urls[] = [
-        'loc' => route('careers.index'),
-        'lastmod' => now()->startOfWeek()->toAtomString(),
-        'changefreq' => 'weekly',
-        'priority' => '0.7',
-    ];
-
-    // 7. Institutional Trust, Legal & Accreditation Pages
-    $urls[] = [
-        'loc' => route('about.index'),
-        'lastmod' => now()->startOfMonth()->toAtomString(),
-        'changefreq' => 'monthly',
-        'priority' => '0.6',
-    ];
-    $urls[] = [
-        'loc' => route('contact.index'),
-        'lastmod' => now()->startOfMonth()->toAtomString(),
-        'changefreq' => 'monthly',
-        'priority' => '0.6',
-    ];
-    $urls[] = [
-        'loc' => route('legal.privacy'),
-        'lastmod' => now()->startOfYear()->toAtomString(),
-        'changefreq' => 'yearly',
-        'priority' => '0.4',
-    ];
-    $urls[] = [
-        'loc' => route('legal.terms'),
-        'lastmod' => now()->startOfYear()->toAtomString(),
-        'changefreq' => 'yearly',
-        'priority' => '0.4',
-    ];
-    $urls[] = [
-        'loc' => route('legal.refund'),
-        'lastmod' => now()->startOfYear()->toAtomString(),
-        'changefreq' => 'yearly',
-        'priority' => '0.4',
-    ];
+    $urls = \App\Support\SeoIndexingManager::getSitemapUrls();
 
     return response()
         ->view('sitemap', compact('urls'))
         ->header('Content-Type', 'application/xml; charset=utf-8');
 })->name('sitemap.xml');
+
+// Dynamic robots.txt endpoint (Synchronized with Admin SEO & Sensitive Route Protections)
+Route::get('/robots.txt', function () {
+    return response(\App\Support\SeoIndexingManager::generateRobotsTxt(), 200)
+        ->header('Content-Type', 'text/plain; charset=utf-8');
+})->name('robots.txt');
+
+// Google Search Console HTML File Verification Endpoint (e.g. /google1234567890abcdef.html)
+Route::get('/google{code}.html', function (string $code) {
+    $configured = \App\Support\SeoIndexingManager::extractVerificationCode(
+        \App\Models\Setting::getVal('google_site_verification', '')
+    );
+    if ($configured !== '' && ($configured === $code || $configured === 'google' . $code)) {
+        return response('google-site-verification: google' . $code . '.html', 200)
+            ->header('Content-Type', 'text/html; charset=utf-8');
+    }
+    abort(404);
+})->where('code', '[a-zA-Z0-9_-]+');
+
+// IndexNow Verification Key Endpoint (e.g. /{32-char-key}.txt)
+Route::get('/{indexNowKey}.txt', function (string $indexNowKey) {
+    $expectedKey = \App\Support\SeoIndexingManager::getIndexNowKey();
+    if ($expectedKey !== '' && hash_equals($expectedKey, $indexNowKey)) {
+        return response($expectedKey, 200)
+            ->header('Content-Type', 'text/plain; charset=utf-8');
+    }
+    abort(404);
+})->where('indexNowKey', '[a-fA-F0-9]{16,64}');
 
 
 // Public Course Catalog & Category Routes
@@ -531,6 +412,7 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::middleware([\App\Http\Middleware\IsStrictAdmin::class])->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');
         Route::post('/settings', [SettingsController::class, 'store'])->name('admin.settings.store');
+        Route::post('/settings/seo-ping', [SettingsController::class, 'pingSeo'])->name('admin.settings.seo_ping');
         
         Route::get('/announcements', [\App\Http\Controllers\Admin\AnnouncementController::class, 'create'])->name('admin.announcements.create');
         Route::post('/announcements', [\App\Http\Controllers\Admin\AnnouncementController::class, 'store'])->name('admin.announcements.store');

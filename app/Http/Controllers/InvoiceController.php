@@ -18,6 +18,11 @@ class InvoiceController extends Controller
             abort(403, 'Unauthorized access to this payment receipt.');
         }
 
+        if (!$user->isAdmin() && $payment->status !== 'verified') {
+            return redirect()->route('dashboard')
+                ->with('error', 'Official tuition invoice will be available for download once your payment is verified and approved by an administrator.');
+        }
+
         $payment->load(['course', 'user', 'paymentMethod']);
 
         return view('payments.invoice', compact('payment'));
