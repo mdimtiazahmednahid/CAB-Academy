@@ -40,75 +40,82 @@ function setMemCache(cacheMap, key, value) {
 
 export default {
   async fetch(request, env, ctx) {
-    const reqUrl = new URL(request.url);
-    const ua = request.headers.get('user-agent') || '';
-    const isSocialBot = SOCIAL_BOT_REGEX.test(ua);
-    const isWorkersDev = reqUrl.hostname.endsWith('.workers.dev') || reqUrl.hostname === 'fb.acsacademy.bd';
-    const isAssetPath = ASSET_PATH_REGEX.test(reqUrl.pathname);
+    try {
+      const reqUrl = new URL(request.url);
+      const ua = request.headers.get('user-agent') || '';
+      const isSocialBot = SOCIAL_BOT_REGEX.test(ua);
+      const isWorkersDev = reqUrl.hostname.endsWith('.workers.dev') || reqUrl.hostname === 'fb.acsacademy.bd';
+      const isAssetPath = ASSET_PATH_REGEX.test(reqUrl.pathname);
 
-    // 1. Always guarantee 200 OK for /robots.txt so Meta Sharing Debugger never gets 403
-    if (reqUrl.pathname === '/robots.txt') {
-      const robotsTxt = [
-        'User-agent: facebookexternalhit',
-        'User-agent: facebookexternalhit/1.1',
-        'User-agent: Facebot',
-        'User-agent: meta-externalagent',
-        'User-agent: meta-externalagent/1.1',
-        'User-agent: FacebookBot',
-        'User-agent: WhatsApp',
-        'User-agent: Twitterbot',
-        'User-agent: LinkedInBot',
-        'User-agent: TelegramBot',
-        'Allow: /',
-        '',
-        'User-agent: *',
-        'Disallow: /admin/',
-        'Disallow: /dashboard',
-        'Disallow: /login',
-        'Disallow: /register',
-        'Allow: /',
-        `Sitemap: ${PRIMARY_ORIGIN}/sitemap.xml`,
-      ].join('\n');
+      // 1. Always guarantee 200 OK for /robots.txt so Meta Sharing Debugger never gets 403
+      if (reqUrl.pathname === '/robots.txt') {
+        const robotsTxt = [
+          'User-agent: facebookexternalhit',
+          'User-agent: facebookexternalhit/1.1',
+          'User-agent: Facebot',
+          'User-agent: meta-externalagent',
+          'User-agent: meta-externalagent/1.1',
+          'User-agent: FacebookBot',
+          'User-agent: WhatsApp',
+          'User-agent: Twitterbot',
+          'User-agent: LinkedInBot',
+          'User-agent: TelegramBot',
+          'Allow: /',
+          '',
+          'User-agent: *',
+          'Disallow: /admin/',
+          'Disallow: /dashboard',
+          'Disallow: /login',
+          'Disallow: /register',
+          'Allow: /',
+          `Sitemap: ${PRIMARY_ORIGIN}/sitemap.xml`,
+        ].join('\n');
 
-      return new Response(robotsTxt, {
+        return new Response(robotsTxt, {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+          },
+        });
+      }
+
+      // 2. Dynamic Base64 Course Thumbnail Endpoint (if a course cover is stored as data:image/...;base64,...)
+      if (reqUrl.pathname.startsWith('/__og_b64/')) {
+        return serveBase64CourseImage(reqUrl);
+      }
+
+      // 3. Image / static asset request: resolve exact course thumbnail across acsacademy.bd and cabacademy.bd
+      //    Accelerated via Tier-1 Memory Cache + Tier-2 Cloudflare Global Edge Cache (caches.default) + Optional Redis/KV
+      if (isAssetPath) {
+        return fetchAssetSolvingChallenge(reqUrl, request, env, ctx);
+      }
+
+      // 4. If human visitor clicks the Facebook preview card via https://fb.neurasoftware.workers.dev/c/{id},
+      //    redirect them straight to https://acsacademy.bd/courses/{id}?enroll=true (opens Enroll Now drawer!)
+      if (isWorkersDev && !isSocialBot && !reqUrl.searchParams.has('debug_og') && !reqUrl.searchParams.has('preview_debug')) {
+        const shortMatch = reqUrl.pathname.match(/^\/(?:c|courses)\/(\d+)/);
+        if (shortMatch) {
+          return Response.redirect(`${PRIMARY_ORIGIN}/courses/${shortMatch[1]}?enroll=true`, 302);
+        }
+        const targetUrl = `${PRIMARY_ORIGIN}${reqUrl.pathname}${reqUrl.search}`;
+        return Response.redirect(targetUrl, 302);
+      }
+
+      // 5. If human visitor accesses https://acsacademy.bd directly, pass straight through
+      if (!isWorkersDev && !isSocialBot && !reqUrl.searchParams.has('debug_og')) {
+        return fetch(request);
+      }
+
+      // 6. HTML page for social crawlers (or ?debug_og=1)
+      //    Accelerated via Cloudflare Global Edge Cache
+      return fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx);
+    } catch (fatalErr) {
+      return new Response(`<!DOCTYPE html><html><head><meta property="og:title" content="ACS Academy"><meta property="og:site_name" content="ACS Academy"></head><body>ACS Academy</body></html>`, {
         status: 200,
-        headers: {
-          'Content-Type': 'text/plain; charset=utf-8',
-          'Cache-Control': 'public, max-age=86400, s-maxage=86400',
-        },
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
       });
     }
-
-    // 2. Dynamic Base64 Course Thumbnail Endpoint (if a course cover is stored as data:image/...;base64,...)
-    if (reqUrl.pathname.startsWith('/__og_b64/')) {
-      return serveBase64CourseImage(reqUrl);
-    }
-
-    // 3. Image / static asset request: resolve exact course thumbnail across acsacademy.bd and cabacademy.bd
-    //    Accelerated via Tier-1 Memory Cache + Tier-2 Cloudflare Global Edge Cache (caches.default) + Optional Redis/KV
-    if (isAssetPath) {
-      return fetchAssetSolvingChallenge(reqUrl, request, env, ctx);
-    }
-
-    // 4. If human visitor clicks the Facebook preview card via https://fb.neurasoftware.workers.dev/c/{id},
-    //    redirect them straight to https://acsacademy.bd/courses/{id}?enroll=true (opens Enroll Now drawer!)
-    if (isWorkersDev && !isSocialBot && !reqUrl.searchParams.has('debug_og') && !reqUrl.searchParams.has('preview_debug')) {
-      const shortMatch = reqUrl.pathname.match(/^\/(?:c|courses)\/(\d+)/);
-      if (shortMatch) {
-        return Response.redirect(`${PRIMARY_ORIGIN}/courses/${shortMatch[1]}?enroll=true`, 302);
-      }
-      const targetUrl = `${PRIMARY_ORIGIN}${reqUrl.pathname}${reqUrl.search}`;
-      return Response.redirect(targetUrl, 302);
-    }
-
-    // 5. If human visitor accesses https://acsacademy.bd directly, pass straight through
-    if (!isWorkersDev && !isSocialBot && !reqUrl.searchParams.has('debug_og')) {
-      return fetch(request);
-    }
-
-    // 6. HTML page for social crawlers (or ?debug_og=1)
-    //    Accelerated via Cloudflare Global Edge Cache
-    return fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx);
   },
 };
 
@@ -351,26 +358,30 @@ async function fetchHtmlSolvingChallenge(reqUrl, isWorkersDev, request, env, ctx
     } catch (e) {}
   }
 
-  const originUrl = new URL(`${PRIMARY_ORIGIN}${reqUrl.pathname}${reqUrl.search}`);
-  originUrl.searchParams.delete('fbclid');
-  originUrl.searchParams.delete('debug_og');
-  originUrl.searchParams.delete('preview_debug');
+  // Query InfinityFree origin directly via LEGACY_ORIGIN (cabacademy.bd) to prevent Cloudflare same-worker route loop
+  const legacyUrl = new URL(`${LEGACY_ORIGIN}${reqUrl.pathname}${reqUrl.search}`);
+  legacyUrl.searchParams.delete('fbclid');
+  legacyUrl.searchParams.delete('debug_og');
+  legacyUrl.searchParams.delete('preview_debug');
 
-  let resp = await fetchWithInfinityFreeCookie(originUrl.toString(), false);
+  let resp = await fetchWithInfinityFreeCookie(legacyUrl.toString(), false);
   let html = resp && resp.ok ? await resp.text() : '';
+  if (html) {
+    html = html.replace(/cabacademy\.bd/gi, 'acsacademy.bd').replace(/CAB Academy/g, 'ACS Academy');
+  }
 
-  // If acsacademy.bd subrequest was blocked by Cloudflare same-worker loop (when called via fb.acsacademy.bd),
-  // seamlessly fall back to cabacademy.bd (direct InfinityFree origin) and normalize domain references to acsacademy.bd
+  // Fallback to PRIMARY_ORIGIN only if legacy did not return valid HTML
   if (!html || !html.includes('og:title')) {
-    const legacyUrl = new URL(`${LEGACY_ORIGIN}${reqUrl.pathname}${reqUrl.search}`);
-    legacyUrl.searchParams.delete('fbclid');
-    legacyUrl.searchParams.delete('debug_og');
-    legacyUrl.searchParams.delete('preview_debug');
-    const legacyResp = await fetchWithInfinityFreeCookie(legacyUrl.toString(), false);
-    if (legacyResp && legacyResp.ok) {
-      html = await legacyResp.text();
-      html = html.replace(/cabacademy\.bd/gi, 'acsacademy.bd').replace(/CAB Academy/g, 'ACS Academy');
-    }
+    const originUrl = new URL(`${PRIMARY_ORIGIN}${reqUrl.pathname}${reqUrl.search}`);
+    originUrl.searchParams.delete('fbclid');
+    originUrl.searchParams.delete('debug_og');
+    originUrl.searchParams.delete('preview_debug');
+    try {
+      const primaryResp = await fetchWithInfinityFreeCookie(originUrl.toString(), false);
+      if (primaryResp && primaryResp.ok) {
+        html = await primaryResp.text();
+      }
+    } catch (e) {}
   }
 
   // Strip ?i=1 from canonical and og:url if present
