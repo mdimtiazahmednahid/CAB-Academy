@@ -6,15 +6,22 @@
     <div class="h-0.5 w-full bg-gradient-to-r from-white/80 via-slate-200/70 to-white/80 group-hover:from-[#041536] group-hover:via-[#c30102] group-hover:to-[#10b981] transition-all duration-300"></div>
 
     <!-- 1. Thumbnail Container (Sleek 16:10 Landscape, height-controlled, with Cypress aspect-square hook & Skeleton Shimmer) -->
-    <div class="relative aspect-square aspect-[16/10] h-40 sm:h-44 lg:h-48 w-full bg-slate-900/5 overflow-visible">
-        <a href="{{ route('courses.show', $course) }}" class="img-skeleton-wrapper block w-full h-full overflow-hidden relative">
+    <div class="relative aspect-square aspect-[16/10] h-40 sm:h-44 lg:h-48 w-full bg-[#041536] overflow-visible">
+        <a href="{{ route('courses.show', $course) }}" class="img-skeleton-wrapper block w-full h-full overflow-hidden relative bg-[#041536]">
             @php
                 $imgSrc = $course->cover_image_url;
             @endphp
             <img 
                 src="{{ $imgSrc }}" 
+                alt="" 
+                aria-hidden="true"
+                class="absolute inset-0 w-full h-full object-cover object-center blur-lg opacity-50 scale-110 pointer-events-none"
+                loading="lazy"
+            >
+            <img 
+                src="{{ $imgSrc }}" 
                 alt="{{ $course->title }}" 
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out relative z-10"
+                class="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500 ease-out relative z-10"
                 loading="lazy"
                 onload="this.parentElement.classList.add('is-loaded')"
                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80'; this.parentElement.classList.add('is-loaded');"

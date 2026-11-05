@@ -37,7 +37,8 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')
             || request()->header('X-Forwarded-Proto') === 'https'
             || str_contains((string) request()->header('CF-Visitor'), 'https')
-            || str_contains((string) request()->getHost(), 'acsacademy.bd')) {
+            || str_contains((string) request()->getHost(), 'acsacademy.bd')
+            || str_contains((string) request()->getHost(), 'cabacademy.bd')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
     }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'acs-academy-pwa-v3';
+const CACHE_NAME = 'acs-academy-pwa-v6';
 const OFFLINE_ASSETS = [
     '/images/logo.png'
 ];
@@ -54,8 +54,16 @@ self.addEventListener('fetch', (event) => {
         fetch(event.request)
             .then((response) => {
                 if (response && response.status === 200 && response.type === 'basic') {
-                    const clone = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone)).catch(() => {});
+                    const ct = (response.headers.get('content-type') || '').toLowerCase();
+                    const isCss = url.pathname.endsWith('.css');
+                    const isJs = url.pathname.endsWith('.js');
+                    const validMime = isCss
+                        ? ct.includes('text/css')
+                        : (isJs ? ct.includes('javascript') : !ct.includes('text/html'));
+                    if (validMime) {
+                        const clone = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone)).catch(() => {});
+                    }
                 }
                 return response;
             })

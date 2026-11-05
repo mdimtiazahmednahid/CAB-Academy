@@ -253,25 +253,20 @@ Route::get('/c/{course}', [App\Http\Controllers\CourseController::class, 'shortL
 
 // Dedicated Course Open Graph Image Endpoint (/courses/{course}/og-image.jpg)
 Route::get('/courses/{course}/og-image.jpg', function (\App\Models\Course $course) use ($streamPublicFile) {
-    $img = $course->cover_image ?: $course->thumbnail;
-    if ($img && preg_match('/^data:image\/(\w+);base64,/', $img, $matches)) {
-        $ext = strtolower($matches[1]);
-        $mime = $ext === 'png' ? 'image/png' : ($ext === 'webp' ? 'image/webp' : 'image/jpeg');
-        $decoded = base64_decode(substr($img, strpos($img, ',') + 1));
-        if ($decoded !== false) {
-            return response($decoded, 200, [
-                'Content-Type' => $mime,
-                'Cache-Control' => 'public, max-age=86400',
-            ]);
-        }
+    $strict = request()->boolean('strict');
+    $cardPath = \App\Support\SocialImageGenerator::getOrGenerateCourseSocialCard($course, $strict);
+    if ($cardPath && file_exists($cardPath)) {
+        return response()->file($cardPath, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'public, max-age=604800, s-maxage=604800',
+        ]);
     }
-    if ($img && !str_starts_with($img, 'http://') && !str_starts_with($img, 'https://')) {
-        $clean = preg_replace('/^\/?(storage|uploads)\//i', '', $img);
-        return $streamPublicFile($clean);
+    if ($strict) {
+        abort(404);
     }
     return response()->file(public_path('images/og-banner.jpg'), [
         'Content-Type' => 'image/jpeg',
-        'Cache-Control' => 'public, max-age=86400',
+        'Cache-Control' => 'public, max-age=604800, s-maxage=604800',
     ]);
 })->name('courses.og_image');
 

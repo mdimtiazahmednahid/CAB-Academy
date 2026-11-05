@@ -41,6 +41,7 @@
 
     <!-- Tailwind CSS & Alpine.js -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {!! acs_inline_compiled_css() !!}
 
     <style>
         :root {

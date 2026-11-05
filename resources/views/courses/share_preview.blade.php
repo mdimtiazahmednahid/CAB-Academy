@@ -44,10 +44,10 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ $shortUrl }}">
     <meta property="og:title" content="{{ $course->stylish_og_title }}">
-    <meta property="og:description" content="{{ $cleanDesc }}">
+    <meta property="og:description" content="Executive Certification">
     <meta property="og:image" content="{!! $imageUrl !!}">
     <meta property="og:image:secure_url" content="{!! $secureImageUrl !!}">
-    <meta property="og:image:type" content="{{ $ogMime }}">
+    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ $course->social_card_headline }}">
@@ -55,9 +55,11 @@
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ACSAcademy">
+    <meta name="twitter:creator" content="@ACSAcademy">
     <meta name="twitter:url" content="{{ $shortUrl }}">
     <meta name="twitter:title" content="{{ $course->stylish_og_title }}">
-    <meta name="twitter:description" content="{{ $cleanDesc }}">
+    <meta name="twitter:description" content="Executive Certification">
     <meta name="twitter:image" content="{!! $imageUrl !!}">
     <meta name="twitter:image:alt" content="{{ $course->title }}">
 
@@ -75,6 +77,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {!! acs_inline_compiled_css() !!}
 
     <style>
         body {
@@ -155,13 +158,20 @@
                 </div>
             </div>
 
-            <!-- Clickable Course Thumbnail Banner (True Uncropped 16:9 Format) -->
-            <div class="relative w-full aspect-[16/9] bg-slate-950 overflow-hidden group/thumb">
+            <!-- Clickable Course Thumbnail Banner (True Uncropped Display for 1:1 & 16:9 Flyers) -->
+            <div class="relative w-full aspect-[16/9] bg-[#041536] overflow-hidden group/thumb">
                 <a href="{{ $enrollUrl }}" title="Click to Enroll in {{ $course->title }}" class="block w-full h-full relative cursor-pointer">
+                    <!-- Ambient Blurred Backdrop for Square/Vertical Flyers -->
                     <img 
-                        src="{{ $imageUrl }}" 
+                        src="{{ $course->cover_image_url }}" 
+                        alt="" 
+                        aria-hidden="true"
+                        class="absolute inset-0 w-full h-full object-cover object-center blur-xl opacity-45 scale-110 pointer-events-none"
+                    >
+                    <img 
+                        src="{{ $course->cover_image_url }}" 
                         alt="{{ $course->title }}" 
-                        class="w-full h-full object-cover object-center group-hover/thumb:scale-[1.02] transition-transform duration-700 ease-out"
+                        class="relative z-10 w-full h-full object-contain object-center group-hover/thumb:scale-[1.02] transition-transform duration-700 ease-out"
                         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&h=630&q=85';"
                     >
 

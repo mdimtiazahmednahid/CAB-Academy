@@ -123,3 +123,9 @@
   scrollbar-width: none;
 }
 
+/* Mobile viewport stability */
+html, body {
+  -webkit-text-size-adjust: 100%;
+}
+
+

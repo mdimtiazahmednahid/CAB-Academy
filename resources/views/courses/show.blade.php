@@ -347,8 +347,14 @@
                             >
                                 <img 
                                     src="{{ $course->cover_image_url }}" 
+                                    alt="" 
+                                    aria-hidden="true"
+                                    class="absolute inset-0 w-full h-full object-cover object-center blur-xl opacity-45 scale-110 pointer-events-none"
+                                >
+                                <img 
+                                    src="{{ $course->cover_image_url }}" 
                                     alt="{{ $course->title }}" 
-                                    class="w-full h-full object-cover object-center group-hover/herobanner:scale-[1.03] transition-transform duration-700 ease-out"
+                                    class="relative z-10 w-full h-full object-contain object-center group-hover/herobanner:scale-[1.03] transition-transform duration-700 ease-out"
                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&h=630&q=85';"
                                 >
 

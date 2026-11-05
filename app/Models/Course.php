@@ -238,7 +238,8 @@ class Course extends Model
             return $default;
         }
 
-        if (str_starts_with($img, 'data:image/')) {
+        // Return dedicated 1200x630 Open Graph landscape route for all uploaded covers and base64 images
+        if (str_starts_with($img, 'data:image/') || (!str_starts_with($img, 'http://') && !str_starts_with($img, 'https://'))) {
             return url('/courses/' . $this->id . '/og-image.jpg');
         }
 

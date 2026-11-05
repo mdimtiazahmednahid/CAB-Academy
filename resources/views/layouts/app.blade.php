@@ -15,6 +15,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        {!! acs_inline_compiled_css() !!}
         <style>
             :root {
                 --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#051c45') }};

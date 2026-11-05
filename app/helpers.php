@@ -44,4 +44,44 @@ if (!function_exists('storage_asset')) {
     }
 }
 
+if (!function_exists('acs_inline_compiled_css')) {
+    /**
+     * Inline the compiled production Tailwind CSS from public/build/manifest.json directly in <head>
+     * as a zero-latency fallback so mobile browsers and Facebook in-app WebViews on InfinityFree
+     * never render unstyled HTML even if secondary /build/assets/*.css requests are throttled or cached.
+     */
+    function acs_inline_compiled_css(): string
+    {
+        static $cachedInlineCss = null;
+        if ($cachedInlineCss !== null) {
+            return $cachedInlineCss;
+        }
+
+        try {
+            $manifestPath = public_path('build/manifest.json');
+            if (!file_exists($manifestPath)) {
+                return $cachedInlineCss = '';
+            }
+            $manifest = json_decode((string) file_get_contents($manifestPath), true);
+            $cssRelFile = $manifest['resources/css/app.css']['file'] ?? null;
+            if (!$cssRelFile) {
+                return $cachedInlineCss = '';
+            }
+            $cssFullPath = public_path('build/' . ltrim($cssRelFile, '/'));
+            if (!file_exists($cssFullPath)) {
+                return $cachedInlineCss = '';
+            }
+            $cssContent = (string) file_get_contents($cssFullPath);
+            if ($cssContent === '') {
+                return $cachedInlineCss = '';
+            }
+            $cachedInlineCss = '<style id="acs-compiled-css">' . $cssContent . '</style>';
+            return $cachedInlineCss;
+        } catch (\Throwable $e) {
+            return $cachedInlineCss = '';
+        }
+    }
+}
+
+
 

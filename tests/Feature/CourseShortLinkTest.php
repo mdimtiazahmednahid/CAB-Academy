@@ -73,7 +73,7 @@ class CourseShortLinkTest extends TestCase
         $response->assertSee('property="og:title"', false);
         $response->assertSee(e($course->title), false);
         $response->assertSee('property="og:image"', false);
-        $response->assertSee('content="http://localhost/storage/course_covers/supply_chain.png"', false);
+        $response->assertSee('content="http://localhost/courses/' . $course->id . '/og-image.jpg"', false);
         $response->assertSee('property="og:image:width" content="1200"', false);
         $response->assertSee('property="og:image:height" content="630"', false);
         $response->assertSee('property="og:image:secure_url"', false);
