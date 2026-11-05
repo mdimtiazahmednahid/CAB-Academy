@@ -14,6 +14,8 @@ class Instructor extends Model
         'name',
         'title',
         'expertise',
+        'department',
+        'department_role',
         'avatar',
         'bio',
         'email',
@@ -137,6 +139,11 @@ class Instructor extends Model
     /**
      * Get fully-qualified avatar image URL with reliable storage prefixing, fallback to user profile picture, and UI Avatars.
      */
+    public function isDepartmentHead(): bool
+    {
+        return ($this->department_role ?? '') === 'head';
+    }
+
     public function getAvatarUrlAttribute(): string
     {
         $pic = $this->avatar ?: ($this->user?->profile_picture ?? null);
