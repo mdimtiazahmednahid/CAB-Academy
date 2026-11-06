@@ -321,12 +321,42 @@ class DataIntegrityAndSecurityAuditTest extends TestCase
                 'status' => 'already_enrolled',
             ]);
 
-        // 6. Duplicate Transaction ID reuse across courses/users is blocked
+        // 6. Duplicate Transaction ID reuse across courses/users is blocked (even with lowercase / whitespace)
         $this->actingAs($student)
             ->postJson("/courses/{$courseB->id}/express-enroll", [
-                'transaction_id' => 'TRX-FIRST-COURSE',
+                'transaction_id' => '  trx-first-course  ',
             ])
             ->assertStatus(422)
             ->assertJsonPath('errors.transaction_id.0', 'This Transaction ID (TrxID) has already been used. Please enter a valid Transaction ID.');
+
+        // 7. Guest enrollment resolves existing user even if their phone was only stored in payments.sender_number (no duplicate account)
+        $studentNoProfilePhone = User::factory()->create([
+            'name' => 'Legacy Student',
+            'email' => 'legacy@example.com',
+            'phone' => null,
+            'role' => 'student',
+        ]);
+        Payment::create([
+            'user_id' => $studentNoProfilePhone->id,
+            'course_id' => $courseA->id,
+            'amount' => 1500,
+            'sender_number' => '01999887766',
+            'transaction_id' => 'TRX-LEGACY-99',
+            'status' => 'verified',
+        ]);
+
+        auth()->logout();
+        $userCountBefore = User::count();
+
+        $this->postJson("/courses/{$courseB->id}/express-enroll", [
+            'name' => 'Legacy Student',
+            'phone' => '+8801999-887766',
+            'password' => '7766',
+            'sender_number' => '01999887766',
+            'transaction_id' => 'TRX-LEGACY-NEW-COURSE',
+        ])->assertOk();
+
+        $this->assertSame($userCountBefore, User::count());
+        $this->assertSame('01999887766', $studentNoProfilePhone->fresh()->phone);
     }
 }

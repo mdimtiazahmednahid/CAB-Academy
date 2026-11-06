@@ -81,13 +81,42 @@ class CourseController extends Controller
 
         $user = $request->user();
 
+        if (!$user->isAdmin() && $user->enrolledCourses()->where('courses.id', $course->id)->exists()) {
+            return redirect()->route('courses.show', $course)->with('info', 'You are already enrolled in this course.');
+        }
+
         if ($course->price > 0) {
             return redirect()->route('courses.checkout', $course);
         }
 
-        if (!$user->enrolledCourses()->where('course_id', $course->id)->exists()) {
-            $user->enrolledCourses()->attach($course->id);
-        }
+        DB::transaction(function () use ($user, $course) {
+            $user->enrolledCourses()->syncWithoutDetaching([$course->id]);
+
+            $phone = $user->effective_phone;
+            $formData = array_merge($user->saved_enrollment_fields, [
+                'name' => $user->name,
+                'phone' => $phone,
+                'email' => $user->email,
+                'training_mode' => $course->isCampusOnly() ? 'in_person' : 'online_zoom',
+            ]);
+
+            \App\Models\Payment::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'course_id' => $course->id,
+                    'amount' => 0.00,
+                ],
+                [
+                    'payment_method_id' => null,
+                    'sender_number' => $phone ?: ($user->last_sender_number ?: 'FREE'),
+                    'transaction_id' => 'FREE-ENROLL-' . strtoupper(\Illuminate\Support\Str::random(6)),
+                    'status' => 'verified',
+                    'notes' => 'Mode: ' . ($course->isCampusOnly() ? 'Campus' : 'Online Zoom'),
+                    'form_data' => $formData,
+                    'verified_at' => now(),
+                ]
+            );
+        });
         
         return back()->with('success', 'You have successfully enrolled in the course!');
     }

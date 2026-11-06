@@ -16,7 +16,8 @@ class UserController extends Controller
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
             });
         }
         
@@ -36,6 +37,9 @@ class UserController extends Controller
             'cover_photo' => 'nullable|image|max:10240',
         ]);
 
+        if (!empty($data['phone'])) {
+            $data['phone'] = User::normalizeBdPhone($data['phone']);
+        }
         $data['password'] = bcrypt($data['password']);
 
         $user = new User();
@@ -84,8 +88,14 @@ class UserController extends Controller
             'cover_photo_base64' => 'nullable|string',
         ]);
 
+        if (!empty($data['phone'])) {
+            $data['phone'] = User::normalizeBdPhone($data['phone']);
+        }
         if (!empty($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
+            if (!empty($data['phone'])) {
+            $data['phone'] = User::normalizeBdPhone($data['phone']);
+        }
+        $data['password'] = bcrypt($data['password']);
         } else {
             unset($data['password']);
         }

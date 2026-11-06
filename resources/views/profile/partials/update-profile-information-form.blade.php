@@ -44,6 +44,14 @@
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div>
+            <x-input-label for="phone" :value="__('Mobile Number (11 Digits)')" />
+            <x-text-input id="phone" name="phone" type="tel" class="mt-1 block w-full" :value="old('phone', $user->effective_phone)" placeholder="01712345678" autocomplete="tel" />
+            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+        </div>
+
         <div class="space-y-4">
             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
                 <x-input-label for="profile_picture_input" :value="__('Profile Picture')" />

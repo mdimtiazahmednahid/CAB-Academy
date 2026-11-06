@@ -34,6 +34,9 @@ class ProfileController extends Controller
         if (array_key_exists('email', $validated) && empty($validated['email'])) {
             unset($validated['email']);
         }
+        if (!empty($validated['phone'])) {
+            $validated['phone'] = \App\Models\User::normalizeBdPhone($validated['phone']);
+        }
         
         $user->fill($validated);
 

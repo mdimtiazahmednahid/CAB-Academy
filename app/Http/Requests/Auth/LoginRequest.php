@@ -56,17 +56,30 @@ class LoginRequest extends FormRequest
                 $authenticated = Auth::attempt(['email' => $identifier, 'password' => $password], $remember);
             }
         } else {
-            $digits = preg_replace('/[^0-9]/', '', $identifier);
-            if (strlen($digits) === 13 && str_starts_with($digits, '8801')) {
-                $digits = substr($digits, 2);
+            $digits = \App\Models\User::normalizeBdPhone($identifier);
+            if (empty($digits)) {
+                $digits = preg_replace('/[^0-9]/', '', $identifier);
             }
 
             if (!empty($digits)) {
                 try {
                     $candidates = \App\Models\User::where('phone', $digits)
+                        ->orWhere('phone', '+88' . $digits)
+                        ->orWhere('phone', '88' . $digits)
                         ->orWhere('phone', $identifier)
                         ->orWhere('email', 'student_' . $digits . '@cabacademy.com')
                         ->get();
+
+                    if ($candidates->isEmpty()) {
+                        $paymentUserIds = \App\Models\Payment::where('sender_number', $digits)
+                            ->whereNotNull('user_id')
+                            ->pluck('user_id')
+                            ->unique()
+                            ->toArray();
+                        if (!empty($paymentUserIds)) {
+                            $candidates = \App\Models\User::whereIn('id', $paymentUserIds)->get();
+                        }
+                    }
                 } catch (\Throwable $e) {
                     \App\Support\DatabaseSchemaRepair::ensureSchema(true);
                     $candidates = \App\Models\User::where('email', 'student_' . $digits . '@cabacademy.com')->get();

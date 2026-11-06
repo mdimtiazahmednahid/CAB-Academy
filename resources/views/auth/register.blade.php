@@ -25,6 +25,15 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm text-red-500" />
         </div>
 
+        <!-- Mobile Number -->
+        <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Mobile number <span class="text-gray-400 font-normal text-xs">(11 digits)</span></label>
+            <input id="phone" type="tel" name="phone" value="{{ old('phone') }}" autocomplete="tel" 
+                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none" 
+                placeholder="e.g. 01712345678">
+            <x-input-error :messages="$errors->get('phone')" class="mt-2 text-sm text-red-500" />
+        </div>
+
         <!-- Password -->
         <div>
             <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>

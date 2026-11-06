@@ -331,7 +331,8 @@
                     <div class="liquid-glass-dark rounded-3xl p-2 border border-white/25 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.65)] overflow-hidden">
                         <div class="relative w-full aspect-[16/9] rounded-2xl overflow-hidden group/herobanner bg-slate-950">
                             <a 
-                                href="javascript:void(0)" 
+                                href="{{ $isEnrolled && $resumeLesson ? route('lessons.show', [$course, $resumeLesson]) : ($canShowEnrollCta ? 'javascript:void(0)' : '#curriculum') }}" 
+                                @if($canShowEnrollCta)
                                 onclick="openEnrollDrawer({ 
                                     id: {{ $course->id }}, 
                                     title: '{{ addslashes($course->title) }}', 
@@ -342,8 +343,9 @@
                                     attendanceMode: '{{ $course->attendance_mode }}',
                                     whatsapp: '{{ $course->effective_whatsapp_number }}',
                                     fields: {{ json_encode($course->effective_enrollment_fields) }}
-                                })" 
-                                title="Click to Express Enroll in {{ $course->title }}"
+                                })"
+                                @endif
+                                title="{{ $isEnrolled ? 'Continue Classroom' : ($canShowEnrollCta ? 'Click to Express Enroll in ' . $course->title : $course->title) }}"
                                 class="block w-full h-full relative cursor-pointer"
                             >
                                 <img 
@@ -360,12 +362,21 @@
                                 >
 
                                 <!-- Center Hover Overlay Pill -->
-                                <div class="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/herobanner:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
-                                    <span class="px-4 py-2 rounded-full bg-[#c30102] text-white font-extrabold text-xs shadow-xl flex items-center gap-1.5 transform group-hover/herobanner:scale-105 transition-transform border border-white/20">
-                                        <i class="fas fa-bolt text-amber-300 text-xs"></i>
-                                        <span>Click to Express Enroll (30 Sec)</span>
-                                    </span>
-                                </div>
+                                @if($isEnrolled)
+                                    <div class="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/herobanner:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
+                                        <span class="px-4 py-2 rounded-full bg-[#10b981] text-white font-extrabold text-xs shadow-xl flex items-center gap-1.5 transform group-hover/herobanner:scale-105 transition-transform border border-white/20">
+                                            <i class="fas fa-play-circle text-white text-xs"></i>
+                                            <span>Continue Classroom</span>
+                                        </span>
+                                    </div>
+                                @elseif($canShowEnrollCta)
+                                    <div class="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/herobanner:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
+                                        <span class="px-4 py-2 rounded-full bg-[#c30102] text-white font-extrabold text-xs shadow-xl flex items-center gap-1.5 transform group-hover/herobanner:scale-105 transition-transform border border-white/20">
+                                            <i class="fas fa-bolt text-amber-300 text-xs"></i>
+                                            <span>Click to Express Enroll (30 Sec)</span>
+                                        </span>
+                                    </div>
+                                @endif
                             </a>
                         </div>
 
@@ -715,7 +726,23 @@
 
                         <!-- Action Buttons -->
                         @if(!$isEnrolled)
+                            @php
+                                $sidebarPendingPayment = auth()->check()
+                                    ? auth()->user()->payments()->where('course_id', $course->id)->whereIn('status', ['pending', 'processing'])->latest()->first()
+                                    : null;
+                            @endphp
                             <div class="space-y-2.5">
+                                @if($sidebarPendingPayment)
+                                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 space-y-1">
+                                        <p class="font-bold flex items-center gap-1.5">
+                                            <i class="fas fa-clock text-amber-600"></i>
+                                            <span>Payment Pending Verification</span>
+                                        </p>
+                                        <p class="text-[11px] text-amber-800">
+                                            TrxID: <span class="font-mono font-bold">{{ $sidebarPendingPayment->transaction_id }}</span>
+                                        </p>
+                                    </div>
+                                @endif
                                 @if($isRegistrationOpen)
                                     <!-- Form Submit Button (Required by Cypress) -->
                                     <form 
@@ -969,7 +996,7 @@
             >
                 Continue Learning
             </a>
-        @else
+        @elseif($isRegistrationOpen)
             <button 
                 type="button"
                 onclick="openEnrollDrawer({ 
@@ -988,9 +1015,15 @@
                 <i class="fas fa-bolt text-xs"></i>
                 <span>Enroll Now (৳{{ number_format($course->price, 0) }})</span>
             </button>
+        @else
+            <div class="block w-full py-2.5 px-4 bg-slate-200 text-slate-600 font-bold rounded-full shadow-xl text-center text-xs tracking-wide flex items-center justify-center gap-1.5">
+                <i class="fas fa-lock text-[11px]"></i>
+                <span>Registration Closed</span>
+            </div>
         @endif
     </div>
 
+    @if($canShowEnrollCta)
     <!-- Auto-Enroll Trigger for Shared Links (?enroll=true or #enroll) -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1014,5 +1047,6 @@
             }
         });
     </script>
+    @endif
 </div>
 @endsection

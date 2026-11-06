@@ -69,7 +69,8 @@ class AccountingController extends Controller
                   ->orWhere('invoice_number', 'like', "%{$search}%")
                   ->orWhereHas('user', function ($uq) use ($search) {
                       $uq->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
+                         ->orWhere('email', 'like', "%{$search}%")
+                         ->orWhere('phone', 'like', "%{$search}%");
                   });
             });
         }
@@ -169,8 +170,9 @@ class AccountingController extends Controller
 
         $course = Course::findOrFail($validated['course_id']);
         $trxId = !empty($validated['transaction_id']) ? $validated['transaction_id'] : 'CAMPUS-' . strtoupper(Str::random(8));
+        $normalizedPhone = !empty($validated['student_phone']) ? User::normalizeBdPhone($validated['student_phone']) : null;
 
-        [$user, $payment] = DB::transaction(function () use ($validated, $course, $trxId) {
+        [$user, $payment] = DB::transaction(function () use ($validated, $course, $trxId, $normalizedPhone) {
             // Find or create student user
             $user = User::firstOrCreate(
                 ['email' => $validated['student_email']],
@@ -178,10 +180,15 @@ class AccountingController extends Controller
                     'name' => $validated['student_name'],
                     'password' => bcrypt(Str::random(12)),
                     'role' => 'student',
-                    'phone' => $validated['student_phone'] ?? null,
+                    'phone' => $normalizedPhone,
                     'email_verified_at' => now(),
                 ]
             );
+
+            if (empty($user->phone) && !empty($normalizedPhone)) {
+                $user->phone = $normalizedPhone;
+                $user->saveQuietly();
+            }
 
             // Create Verified Payment Record
             $payment = Payment::create([
@@ -189,7 +196,7 @@ class AccountingController extends Controller
                 'course_id' => $course->id,
                 'payment_method_id' => $validated['payment_method_id'] ?? null,
                 'amount' => $validated['amount'],
-                'sender_number' => $validated['student_phone'] ?? 'Campus Desk',
+                'sender_number' => $normalizedPhone ?: ($validated['student_phone'] ?? 'Campus Desk'),
                 'transaction_id' => $trxId,
                 'payment_type' => $validated['payment_type'],
                 'status' => 'verified',

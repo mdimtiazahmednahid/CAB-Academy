@@ -48,6 +48,9 @@ class PaymentController extends Controller
         if ($request->filled('sender_number')) {
             $request->merge(['sender_number' => User::normalizeBdPhone($request->sender_number)]);
         }
+        if ($request->filled('transaction_id')) {
+            $request->merge(['transaction_id' => strtoupper(trim((string) $request->transaction_id))]);
+        }
 
         $request->validate([
             'payment_method_id' => 'required|exists:payment_methods,id',
@@ -57,8 +60,8 @@ class PaymentController extends Controller
             'sender_number.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01712345678).'
         ]);
 
-        $cleanTrx = trim((string) $request->transaction_id);
-        $duplicateTrx = Payment::where('transaction_id', $cleanTrx)
+        $cleanTrx = strtoupper(trim((string) $request->transaction_id));
+        $duplicateTrx = Payment::whereRaw('UPPER(transaction_id) = ?', [$cleanTrx])
             ->where(function ($q) use ($user, $course) {
                 $q->where('user_id', '!=', $user->id)
                   ->orWhere('course_id', '!=', $course->id)
@@ -137,6 +140,35 @@ class PaymentController extends Controller
             $request->merge(['sender_number' => User::normalizeBdPhone((string) $request->sender_number)]);
         } elseif (!empty($request->phone)) {
             $request->merge(['sender_number' => User::normalizeBdPhone((string) $request->phone)]);
+        }
+        if ($request->filled('transaction_id')) {
+            $request->merge(['transaction_id' => strtoupper(trim((string) $request->transaction_id))]);
+        }
+
+        // If a returning user is not logged in and omitted email/name, pre-fill from their existing account matched by phone
+        if (!Auth::check() && !empty($request->phone) && empty($request->email)) {
+            $lookupPhone = (string) $request->phone;
+            $existingByPhone = User::where('phone', $lookupPhone)
+                ->orWhere('phone', '+88' . $lookupPhone)
+                ->orWhere('phone', '88' . $lookupPhone)
+                ->first();
+            if (!$existingByPhone) {
+                $pastPayment = Payment::where('sender_number', $lookupPhone)
+                    ->whereNotNull('user_id')
+                    ->latest()
+                    ->first();
+                if ($pastPayment && $pastPayment->user && !$pastPayment->user->trashed() && empty($pastPayment->user->phone)) {
+                    $existingByPhone = $pastPayment->user;
+                }
+            }
+            if ($existingByPhone) {
+                if (!empty($existingByPhone->email)) {
+                    $request->merge(['email' => $existingByPhone->email]);
+                }
+                if (empty($request->name) && !empty($existingByPhone->name)) {
+                    $request->merge(['name' => $existingByPhone->name]);
+                }
+            }
         }
 
         $isPaidCourse = (float) $course->price > 0;
@@ -229,9 +261,31 @@ class PaymentController extends Controller
             : substr($cleanPhone, -4);
 
         if (!$user) {
-            $email = strtolower(trim($request->email ?: ('student_' . $cleanPhone . '@cabacademy.com')));
-            // Check by email first, or by phone if email was not explicitly matched
-            $user = User::where('email', $email)->orWhere('phone', $cleanPhone)->first();
+            $explicitEmail = $request->filled('email') ? strtolower(trim((string) $request->email)) : '';
+            $email = $explicitEmail ?: ('student_' . $cleanPhone . '@cabacademy.com');
+
+            // 1. Check by explicit email first if provided, then by normalized phone or auto-generated email
+            if ($explicitEmail !== '') {
+                $user = User::where('email', $explicitEmail)->first();
+            }
+            if (!$user) {
+                $user = User::where('phone', $cleanPhone)
+                    ->orWhere('phone', '+88' . $cleanPhone)
+                    ->orWhere('phone', '88' . $cleanPhone)
+                    ->orWhere('email', $email)
+                    ->first();
+            }
+            // 2. Fallback: check if a user previously paid with this phone number while having a null profile phone
+            if (!$user && !empty($cleanPhone)) {
+                $pastPayment = Payment::where('sender_number', $cleanPhone)
+                    ->whereNotNull('user_id')
+                    ->latest()
+                    ->first();
+                if ($pastPayment && $pastPayment->user && !$pastPayment->user->trashed() && empty($pastPayment->user->phone)) {
+                    $user = $pastPayment->user;
+                }
+            }
+
             if (!$user) {
                 $user = User::create([
                     'name' => $request->name,
@@ -313,8 +367,8 @@ class PaymentController extends Controller
 
         // Prevent duplicate Transaction ID reuse across verified or other payments
         if ($isPaidCourse) {
-            $cleanTrx = trim((string) $request->transaction_id);
-            $duplicateTrx = Payment::where('transaction_id', $cleanTrx)
+            $cleanTrx = strtoupper(trim((string) $request->transaction_id));
+            $duplicateTrx = Payment::whereRaw('UPPER(transaction_id) = ?', [$cleanTrx])
                 ->where(function ($q) use ($user, $course) {
                     $q->where('user_id', '!=', $user->id)
                       ->orWhere('course_id', '!=', $course->id)

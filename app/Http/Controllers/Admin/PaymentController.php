@@ -29,9 +29,17 @@ class PaymentController extends Controller
                     'verified_by' => auth()->id(),
                 ]);
 
-                // Enroll the user in the course
+                // Enroll the user in the course and backfill phone if missing
                 if ($payment->user) {
                     $payment->user->enrolledCourses()->syncWithoutDetaching([$payment->course_id]);
+                    if (empty($payment->user->phone)) {
+                        $formData = is_array($payment->form_data) ? $payment->form_data : [];
+                        $candidatePhone = \App\Models\User::normalizeBdPhone($formData['phone'] ?? $payment->sender_number);
+                        if (!empty($candidatePhone) && preg_match('/^01[3-9]\d{8}$/', $candidatePhone)) {
+                            $payment->user->phone = $candidatePhone;
+                            $payment->user->saveQuietly();
+                        }
+                    }
                 }
             } else {
                 $payment->update([

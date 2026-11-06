@@ -38,7 +38,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-100">
                         <div>
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Conferred Recipient</span>
-                            <h2 class="text-2xl font-black text-[#0f131f] mt-1">{{ $certificate->user->name }}</h2>
+                            <h2 class="text-2xl font-black text-[#0f131f] mt-1">{{ $certificate->user?->name ?? 'Verified Graduate' }}</h2>
                         </div>
                         <div class="sm:text-right">
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Credential ID</span>
@@ -49,10 +49,12 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-6 border-b border-gray-100">
                         <div>
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Executive Program</span>
-                            <h3 class="text-base font-bold text-[#0f131f] mt-1">{{ $certificate->course->title }}</h3>
-                            <a href="{{ route('courses.show', $certificate->course) }}" class="text-xs font-semibold text-[#c30102] hover:underline mt-1 inline-block">
-                                View Course Curriculum &rarr;
-                            </a>
+                            <h3 class="text-base font-bold text-[#0f131f] mt-1">{{ $certificate->course?->title ?? 'Executive Certification Program' }}</h3>
+                            @if($certificate->course && !$certificate->course->trashed() && $certificate->course->is_published)
+                                <a href="{{ route('courses.show', $certificate->course) }}" class="text-xs font-semibold text-[#c30102] hover:underline mt-1 inline-block">
+                                    View Course Curriculum &rarr;
+                                </a>
+                            @endif
                         </div>
                         <div>
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Official Issue Date</span>
