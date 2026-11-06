@@ -260,82 +260,141 @@
 
     <!-- Mobile Sidebar Drawer -->
     <div id="mobile-menu" class="hidden md:hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex" onclick="if(event.target === this) this.classList.add('hidden')">
-        <div class="w-72 max-w-[85vw] bg-[#03112b] h-full p-5 flex flex-col overflow-y-auto shadow-2xl text-white">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-white/10">
-                <div class="flex items-center gap-2.5">
-                    <img src="{{ $siteLogo }}" alt="{{ $siteName }}" class="h-8 w-8 rounded-lg object-contain bg-white p-0.5" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
-                    <span class="text-white font-black text-base tracking-tight uppercase truncate">{{ $siteName }}</span>
+        <div class="w-64 max-w-[82vw] bg-[#03112b] h-full p-4 flex flex-col overflow-y-auto shadow-2xl text-white">
+            <div class="flex justify-between items-center mb-3.5 pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2 min-w-0">
+                    <img src="{{ $siteLogo }}" alt="{{ $siteName }}" class="h-7 w-7 rounded-lg object-contain bg-white p-0.5 shrink-0" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                    <span class="text-white font-extrabold text-xs tracking-tight uppercase truncate">ACS Console</span>
                 </div>
                 <button type="button" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="text-slate-400 hover:text-white p-1 rounded-lg">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <nav class="flex-1 space-y-1 text-sm">
-                <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Dashboard</a>
-                <a href="{{ route('admin.courses') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.courses*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Courses</a>
-                <a href="{{ route('admin.categories.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.categories*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Categories</a>
-                <a href="{{ route('admin.instructors.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.instructors*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Instructors</a>
-                <a href="{{ route('admin.certificates.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.certificates*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Certificates</a>
-                <a href="{{ route('admin.inquiries.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.inquiries*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Inquiries</a>
-                <a href="{{ route('admin.feeds.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.feeds*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Community Feed</a>
-                <a href="{{ route('admin.blogs.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.blogs*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Articles & Blogs</a>
+            <nav class="flex-1 space-y-0.5 text-xs">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.dashboard') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-chart-pie w-4 text-center text-slate-400"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ route('admin.courses') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.courses*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-graduation-cap w-4 text-center text-slate-400"></i>
+                    <span>Courses</span>
+                </a>
+                <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.categories*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-sitemap w-4 text-center text-slate-400"></i>
+                    <span>4 Learning Depts</span>
+                </a>
+                <a href="{{ route('admin.instructors.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.instructors*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-chalkboard-user w-4 text-center text-slate-400"></i>
+                    <span>Faculty</span>
+                </a>
+                <a href="{{ route('admin.certificates.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.certificates*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-award w-4 text-center text-slate-400"></i>
+                    <span>Certificates</span>
+                </a>
+                <a href="{{ route('admin.inquiries.index') }}" class="flex items-center justify-between px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.inquiries*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <span class="flex items-center gap-2.5">
+                        <i class="fas fa-inbox w-4 text-center text-slate-400"></i>
+                        <span>Inquiries</span>
+                    </span>
+                    @if($pendingInqCount > 0)
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-rose-500 text-white">{{ $pendingInqCount }}</span>
+                    @endif
+                </a>
+                <a href="{{ route('admin.feeds.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.feeds*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-comments w-4 text-center text-slate-400"></i>
+                    <span>Community Feed</span>
+                </a>
+                <a href="{{ route('admin.blogs.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.blogs*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-newspaper w-4 text-center text-slate-400"></i>
+                    <span>Articles & Blogs</span>
+                </a>
                 @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.payments.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.payments*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Pending Payments</a>
-                <a href="{{ route('admin.accounting.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.accounting*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Accounting & Ledger</a>
-                <a href="{{ route('admin.payment-methods.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.payment-methods*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Payment Methods</a>
-                <a href="{{ route('admin.users') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.users*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Users</a>
-                <a href="{{ route('admin.jobs') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.jobs*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Jobs</a>
-                <a href="{{ route('admin.frontend.index') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.frontend.*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Frontend</a>
-                <a href="{{ route('admin.settings') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.settings') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Settings</a>
-                <a href="{{ route('admin.announcements.create') }}" class="block px-3 py-2 rounded-xl font-medium {{ request()->routeIs('admin.announcements.*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">Announcements</a>
-                <a href="{{ route('admin.trash.index') }}" class="block px-3 py-2 rounded-xl font-medium text-rose-400 hover:bg-rose-500/10">Trash Bin</a>
+                <a href="{{ route('admin.payments.index') }}" class="flex items-center justify-between px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.payments*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <span class="flex items-center gap-2.5">
+                        <i class="fas fa-check-double w-4 text-center text-slate-400"></i>
+                        <span>Verify Payments</span>
+                    </span>
+                    @if($pendingPayCount > 0)
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-400 text-slate-950">{{ $pendingPayCount }}</span>
+                    @endif
+                </a>
+                <a href="{{ route('admin.accounting.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.accounting*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-chart-line w-4 text-center text-slate-400"></i>
+                    <span>Accounting</span>
+                </a>
+                <a href="{{ route('admin.payment-methods.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.payment-methods*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-wallet w-4 text-center text-slate-400"></i>
+                    <span>Payment Gateways</span>
+                </a>
+                <a href="{{ route('admin.users') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.users*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-users w-4 text-center text-slate-400"></i>
+                    <span>Users</span>
+                </a>
+                <a href="{{ route('admin.jobs') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.jobs*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-briefcase w-4 text-center text-slate-400"></i>
+                    <span>Jobs</span>
+                </a>
+                <a href="{{ route('admin.frontend.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.frontend.*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-wand-magic-sparkles w-4 text-center text-slate-400"></i>
+                    <span>Frontend CMS</span>
+                </a>
+                <a href="{{ route('admin.settings') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.settings') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-sliders w-4 text-center text-slate-400"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="{{ route('admin.announcements.create') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold {{ request()->routeIs('admin.announcements.*') ? 'bg-white/15 text-white' : 'text-slate-300 hover:bg-white/10' }}">
+                    <i class="fas fa-bullhorn w-4 text-center text-slate-400"></i>
+                    <span>Announcements</span>
+                </a>
+                <a href="{{ route('admin.trash.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl font-semibold text-rose-400 hover:bg-rose-500/10">
+                    <i class="fas fa-trash-can w-4 text-center"></i>
+                    <span>Trash Bin</span>
+                </a>
                 @endif
             </nav>
-            <div class="mt-4 pt-4 border-t border-white/10 space-y-2">
-                <a href="{{ url('/') }}" target="_blank" class="block px-3 py-2 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-500/10 text-center">Visit Live Platform ↗</a>
+            <div class="mt-3 pt-3 border-t border-white/10 space-y-1.5">
+                <a href="{{ url('/') }}" target="_blank" class="block px-3 py-2 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-500/10 text-center">Visit Live Site ↗</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="w-full text-left block px-3 py-2 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10">Log Out</button>
+                    <button type="submit" class="w-full text-left block px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10">Log Out</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Desktop Sticky Executive Top Bar -->
-    <header class="hidden md:flex items-center justify-between px-8 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-20">
-        <div class="flex items-center gap-3">
+    <!-- Desktop Sticky Executive Top Bar (Compact h-14) -->
+    <header class="hidden md:flex items-center justify-between px-5 lg:px-6 h-14 bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-20">
+        <div class="flex items-center gap-2.5">
             <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Workspace</span>
-            <span class="text-slate-300">/</span>
-            <span class="text-sm font-bold text-[#051c45]">@yield('header_title', 'Executive Overview')</span>
+            <span class="text-xs font-bold text-[#051c45]">@yield('header_title', 'Executive Overview')</span>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2.5">
             @if(auth()->user()->isAdmin() && $pendingPayCount > 0)
-                <a href="{{ route('admin.payments.index') }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 text-xs font-bold transition-colors">
-                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                    <span>{{ $pendingPayCount }} Pending {{ \Illuminate\Support\Str::plural('Payment', $pendingPayCount) }}</span>
+                <a href="{{ route('admin.payments.index') }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 text-xs font-bold transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                    <span>{{ $pendingPayCount }} Pending</span>
                 </a>
             @endif
 
             @if($pendingInqCount > 0)
-                <a href="{{ route('admin.inquiries.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 text-xs font-bold transition-colors">
-                    <i class="fas fa-inbox text-[11px]"></i>
-                    <span>{{ $pendingInqCount }} {{ \Illuminate\Support\Str::plural('Inquiry', $pendingInqCount) }}</span>
+                <a href="{{ route('admin.inquiries.index') }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 text-xs font-bold transition-colors">
+                    <i class="fas fa-inbox text-[10px]"></i>
+                    <span>{{ $pendingInqCount }}</span>
                 </a>
             @endif
 
-            <a href="{{ route('admin.courses') }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] text-xs font-bold transition-colors">
+            <a href="{{ route('admin.courses') }}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] text-xs font-bold transition-colors">
                 <i class="fas fa-graduation-cap text-[11px]"></i>
                 <span>Courses</span>
             </a>
 
-            <a href="{{ url('/') }}" target="_blank" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold transition-colors shadow-xs">
+            <a href="{{ url('/') }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold transition-colors shadow-2xs">
                 <span>Live Site</span>
-                <i class="fas fa-arrow-up-right-from-square text-[10px] text-emerald-400"></i>
+                <i class="fas fa-arrow-up-right-from-square text-[9px] text-emerald-400"></i>
             </a>
 
-            <a href="{{ route('profile.edit') }}" title="Profile & Account Settings" class="w-9 h-9 rounded-xl bg-[#051c45] text-white font-black text-xs flex items-center justify-center shadow-xs hover:bg-[#082860] transition-colors overflow-hidden border border-slate-200/80 shrink-0">
+            <a href="{{ route('profile.edit') }}" title="Profile & Account Settings" class="w-8 h-8 rounded-xl bg-[#051c45] text-white font-black text-xs flex items-center justify-center shadow-2xs hover:bg-[#082860] transition-colors overflow-hidden border border-slate-200/80 shrink-0">
                 @if(auth()->user()->hasCustomProfilePicture())
                     <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=051c45&color=fff';">
                 @else
@@ -345,8 +404,8 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8">
+    <!-- Main Content (Compact Responsive Padding) -->
+    <main class="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-5 lg:p-6">
         @if($errors->any())
             <div class="mb-6 p-4 bg-rose-50 text-rose-800 rounded-2xl border border-rose-200 shadow-xs">
                 <div class="flex items-center gap-2 mb-1.5 font-bold text-sm">

@@ -1,24 +1,12 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-    <div>
-        <div class="flex items-center gap-2 mb-1">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#041536] text-white">
-                ACS 4 Learning Departments
-            </span>
-            <span class="text-xs text-gray-500 font-medium">Categories, Sub-Tracks & Department Heads</span>
-        </div>
-        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Learning Departments & Categories</h2>
-        <p class="text-gray-500 text-sm mt-1">Manage the 4 Core Learning Departments, their 6 specialized training tracks, Department Heads, and dedicated faculty teams.</p>
-    </div>
-    
-    <div class="flex items-center gap-3">
-        <a href="{{ route('admin.categories.create') }}" class="px-4 py-2.5 bg-[#c30102] hover:bg-[#a50102] text-white text-sm font-bold rounded-xl shadow-lg shadow-red-900/20 active:scale-95 transition-all inline-flex items-center gap-2">
-            <i class="fas fa-plus"></i>
-            <span>Add Department / Category</span>
-        </a>
-    </div>
+<div class="mb-4 flex items-center justify-between gap-3">
+    <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">4 Learning Departments</h2>
+    <a href="{{ route('admin.categories.create') }}" class="px-3.5 py-2 bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold rounded-xl shadow-2xs transition-all inline-flex items-center gap-1.5">
+        <i class="fas fa-plus"></i>
+        <span>Add Department</span>
+    </a>
 </div>
 
 @if(session('success'))

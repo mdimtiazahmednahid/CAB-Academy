@@ -128,39 +128,17 @@
                         @php
                             $avatarUrl = $f->avatar_url;
                         @endphp
-                        <div class="bg-white rounded-2xl border border-[#e3e7f0] p-4 sm:p-5 text-center shadow-2xs hover:shadow-md transition-all duration-200 group flex flex-col justify-between hover:border-[#051c45]/30">
-                            <div>
-                                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full overflow-hidden mb-3 border-2 border-slate-100 shadow-xs bg-gray-100">
-                                    <img src="{{ $avatarUrl }}" alt="{{ $f->name }}" class="w-full h-full object-cover object-top" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($f->name) }}&background=051c45&color=fff'">
-                                </div>
-
-                                @if(!empty($f->department))
-                                    <div class="mb-2 flex items-center justify-center gap-1 flex-wrap">
-                                        <span class="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded {{ $f->department_role === 'head' ? 'bg-[#c30102] text-white' : 'bg-[#051c45]/10 text-[#051c45]' }}">
-                                            {{ $f->department_role === 'head' ? 'Head' : 'Team' }}
-                                        </span>
-                                        <span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded truncate max-w-[140px]">
-                                            {{ $f->department }}
-                                        </span>
-                                    </div>
-                                @endif
-
-                                <h3 class="text-xs sm:text-sm font-extrabold text-[#0f131f] group-hover:text-[#c30102] transition-colors leading-snug mb-0.5 line-clamp-1">
-                                    {{ $f->name }}
-                                </h3>
-                                <span class="text-[11px] text-[#c30102] font-semibold block mb-2 line-clamp-1">
-                                    {{ $f->title }}
-                                </span>
-                                @if(!empty($f->expertise))
-                                    <span class="inline-block bg-emerald-50 text-emerald-800 border border-emerald-200/70 text-[10px] font-semibold px-2.5 py-0.5 rounded-full mb-3 line-clamp-1">
-                                        {{ $f->expertise }}
-                                    </span>
-                                @endif
+                        <div class="bg-white rounded-2xl border border-[#e3e7f0] p-4 sm:p-5 text-center shadow-2xs hover:shadow-md transition-all duration-200 group flex flex-col items-center justify-center hover:border-[#051c45]/30">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full overflow-hidden mb-3 border-2 border-slate-100 shadow-xs bg-gray-100">
+                                <img src="{{ $avatarUrl }}" alt="{{ $f->name }}" class="w-full h-full object-cover object-top" onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($f->name) }}&background=051c45&color=fff'">
                             </div>
 
-                            <a href="{{ route('catalog.index') }}" class="btn-ipdp-primary text-center py-2 rounded-xl text-xs font-bold w-full">
-                                View Courses →
-                            </a>
+                            <h3 class="text-xs sm:text-sm font-extrabold text-[#0f131f] group-hover:text-[#c30102] transition-colors leading-snug mb-0.5 line-clamp-1">
+                                {{ $f->name }}
+                            </h3>
+                            <span class="text-[11px] text-slate-500 font-semibold block line-clamp-1">
+                                {{ $f->title }}
+                            </span>
                         </div>
                     @endforeach
                 </div>

@@ -3,56 +3,49 @@
 @section('header_title', 'Executive Command Center')
 
 @section('content')
-<div class="space-y-6">
-    <!-- 1. Executive Command Masthead Banner (Imperial Navy + Ambient Glow + Quick Launch Bar) -->
-    <div class="bg-gradient-to-br from-[#020c21] via-[#051c45] to-[#0b2d6b] rounded-3xl p-6 sm:p-7 text-white shadow-xl border border-white/10 relative overflow-hidden">
-        <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#c30102]/20 blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-emerald-500/15 blur-3xl pointer-events-none"></div>
-
-        <div class="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+<div class="space-y-4 sm:space-y-5">
+    <!-- 1. Compact Executive Command Masthead Banner -->
+    <div class="bg-gradient-to-br from-[#020c21] via-[#051c45] to-[#0b2d6b] rounded-2xl p-4 sm:p-5 text-white shadow-md border border-white/10 relative overflow-hidden">
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
             <div>
-                <div class="flex flex-wrap items-center gap-2 mb-2.5">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-[10px] font-black uppercase tracking-wider text-emerald-300">
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Executive Telemetry Active</span>
+                        <span>Live</span>
                     </span>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold text-sky-200">
-                        <i class="fas fa-calendar-check text-[9px]"></i>
-                        <span>{{ now()->format('F d, Y') }}</span>
-                    </span>
+                    <span class="text-[11px] font-medium text-slate-300">{{ now()->format('M d, Y') }}</span>
                     @if(($pendingPaymentsCount ?? 0) > 0)
-                        <a href="{{ route('admin.payments.index') }}" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-[10px] font-black uppercase tracking-wider text-amber-300 hover:bg-amber-400/30 transition-colors">
+                        <a href="{{ route('admin.payments.index') }}" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-[10px] font-extrabold text-amber-300 hover:bg-amber-400/30 transition-colors">
                             <i class="fas fa-bolt text-[9px]"></i>
-                            <span>{{ $pendingPaymentsCount }} Payment {{ \Illuminate\Support\Str::plural('Approval', $pendingPaymentsCount) }} Needed</span>
+                            <span>{{ $pendingPaymentsCount }} Pending</span>
                         </a>
                     @endif
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">Platform Overview &amp; Executive Command</h1>
-                <p class="text-slate-300 text-xs sm:text-sm mt-1 max-w-2xl">Real-time financial realization, enrollment velocity, pending tuition approvals, career placement queue, and academic telemetry.</p>
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">Platform Overview &amp; Executive Command</h1>
             </div>
 
-            <!-- Quick Launch Action Pills -->
-            <div class="flex flex-wrap items-center gap-2">
-                <a href="{{ route('admin.courses') }}" class="px-4 py-2.5 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-extrabold shadow-lg shadow-[#c30102]/25 inline-flex items-center gap-2 transition-all">
-                    <i class="fas fa-plus"></i>
-                    <span>Manage Courses</span>
+            <!-- Compact Quick Launch Action Pills -->
+            <div class="flex flex-wrap items-center gap-1.5">
+                <a href="{{ route('admin.courses') }}" class="px-3 py-1.5 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold shadow-xs inline-flex items-center gap-1.5 transition-all">
+                    <i class="fas fa-plus text-[10px]"></i>
+                    <span>Courses</span>
                 </a>
                 @if(auth()->user()->isAdmin())
-                    <a href="{{ route('admin.announcements.create') }}" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold inline-flex items-center gap-2 transition-all">
-                        <i class="fas fa-bullhorn text-amber-300"></i>
-                        <span>Broadcast Notice</span>
+                    <a href="{{ route('admin.categories.index') }}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-sitemap text-amber-300 text-[10px]"></i>
+                        <span>4 Depts</span>
                     </a>
-                    <a href="{{ route('admin.jobs') }}" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold inline-flex items-center gap-2 transition-all">
-                        <i class="fas fa-briefcase text-sky-300"></i>
-                        <span>Post Job</span>
+                    <a href="{{ route('admin.jobs') }}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-briefcase text-sky-300 text-[10px]"></i>
+                        <span>Jobs</span>
                     </a>
-                    <a href="{{ route('admin.accounting.index') }}" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold inline-flex items-center gap-2 transition-all">
-                        <i class="fas fa-coins text-emerald-300"></i>
-                        <span>Treasury &amp; Ledger</span>
+                    <a href="{{ route('admin.accounting.index') }}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-coins text-emerald-300 text-[10px]"></i>
+                        <span>Ledger</span>
                     </a>
-                    <a href="{{ route('admin.frontend.index') }}" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold inline-flex items-center gap-2 transition-all">
-                        <i class="fas fa-wand-magic-sparkles text-pink-300"></i>
-                        <span>Customize Frontend</span>
+                    <a href="{{ route('admin.frontend.index') }}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-wand-magic-sparkles text-pink-300 text-[10px]"></i>
+                        <span>CMS</span>
                     </a>
                 @endif
             </div>
@@ -60,112 +53,108 @@
     </div>
 
     @if(session('success'))
-        <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-2.5 shadow-xs">
+        <div class="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-2xs">
             <i class="fas fa-check-circle text-emerald-600"></i>
             <span>{{ session('success') }}</span>
         </div>
     @endif
 
-    <!-- 2. 5-Card Liquid Glass Executive KPI Strip -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <!-- 2. Compact 2-Col Mobile / 5-Col Desktop KPI Strip -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
         <!-- Realized Revenue -->
-        <a href="{{ auth()->user()->isAdmin() ? route('admin.accounting.index') : '#' }}" class="liquid-glass-card bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-[#051c45]/30 transition-all group">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Realized Revenue</span>
-                <span class="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-600 flex items-center justify-center font-black text-sm">৳</span>
+        <a href="{{ auth()->user()->isAdmin() ? route('admin.accounting.index') : '#' }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#051c45]/30 transition-all group">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Revenue</span>
+                <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-xs">৳</span>
             </div>
-            <p class="text-2xl font-black text-[#051c45] tracking-tight">৳{{ number_format($totalRealizedRevenue ?? 0, 0) }}</p>
-            <div class="flex items-center justify-between mt-1.5 text-[11px] font-semibold">
-                <span class="text-emerald-600">+৳{{ number_format($monthlyRevenue ?? 0, 0) }} this mo</span>
-                <span class="text-slate-400">Net: ৳{{ number_format($netOperatingSurplus ?? 0, 0) }}</span>
-            </div>
+            <p class="text-lg sm:text-xl font-black text-[#051c45] tracking-tight">৳{{ number_format($totalRealizedRevenue ?? 0, 0) }}</p>
+            <p class="text-[10px] font-semibold text-emerald-600 mt-1 truncate">
+                +৳{{ number_format($monthlyRevenue ?? 0, 0) }} this mo
+            </p>
         </a>
 
         <!-- Pending Approvals -->
-        <a href="{{ auth()->user()->isAdmin() ? route('admin.payments.index') : '#' }}" class="liquid-glass-card bg-white p-5 rounded-2xl border {{ ($pendingPaymentsCount ?? 0) > 0 ? 'border-amber-300/90 bg-amber-50/20' : 'border-slate-200/80' }} shadow-xs hover:border-amber-400 transition-all">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Pending Payments</span>
-                <span class="w-9 h-9 rounded-xl {{ ($pendingPaymentsCount ?? 0) > 0 ? 'bg-amber-100 text-amber-700 border border-amber-300/60' : 'bg-slate-100 text-slate-500' }} flex items-center justify-center text-sm">
+        <a href="{{ auth()->user()->isAdmin() ? route('admin.payments.index') : '#' }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border {{ ($pendingPaymentsCount ?? 0) > 0 ? 'border-amber-300/90 bg-amber-50/20' : 'border-slate-200/80' }} shadow-2xs hover:border-amber-400 transition-all">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Pending</span>
+                <span class="w-7 h-7 rounded-lg {{ ($pendingPaymentsCount ?? 0) > 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500' }} flex items-center justify-center text-xs">
                     <i class="fas fa-clock"></i>
                 </span>
             </div>
-            <p class="text-2xl font-black {{ ($pendingPaymentsCount ?? 0) > 0 ? 'text-amber-600' : 'text-[#051c45]' }} tracking-tight">
+            <p class="text-lg sm:text-xl font-black {{ ($pendingPaymentsCount ?? 0) > 0 ? 'text-amber-600' : 'text-[#051c45]' }} tracking-tight">
                 {{ number_format($pendingPaymentsCount ?? 0) }}
             </p>
-            <p class="text-[11px] font-semibold text-slate-500 mt-1.5">
-                ৳{{ number_format($pendingReceivablesAmount ?? 0, 0) }} awaiting review
+            <p class="text-[10px] font-semibold text-slate-500 mt-1 truncate">
+                ৳{{ number_format($pendingReceivablesAmount ?? 0, 0) }} queue
             </p>
         </a>
 
         <!-- Total Students & Enrollments -->
-        <a href="{{ auth()->user()->isAdmin() ? route('admin.users') : '#' }}" class="liquid-glass-card bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-[#051c45]/30 transition-all">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Students</span>
-                <span class="w-9 h-9 rounded-xl bg-[#051c45]/[0.08] text-[#051c45] flex items-center justify-center text-sm">
+        <a href="{{ auth()->user()->isAdmin() ? route('admin.users') : '#' }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#051c45]/30 transition-all">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Students</span>
+                <span class="w-7 h-7 rounded-lg bg-[#051c45]/[0.08] text-[#051c45] flex items-center justify-center text-xs">
                     <i class="fas fa-user-graduate"></i>
                 </span>
             </div>
-            <p class="text-2xl font-black text-[#051c45] tracking-tight">{{ number_format($totalStudents) }}</p>
-            <p class="text-[11px] font-semibold text-slate-500 mt-1.5">
-                {{ number_format($totalEnrollments ?? 0) }} Active Seat Enrollments
+            <p class="text-lg sm:text-xl font-black text-[#051c45] tracking-tight">{{ number_format($totalStudents) }}</p>
+            <p class="text-[10px] font-semibold text-slate-500 mt-1 truncate">
+                {{ number_format($totalEnrollments ?? 0) }} Enrollments
             </p>
         </a>
 
         <!-- Published Courses & Certificates -->
-        <a href="{{ route('admin.courses') }}" class="liquid-glass-card bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-[#051c45]/30 transition-all">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Published Courses</span>
-                <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+        <a href="{{ route('admin.courses') }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#051c45]/30 transition-all">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Courses</span>
+                <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
                     <i class="fas fa-book-open"></i>
                 </span>
             </div>
-            <p class="text-2xl font-black text-[#051c45] tracking-tight">{{ number_format($publishedCourses) }}</p>
-            <p class="text-[11px] font-semibold text-slate-500 mt-1.5">
+            <p class="text-lg sm:text-xl font-black text-[#051c45] tracking-tight">{{ number_format($publishedCourses) }}</p>
+            <p class="text-[10px] font-semibold text-slate-500 mt-1 truncate">
                 {{ $draftCourses ?? 0 }} Drafts &bull; {{ number_format($totalCertificates ?? 0) }} Certs
             </p>
         </a>
 
         <!-- Quizzes & Career Placement -->
-        <a href="{{ auth()->user()->isAdmin() ? route('admin.jobs') : '#' }}" class="liquid-glass-card bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-[#051c45]/30 transition-all">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Quizzes &amp; Careers</span>
-                <span class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-sm">
+        <a href="{{ auth()->user()->isAdmin() ? route('admin.jobs') : '#' }}" class="col-span-2 sm:col-span-1 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#051c45]/30 transition-all">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Careers &amp; Quiz</span>
+                <span class="w-7 h-7 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-xs">
                     <i class="fas fa-chart-line"></i>
                 </span>
             </div>
             <div class="flex items-baseline justify-between">
-                <p class="text-2xl font-black text-[#051c45] tracking-tight">{{ number_format($totalAssessments) }}</p>
-                <span class="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-700 text-xs font-bold">{{ $averageScore }}% Avg</span>
+                <p class="text-lg sm:text-xl font-black text-[#051c45] tracking-tight">{{ number_format($totalAssessments) }}</p>
+                <span class="px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">{{ $averageScore }}%</span>
             </div>
-            <p class="text-[11px] font-semibold text-slate-500 mt-1.5">
-                {{ $activeJobsCount ?? 0 }} Active Jobs &bull; {{ $pendingJobApplicationsCount ?? 0 }} Pending CVs
+            <p class="text-[10px] font-semibold text-slate-500 mt-1 truncate">
+                {{ $activeJobsCount ?? 0 }} Jobs &bull; {{ $pendingJobApplicationsCount ?? 0 }} CVs
             </p>
         </a>
     </div>
 
     <!-- 3. Financial Telemetry Chart (8 cols) & Treasury Snapshot (4 cols) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
         <!-- 6-Month Revenue & Enrollment Velocity Chart -->
-        <div class="lg:col-span-8 liquid-glass-card bg-white rounded-2xl border border-slate-200/80 p-6 flex flex-col justify-between">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
-                <div>
-                    <h2 class="font-extrabold text-sm text-[#051c45] uppercase tracking-wider flex items-center gap-2">
-                        <i class="fas fa-chart-column text-[#c30102]"></i>
-                        <span>6-Month Revenue &amp; Enrollment Velocity</span>
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Monthly verified tuition inflow vs operating expenses and student enrollment volume.</p>
-                </div>
-                <div class="flex items-center gap-3 text-[11px] font-bold">
-                    <span class="inline-flex items-center gap-1.5 text-[#051c45]">
-                        <span class="w-2.5 h-2.5 rounded-xs bg-[#051c45]"></span> Realized Tuition
+        <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 flex flex-col justify-between shadow-2xs">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                <h2 class="font-extrabold text-xs sm:text-sm text-[#051c45] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-chart-column text-[#c30102]"></i>
+                    <span>6-Month Revenue &amp; Enrollment Velocity</span>
+                </h2>
+                <div class="flex items-center gap-3 text-[10px] font-bold">
+                    <span class="inline-flex items-center gap-1 text-[#051c45]">
+                        <span class="w-2 h-2 rounded-xs bg-[#051c45]"></span> Tuition
                     </span>
-                    <span class="inline-flex items-center gap-1.5 text-rose-600">
-                        <span class="w-2.5 h-2.5 rounded-xs bg-rose-500"></span> Expenses
+                    <span class="inline-flex items-center gap-1 text-rose-600">
+                        <span class="w-2 h-2 rounded-xs bg-rose-500"></span> Expenses
                     </span>
                 </div>
             </div>
 
-            <div class="grid grid-cols-6 gap-2 sm:gap-4 items-end pt-6 pb-2 h-48">
+            <div class="grid grid-cols-6 gap-2 sm:gap-3 items-end pt-4 pb-1 h-40">
                 @foreach($monthlyTrend ?? [] as $m)
                     @php
                         $revPct = max(8, min(100, round((($m['revenue'] ?? 0) / max(1, $maxMonthlyRevenue ?? 1)) * 100)));
@@ -175,19 +164,19 @@
                         <div class="text-[10px] font-bold text-[#051c45] mb-1 opacity-85 group-hover:opacity-100">
                             ৳{{ $m['revenue'] >= 1000 ? number_format($m['revenue'] / 1000, 1) . 'k' : number_format($m['revenue'], 0) }}
                         </div>
-                        <div class="w-full max-w-[54px] flex items-end justify-center gap-1 h-28 bg-slate-50/80 rounded-xl p-1.5 border border-slate-100">
+                        <div class="w-full max-w-[48px] flex items-end justify-center gap-1 h-24 bg-slate-50/80 rounded-xl p-1 border border-slate-100">
                             <div class="w-1/2 bg-gradient-to-t from-[#051c45] to-[#1e40af] rounded-md transition-all duration-500" style="height: {{ $m['revenue'] > 0 ? $revPct : 6 }}%" title="Revenue: ৳{{ number_format($m['revenue'], 0) }}"></div>
                             <div class="w-1/2 bg-gradient-to-t from-[#c30102] to-rose-400 rounded-md transition-all duration-500" style="height: {{ $m['expenses'] > 0 ? $expPct : 4 }}%" title="Expenses: ৳{{ number_format($m['expenses'], 0) }}"></div>
                         </div>
-                        <span class="text-[11px] font-extrabold text-slate-700 mt-2">{{ $m['short_label'] }}</span>
-                        <span class="text-[10px] text-slate-400 font-semibold">{{ $m['enrollments'] }} {{ \Illuminate\Support\Str::plural('seat', $m['enrollments']) }}</span>
+                        <span class="text-[10px] font-extrabold text-slate-700 mt-1.5">{{ $m['short_label'] }}</span>
+                        <span class="text-[9px] text-slate-400 font-semibold">{{ $m['enrollments'] }} {{ \Illuminate\Support\Str::plural('seat', $m['enrollments']) }}</span>
                     </div>
                 @endforeach
             </div>
         </div>
 
         <!-- Executive Treasury & Compliance Summary Card -->
-        <div class="lg:col-span-4 liquid-glass-card bg-white rounded-2xl border border-slate-200/80 p-6 flex flex-col justify-between space-y-4">
+        <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 flex flex-col justify-between space-y-3 shadow-2xs">
             <div>
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                     <h2 class="font-extrabold text-sm text-[#051c45] uppercase tracking-wider flex items-center gap-2">

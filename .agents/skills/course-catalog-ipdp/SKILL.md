@@ -3,14 +3,14 @@ name: course-catalog-ipdp
 description: >-
   Provides comprehensive specifications and guidelines for implementing, styling, and
   maintaining the IPDP-style (ipdpbd.com) course catalog, category pages, course cards,
-  and single course overview layout within CAB Academy. Use this skill whenever building or
+  and single course overview layout within Academy of Commercial & Supply Chain (ACS). Use this skill whenever building or
   modifying course listing pages, category taxonomies, course card UI, instructor overlays,
   course accordions, or replicating the IPDP visual structure.
 ---
 
 # Course Catalog & Category Design (IPDP Style)
 
-This skill guides the implementation and maintenance of the course catalog and category structures inspired by `ipdpbd.com` (such as `https://ipdpbd.com/export-import/`), tailored to integrate seamlessly with CAB Academy's LMS and student portal features.
+This skill guides the implementation and maintenance of the course catalog and category structures inspired by `ipdpbd.com` (such as `https://ipdpbd.com/export-import/`), tailored to integrate seamlessly with Academy of Commercial & Supply Chain (ACS)'s LMS and student portal features.
 
 ---
 
@@ -54,9 +54,9 @@ The IPDP course catalog layout consists of 5 core architectural blocks:
 
 ---
 
-## 2. Integration with CAB Academy Features
+## 2. Integration with Academy of Commercial & Supply Chain (ACS) Features
 
-When replicating this structure, preserve and enhance CAB Academy's core capabilities:
+When replicating this structure, preserve and enhance Academy of Commercial & Supply Chain (ACS)'s core capabilities:
 - **Guest-Friendly Public Browsing**: Public visitors must be able to explore all categories and course overviews without forced login.
 - **Offline & Direct Enrollment Flow**: Clicking `Enroll Now` routes authenticated students directly to the offline payment (bKash/Nagad/Rocket/Bank) instructions or immediate enrollment if free, and prompts guests to quickly log in/register with an intended redirect.
 - **Student Dashboard Synergy**: Enrolled courses appear in the student's personal dashboard (`/dashboard`) with progress bars and lesson player (`/courses/{course}/lessons/{lesson}`).

@@ -9,7 +9,7 @@ description: >-
 
 # EdTech Growth Marketing & Business Decision Architecture
 
-This skill codifies domain expertise in **EdTech Growth Marketing, Conversion Rate Optimization (CRO), and Business Economics**, specifically tailored for executive, professional, and vocational certification institutions like CAB Academy.
+This skill codifies domain expertise in **EdTech Growth Marketing, Conversion Rate Optimization (CRO), and Business Economics**, specifically tailored for executive, professional, and vocational certification institutions like Academy of Commercial & Supply Chain (ACS).
 
 ---
 

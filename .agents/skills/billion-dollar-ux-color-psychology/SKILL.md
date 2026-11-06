@@ -2,15 +2,15 @@
 name: billion-dollar-ux-color-psychology
 description: >-
   Provides elite UI/UX architecture, color science, conversion psychology, and rapid course enrollment
-  patterns for CAB Academy. Synthesizes design principles from Apple, Stripe, and MasterClass with the
-  authentic CAB Academy logo palette (#051c45 Imperial Navy, #c30102 Conversion Crimson, #103db9ff Verification
+  patterns for Academy of Commercial & Supply Chain (ACS). Synthesizes design principles from Apple, Stripe, and MasterClass with the
+  authentic Academy of Commercial & Supply Chain (ACS) logo palette (#051c45 Imperial Navy, #c30102 Conversion Crimson, #103db9ff Verification
   Emerald). Use when designing visual layouts, high-converting enrollment engines, interactive
   scrollytelling sections, color harmony systems, or optimizing course checkout velocity.
 ---
 
 # Billion-Dollar UI/UX & Color Science Framework
 
-This skill establishes the design philosophy, psychological color mapping, and frictionless enrollment engine for CAB Academy, transforming the platform into a world-class executive learning experience comparable to Apple, MasterClass, and Stripe.
+This skill establishes the design philosophy, psychological color mapping, and frictionless enrollment engine for Academy of Commercial & Supply Chain (ACS), transforming the platform into a world-class executive learning experience comparable to Apple, MasterClass, and Stripe.
 
 ---
 
@@ -32,7 +32,7 @@ Mass-market educational platforms often look cluttered, generic, or overwhelming
 
 A color palette is not merely decorative; it is a neurological roadmap that directs user attention, builds confidence, and drives action. 
 
-Extracted directly from the **CAB Academy official mark (`public/images/logo.png`)**, the platform utilizes a tri-color conversion hierarchy:
+Extracted directly from the **Academy of Commercial & Supply Chain (ACS) official mark (`public/images/logo.png`)**, the platform utilizes a tri-color conversion hierarchy:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -113,7 +113,7 @@ To deliver the sensory impact of an Apple product release or MasterClass course 
 2. **Chapter 2: The Executive Transformation (Scrollytelling Comparison)**
    - Interactive sticky 2-column comparison card:
      - Left: *Traditional Academic Learning* (Theory-heavy, outdated customs manuals, delayed career progress).
-     - Right: *The CAB Academy Advantage* (NBR practitioner mentorship, real L/C Bill of Entry simulations, executive network).
+     - Right: *The Academy of Commercial & Supply Chain (ACS) Advantage* (NBR practitioner mentorship, real L/C Bill of Entry simulations, executive network).
 
 3. **Chapter 3: Interactive Curriculum Walkthrough (Sticky Pin Accordion)**
    - As the user scrolls, the active syllabus module pins to the screen, illuminating lessons, practical case studies, and downloadable compliance templates.

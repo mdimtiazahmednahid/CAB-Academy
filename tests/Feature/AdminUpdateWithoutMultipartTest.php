@@ -207,7 +207,7 @@ class AdminUpdateWithoutMultipartTest extends TestCase
 
         $response = $this->get('/');
         $response->assertStatus(200);
-        $response->assertSee('Distinguished Faculty &amp; Industry Fellows', false);
+        $response->assertSee('Our Faculty', false);
         $response->assertSee('Distinguished Senior Fellow Test');
         $response->assertSee('Executive Director, Port Operations');
     }

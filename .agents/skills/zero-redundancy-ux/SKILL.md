@@ -1,71 +1,221 @@
 ---
 name: zero-redundancy-ux
 description: >-
-  Enforces zero-redundancy, minimalist content hygiene, and sleek visual architecture across CAB Academy.
+  Enforces zero-redundancy, minimalist content hygiene, and sleek visual architecture across Academy of Commercial & Supply Chain (ACS).
   Strictly forbids repetitive micro-badges, redundant subheadings, AI marketing slope, verbose announcement bars,
   and duplicate explanatory labels. Use when reviewing views, authoring page layouts, writing copy, building
   components, or auditing the platform for lean, high-luxury visual excellence.
 ---
 
-# Zero-Redundancy & Minimalist UX Standard
+# Zero-Redundancy UX — Strict Edition
 
-This skill establishes strict rules and anti-patterns to guarantee that CAB Academy remains clean, executive, and free of redundant clutter, repetitive micro-badges, and verbose filler copy ("AI slope").
+## 1. Core Philosophy
 
----
+**Less content. More meaning.**
 
-## 1. Core Principles: The Zero-Redundancy Law
+Academy of Commercial & Supply Chain (ACS) must communicate through clarity, hierarchy, and purposeful design — not through excessive text, repeated labels, marketing slogans, or unnecessary explanations.
 
-Every element on a screen must justify its existence through **unique utility** or **essential context**. If an element repeats what another nearby element already conveys, it MUST be eliminated.
+Every element must justify its existence.
 
-### The Golden Rules
-1. **Never Duplicate Information Vertically**:
-   - If a headline or section title states a topic (e.g., `Course Categories`, `Certificate Course`, `Our Valuable Clients`), **NEVER** place a small badge or pill directly above it that repeats synonymous or identical phrasing (`Executive Disciplines`, `Multi-Week Diploma`, `Corporate Trust & Affiliation`).
-2. **Never Duplicate Marketing Slogans**:
-   - Do not repeat platform descriptors in the announcement bar, hero badge, and subheadline simultaneously. 
-   - Keep announcement bars strictly for essential utility (e.g., Campus Location, Direct Phone, WhatsApp Support).
-3. **Direct, Authoritative Taxonomy**:
-   - Use clean, standard terminology rather than inflated descriptors.
-   - Example: Use `Course Categories`, not `Running Course Categories` or `Executive Disciplines`.
-   - Example: Use `Our Features`, not `Institutional Excellence • Our Features`.
-4. **Cinematic Proportions Over Bulk**:
-   - Course cards must use modern widescreen landscape proportions (`aspect-[16/10]` or `h-40 sm:h-44`) rather than oversized squares (`1:1`) that push information off-screen and make cards excessively long.
-   - Instructor avatars on cards must remain compact and docked in the corner (`w-9 h-9 sm:w-10 sm:h-10`) so they never crowd out course titles or tags.
-5. **Atmospheric Tones Over Plain Harsh White**:
-   - Avoid long stretches of stark, clinical `bg-white` backgrounds.
-   - Use curated soft luxury tones (e.g. `bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#f8fafc]` or `bg-[#f4f7fb]`) to create gentle depth and make content cards visually elevate off the page.
+If removing an element does not reduce functionality, clarity, or essential context, remove it.
 
----
+The default decision is **DELETE, not ADD.**
 
-## 2. Banned Anti-Patterns & Allowed Replacements
+## 2. Aggressive Text Reduction
 
-| Anti-Pattern (BANNED ❌) | Why It Is Harmful | Approved Clean Pattern (ALLOWED ✅) |
-| :--- | :--- | :--- |
-| Pill badge directly above heading repeating the theme (e.g. `<span class="badge">Executive Disciplines</span> <h2>Running Course Categories</h2>`) | Visual clutter, cognitive fatigue, redundant AI slope. | Clean, bold single heading: `<h2>Course Categories</h2>` with subtle accent line. |
-| Hero badge repeating the subheadline (e.g. `Executive Professional Certification & Corporate Programs` badge + identical subtext below) | Wastes prime hero viewport real estate; repeats same words twice. | Clean hero title + single crisp value proposition subheadline. |
-| Announcement bar stuffed with redundant claims (e.g. `Live Admissions Batch 105th Enrolling • 100% Live Interactive Online Masterclasses (Zoom)`) | Clutters the top bar and competes with main brand navigation. | Functional utility: Campus location (`Mirpur-Pallabi, Dhaka-1216`) + Direct Phone + WhatsApp Support. |
-| Oversized 1:1 square card thumbnails (`max-h-none aspect-square`) | Results in 300px+ image blocks that make cards unnecessarily tall and boring. | Sleek widescreen landscape (`aspect-[16/10] h-40 sm:h-44 lg:h-48`) with Cypress compatibility hook. |
-| Giant instructor avatar overlapping title text | Distracts from course title and breaks layout on small viewports. | Compact badge avatar (`w-9 h-9 sm:w-10 sm:h-10`) docked to lower right corner with verified faculty pin. |
-| Monotonous full-page stark white (`bg-white`) sections | Feels generic, flat, and clinical; lacks executive prestige. | Subtle alabaster and pearl luxury gradations (`#f8fafc`, `#f1f5f9`, `#edf2f7`, `#f4f7fb`). |
+### The One-Message Rule
 
----
+- One section communicates one primary message.
+- One heading identifies that message.
+- One short supporting sentence is sufficient when explanation is necessary.
+- Never explain something that is already self-explanatory.
+- Never repeat the same information in a heading, subtitle, badge, and paragraph.
 
-## 3. Pre-Commit Content Hygiene Checklist
+### Strict Copy Limits
 
-Before committing any changes to Blade templates, components, or CSS:
+| Element             | Preferred limit            |
+| ------------------- | -------------------------- |
+| Section heading     | 1–4 words                  |
+| Section description | 8–15 words                 |
+| Card title          | 3–8 words                  |
+| Card description    | 10–18 words                |
+| Button label        | 1–3 words                  |
+| Badge               | 1–2 words                  |
+| Announcement        | Essential information only |
+| Hero subtitle       | One concise sentence       |
 
-- [ ] **Badge Redundancy Check**: Did I add a badge/pill above a title? If yes, does the title already make the meaning obvious? If yes, remove the badge.
-- [ ] **Copy Repetition Check**: Does any paragraph or list item restate what was already said in the hero or top bar? If yes, delete or condense it.
-- [ ] **Card Proportions Check**: Is the course card compact, readable, and under 420px total height on desktop? Is the image widescreen rather than a tall square?
-- [ ] **Instructor Element Check**: Is the instructor image sized compactly without covering title text or category pills?
-- [ ] **Background Contrast Check**: Do cards sit on a soft light luxury background rather than plain stark white?
-- [ ] **Automated Test Check**: Do all PHPUnit feature tests and Cypress end-to-end suites pass with 100% green status?
+These are maximum design guidelines, not mandatory text quotas. Use fewer words whenever possible.
 
----
+### Delete These Automatically
 
-## 4. Code Review Guardrails for Antigravity Agents
+- Unnecessary introductory paragraphs.
+- Repeated explanations of platform features.
+- Generic marketing statements.
+- Empty adjectives such as exceptional, extraordinary, world-class, unparalleled, and transformative.
+- Sentences that merely announce what the following section already shows.
+- Repeated calls to action.
+- Decorative labels that add no information.
+- Long explanations of obvious interface elements.
 
-When asked to update, style, or enhance any section of CAB Academy:
-1. **Never generate redundant micro-badges** as decorative placeholders.
-2. **Keep headings concise and punchy** (1 to 3 words: `Course Categories`, `Certificate Course`, `Our Features`).
-3. **Do not re-introduce verbose announcement marketing banners**.
-4. **Preserve Cypress compatibility hooks** (`.aspect-square`, `.btn-ipdp-primary`, `#home-category`) while delivering refined, minimalist aesthetics.
+## 3. Information Hierarchy
+
+Every section should follow this priority:
+
+1. Primary message.
+2. Essential supporting information.
+3. Relevant action.
+
+Nothing else by default.
+
+Example:
+
+**Bad:**
+
+- Badge: Professional Learning
+- Heading: Our Professional Courses
+- Subtitle: Explore our professional learning opportunities.
+- Paragraph: We offer a wide range of courses designed to help learners develop professional skills.
+
+**Good:**
+
+**Professional Courses**
+
+Explore courses designed for practical career development.
+
+Do not add a badge or another explanatory paragraph.
+
+## 4. Component-Level Minimalism
+
+### Course Cards
+
+Display only information that helps someone choose a course:
+
+- Course image.
+- Course title.
+- Price, if applicable.
+- One essential course detail.
+- Instructor, if relevant.
+- One clear action.
+
+Do not repeat course categories, course descriptions, instructor details, and duration across multiple UI elements.
+
+Use widescreen imagery (16:10), compact layouts, and controlled card heights.
+
+### Instructor Cards
+
+Show:
+
+- Photo.
+- Name.
+- Relevant designation.
+
+Avoid lengthy biographies, decorative verification labels, and repeated credentials.
+
+### Statistics
+
+Show the number and its meaning.
+
+Example:
+
+- 25+ Courses
+- 1,200+ Learners
+
+Do not add explanatory paragraphs underneath obvious statistics.
+
+### Buttons
+
+Use direct actions:
+
+- Explore Courses
+- Enroll Now
+- Learn More
+- Contact Us
+
+Never use lengthy sentence-style buttons.
+
+## 5. Section Elimination Rules
+
+Before adding a new section, ask:
+
+1. Does this information already exist elsewhere?
+2. Does the user actually need it here?
+3. Does it help the user make a decision?
+4. Can an existing section communicate it?
+5. Can the information be removed entirely?
+
+If an existing section already communicates the message, do not create another section for it.
+
+Merge overlapping sections. Remove duplicate content. Prefer restructuring over adding.
+
+## 6. Visual Restraint
+
+- Avoid excessive badges, pills, icons, decorative dividers, and labels.
+- Never place a redundant badge above a heading.
+- Avoid oversized content blocks.
+- Maintain consistent spacing and visual rhythm.
+- Use subtle pearl, alabaster, and slate backgrounds.
+- Keep course imagery widescreen.
+- Keep instructor avatars compact and unobtrusive.
+- Use whitespace to establish hierarchy instead of adding more labels.
+
+## 7. Functional Preservation
+
+Visual simplification must never break:
+
+- Existing business logic.
+- Blade and Laravel functionality.
+- Responsive behavior.
+- Accessibility.
+- SEO and semantic HTML.
+- Existing Cypress selectors and compatibility hooks.
+- Existing integrations and user workflows.
+
+Preserve required selectors such as `.aspect-square`, `.btn-ipdp-primary`, and `#home-category` when existing tests or functionality depend on them. Their presence does not require visually square images.
+
+## 8. Mandatory Editing Protocol
+
+Whenever modifying an existing page:
+
+**Step 1 — Audit**
+Identify repeated messages, unnecessary paragraphs, redundant labels, and oversized components.
+
+**Step 2 — Eliminate**
+Remove unnecessary content before introducing new content.
+
+**Step 3 — Consolidate**
+Merge overlapping sections, descriptions, and actions.
+
+**Step 4 — Refine**
+Improve typography, spacing, image proportions, contrast, and hierarchy.
+
+**Step 5 — Validate**
+Check responsive layouts, accessibility, existing functionality, PHPUnit, and Cypress.
+
+Do not rewrite an entire page unnecessarily when targeted removal solves the problem.
+
+## 9. Final Zero-Redundancy Test
+
+Before completing any change, ask:
+
+- Can any sentence be removed?
+- Can any paragraph become one sentence?
+- Can any two sections become one?
+- Does any label repeat the heading?
+- Does any card contain unnecessary information?
+- Are there multiple elements communicating the same message?
+- Is the page visually or textually overwhelming?
+- Does every element help the user understand, decide, or act?
+
+If the answer indicates unnecessary content, remove it.
+
+## 10. Absolute Rule
+
+**Never add content to make a page look complete.**
+
+Do not fill whitespace with paragraphs, badges, statistics, slogans, or decorative descriptions.
+
+Whitespace is intentional.
+
+A page is complete when the user's objective is achieved — not when every available space is occupied.
+
+**Academy of Commercial & Supply Chain (ACS) Design Principle: Maximum clarity. Minimum content. Zero redundancy.**

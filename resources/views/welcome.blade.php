@@ -370,7 +370,7 @@
                 <!-- Bottom Gateway Action Button -->
                 <div class="mt-6 sm:mt-8 text-center">
                     <a href="{{ route('catalog.index') }}" class="btn-ipdp-secondary inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-extrabold shadow-sm hover:shadow-md transition-all">
-                        <span>View All Courses ({{ $courses->count() }})</span>
+                        <span>Explore Courses</span>
                         <i class="fas fa-arrow-right text-[10px]"></i>
                     </a>
                 </div>
@@ -660,27 +660,17 @@
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
                 @foreach($landingInstructors as $inst)
-                    <div class="bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-5 text-center shadow-2xs hover:shadow-md transition-all duration-200 group flex flex-col justify-between hover:border-[#051c45]/30">
-                        <div>
-                            <div class="relative w-14 h-14 sm:w-18 sm:h-18 mx-auto rounded-full overflow-hidden mb-2.5 border-2 border-white shadow-sm bg-white ring-1 ring-slate-200 group-hover:ring-[#c30102]/40 transition-all">
-                                <img src="{{ $inst->avatar_url }}" alt="{{ $inst->name }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($inst->name) }}&background=051c45&color=fff';">
-                            </div>
-                            @if(!empty($inst->department))
-                                <span class="inline-block bg-[#051c45]/8 text-[#051c45] text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md mb-1.5 truncate max-w-full">
-                                    {{ $inst->department }}
-                                </span>
-                            @endif
-                            <h3 class="text-xs sm:text-sm font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug line-clamp-1 mb-0.5">
-                                {{ $inst->name }}
-                            </h3>
-                            <p class="text-[10px] sm:text-xs text-slate-500 font-semibold line-clamp-1 mb-3">
-                                {{ $inst->title }}
-                            </p>
+                    <a href="{{ route('instructors.index') }}" class="bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 text-center shadow-2xs hover:shadow-md transition-all duration-200 group flex flex-col items-center justify-center hover:border-[#051c45]/30">
+                        <div class="relative w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-full overflow-hidden mb-2.5 border-2 border-white shadow-sm bg-white ring-1 ring-slate-200 group-hover:ring-[#c30102]/40 transition-all">
+                            <img src="{{ $inst->avatar_url }}" alt="{{ $inst->name }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($inst->name) }}&background=051c45&color=fff';">
                         </div>
-                        <a href="{{ route('instructors.index') }}" class="py-1.5 px-3 bg-white group-hover:bg-[#051c45] text-[#041536] group-hover:text-white border border-slate-200/90 group-hover:border-[#051c45] rounded-xl text-[11px] font-bold transition-all text-center">
-                            View Profile →
-                        </a>
-                    </div>
+                        <h3 class="text-xs sm:text-sm font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug line-clamp-1 mb-0.5">
+                            {{ $inst->name }}
+                        </h3>
+                        <p class="text-[11px] sm:text-xs text-slate-500 font-semibold line-clamp-1">
+                            {{ $inst->title }}
+                        </p>
+                    </a>
                 @endforeach
             </div>
         </div>

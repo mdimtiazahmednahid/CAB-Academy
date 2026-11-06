@@ -1,18 +1,13 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="p-6 md:p-8 space-y-6">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-            <h1 class="text-2xl font-black text-gray-900 tracking-tight">Executive Instructors & Faculty</h1>
-            <p class="text-sm text-gray-500 mt-1">Manage, add, edit, or remove instructors showcased on the public platform.</p>
-        </div>
-        <div>
-            <a href="{{ route('admin.instructors.create') }}" class="px-5 py-2.5 bg-[#041536] hover:bg-[#c30102] text-white text-xs font-bold rounded-xl transition-all shadow-sm inline-flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                Add New Instructor
-            </a>
-        </div>
+<div class="space-y-4">
+    <div class="flex items-center justify-between gap-3">
+        <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Faculty ({{ $instructors->total() }})</h1>
+        <a href="{{ route('admin.instructors.create') }}" class="px-3.5 py-2 bg-[#041536] hover:bg-[#c30102] text-white text-xs font-bold rounded-xl transition-all shadow-2xs inline-flex items-center gap-1.5">
+            <i class="fas fa-plus text-[10px]"></i>
+            <span>Add Faculty</span>
+        </a>
     </div>
 
     @if(session('success'))

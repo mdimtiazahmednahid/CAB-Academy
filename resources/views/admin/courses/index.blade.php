@@ -3,52 +3,49 @@
 @section('header_title', 'Courses & Curriculum')
 
 @section('content')
-<div class="space-y-6" x-data="{ search: '', statusFilter: 'all', quickEditId: null }">
-    <!-- Header & Primary Action -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-2xl sm:text-3xl font-black text-[#051c45] tracking-tight">Courses</h1>
-            <p class="text-slate-500 text-xs sm:text-sm mt-1">Manage executive programs, batch schedules, tuition fees, and curriculum modules.</p>
-        </div>
-        <button onclick="document.getElementById('createModal').classList.remove('hidden')" class="px-4 py-2.5 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs inline-flex items-center gap-2 transition-all">
+<div class="space-y-4" x-data="{ search: '', statusFilter: 'all', quickEditId: null }">
+    <!-- Compact Header & Primary Action -->
+    <div class="flex items-center justify-between gap-3">
+        <h1 class="text-xl sm:text-2xl font-black text-[#051c45] tracking-tight">Courses ({{ $courses->count() }})</h1>
+        <button onclick="document.getElementById('createModal').classList.remove('hidden')" class="px-3.5 py-2 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold shadow-2xs inline-flex items-center gap-1.5 transition-all">
             <i class="fas fa-plus text-emerald-400"></i>
-            <span>+ New Course</span>
+            <span>New Course</span>
         </button>
     </div>
 
     @if(session('success'))
-        <div class="p-4 text-sm text-emerald-800 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-2.5 font-semibold shadow-xs">
+        <div class="p-3.5 text-xs sm:text-sm text-emerald-800 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-2 font-semibold shadow-2xs">
             <i class="fas fa-check-circle text-emerald-600"></i>
             <span>{{ session('success') }}</span>
         </div>
     @endif
 
-    <!-- 4-Card KPI Summary Strip -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Courses</div>
-            <div class="text-2xl font-black text-[#051c45] mt-1">{{ $courses->count() }}</div>
-            <div class="text-[11px] text-slate-500 mt-0.5">{{ $courses->pluck('category')->filter()->unique()->count() }} Active Disciplines</div>
+    <!-- Compact 2x2 Mobile / 4-Col Desktop KPI Strip -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Courses</div>
+            <div class="text-xl font-black text-[#051c45] mt-0.5">{{ $courses->count() }}</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">{{ $courses->pluck('category')->filter()->unique()->count() }} Depts</div>
         </div>
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Published Tracks</div>
-            <div class="text-2xl font-black text-emerald-600 mt-1">{{ $courses->where('is_published', true)->count() }}</div>
-            <div class="text-[11px] text-slate-500 mt-0.5">{{ $courses->where('is_published', false)->count() }} in Draft Mode</div>
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Published</div>
+            <div class="text-xl font-black text-emerald-600 mt-0.5">{{ $courses->where('is_published', true)->count() }}</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">{{ $courses->where('is_published', false)->count() }} Drafts</div>
         </div>
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Enrolled Students</div>
-            <div class="text-2xl font-black text-[#051c45] mt-1">{{ number_format($courses->sum('students_count')) }}</div>
-            <div class="text-[11px] text-slate-500 mt-0.5">{{ number_format($courses->sum('certificates_count')) }} Certificates Issued</div>
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Students</div>
+            <div class="text-xl font-black text-[#051c45] mt-0.5">{{ number_format($courses->sum('students_count')) }}</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">{{ number_format($courses->sum('certificates_count')) }} Certs</div>
         </div>
-        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Catalog Views</div>
-            <div class="text-2xl font-black text-[#051c45] mt-1">{{ number_format($courses->sum('views')) }}</div>
-            <div class="text-[11px] text-slate-500 mt-0.5">{{ number_format($courses->sum('lessons_count')) }} Total Lessons</div>
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Views</div>
+            <div class="text-xl font-black text-[#051c45] mt-0.5">{{ number_format($courses->sum('views')) }}</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">{{ number_format($courses->sum('lessons_count')) }} Lessons</div>
         </div>
     </div>
 
     <!-- Filter & Search Bar -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+    <div class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
         <div class="flex items-center gap-1.5 overflow-x-auto">
             <button type="button" @click="statusFilter = 'all'" :class="statusFilter === 'all' ? 'bg-[#051c45] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors">
                 All ({{ $courses->count() }})
