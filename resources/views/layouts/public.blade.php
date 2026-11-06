@@ -774,7 +774,7 @@
                         </div>
                     </div>
                     <p class="leading-relaxed mb-6 text-xs sm:text-sm text-slate-300">
-                        {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} is a specialized professional training institute delivering practical, industry-standard certification programs in Export-Import, Supply Chain, VAT & Tax, and Corporate Leadership.
+                        {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} is a specialized professional training institute operating 4 independent Learning Departments in Commercial Management, Supply Chain Management, Career Development, and Professional Skills &amp; Leadership Development.
                     </p>
                     <div class="flex items-center gap-3">
                         <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Follow {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} on Facebook" title="Official Facebook Page — {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" class="w-9 h-9 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:bg-[#166fe5] shadow-md transition-all hover:scale-105">

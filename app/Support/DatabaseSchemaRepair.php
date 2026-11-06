@@ -586,6 +586,8 @@ class DatabaseSchemaRepair
             'Labor Law, HR Compliance & Industrial Disputes Masterclass (Day-Long)',
             'Civil Construction Project Planning, BOQ & Cost Estimation (Day-Long)',
             'Fire Safety, Disaster Management & Factory Compliance Masterclass (Day-Long)',
+            'Career Planning, Executive CV & LinkedIn Branding Masterclass (Day-Long)',
+            'Business Communication, Leadership & Corporate Negotiation Masterclass (Day-Long)',
             'PGD in Supply Chain Management (PGDSCM)',
         ];
 
