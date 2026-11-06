@@ -185,49 +185,32 @@
                     </div>
 
                     @php
-                        $dbCategories = \App\Models\Category::active()->ordered()->get();
+                        \App\Support\DatabaseSchemaRepair::ensureSchema();
+                        $dbCategories = \App\Models\Category::active()->ordered()->with('headInstructor')->get();
                         if ($dbCategories->isNotEmpty()) {
                             $runningCategories = $dbCategories->map(function ($cat) {
                                 return [
                                     'name' => $cat->name,
                                     'slug' => $cat->slug,
                                     'icon' => $cat->icon ?: 'fa-tag',
+                                    'description' => $cat->description,
+                                    'subcategories' => $cat->effective_subcategories,
+                                    'head' => $cat->resolved_head,
+                                    'team' => $cat->resolved_team,
                                 ];
                             })->toArray();
                         } else {
-                            $rawCats = \App\Models\Setting::getVal('landing_categories_data');
-                            if (!empty(trim($rawCats))) {
-                                $catLines = array_filter(array_map('trim', explode("\n", $rawCats)));
-                                $runningCategories = [];
-                                foreach ($catLines as $line) {
-                                    $parts = array_map('trim', explode('|', $line));
-                                    $name = $parts[0] ?? '';
-                                    $slug = $parts[1] ?? \Illuminate\Support\Str::slug($name);
-                                    $icon = $parts[2] ?? 'fa-tag';
-                                    if ($name !== '') {
-                                        $runningCategories[] = [
-                                            'name' => $name,
-                                            'slug' => $slug,
-                                            'icon' => str_starts_with($icon, 'fa-') ? $icon : ('fa-' . $icon),
-                                        ];
-                                    }
-                                }
-                            } else {
-                                $runningCategories = [
-                                    ['name' => 'Soft Skills', 'slug' => 'soft-skills', 'icon' => 'fa-comments'],
-                                    ['name' => 'Supply Chain Management', 'slug' => 'supply-chain-management', 'icon' => 'fa-truck-fast'],
-                                    ['name' => 'Value Added Tax', 'slug' => 'value-added-tax', 'icon' => 'fa-file-invoice-dollar'],
-                                    ['name' => 'Export – Import', 'slug' => 'export-import', 'icon' => 'fa-ship'],
-                                    ['name' => 'Accounting', 'slug' => 'accounting', 'icon' => 'fa-calculator'],
-                                    ['name' => 'Human Resource', 'slug' => 'human-resource', 'icon' => 'fa-people-group'],
-                                    ['name' => 'Civil Construction Project', 'slug' => 'civil-construction-project', 'icon' => 'fa-helmet-safety'],
-                                    ['name' => 'Fire Safety', 'slug' => 'fire-safety', 'icon' => 'fa-fire-extinguisher'],
-                                    ['name' => 'Law & Compliance', 'slug' => 'law', 'icon' => 'fa-scale-balanced'],
-                                    ['name' => 'Leadership', 'slug' => 'leadership', 'icon' => 'fa-award'],
-                                    ['name' => 'Production & Ops', 'slug' => 'production', 'icon' => 'fa-industry'],
-                                    ['name' => 'Project Management', 'slug' => 'project-management', 'icon' => 'fa-diagram-project'],
+                            $runningCategories = collect(\App\Models\Category::getCoreDepartmentsBlueprint())->map(function ($dept) {
+                                return [
+                                    'name' => $dept['name'],
+                                    'slug' => $dept['slug'],
+                                    'icon' => $dept['icon'],
+                                    'description' => $dept['description'],
+                                    'subcategories' => $dept['subcategories'],
+                                    'head' => null,
+                                    'team' => collect(),
                                 ];
-                            }
+                            })->toArray();
                         }
                         $allCatUrl = \App\Models\Setting::getVal('landing_categories_all_url', route('catalog.index'));
                         $allCatText = \App\Models\Setting::getVal('landing_categories_all_text', 'All');
@@ -402,6 +385,116 @@
         </section>
         @endif
     </div>
+
+    {{-- 4B. ACS 4 Core Training Categories & Independent Learning Departments Model --}}
+    <section id="learning-departments" class="py-12 sm:py-16 lg:py-20 bg-white border-b border-slate-200/80 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#051c45]/10 text-[#051c45] text-[10px] font-black uppercase tracking-widest mb-2.5">
+                        <i class="fas fa-sitemap text-[#c30102]"></i>
+                        <span>ACS Scalable Learning Platform Model</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-[#041536] tracking-tight">
+                        4 Core Training Categories & Learning Departments
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-600 mt-1.5 max-w-2xl leading-relaxed">
+                        Operated as 4 independent Learning Departments. Each department is led by a dedicated Department Head and a specialized faculty team delivering 6 focused industry tracks.
+                    </p>
+                </div>
+                <a href="{{ route('faculty.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-[#051c45] text-[#051c45] hover:text-white text-xs font-bold transition-all shrink-0 self-start md:self-auto">
+                    <i class="fas fa-users-gear text-xs"></i>
+                    <span>Meet Department Heads & Teams</span>
+                </a>
+            </div>
+
+            @php
+                $coreDepts = isset($runningCategories) && !empty($runningCategories)
+                    ? $runningCategories
+                    : collect(\App\Models\Category::getCoreDepartmentsBlueprint())->map(fn($d) => [
+                        'name' => $d['name'],
+                        'slug' => $d['slug'],
+                        'icon' => $d['icon'],
+                        'description' => $d['description'],
+                        'subcategories' => $d['subcategories'],
+                        'head' => null,
+                        'team' => collect(),
+                    ])->toArray();
+            @endphp
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                @foreach($coreDepts as $dIdx => $dept)
+                    <div class="group rounded-2xl bg-gradient-to-b from-slate-50/70 to-white border border-slate-200/90 hover:border-[#051c45]/30 p-5 sm:p-6 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                        <div>
+                            <!-- Department Number & Icon -->
+                            <div class="flex items-center justify-between gap-2 mb-4">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#051c45] text-white text-[10px] font-black uppercase tracking-wider">
+                                    <span>Department 0{{ $dIdx + 1 }}</span>
+                                </span>
+                                <div class="w-10 h-10 rounded-xl bg-[#c30102]/10 text-[#c30102] group-hover:bg-[#c30102] group-hover:text-white flex items-center justify-center text-base transition-colors">
+                                    <i class="fas {{ $dept['icon'] ?? 'fa-layer-group' }}"></i>
+                                </div>
+                            </div>
+
+                            <!-- Department Title -->
+                            <a href="{{ route('catalog.category', $dept['slug']) }}" class="block mb-3">
+                                <h3 class="text-base sm:text-lg font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug">
+                                    {{ $dIdx + 1 }}. {{ $dept['name'] }}
+                                </h3>
+                            </a>
+
+                            <!-- Department Head & Dedicated Team Card -->
+                            <div class="mb-4 p-2.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="w-7 h-7 rounded-full bg-[#051c45] text-white flex items-center justify-center text-[10px] font-bold shrink-0 overflow-hidden">
+                                        @if(!empty($dept['head']) && $dept['head']->avatar_url)
+                                            <img src="{{ $dept['head']->avatar_url }}" alt="{{ $dept['head']->name }}" class="w-full h-full object-cover object-top">
+                                        @else
+                                            <i class="fas fa-user-tie"></i>
+                                        @endif
+                                    </div>
+                                    <div class="truncate">
+                                        <span class="text-[9px] font-extrabold uppercase tracking-wider text-[#c30102] block leading-none">Department Head</span>
+                                        <span class="text-[11px] font-bold text-slate-800 truncate block mt-0.5">
+                                            {{ !empty($dept['head']) ? $dept['head']->name : 'Department Head' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <span class="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0">
+                                    + Team
+                                </span>
+                            </div>
+
+                            <!-- 6 Specialized Sub-Tracks -->
+                            @if(!empty($dept['subcategories']))
+                                <ul class="space-y-2 mb-5">
+                                    @foreach($dept['subcategories'] as $subTrack)
+                                        <li>
+                                            <a 
+                                                href="{{ route('catalog.category', ['category' => $dept['slug'], 'subtrack' => $subTrack]) }}"
+                                                class="flex items-start gap-2 text-xs text-slate-600 hover:text-[#051c45] font-semibold group/sub transition-colors"
+                                            >
+                                                <i class="fas fa-angle-right text-[#c30102] mt-0.5 text-[11px] shrink-0 group-hover/sub:translate-x-0.5 transition-transform"></i>
+                                                <span class="leading-snug">{{ $subTrack }}</span>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
+
+                        <a 
+                            href="{{ route('catalog.category', $dept['slug']) }}" 
+                            class="w-full py-2.5 px-4 rounded-xl bg-slate-100 group-hover:bg-[#051c45] text-[#051c45] group-hover:text-white text-xs font-extrabold flex items-center justify-center gap-2 transition-all"
+                        >
+                            <span>Explore Department</span>
+                            <i class="fas fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
     {{-- 5. Executive Career & Job Placement Opportunities (Spotlighted on Front View) --}}
     @if(\App\Models\Setting::getVal('landing_jobs_enabled', '1') == '1' && isset($jobs) && $jobs->count() > 0)

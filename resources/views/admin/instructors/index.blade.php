@@ -53,6 +53,16 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 max-w-xs">
+                                @if(!empty($instructor->department))
+                                    <div class="mb-1 flex items-center gap-1.5 flex-wrap">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase {{ $instructor->department_role === 'head' ? 'bg-[#c30102] text-white' : 'bg-[#041536]/10 text-[#041536]' }}">
+                                            {{ $instructor->department_role === 'head' ? 'Department Head' : 'Team Member' }}
+                                        </span>
+                                        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold">
+                                            {{ $instructor->department }}
+                                        </span>
+                                    </div>
+                                @endif
                                 <div class="font-semibold text-gray-800 text-xs">{{ $instructor->title }}</div>
                                 <span class="inline-block mt-1 px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded text-[10px] font-bold">
                                     {{ $instructor->expertise }}

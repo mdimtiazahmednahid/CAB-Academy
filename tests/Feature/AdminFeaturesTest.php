@@ -235,7 +235,7 @@ class AdminFeaturesTest extends TestCase
         $this->seed(\Database\Seeders\DemoDataSeeder::class);
 
         $this->assertEquals(8, \App\Models\Course::count(), 'Database must contain exactly 8 courses.');
-        $this->assertEquals(12, \App\Models\Category::count(), 'Database must contain exactly 12 categories.');
+        $this->assertEquals(4, \App\Models\Category::active()->count(), 'Database must contain the 4 Core Learning Departments.');
 
         // Test homepage renders both sections without duplicates
         $homeRes = $this->get('/');

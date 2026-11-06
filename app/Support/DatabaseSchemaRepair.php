@@ -16,7 +16,7 @@ class DatabaseSchemaRepair
     public static function ensureSchema(bool $force = false): array
     {
         $dbKey = md5(config('database.default') . '_' . config('database.connections.' . config('database.default') . '.database'));
-        $lockFile = storage_path("framework/schema_verified_v8_{$dbKey}.lock");
+        $lockFile = storage_path("framework/schema_verified_v10_{$dbKey}.lock");
         if (!$force && file_exists($lockFile)) {
             return ['status' => 'cached', 'repaired' => []];
         }
@@ -213,6 +213,8 @@ class DatabaseSchemaRepair
                     $table->string('name');
                     $table->string('title');
                     $table->string('expertise');
+                    $table->string('department')->nullable();
+                    $table->string('department_role')->default('team_member');
                     $table->string('avatar')->nullable();
                     $table->text('bio')->nullable();
                     $table->string('email')->nullable();
@@ -226,6 +228,14 @@ class DatabaseSchemaRepair
                 $repaired[] = 'table:instructors';
             } else {
                 Schema::table('instructors', function (Blueprint $table) use (&$repaired) {
+                    if (!Schema::hasColumn('instructors', 'department')) {
+                        $table->string('department')->nullable();
+                        $repaired[] = 'instructors.department';
+                    }
+                    if (!Schema::hasColumn('instructors', 'department_role')) {
+                        $table->string('department_role')->default('team_member');
+                        $repaired[] = 'instructors.department_role';
+                    }
                     if (!Schema::hasColumn('instructors', 'email')) {
                         $table->string('email')->nullable();
                         $repaired[] = 'instructors.email';
@@ -245,7 +255,7 @@ class DatabaseSchemaRepair
                 });
             }
 
-            // 6. Categories table
+            // 6. Categories table (4 Core Learning Departments & Sub-Tracks)
             if (!Schema::hasTable('categories')) {
                 Schema::create('categories', function (Blueprint $table) {
                     $table->id();
@@ -253,12 +263,31 @@ class DatabaseSchemaRepair
                     $table->string('slug')->unique();
                     $table->string('icon')->default('fa-tag');
                     $table->text('description')->nullable();
+                    $table->json('subcategories')->nullable();
+                    $table->unsignedBigInteger('head_instructor_id')->nullable();
                     $table->string('image')->nullable();
                     $table->integer('order')->default(0);
                     $table->boolean('is_active')->default(true);
                     $table->timestamps();
                 });
                 $repaired[] = 'table:categories';
+            } else {
+                Schema::table('categories', function (Blueprint $table) use (&$repaired) {
+                    if (!Schema::hasColumn('categories', 'subcategories')) {
+                        $table->json('subcategories')->nullable();
+                        $repaired[] = 'categories.subcategories';
+                    }
+                    if (!Schema::hasColumn('categories', 'head_instructor_id')) {
+                        $table->unsignedBigInteger('head_instructor_id')->nullable();
+                        $repaired[] = 'categories.head_instructor_id';
+                    }
+                });
+            }
+
+            try {
+                \App\Models\Category::syncCoreDepartments();
+            } catch (\Throwable $e) {
+                Log::warning('Category::syncCoreDepartments warning: ' . $e->getMessage());
             }
 
             // 7. Blog Posts table & columns

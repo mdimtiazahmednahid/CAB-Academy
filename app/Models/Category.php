@@ -169,6 +169,7 @@ class Category extends Model
             'value-added-tax',
             'export-import',
             'accounting',
+            'income-tax-management',
             'human-resource',
             'civil-construction-project',
             'fire-safety',
@@ -181,6 +182,110 @@ class Category extends Model
         static::whereIn('slug', $legacySlugs)
             ->whereNotIn('slug', $coreSlugs)
             ->update(['is_active' => false]);
+
+        // Auto-link Department Heads and Teams if instructors exist and have no department assigned yet
+        if (
+            \Illuminate\Support\Facades\Schema::hasTable('instructors') &&
+            \Illuminate\Support\Facades\Schema::hasColumn('instructors', 'department') &&
+            \Illuminate\Support\Facades\Schema::hasColumn('categories', 'head_instructor_id')
+        ) {
+            $activeDepts = static::whereIn('slug', $coreSlugs)->orderBy('order')->get();
+            $unassignedInstructors = Instructor::where('is_active', true)
+                ->where(function ($q) {
+                    $q->whereNull('department')->orWhere('department', '');
+                })
+                ->orderBy('order')
+                ->get();
+
+            if ($unassignedInstructors->isNotEmpty() && $activeDepts->isNotEmpty()) {
+                foreach ($unassignedInstructors->values() as $idx => $inst) {
+                    $targetDept = $activeDepts[$idx % $activeDepts->count()];
+                    $hasHead = Instructor::where('department', $targetDept->name)
+                        ->where('department_role', 'head')
+                        ->exists() || !empty($targetDept->head_instructor_id);
+
+                    $role = !$hasHead ? 'head' : 'team_member';
+                    $inst->update([
+                        'department' => $targetDept->name,
+                        'department_role' => $role,
+                    ]);
+
+                    if ($role === 'head' && empty($targetDept->head_instructor_id)) {
+                        $targetDept->update(['head_instructor_id' => $inst->id]);
+                    }
+                }
+            }
+
+            // Ensure head_instructor_id is populated if a department head exists in instructors table
+            foreach ($activeDepts as $dept) {
+                if (empty($dept->head_instructor_id)) {
+                    $headInst = Instructor::where('is_active', true)
+                        ->where('department', $dept->name)
+                        ->orderByRaw("CASE WHEN department_role = 'head' THEN 0 ELSE 1 END")
+                        ->orderBy('order')
+                        ->first();
+                    if ($headInst) {
+                        $dept->update(['head_instructor_id' => $headInst->id]);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve a category/department or sub-track from a URL slug or query string.
+     *
+     * @return array{department: ?Category, subtrack: ?string, is_legacy_export_import: bool}
+     */
+    public static function resolveDepartmentAndSubtrack(string $input): array
+    {
+        $cleanInput = trim($input);
+        $slugInput = Str::slug($cleanInput);
+        $isLegacyExportImport = in_array($slugInput, ['export-import'], true);
+
+        // 1. Direct match on active or existing Category by slug or name
+        $directDept = static::where('slug', $cleanInput)
+            ->orWhere('slug', $slugInput)
+            ->orWhere('name', $cleanInput)
+            ->first();
+
+        if ($directDept && $directDept->is_active) {
+            return [
+                'department' => $directDept,
+                'subtrack' => null,
+                'is_legacy_export_import' => false,
+            ];
+        }
+
+        // 2. Check all active departments for matching sub-track or legacy alias
+        $activeDepts = static::active()->ordered()->get();
+        foreach ($activeDepts as $dept) {
+            foreach ($dept->effective_subcategories as $sub) {
+                if (strcasecmp($sub, $cleanInput) === 0 || Str::slug($sub) === $slugInput) {
+                    return [
+                        'department' => $dept,
+                        'subtrack' => $sub,
+                        'is_legacy_export_import' => $isLegacyExportImport,
+                    ];
+                }
+            }
+
+            foreach ($dept->getMatchingCategoryTerms() as $term) {
+                if (strcasecmp($term, $cleanInput) === 0 || Str::slug($term) === $slugInput) {
+                    return [
+                        'department' => $dept,
+                        'subtrack' => null,
+                        'is_legacy_export_import' => $isLegacyExportImport,
+                    ];
+                }
+            }
+        }
+
+        return [
+            'department' => $directDept,
+            'subtrack' => null,
+            'is_legacy_export_import' => $isLegacyExportImport,
+        ];
     }
 
     public function scopeActive($query)
@@ -196,6 +301,18 @@ class Category extends Model
     public function courses()
     {
         return $this->hasMany(Course::class, 'category', 'name');
+    }
+
+    /**
+     * Count all courses belonging to this Learning Department (including all 6 sub-tracks and legacy aliases).
+     */
+    public function getDepartmentCoursesCountAttribute(): int
+    {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('courses')) {
+            return 0;
+        }
+
+        return Course::whereIn('category', $this->getMatchingCategoryTerms())->count();
     }
 
     public function headInstructor()

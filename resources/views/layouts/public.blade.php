@@ -457,22 +457,23 @@
                             @php
                                 $publicNavCategories = collect();
                                 try {
-                                    $publicNavCategories = \App\Models\Category::active()->ordered()->take(5)->get();
+                                    \App\Support\DatabaseSchemaRepair::ensureSchema();
+                                    $publicNavCategories = \App\Models\Category::active()->ordered()->take(4)->get();
                                     if ($publicNavCategories->isEmpty()) {
-                                        $fallbackCatNames = \App\Models\Course::where('is_published', true)->whereNotNull('category')->where('category', '!=', '')->distinct()->pluck('category')->take(5);
-                                        $publicNavCategories = $fallbackCatNames->map(function($name) {
-                                            return (object)['name' => $name, 'slug' => \Illuminate\Support\Str::slug($name), 'icon' => 'fa-tag'];
-                                        });
+                                        $publicNavCategories = collect(\App\Models\Category::getCoreDepartmentsBlueprint())->map(fn($d) => (object) $d);
                                     }
                                 } catch (\Throwable $e) {
-                                    $publicNavCategories = collect();
+                                    $publicNavCategories = collect(\App\Models\Category::getCoreDepartmentsBlueprint())->map(fn($d) => (object) $d);
                                 }
                             @endphp
                             @if($publicNavCategories->isNotEmpty())
-                                <div class="border-t border-slate-100 my-1"></div>
+                                <div class="border-t border-slate-100 my-1.5"></div>
+                                <div class="px-4 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                                    4 Core Learning Departments
+                                </div>
                                 @foreach($publicNavCategories as $pCat)
-                                    <a href="{{ route('catalog.category', $pCat->slug) }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
-                                        <i class="fas {{ $pCat->icon ?? 'fa-tag' }} text-[11px] text-slate-400"></i>
+                                    <a href="{{ route('catalog.category', $pCat->slug) }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-700">
+                                        <i class="fas {{ $pCat->icon ?? 'fa-layer-group' }} text-[11px] text-[#051c45]"></i>
                                         <span>{{ $pCat->name }}</span>
                                     </a>
                                 @endforeach
@@ -659,7 +660,7 @@
                         <a href="{{ route('feed.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Community Feed</a>
                         @endif
                         @if(isset($publicNavCategories) && $publicNavCategories->isNotEmpty())
-                            @foreach($publicNavCategories->take(3) as $mCat)
+                            @foreach($publicNavCategories->take(4) as $mCat)
                                 <a href="{{ route('catalog.category', $mCat->slug) }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">{{ $mCat->name }}</a>
                             @endforeach
                         @endif

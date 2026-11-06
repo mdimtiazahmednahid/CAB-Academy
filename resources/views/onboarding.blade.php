@@ -10,6 +10,7 @@
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {!! acs_inline_compiled_css() !!}
 </head>
 <body class="font-sans text-gray-900 antialiased bg-white">
     <div x-data="onboarding()" class="min-h-screen flex flex-col pt-8 pb-28 px-6 max-w-lg mx-auto relative">
@@ -115,7 +116,7 @@
                 totalSteps: 3,
                 loading: false,
                 levels: ['Executive & Corporate Professional', 'University Graduate / Job Seeker', 'Business Owner & Entrepreneur'],
-                availableSubjects: ['Export-Import & L/C Operations', 'Supply Chain & Procurement', 'Customs, VAT & NBR Compliance', 'Commercial Banking & Trade Finance'],
+                availableSubjects: ['Commercial Management', 'Supply Chain Management', 'Career Development', 'Professional Skills & Leadership Development'],
                 availableGoals: ['Earn Verified Executive Certification', 'Advance Corporate Career & Placement', 'Master Practical Trade Documentation'],
                 formData: {
                     level: null,

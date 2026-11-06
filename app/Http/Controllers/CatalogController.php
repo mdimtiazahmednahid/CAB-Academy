@@ -14,36 +14,92 @@ class CatalogController extends Controller
     {
         \App\Support\DatabaseSchemaRepair::ensureSchema();
         $selectedCategory = $category ?? $request->query('category');
+        $selectedSubtrack = $request->query('subtrack');
         
         $query = Course::where('is_published', true)
             ->with(['instructorProfile', 'instructor', 'sections.lessons']);
 
         $categoryTitle = null;
         $categoryDesc = null;
+        $activeDepartment = null;
 
-        // Apply category filter if provided
+        // Apply category / department / sub-track filter if provided
         if ($selectedCategory) {
-            $catRecord = Category::where('slug', $selectedCategory)
-                ->orWhere('name', $selectedCategory)
-                ->orWhere('slug', Str::slug($selectedCategory))
-                ->first();
-
-            $matchedName = $catRecord ? $catRecord->name : null;
-            if ($catRecord) {
-                $categoryDesc = $catRecord->description;
-                $categoryTitle = $catRecord->name;
+            $resolved = Category::resolveDepartmentAndSubtrack($selectedCategory);
+            $activeDepartment = $resolved['department'];
+            if (!$selectedSubtrack && !empty($resolved['subtrack'])) {
+                $selectedSubtrack = $resolved['subtrack'];
             }
 
-            $query->where(function ($q) use ($selectedCategory, $matchedName) {
-                $q->where('category', $selectedCategory)
-                  ->orWhere('category', 'like', '%' . str_replace('-', ' ', $selectedCategory) . '%');
-                if ($matchedName) {
-                    $q->orWhere('category', $matchedName);
-                }
-            });
-
-            if (!$categoryTitle) {
+            if ($resolved['is_legacy_export_import']) {
+                $categoryTitle = 'Export – Import';
+                $categoryDesc = $activeDepartment?->description;
+            } elseif ($activeDepartment) {
+                $categoryTitle = $selectedSubtrack
+                    ? $selectedSubtrack
+                    : $activeDepartment->name;
+                $categoryDesc = $activeDepartment->description;
+            } else {
                 $categoryTitle = ucwords(str_replace('-', ' ', $selectedCategory));
+            }
+
+            if ($activeDepartment) {
+                $deptTerms = $activeDepartment->getMatchingCategoryTerms();
+
+                if ($selectedSubtrack) {
+                    // Check if specific courses exist for this sub-track; otherwise show department courses
+                    $subtrackCourseCount = Course::where('is_published', true)
+                        ->where(function ($q) use ($selectedSubtrack) {
+                            $q->where('category', $selectedSubtrack)
+                              ->orWhere('title', 'like', '%' . $selectedSubtrack . '%');
+                        })
+                        ->count();
+
+                    if ($subtrackCourseCount > 0) {
+                        $query->where(function ($q) use ($selectedSubtrack) {
+                            $q->where('category', $selectedSubtrack)
+                              ->orWhere('title', 'like', '%' . $selectedSubtrack . '%');
+                        });
+                    } else {
+                        $query->where(function ($q) use ($deptTerms, $selectedCategory) {
+                            $q->whereIn('category', $deptTerms)
+                              ->orWhere('category', $selectedCategory)
+                              ->orWhere('category', 'like', '%' . str_replace('-', ' ', $selectedCategory) . '%');
+                        });
+                    }
+                } else {
+                    $query->where(function ($q) use ($deptTerms, $selectedCategory) {
+                        $q->whereIn('category', $deptTerms)
+                          ->orWhere('category', $selectedCategory)
+                          ->orWhere('category', 'like', '%' . str_replace('-', ' ', $selectedCategory) . '%');
+                    });
+                }
+            } else {
+                $query->where(function ($q) use ($selectedCategory) {
+                    $q->where('category', $selectedCategory)
+                      ->orWhere('category', 'like', '%' . str_replace('-', ' ', $selectedCategory) . '%');
+                });
+            }
+        } elseif ($selectedSubtrack) {
+            $resolved = Category::resolveDepartmentAndSubtrack($selectedSubtrack);
+            $activeDepartment = $resolved['department'];
+            $categoryTitle = $selectedSubtrack;
+            $categoryDesc = $activeDepartment?->description;
+
+            $subtrackCourseCount = Course::where('is_published', true)
+                ->where(function ($q) use ($selectedSubtrack) {
+                    $q->where('category', $selectedSubtrack)
+                      ->orWhere('title', 'like', '%' . $selectedSubtrack . '%');
+                })
+                ->count();
+
+            if ($subtrackCourseCount > 0) {
+                $query->where(function ($q) use ($selectedSubtrack) {
+                    $q->where('category', $selectedSubtrack)
+                      ->orWhere('title', 'like', '%' . $selectedSubtrack . '%');
+                });
+            } elseif ($activeDepartment) {
+                $query->whereIn('category', $activeDepartment->getMatchingCategoryTerms());
             }
         }
 
@@ -92,8 +148,9 @@ class CatalogController extends Controller
                     $subjects = $prefs['subjects'] ?? [];
                     
                     if (!empty($subjects) || !empty($level)) {
-                        $subjectsList = implode("','", array_map('addslashes', $subjects));
-                        $levelQuery = $level ? "level = '{$level}' DESC," : "";
+                        $subjectsList = implode("','", array_map('addslashes', (array) $subjects));
+                        $safeLevel = addslashes((string) $level);
+                        $levelQuery = $safeLevel !== '' ? "level = '{$safeLevel}' DESC," : "";
                         $subjectQuery = !empty($subjectsList) ? "category IN ('{$subjectsList}') DESC," : "";
                         $query->orderByRaw("{$levelQuery} {$subjectQuery} cover_image IS NULL ASC, created_at DESC");
                         break;
@@ -105,7 +162,7 @@ class CatalogController extends Controller
 
         $courses = $query->paginate(9)->withQueryString();
 
-        // Count published courses per category
+        // Count published courses per category string
         $dbCategoryCounts = Course::where('is_published', true)
             ->whereNotNull('category')
             ->where('category', '!=', '')
@@ -113,12 +170,25 @@ class CatalogController extends Controller
             ->groupBy('category')
             ->pluck('count', 'category');
 
-        // Fetch dynamic categories from the database
-        $dbCategories = Category::active()->ordered()->get();
+        // Fetch dynamic Learning Departments from the database
+        $dbCategories = Category::active()->ordered()->with('headInstructor')->get();
         $runningCategories = [];
 
         foreach ($dbCategories as $cat) {
-            $count = $dbCategoryCounts->get($cat->name, 0);
+            $terms = $cat->getMatchingCategoryTerms();
+            $count = 0;
+            foreach ($dbCategoryCounts as $catKey => $cVal) {
+                foreach ($terms as $t) {
+                    if (strcasecmp(trim($catKey), trim($t)) === 0) {
+                        $count += (int) $cVal;
+                        break;
+                    }
+                }
+            }
+
+            $head = $cat->resolved_head;
+            $team = $cat->resolved_team;
+
             $runningCategories[] = [
                 'id' => $cat->id,
                 'name' => $cat->name,
@@ -127,26 +197,28 @@ class CatalogController extends Controller
                 'image' => $cat->image ?: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80',
                 'desc' => $cat->description ?: 'Professional training and skills development',
                 'icon' => $cat->icon ?: 'fa-tag',
+                'subcategories' => $cat->effective_subcategories,
+                'head' => $head,
+                'team' => $team,
+                'team_count' => $team ? $team->count() : 0,
             ];
         }
 
         // Graceful fallback if categories table has not been seeded yet
         if (empty($runningCategories)) {
-            $coursesCats = Course::where('is_published', true)
-                ->whereNotNull('category')
-                ->where('category', '!=', '')
-                ->distinct()
-                ->pluck('category');
-
-            foreach ($coursesCats as $cName) {
+            foreach (Category::getCoreDepartmentsBlueprint() as $idx => $dept) {
                 $runningCategories[] = [
-                    'id' => 0,
-                    'name' => $cName,
-                    'slug' => Str::slug($cName),
-                    'count' => $dbCategoryCounts->get($cName, 0),
-                    'image' => 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80',
-                    'desc' => 'Professional training and skills development',
-                    'icon' => 'fa-tag',
+                    'id' => $idx + 1,
+                    'name' => $dept['name'],
+                    'slug' => $dept['slug'],
+                    'count' => 0,
+                    'image' => $dept['image'],
+                    'desc' => $dept['description'],
+                    'icon' => $dept['icon'],
+                    'subcategories' => $dept['subcategories'],
+                    'head' => null,
+                    'team' => collect(),
+                    'team_count' => 0,
                 ];
             }
         }
@@ -155,6 +227,8 @@ class CatalogController extends Controller
             'courses',
             'sort',
             'selectedCategory',
+            'selectedSubtrack',
+            'activeDepartment',
             'categoryTitle',
             'categoryDesc',
             'runningCategories'

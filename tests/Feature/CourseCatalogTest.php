@@ -39,6 +39,36 @@ class CourseCatalogTest extends TestCase
         $response->assertSee('L/C, Banking, Customs');
     }
 
+    public function test_acs_four_core_learning_departments_and_subtracks_work(): void
+    {
+        $departments = [
+            'commercial-management' => [
+                'title' => 'Commercial Management',
+                'subtrack' => 'LC & Trade Finance',
+            ],
+            'supply-chain-management' => [
+                'title' => 'Supply Chain Management',
+                'subtrack' => 'Procurement & Sourcing',
+            ],
+            'career-development' => [
+                'title' => 'Career Development',
+                'subtrack' => 'CV & LinkedIn Development',
+            ],
+            'professional-skills-leadership' => [
+                'title' => 'Professional Skills & Leadership Development',
+                'subtrack' => 'Business Communication',
+            ],
+        ];
+
+        foreach ($departments as $slug => $meta) {
+            $res = $this->get("/category/{$slug}");
+            $res->assertStatus(200);
+            $res->assertSee($meta['title']);
+            $res->assertSee($meta['subtrack']);
+            $res->assertSee('Department Head');
+        }
+    }
+
     public function test_export_import_direct_alias_redirects(): void
     {
         $response = $this->get('/export-import');

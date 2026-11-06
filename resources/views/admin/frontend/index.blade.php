@@ -740,10 +740,10 @@
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Category Pills (One per line: Name | slug | fontawesome-icon)</label>
-                            <span class="text-xs text-gray-400 font-medium">Leave blank for authentic 12 defaults</span>
+                            <span class="text-xs text-gray-400 font-medium">Leave blank for the 4 ACS Core Learning Departments</span>
                         </div>
-                        <textarea name="landing_categories_data" rows="12" 
-                                  placeholder="Soft Skills | soft-skills | fa-comments&#10;Supply Chain Management | supply-chain-management | fa-truck-fast&#10;Value Added Tax | value-added-tax | fa-file-invoice-dollar&#10;Export – Import | export-import | fa-ship&#10;Accounting | accounting | fa-calculator&#10;Human Resource | human-resource | fa-people-group&#10;Civil Construction Project | civil-construction-project | fa-helmet-safety&#10;Fire Safety | fire-safety | fa-fire-extinguisher&#10;Law & Compliance | law | fa-scale-balanced&#10;Leadership | leadership | fa-award&#10;Production & Ops | production | fa-industry&#10;Project Management | project-management | fa-diagram-project" 
+                        <textarea name="landing_categories_data" rows="6" 
+                                  placeholder="Commercial Management | commercial-management | fa-ship&#10;Supply Chain Management | supply-chain-management | fa-truck-fast&#10;Career Development | career-development | fa-compass&#10;Professional Skills & Leadership Development | professional-skills-leadership | fa-award" 
                                   class="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ $settings['landing_categories_data'] ?? '' }}</textarea>
                         <p class="text-[11px] text-gray-500 mt-1">Format: <code>Category Name | slug | icon</code>. Example: <code>Export – Import | export-import | fa-ship</code>.</p>
                     </div>

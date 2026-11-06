@@ -271,7 +271,10 @@
                         <input list="category-options-modular" type="text" name="category" value="{{ $course->category }}" placeholder="e.g. Leadership" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
                         <datalist id="category-options-modular">
                             @foreach(\App\Models\Category::active()->ordered()->get() as $cat)
-                                <option value="{{ $cat->name }}"></option>
+                                <option value="{{ $cat->name }}">Department: {{ $cat->name }}</option>
+                                @foreach($cat->effective_subcategories as $subOpt)
+                                    <option value="{{ $subOpt }}">{{ $cat->name }} — Sub-Track</option>
+                                @endforeach
                             @endforeach
                         </datalist>
                     </div>
@@ -1932,7 +1935,10 @@ function courseFormBuilder(config) {
                         <input list="category-options-edit" type="text" name="category" value="{{ $course->category }}" placeholder="Choose or type category..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                         <datalist id="category-options-edit">
                             @foreach(\App\Models\Category::active()->ordered()->get() as $cat)
-                                <option value="{{ $cat->name }}"></option>
+                                <option value="{{ $cat->name }}">Department: {{ $cat->name }}</option>
+                                @foreach($cat->effective_subcategories as $subOpt)
+                                    <option value="{{ $subOpt }}">{{ $cat->name }} — Sub-Track</option>
+                                @endforeach
                             @endforeach
                         </datalist>
                     </div>

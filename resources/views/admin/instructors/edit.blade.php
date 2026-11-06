@@ -40,6 +40,32 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Learning Department</label>
+                @php
+                    $deptNames = \App\Models\Category::active()->ordered()->pluck('name')->toArray();
+                    if (empty($deptNames)) {
+                        $deptNames = array_column(\App\Models\Category::getCoreDepartmentsBlueprint(), 'name');
+                    }
+                @endphp
+                <select name="department" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    <option value="">-- Select Learning Department --</option>
+                    @foreach($deptNames as $dName)
+                        <option value="{{ $dName }}" {{ old('department', $instructor->department) === $dName ? 'selected' : '' }}>{{ $dName }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Department Role</label>
+                <select name="department_role" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    <option value="team_member" {{ old('department_role', $instructor->department_role ?? 'team_member') === 'team_member' ? 'selected' : '' }}>Department Team Member</option>
+                    <option value="head" {{ old('department_role', $instructor->department_role) === 'head' ? 'selected' : '' }}>Department Head</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Specialization / Expertise *</label>
                 <input type="text" name="expertise" value="{{ old('expertise', $instructor->expertise) }}" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
             </div>

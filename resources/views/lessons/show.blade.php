@@ -9,6 +9,7 @@
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {!! acs_inline_compiled_css() !!}
     <style>
         :root {
             --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#051c45') }};

@@ -273,7 +273,10 @@
                         <input list="category-options-create" type="text" name="category" placeholder="Choose or type..." class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
                         <datalist id="category-options-create">
                             @foreach(\App\Models\Category::active()->ordered()->get() as $cat)
-                                <option value="{{ $cat->name }}"></option>
+                                <option value="{{ $cat->name }}">Department: {{ $cat->name }}</option>
+                                @foreach($cat->effective_subcategories as $subOpt)
+                                    <option value="{{ $subOpt }}">{{ $cat->name }} — Sub-Track</option>
+                                @endforeach
                             @endforeach
                         </datalist>
                     </div>

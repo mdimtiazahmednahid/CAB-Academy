@@ -21,124 +21,8 @@ class DemoDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // 0. Seed Authentic Course Categories
-        $categories = [
-            [
-                'name' => 'Export – Import',
-                'slug' => 'export-import',
-                'icon' => 'fa-ship',
-                'description' => 'L/C, Banking, Customs, Bond Management, and International Trade Procedures',
-                'image' => 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&q=80',
-                'order' => 1,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Supply Chain Management',
-                'slug' => 'supply-chain-management',
-                'icon' => 'fa-truck-fast',
-                'description' => 'Procurement, Logistics, Warehouse, and Inventory Optimization',
-                'image' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80',
-                'order' => 2,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Accounting',
-                'slug' => 'accounting',
-                'icon' => 'fa-calculator',
-                'description' => 'Financial Reporting, Auditing, Corporate Tax, and Budgeting',
-                'image' => 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80',
-                'order' => 3,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Income Tax Management',
-                'slug' => 'income-tax-management',
-                'icon' => 'fa-file-invoice-dollar',
-                'description' => 'Tax Assessment, VAT & Customs, Returns, and Legal Compliance',
-                'image' => 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80',
-                'order' => 4,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Human Resource',
-                'slug' => 'human-resource',
-                'icon' => 'fa-people-group',
-                'description' => 'HR Operations, Labor Law, Talent Acquisition, and Performance Appraisal',
-                'image' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80',
-                'order' => 5,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Civil Construction Project',
-                'slug' => 'civil-construction-project',
-                'icon' => 'fa-helmet-safety',
-                'description' => 'Project Planning, Site Supervision, Quality Control, and Estimating',
-                'image' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80',
-                'order' => 6,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Fire Safety',
-                'slug' => 'fire-safety',
-                'icon' => 'fa-fire-extinguisher',
-                'description' => 'Industrial Safety, Disaster Management, NFPA Codes, and Compliance',
-                'image' => 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=600&q=80',
-                'order' => 7,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Leadership & Soft Skills',
-                'slug' => 'leadership',
-                'icon' => 'fa-award',
-                'description' => 'Executive Leadership, Communication, Conflict Resolution, and Negotiations',
-                'image' => 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80',
-                'order' => 8,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Soft Skills',
-                'slug' => 'soft-skills',
-                'icon' => 'fa-comments',
-                'description' => 'Effective Corporate Presentation, Workplace Communication, and Etiquette',
-                'image' => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80',
-                'order' => 9,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Value Added Tax',
-                'slug' => 'value-added-tax',
-                'icon' => 'fa-receipt',
-                'description' => 'VAT Registration, VDS, Mushak Forms, and Auditing Standards',
-                'image' => 'https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&w=600&q=80',
-                'order' => 10,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Law & Compliance',
-                'slug' => 'law',
-                'icon' => 'fa-scale-balanced',
-                'description' => 'Company Law, Corporate Secretarial Practices, and Contract Management',
-                'image' => 'https://images.unsplash.com/photo-1453733197783-64768dd7467b?auto=format&fit=crop&w=600&q=80',
-                'order' => 11,
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Project Management',
-                'slug' => 'project-management',
-                'icon' => 'fa-diagram-project',
-                'description' => 'Agile, PMP Methodologies, Risk Mitigation, and Resource Allocation',
-                'image' => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80',
-                'order' => 12,
-                'is_active' => true,
-            ],
-        ];
-
-        foreach ($categories as $catData) {
-            Category::updateOrCreate(
-                ['slug' => $catData['slug']],
-                $catData
-            );
-        }
+        // 0. Seed Official ACS 4 Core Learning Departments & Legacy Category Mappings
+        Category::syncCoreDepartments();
 
         // 1. Ensure Admin and Academy Director Exist with role = 'admin'
         $admin = User::withTrashed()->where('email', 'admin@cab-academy.com')->first();
@@ -169,45 +53,53 @@ class DemoDataSeeder extends Seeder
             ]);
         }
 
-        // 2. Create Faculty User Accounts & Instructor Profiles (Strictly Institutional Roles)
+        // 2. Create Faculty User Accounts & Instructor Profiles (4 Learning Department Heads)
         $facultyDefinitions = [
             [
                 'email' => 'trade.faculty@cab-academy.com',
-                'name' => 'Faculty Chair – Trade & Customs',
-                'title' => 'Executive Fellow in Trade Finance & Customs Clearance',
-                'expertise' => 'Banking, L/C, Customs & Shipping Procedure',
+                'name' => 'Faculty Chair – Commercial Management',
+                'title' => 'Department Head – Commercial Management',
+                'department' => 'Commercial Management',
+                'department_role' => 'head',
+                'expertise' => 'Export & Import, LC & Trade Finance, Customs & Bond Management',
                 'avatar' => null,
-                'bio' => 'Senior academic advisory board with extensive commercial experience guiding international trade, customs regulations, and banking documentation.',
+                'bio' => 'Leads the Commercial Management Learning Department, guiding international trade, LC finance, customs & bond regulations, and shipping documentation.',
                 'phone' => '01917-054664',
                 'order' => 1,
             ],
             [
                 'email' => 'scm.faculty@cab-academy.com',
                 'name' => 'Faculty Chair – Supply Chain',
-                'title' => 'Executive Fellow in SCM Strategy & Procurement',
-                'expertise' => 'Supply Chain Strategy & Sourcing Excellence',
+                'title' => 'Department Head – Supply Chain Management',
+                'department' => 'Supply Chain Management',
+                'department_role' => 'head',
+                'expertise' => 'Procurement, Logistics, Warehouse, Planning & Supply Chain Analytics',
                 'avatar' => null,
-                'bio' => 'Operations faculty specializing in strategic sourcing, warehouse safety stock modeling, freight optimization, and global logistics.',
+                'bio' => 'Leads the Supply Chain Management Learning Department, specializing in strategic sourcing, freight logistics, production planning, and supply chain analytics.',
                 'phone' => '01917-054664',
                 'order' => 2,
             ],
             [
                 'email' => 'tax.faculty@cab-academy.com',
-                'name' => 'Faculty Chair – Tax & VAT',
-                'title' => 'Executive Fellow in Corporate Tax & NBR Compliance',
-                'expertise' => 'VAT, Corporate Taxation & Financial Audits',
+                'name' => 'Faculty Chair – Career Development',
+                'title' => 'Department Head – Career Development',
+                'department' => 'Career Development',
+                'department_role' => 'head',
+                'expertise' => 'Career Planning, CV & LinkedIn, Interview Prep & Job Readiness',
                 'avatar' => null,
-                'bio' => 'Advisory faculty specializing in corporate tax assessment, monthly VAT returns, withholding tax certificates, and statutory audit compliance.',
+                'bio' => 'Leads the Career Development Learning Department, mentoring professionals in career planning, executive CV & LinkedIn branding, interview preparation, and corporate job readiness.',
                 'phone' => '01917-054664',
                 'order' => 3,
             ],
             [
                 'email' => 'law.faculty@cab-academy.com',
-                'name' => 'Faculty Chair – Law & Governance',
-                'title' => 'Executive Fellow in Corporate Law & Labor Relations',
-                'expertise' => 'Labor Laws, Compliance & Organizational Governance',
+                'name' => 'Faculty Chair – Leadership & Skills',
+                'title' => 'Department Head – Professional Skills & Leadership Development',
+                'department' => 'Professional Skills & Leadership Development',
+                'department_role' => 'head',
+                'expertise' => 'Business Communication, Team Leadership, Negotiation & Corporate Etiquette',
                 'avatar' => null,
-                'bio' => 'Corporate legal faculty specializing in company law, statutory filings, employment regulations, domestic inquiries, and workplace compliance.',
+                'bio' => 'Leads the Professional Skills & Leadership Development Department, training executives in business communication, negotiation, public speaking, and strategic decision making.',
                 'phone' => '01917-054664',
                 'order' => 4,
             ],
@@ -236,24 +128,33 @@ class DemoDataSeeder extends Seeder
             }
             $facultyUsers[$f['email']] = $user;
 
+            $instData = [
+                'user_id' => $user->id,
+                'name' => $f['name'],
+                'title' => $f['title'],
+                'expertise' => $f['expertise'],
+                'avatar' => $f['avatar'],
+                'bio' => $f['bio'],
+                'phone' => $f['phone'],
+                'order' => $f['order'],
+                'is_active' => true,
+            ];
+            if (\Illuminate\Support\Facades\Schema::hasColumn('instructors', 'department')) {
+                $instData['department'] = $f['department'];
+                $instData['department_role'] = $f['department_role'];
+            }
+
             $inst = Instructor::withTrashed()->updateOrCreate(
                 ['email' => $f['email']],
-                [
-                    'user_id' => $user->id,
-                    'name' => $f['name'],
-                    'title' => $f['title'],
-                    'expertise' => $f['expertise'],
-                    'avatar' => $f['avatar'],
-                    'bio' => $f['bio'],
-                    'phone' => $f['phone'],
-                    'order' => $f['order'],
-                    'is_active' => true,
-                ]
+                $instData
             );
             if ($inst->trashed()) {
                 $inst->restore();
             }
         }
+
+        // Re-sync Core Departments so head_instructor_id is linked to each Department Head
+        Category::syncCoreDepartments();
 
         // Purge any legacy user with real/personal names from earlier seeders
         User::withTrashed()->where('email', 'delwar@cabacademy.com')->forceDelete();
@@ -372,36 +273,36 @@ class DemoDataSeeder extends Seeder
                 'instructor_email' => 'law.faculty@cab-academy.com',
             ],
             [
-                'title' => 'Civil Construction Project Planning, BOQ & Cost Estimation (Day-Long)',
-                'description' => 'Advanced project budgeting, BOQ preparation, contractor agreements, site inspection standards, and Primavera/MS Project tracking for civil engineers and site managers.',
-                'short_description' => 'From land feasibility to final handover: practical project estimation, BOQ preparation, and QA/QC procedures for engineers.',
-                'price' => 4000.00,
+                'title' => 'Career Planning, Executive CV & LinkedIn Branding Masterclass (Day-Long)',
+                'description' => 'Intensive career acceleration workshop covering strategic career planning, ATS-optimized CV writing, LinkedIn executive branding, mock interview preparation, and corporate job readiness.',
+                'short_description' => 'Build an executive CV and LinkedIn profile, master corporate interview preparation, and accelerate your career growth with mentorship.',
+                'price' => 2500.00,
                 'is_published' => true,
                 'level' => 'Day Long',
-                'category' => 'Civil Construction Project',
+                'category' => 'Career Development',
                 'duration' => 'Full Day Masterclass (9 AM - 6 PM)',
                 'start_date' => now()->addDays(15),
-                'venue' => 'Classroom Mirpur-Pallabi Campus',
-                'target_audience' => 'Civil engineers, site supervisors, project directors, and real estate developers.',
-                'thumbnail' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
-                'cover_image' => 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
-                'instructor_email' => 'scm.faculty@cab-academy.com',
+                'venue' => 'Online Live Interactive (Zoom)',
+                'target_audience' => 'University graduates, management trainees, mid-career executives, and professionals seeking career advancement.',
+                'thumbnail' => 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'tax.faculty@cab-academy.com',
             ],
             [
-                'title' => 'Fire Safety, Disaster Management & Factory Compliance Masterclass (Day-Long)',
-                'description' => 'Comprehensive training on fire hazard identification, risk assessment, fire prevention systems, sprinkler and hydrant operations, and compliance with national and international industrial fire safety codes.',
-                'short_description' => 'Industrial safety, NFPA standards, emergency evacuation protocols, firefighting equipment handling, and international audit compliance.',
+                'title' => 'Business Communication, Leadership & Corporate Negotiation Masterclass (Day-Long)',
+                'description' => 'Comprehensive executive training on workplace business communication, team leadership, persuasive presentation & public speaking, commercial negotiation skills, strategic decision making, and corporate etiquette.',
+                'short_description' => 'Master business communication, team management, public speaking, negotiation skills, and executive decision making.',
                 'price' => 3000.00,
                 'is_published' => true,
                 'level' => 'Day Long',
-                'category' => 'Fire Safety',
+                'category' => 'Professional Skills & Leadership Development',
                 'duration' => 'Full Day Workshop (9 AM - 6 PM)',
                 'start_date' => now()->addDays(20),
-                'venue' => 'Mirpur-Pallabi Campus',
-                'target_audience' => 'EHS managers, safety officers, factory compliance heads, and facility managers.',
-                'thumbnail' => 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=800&q=80',
-                'cover_image' => 'https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=800&q=80',
-                'instructor_email' => 'scm.faculty@cab-academy.com',
+                'venue' => 'Mirpur-Pallabi Campus & Online Live',
+                'target_audience' => 'Team leaders, corporate managers, commercial executives, and emerging organizational leaders.',
+                'thumbnail' => 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
+                'cover_image' => 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
+                'instructor_email' => 'law.faculty@cab-academy.com',
             ],
         ];
 

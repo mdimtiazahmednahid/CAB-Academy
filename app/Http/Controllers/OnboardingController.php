@@ -24,7 +24,7 @@ class OnboardingController extends Controller
             $user = auth()->user();
             $user->preferences = [
                 'level' => 'Professional',
-                'subjects' => ['Export-Import & L/C Operations', 'Supply Chain & Logistics'],
+                'subjects' => ['Commercial Management', 'Supply Chain Management'],
                 'goals' => ['Advance Corporate Career'],
             ];
             $user->save();

@@ -40,6 +40,8 @@ class InstructorController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'title' => 'required|string|max:255',
+            'department' => 'nullable|string|max:255',
+            'department_role' => 'nullable|string|in:head,team_member',
             'expertise' => 'required|string|max:255',
             'avatar' => 'nullable|string|max:500',
             'avatar_file' => 'nullable|image|max:10240',
@@ -149,6 +151,10 @@ class InstructorController extends Controller
             }
         }
 
+        if ($instructor->department && $instructor->department_role === 'head') {
+            \App\Models\Category::where('name', $instructor->department)->update(['head_instructor_id' => $instructor->id]);
+        }
+
         if ($instructor->user_id) {
             if ($request->boolean('sync_all_courses')) {
                 \App\Models\Course::query()->update(['instructor_id' => $instructor->user_id]);
@@ -178,6 +184,8 @@ class InstructorController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'title' => 'required|string|max:255',
+            'department' => 'nullable|string|max:255',
+            'department_role' => 'nullable|string|in:head,team_member',
             'expertise' => 'required|string|max:255',
             'avatar' => 'nullable|string|max:500',
             'avatar_file' => 'nullable|image|max:10240',
@@ -234,6 +242,10 @@ class InstructorController extends Controller
 
         $instructor->update($validated);
         $instructor->refresh();
+
+        if ($instructor->department && $instructor->department_role === 'head') {
+            \App\Models\Category::where('name', $instructor->department)->update(['head_instructor_id' => $instructor->id]);
+        }
 
         // Keep linked user record in sync safely
         $user = null;

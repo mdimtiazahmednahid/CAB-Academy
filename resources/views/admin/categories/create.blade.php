@@ -48,6 +48,27 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Department Head (Instructor)</label>
+                <select name="head_instructor_id" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                    <option value="">-- Select Department Head --</option>
+                    @foreach(($instructors ?? []) as $inst)
+                        <option value="{{ $inst->id }}" {{ old('head_instructor_id') == $inst->id ? 'selected' : '' }}>
+                            {{ $inst->name }} ({{ $inst->title }})
+                        </option>
+                    @endforeach
+                </select>
+                <p class="text-[11px] text-gray-400 mt-1">Assigns the Head of this independent Learning Department.</p>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Specialized Sub-Tracks (One per line)</label>
+                <textarea name="subcategories_text" rows="5" placeholder="Export & Import Management&#10;LC & Trade Finance&#10;Export Documentation" 
+                          class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ old('subcategories_text') }}</textarea>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Cover Image URL (Optional)</label>
                 <input type="text" name="image" value="{{ old('image') }}" placeholder="https://images.unsplash.com/..." 
                        class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
