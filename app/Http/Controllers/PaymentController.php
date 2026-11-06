@@ -18,6 +18,10 @@ class PaymentController extends Controller
     {
         abort_if(!$course->is_published, 404);
 
+        if (Auth::check() && !Auth::user()->isAdmin() && Auth::user()->enrolledCourses()->where('courses.id', $course->id)->exists()) {
+            return redirect()->route('courses.show', $course)->with('info', 'You are already enrolled in this course.');
+        }
+
         if ($course->price <= 0) {
             return redirect()->route('courses.show', $course);
         }
@@ -32,6 +36,19 @@ class PaymentController extends Controller
     {
         abort_if(!$course->is_published, 404);
 
+        if (!$course->isRegistrationOpen()) {
+            return back()->with('error', 'Registration for this course is currently closed.');
+        }
+
+        $user = $request->user();
+        if ($user && !$user->isAdmin() && $user->enrolledCourses()->where('courses.id', $course->id)->exists()) {
+            return redirect()->route('courses.show', $course)->with('info', 'You are already enrolled in this course.');
+        }
+
+        if ($request->filled('sender_number')) {
+            $request->merge(['sender_number' => User::normalizeBdPhone($request->sender_number)]);
+        }
+
         $request->validate([
             'payment_method_id' => 'required|exists:payment_methods,id',
             'sender_number' => ['required', 'string', 'max:11', 'regex:/^01[3-9]\d{8}$/'],
@@ -40,10 +57,28 @@ class PaymentController extends Controller
             'sender_number.regex' => 'Please enter a valid 11-digit Bangladeshi mobile number (e.g., 01712345678).'
         ]);
 
-        DB::transaction(function () use ($request, $course) {
+        $cleanTrx = trim((string) $request->transaction_id);
+        $duplicateTrx = Payment::where('transaction_id', $cleanTrx)
+            ->where(function ($q) use ($user, $course) {
+                $q->where('user_id', '!=', $user->id)
+                  ->orWhere('course_id', '!=', $course->id)
+                  ->orWhere('status', 'verified');
+            })
+            ->exists();
+
+        if ($duplicateTrx) {
+            return back()->withErrors(['transaction_id' => 'This Transaction ID (TrxID) has already been used.'])->withInput();
+        }
+
+        DB::transaction(function () use ($request, $course, $user, $cleanTrx) {
+            if (empty($user->phone) && !empty($request->sender_number)) {
+                $user->phone = $request->sender_number;
+                $user->saveQuietly();
+            }
+
             Payment::updateOrCreate(
                 [
-                    'user_id' => $request->user()->id,
+                    'user_id' => $user->id,
                     'course_id' => $course->id,
                     'status' => 'pending',
                 ],
@@ -51,7 +86,7 @@ class PaymentController extends Controller
                     'payment_method_id' => $request->payment_method_id,
                     'amount' => $course->price,
                     'sender_number' => $request->sender_number,
-                    'transaction_id' => $request->transaction_id,
+                    'transaction_id' => $cleanTrx,
                 ]
             );
         });
@@ -63,26 +98,45 @@ class PaymentController extends Controller
     {
         abort_if(!$course->is_published, 404);
 
+        if (!$course->isRegistrationOpen()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Registration for this course is currently closed.',
+            ], 422);
+        }
+
         \App\Support\DatabaseSchemaRepair::ensureSchema();
 
         // Autofill name, email, and phone from authenticated user if omitted in request
         if (Auth::check()) {
-            if (empty($request->email) && !empty(Auth::user()->email)) {
-                $request->merge(['email' => Auth::user()->email]);
+            $authUser = Auth::user();
+            if (empty($request->email) && !empty($authUser->email)) {
+                $request->merge(['email' => $authUser->email]);
             }
-            if (empty($request->name) && !empty(Auth::user()->name)) {
-                $request->merge(['name' => Auth::user()->name]);
+            if (empty($request->name) && !empty($authUser->name)) {
+                $request->merge(['name' => $authUser->name]);
             }
             if (empty($request->phone)) {
-                $fallbackPhone = !empty(Auth::user()->phone) ? Auth::user()->phone : $request->sender_number;
+                $fallbackPhone = $authUser->effective_phone ?: ($request->sender_number ?: $authUser->last_sender_number);
                 if (!empty($fallbackPhone)) {
-                    $request->merge(['phone' => preg_replace('/[^0-9]/', '', (string) $fallbackPhone)]);
+                    $request->merge(['phone' => User::normalizeBdPhone((string) $fallbackPhone)]);
+                }
+            }
+            if (empty($request->sender_number)) {
+                $fallbackSender = $request->phone ?: $authUser->last_sender_number;
+                if (!empty($fallbackSender)) {
+                    $request->merge(['sender_number' => User::normalizeBdPhone((string) $fallbackSender)]);
                 }
             }
         }
 
-        if (empty($request->sender_number) && !empty($request->phone)) {
-            $request->merge(['sender_number' => preg_replace('/[^0-9]/', '', (string) $request->phone)]);
+        if ($request->filled('phone')) {
+            $request->merge(['phone' => User::normalizeBdPhone((string) $request->phone)]);
+        }
+        if ($request->filled('sender_number')) {
+            $request->merge(['sender_number' => User::normalizeBdPhone((string) $request->sender_number)]);
+        } elseif (!empty($request->phone)) {
+            $request->merge(['sender_number' => User::normalizeBdPhone((string) $request->phone)]);
         }
 
         $isPaidCourse = (float) $course->price > 0;
@@ -169,7 +223,7 @@ class PaymentController extends Controller
 
         // Resolve or create student user (fallback to auto-generated email if not provided)
         $user = Auth::user();
-        $cleanPhone = preg_replace('/[^0-9]/', '', (string) $request->phone);
+        $cleanPhone = User::normalizeBdPhone((string) $request->phone);
         $rawPassword = $request->filled('password')
             ? (string) $request->password
             : substr($cleanPhone, -4);
@@ -223,10 +277,13 @@ class PaymentController extends Controller
                 }
             }
         } else {
-            // Authenticated user: sync phone number & preferences if missing on profile
+            // Authenticated user: sync phone number & preferences if missing or updated on profile
             $updates = [];
-            if (empty($user->phone) && !empty($cleanPhone)) {
-                $updates['phone'] = $cleanPhone;
+            if (!empty($cleanPhone) && $user->phone !== $cleanPhone) {
+                $phoneTaken = User::where('phone', $cleanPhone)->where('id', '!=', $user->id)->exists();
+                if (!$phoneTaken) {
+                    $updates['phone'] = $cleanPhone;
+                }
             }
             if ($user->preferences === null) {
                 $updates['preferences'] = [
@@ -237,6 +294,44 @@ class PaymentController extends Controller
             }
             if (!empty($updates)) {
                 $user->update($updates);
+            }
+        }
+
+        // Prevent duplicate enrollment for users who are already enrolled in this course
+        if ($user && !$user->isAdmin() && $user->enrolledCourses()->where('courses.id', $course->id)->exists()) {
+            $alreadyMsg = 'You are already enrolled in this course. Please go to your classroom dashboard.';
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'status' => 'already_enrolled',
+                    'message' => $alreadyMsg,
+                    'redirect_url' => route('courses.show', $course),
+                ], 422);
+            }
+            return redirect()->route('courses.show', $course)->with('info', $alreadyMsg);
+        }
+
+        // Prevent duplicate Transaction ID reuse across verified or other payments
+        if ($isPaidCourse) {
+            $cleanTrx = trim((string) $request->transaction_id);
+            $duplicateTrx = Payment::where('transaction_id', $cleanTrx)
+                ->where(function ($q) use ($user, $course) {
+                    $q->where('user_id', '!=', $user->id)
+                      ->orWhere('course_id', '!=', $course->id)
+                      ->orWhere('status', 'verified');
+                })
+                ->exists();
+
+            if ($duplicateTrx) {
+                $trxMsg = 'This Transaction ID (TrxID) has already been used. Please enter a valid Transaction ID.';
+                if ($request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $trxMsg,
+                        'errors' => ['transaction_id' => [$trxMsg]],
+                    ], 422);
+                }
+                return back()->withErrors(['transaction_id' => $trxMsg])->withInput();
             }
         }
 

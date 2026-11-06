@@ -61,9 +61,11 @@ class CourseController extends Controller
             'enrollment_template' => 'nullable|string',
             'counselor_phone' => 'nullable|string|max:50',
             'whatsapp_message' => 'nullable|string|max:1000',
+            'registration_status' => 'nullable|in:open,auto,closed',
         ]);
         
         $data['is_published'] = $request->has('is_published');
+        $data['registration_status'] = $request->input('registration_status', 'open') ?: 'open';
         $data['certificate_enabled'] = $request->boolean('certificate_enabled');
         $data['show_batch'] = $request->boolean('show_batch');
         $data['batch'] = $request->input('batch');
@@ -228,13 +230,14 @@ class CourseController extends Controller
             'enrollment_template' => 'sometimes|nullable|string',
             'counselor_phone' => 'sometimes|nullable|string|max:50',
             'whatsapp_message' => 'sometimes|nullable|string|max:1000',
+            'registration_status' => 'sometimes|nullable|in:open,auto,closed',
         ]);
 
         $data = [];
         $scalarFields = [
             'title', 'description', 'short_description', 'duration', 'start_date',
             'venue', 'target_audience', 'level', 'category', 'batch',
-            'counselor_phone', 'whatsapp_message',
+            'counselor_phone', 'whatsapp_message', 'registration_status',
         ];
 
         foreach ($scalarFields as $field) {

@@ -69,6 +69,10 @@ class CourseController extends Controller
     public function enroll(Request $request, Course $course)
     {
         abort_if(!$course->is_published, 404);
+
+        if (!$course->isRegistrationOpen()) {
+            return back()->with('error', 'Registration for this course is currently closed.');
+        }
         
         if (!auth()->check()) {
             session()->put('url.intended', route('courses.show', $course));

@@ -130,7 +130,8 @@
 @php
     $allCourseLessons = $course->sections->flatMap->lessons;
     $resumeLesson = $allCourseLessons->first(fn($l) => !in_array($l->id, $completedLessonIds)) ?? $allCourseLessons->first();
-    $canShowEnrollCta = !$isEnrolled || (auth()->check() && auth()->user()->isAdmin());
+    $isRegistrationOpen = $course->isRegistrationOpen();
+    $canShowEnrollCta = $isRegistrationOpen && (!$isEnrolled || (auth()->check() && auth()->user()->isAdmin()));
 @endphp
 <div class="relative bg-gradient-to-b from-[#eef4fb] via-[#f5f8fc] to-[#eef2f9] min-h-screen pb-20 overflow-hidden">
     <!-- Ambient Liquid Glass Glow Orbs -->
@@ -715,40 +716,47 @@
                         <!-- Action Buttons -->
                         @if(!$isEnrolled)
                             <div class="space-y-2.5">
-                                <!-- Form Submit Button (Required by Cypress) -->
-                                <form 
-                                    id="enroll-card"
-                                    method="POST" 
-                                    action="{{ route('courses.enroll', $course) }}"
-                                >
-                                    @csrf
-                                    <button 
-                                        type="submit" 
-                                        class="w-full py-3 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-xl text-sm transition-colors shadow-sm"
+                                @if($isRegistrationOpen)
+                                    <!-- Form Submit Button (Required by Cypress) -->
+                                    <form 
+                                        id="enroll-card"
+                                        method="POST" 
+                                        action="{{ route('courses.enroll', $course) }}"
                                     >
-                                        Enroll Now
-                                    </button>
-                                </form>
+                                        @csrf
+                                        <button 
+                                            type="submit" 
+                                            class="w-full py-3 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-xl text-sm transition-colors shadow-sm"
+                                        >
+                                            Enroll Now
+                                        </button>
+                                    </form>
 
-                                <!-- Express Enroll (30 Sec) Button (Required by Cypress) -->
-                                <button 
-                                    type="button"
-                                    onclick="openEnrollDrawer({ 
-                                        id: {{ $course->id }}, 
-                                        title: '{{ addslashes($course->title) }}', 
-                                        price: '{{ number_format($course->price, 2) }}', 
-                                        rawPrice: {{ $course->price }}, 
-                                        batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                                        venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
-                                        attendanceMode: '{{ $course->attendance_mode }}',
-                                        whatsapp: '{{ $course->effective_whatsapp_number }}',
-                                        fields: {{ json_encode($course->effective_enrollment_fields) }}
-                                    })"
-                                    class="w-full py-2.5 bg-white/90 hover:bg-white text-[#051c45] border border-slate-200/90 font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
-                                >
-                                    <i class="fas fa-bolt text-[#c30102] text-xs"></i>
-                                    <span>Express Enroll (30 Sec)</span>
-                                </button>
+                                    <!-- Express Enroll (30 Sec) Button (Required by Cypress) -->
+                                    <button 
+                                        type="button"
+                                        onclick="openEnrollDrawer({ 
+                                            id: {{ $course->id }}, 
+                                            title: '{{ addslashes($course->title) }}', 
+                                            price: '{{ number_format($course->price, 2) }}', 
+                                            rawPrice: {{ $course->price }}, 
+                                            batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
+                                            venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                                            attendanceMode: '{{ $course->attendance_mode }}',
+                                            whatsapp: '{{ $course->effective_whatsapp_number }}',
+                                            fields: {{ json_encode($course->effective_enrollment_fields) }}
+                                        })"
+                                        class="w-full py-2.5 bg-white/90 hover:bg-white text-[#051c45] border border-slate-200/90 font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
+                                    >
+                                        <i class="fas fa-bolt text-[#c30102] text-xs"></i>
+                                        <span>Express Enroll (30 Sec)</span>
+                                    </button>
+                                @else
+                                    <div id="enroll-card" class="w-full py-3 bg-slate-200 text-slate-600 font-extrabold rounded-xl text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1.5">
+                                        <i class="fas fa-lock text-[11px]"></i>
+                                        <span>Registration Closed</span>
+                                    </div>
+                                @endif
 
                                 <!-- Wishlist Button (Required by Cypress) -->
                                 <button 

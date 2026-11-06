@@ -190,6 +190,17 @@
                                     @endif
                                 </form>
 
+                                <!-- 1-Click Registration Status Selector -->
+                                <form method="POST" action="{{ route('admin.courses.update', $c) }}">
+                                    @csrf
+                                    <input type="hidden" name="_section_label" value="Registration Status">
+                                    <select name="registration_status" onchange="this.form.submit()" class="text-[10px] font-bold rounded-lg px-2 py-0.5 border cursor-pointer {{ !$c->isRegistrationOpen() ? 'bg-rose-50 text-rose-700 border-rose-200' : (($c->registration_status ?? 'open') === 'auto' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-slate-50 text-slate-700 border-slate-200') }}">
+                                        <option value="open" {{ ($c->registration_status ?? 'open') === 'open' ? 'selected' : '' }}>Reg: Open</option>
+                                        <option value="auto" {{ ($c->registration_status ?? 'open') === 'auto' ? 'selected' : '' }}>Reg: Auto (Start Date)</option>
+                                        <option value="closed" {{ ($c->registration_status ?? 'open') === 'closed' ? 'selected' : '' }}>Reg: Closed</option>
+                                    </select>
+                                </form>
+
                                 <!-- 1-Click Certificate Release Toggle -->
                                 <form method="POST" action="{{ route('admin.courses.update', $c) }}">
                                     @csrf
@@ -326,10 +337,18 @@
                     </button>
 
                     <div x-show="showAdvancedCreate" x-cloak class="space-y-3.5 mt-3 pt-2">
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-3 gap-3">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Starting Date</label>
                                 <input type="date" name="start_date" class="w-full rounded-xl border-slate-300 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Registration</label>
+                                <select name="registration_status" class="w-full rounded-xl border-slate-300 text-xs font-bold">
+                                    <option value="open">Open</option>
+                                    <option value="auto">Auto-Close on Start Date</option>
+                                    <option value="closed">Closed</option>
+                                </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Duration</label>

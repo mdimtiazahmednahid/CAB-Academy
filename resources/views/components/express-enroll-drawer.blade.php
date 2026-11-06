@@ -13,6 +13,17 @@
     if (strlen($drawerWaDigits) === 11 && str_starts_with($drawerWaDigits, '01')) {
         $drawerWaDigits = '88' . $drawerWaDigits;
     }
+
+    $drawerAuthUser = auth()->user();
+    $drawerSavedPhone = $drawerAuthUser ? $drawerAuthUser->effective_phone : '';
+    $drawerSavedSender = $drawerAuthUser ? $drawerAuthUser->last_sender_number : '';
+    $drawerSavedCustomFields = $drawerAuthUser ? $drawerAuthUser->saved_enrollment_fields : [];
+    $drawerEnrolledCourseIds = ($drawerAuthUser && !$drawerAuthUser->isAdmin())
+        ? $drawerAuthUser->enrolledCourses()->pluck('courses.id')->map(fn ($id) => (int) $id)->values()->all()
+        : [];
+    $drawerPendingMap = ($drawerAuthUser && !$drawerAuthUser->isAdmin())
+        ? $drawerAuthUser->payments()->where('status', 'pending')->get()->mapWithKeys(fn ($p) => [(int) $p->course_id => ($p->transaction_id ?: 'PENDING')])->all()
+        : [];
 @endphp
 <script>
 (function() {
@@ -38,20 +49,36 @@
             copied: false,
             
             isLoggedIn: {{ auth()->check() ? 'true' : 'false' }},
-            hasSavedPhone: {{ (auth()->check() && preg_match('/^01[3-9]\d{8}$/', preg_replace('/[^0-9]/', '', (string) (auth()->user()->phone ?? '')))) ? 'true' : 'false' }},
-            name: '{{ auth()->check() ? addslashes(auth()->user()->name) : '' }}',
-            phone: '{{ auth()->check() ? addslashes(auth()->user()->phone ?? '') : '' }}',
-            email: '{{ auth()->check() ? addslashes(auth()->user()->email) : '' }}',
+            hasSavedPhone: {{ (!empty($drawerSavedPhone) && preg_match('/^01[3-9]\d{8}$/', $drawerSavedPhone)) ? 'true' : 'false' }},
+            editingSavedPhone: false,
+            name: @js($drawerAuthUser ? $drawerAuthUser->name : ''),
+            phone: @js($drawerSavedPhone),
+            email: @js($drawerAuthUser ? $drawerAuthUser->email : ''),
             password: '',
             showPassword: false,
             trainingMode: 'online_zoom',
             paymentMethodId: 2,
-            senderNumber: '{{ auth()->check() ? addslashes(auth()->user()->phone ?? '') : '' }}',
+            senderNumber: @js($drawerSavedSender ?: $drawerSavedPhone),
             transactionId: '',
             fields: [],
             customFields: {},
+            savedCustomDefaults: @js($drawerSavedCustomFields),
+            enrolledCourseIds: @js($drawerEnrolledCourseIds),
+            pendingCourseMap: @js($drawerPendingMap),
+            isAlreadyEnrolled: false,
+            pendingTrxId: '',
             isEmailEnabled: true,
             isEmailRequired: true,
+
+            normalizeBdPhone(raw) {
+                let digits = (raw || '').toString().replace(/[^0-9]/g, '');
+                if (digits.length === 13 && digits.startsWith('8801')) {
+                    digits = digits.substring(2);
+                } else if (digits.length === 10 && /^1[3-9]\d{8}$/.test(digits)) {
+                    digits = '0' + digits;
+                }
+                return digits;
+            },
 
             resolveAttendanceMode(venueStr, explicitMode) {
                 if (explicitMode && ['online', 'in_person', 'hybrid'].includes(explicitMode)) {
@@ -103,13 +130,17 @@
                     this.isEmailRequired = true;
                 }
 
-                // Initialize custom fields state
+                // Initialize custom fields state with smart autofill from previous enrollments
                 this.customFields = {};
                 this.fields.forEach(f => {
                     if (!['name', 'phone', 'email', 'training_mode'].includes(f.name)) {
-                        this.customFields[f.name] = '';
+                        this.customFields[f.name] = (this.savedCustomDefaults && this.savedCustomDefaults[f.name]) ? this.savedCustomDefaults[f.name] : '';
                     }
                 });
+
+                this.isAlreadyEnrolled = Array.isArray(this.enrolledCourseIds) && this.enrolledCourseIds.includes(Number(this.courseId));
+                this.pendingTrxId = (this.pendingCourseMap && this.pendingCourseMap[Number(this.courseId)]) ? this.pendingCourseMap[Number(this.courseId)] : '';
+                this.editingSavedPhone = !this.hasSavedPhone;
 
                 this.step = 1;
                 this.isSuccess = false;
@@ -167,11 +198,12 @@
 
                 // Resolve phone from profile/input or senderNumber for logged-in users
                 let candidatePhone = this.phone || (this.isLoggedIn ? this.senderNumber : '');
-                const cleanPhone = (candidatePhone || '').replace(/[^0-9]/g, '');
+                const cleanPhone = this.normalizeBdPhone(candidatePhone);
                 if (!cleanPhone || !/^01[3-9]\d{8}$/.test(cleanPhone)) {
                     this.errorMessage = 'Please enter a valid 11-digit mobile number (e.g., 017xxxxxxxx).';
                     return;
                 }
+                this.phone = cleanPhone;
 
                 // Validate email if guest and enabled + required
                 if (!this.isLoggedIn && this.isEmailEnabled && this.isEmailRequired) {
@@ -201,12 +233,13 @@
                 }
 
                 // Strict payment validation for paid courses (courseRawPrice > 0)
-                const cleanSender = ((this.senderNumber || '').trim() || cleanPhone).replace(/[^0-9]/g, '');
+                const cleanSender = this.normalizeBdPhone((this.senderNumber || '').trim() || cleanPhone);
                 if (this.courseRawPrice > 0) {
                     if (!cleanSender || !/^01[3-9]\d{8}$/.test(cleanSender)) {
                         this.errorMessage = 'Please enter the 11-digit Sender Mobile Number used for payment.';
                         return;
                     }
+                    this.senderNumber = cleanSender;
                     const cleanTrx = (this.transactionId || '').trim();
                     if (!cleanTrx || cleanTrx.length < 4 || ['RESERVED-OFFLINE', 'FREE'].includes(cleanTrx.toUpperCase())) {
                         this.errorMessage = 'Payment is required for this course. Please enter your valid bKash/Nagad Transaction ID (TrxID).';
@@ -245,6 +278,12 @@
                     const data = await response.json();
 
                     if (!response.ok) {
+                        if (data && data.status === 'already_enrolled') {
+                            this.isAlreadyEnrolled = true;
+                            if (!this.enrolledCourseIds.includes(Number(this.courseId))) {
+                                this.enrolledCourseIds.push(Number(this.courseId));
+                            }
+                        }
                         throw new Error(data.message || 'Enrollment failed. Please check your information.');
                     }
 
@@ -430,9 +469,48 @@
                 </div>
             </div>
 
+            <!-- ALREADY ENROLLED STATE -->
+            <div x-show="!isSuccess && isAlreadyEnrolled" class="text-center py-6 space-y-4 bg-white rounded-2xl p-5 border border-emerald-200 shadow-xs" style="display: none;">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center text-2xl mx-auto">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div>
+                    <h4 class="text-lg font-black text-[#051c45]">Already Enrolled</h4>
+                    <p class="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed mt-1">
+                        Your account is already enrolled in this course. No additional registration or payment is required.
+                    </p>
+                </div>
+                <div class="pt-2 flex flex-col gap-2">
+                    <a 
+                        :href="'/courses/' + courseId" 
+                        class="btn-ipdp-primary w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-center shadow-md"
+                    >
+                        Continue to Classroom →
+                    </a>
+                    <button 
+                        type="button"
+                        @click="close()" 
+                        class="text-xs font-semibold text-slate-500 hover:text-slate-800 py-1 cursor-pointer"
+                    >
+                        Close Window
+                    </button>
+                </div>
+            </div>
+
             <!-- ENROLLMENT FORM STATE -->
-            <div x-show="!isSuccess" class="space-y-4">
+            <div x-show="!isSuccess && !isAlreadyEnrolled" class="space-y-4">
                 
+                <!-- Pending Payment Verification Banner -->
+                <template x-if="pendingTrxId">
+                    <div class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-start gap-2.5">
+                        <i class="fas fa-clock text-amber-600 text-sm mt-0.5 shrink-0"></i>
+                        <div>
+                            <p class="font-bold">Payment Pending Verification (TrxID: <span class="font-mono" x-text="pendingTrxId"></span>)</p>
+                            <p class="text-[11px] text-amber-800 mt-0.5">Your seat reservation is already awaiting verification. Only submit below if you need to correct your TrxID.</p>
+                        </div>
+                    </div>
+                </template>
+
                 <!-- Step 1 Card: Student Information & Attendance Format -->
                 <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_2px_12px_rgba(5,28,69,0.04)] space-y-3.5">
                     <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
@@ -443,7 +521,7 @@
                         <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-500" x-text="courseRawPrice > 0 ? 'Step 1 of 2' : 'Step 1 of 1 • Free Admission'"></span>
                     </div>
 
-                    <!-- Logged-in Student Verified Profile Summary (No need to re-type Name, Email, or Password) -->
+                    <!-- Logged-in Student Verified Profile Summary (Editable Autofill) -->
                     <template x-if="isLoggedIn">
                         <div class="space-y-3">
                             <div class="p-3.5 rounded-xl bg-gradient-to-br from-[#051c45]/[0.04] to-emerald-500/[0.06] border border-[#051c45]/15 flex items-center justify-between gap-3">
@@ -459,19 +537,25 @@
                                             </span>
                                         </div>
                                         <p class="text-[11px] text-slate-500 truncate mt-0.5" x-text="email"></p>
-                                        <template x-if="hasSavedPhone">
-                                            <p class="text-[10px] font-mono font-bold text-slate-600 mt-0.5">
-                                                <i class="fas fa-mobile-alt text-[#10b981] mr-1"></i><span x-text="phone"></span>
+                                        <template x-if="phone && !editingSavedPhone">
+                                            <p class="text-[10px] font-mono font-bold text-slate-600 mt-0.5 flex items-center gap-1.5">
+                                                <span><i class="fas fa-mobile-alt text-[#10b981] mr-1"></i><span x-text="phone"></span></span>
+                                                <button type="button" @click="editingSavedPhone = true" class="text-[10px] font-sans font-bold text-[#c30102] hover:underline cursor-pointer">Edit</button>
                                             </p>
                                         </template>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Only ask for Mobile Number if not yet saved on the logged-in user's profile -->
-                            <template x-if="!hasSavedPhone">
+                            <!-- Editable Mobile Number Input (Shown if editing or if no saved phone) -->
+                            <template x-if="!phone || editingSavedPhone">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Number (11 Digits) <span class="text-[#c30102]">*</span></label>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-xs font-bold text-slate-700">Mobile Number (11 Digits) <span class="text-[#c30102]">*</span></label>
+                                        <template x-if="hasSavedPhone">
+                                            <button type="button" @click="editingSavedPhone = false" class="text-[10px] font-bold text-slate-500 hover:text-slate-800 cursor-pointer">Done</button>
+                                        </template>
+                                    </div>
                                     <div class="relative">
                                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
                                             <i class="fas fa-mobile-alt text-xs"></i>
@@ -828,7 +912,7 @@
         </div>
 
         <!-- 3. Drawer Footer Actions -->
-        <div x-show="!isSuccess" class="px-6 py-4 bg-white border-t border-slate-200/90 shrink-0 shadow-[0_-8px_24px_rgba(5,28,69,0.04)]">
+        <div x-show="!isSuccess && !isAlreadyEnrolled" class="px-6 py-4 bg-white border-t border-slate-200/90 shrink-0 shadow-[0_-8px_24px_rgba(5,28,69,0.04)]">
             <button 
                 type="button" 
                 @click="submitEnrollment()" 

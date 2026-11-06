@@ -9,7 +9,7 @@
     $pendingCoursePayments = $course->payments->where('status', 'pending')->count();
 @endphp
 
-<div x-data="{ wsTab: 'all', editingTitle: false, titleDraft: @js($course->title), editingPrice: false, priceDraft: @js($course->price) }">
+<div x-data="{ wsTab: 'all', editingTitle: false, titleDraft: @js($course->title), editingPrice: false, priceDraft: @js($course->price), showQuizzes: false, showMaterials: false, showStudents: false, showPayments: false }">
 <div class="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     <div class="flex items-center gap-3 flex-wrap flex-1 min-w-0">
         <a href="{{ route('admin.courses') }}" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-[#051c45] hover:border-[#051c45] flex items-center justify-center transition-colors shadow-xs shrink-0">
@@ -65,6 +65,17 @@
                             <span>Draft (Click to Publish)</span>
                         </button>
                     @endif
+                </form>
+
+                <!-- 1-Click Registration Status Selector -->
+                <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="inline-block">
+                    @csrf
+                    <input type="hidden" name="_section_label" value="Registration Status">
+                    <select name="registration_status" onchange="this.form.submit()" class="px-2.5 py-1 rounded-full text-xs font-bold border cursor-pointer {{ !$course->isRegistrationOpen() ? 'bg-rose-50 text-rose-700 border-rose-200' : (($course->registration_status ?? 'open') === 'auto' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200') }}">
+                        <option value="open" {{ ($course->registration_status ?? 'open') === 'open' ? 'selected' : '' }}>Registration: Open</option>
+                        <option value="auto" {{ ($course->registration_status ?? 'open') === 'auto' ? 'selected' : '' }}>Registration: Auto-Close on Start Date</option>
+                        <option value="closed" {{ ($course->registration_status ?? 'open') === 'closed' ? 'selected' : '' }}>Registration: Closed</option>
+                    </select>
                 </form>
 
                 <!-- 1-Click Certificates Toggle (Saves ONLY Certificate Release Status) -->
@@ -163,13 +174,13 @@
     <button type="button" @click="wsTab = 'curriculum'" :class="wsTab === 'curriculum' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
         Curriculum & Quizzes ({{ $course->sections->count() }})
     </button>
-    <button type="button" @click="wsTab = 'students'" :class="wsTab === 'students' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+    <button type="button" @click="wsTab = 'students'; showStudents = true" :class="wsTab === 'students' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
         Enrolled Students ({{ $course->students->count() }})
     </button>
-    <button type="button" @click="wsTab = 'payments'" :class="wsTab === 'payments' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+    <button type="button" @click="wsTab = 'payments'; showPayments = true" :class="wsTab === 'payments' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
         Payments ({{ $course->payments->count() }})
     </button>
-    <button type="button" @click="wsTab = 'form'" :class="wsTab === 'form' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+    <button type="button" @click="wsTab = 'form'; $dispatch('expand-form-studio')" :class="wsTab === 'form' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
         Registration Form Builder
     </button>
 </div>
@@ -495,10 +506,11 @@
 <div id="formBuilderCard" 
      x-show="wsTab === 'all' || wsTab === 'form'"
      x-data="courseFormBuilder(window.__courseFormBuilderConfig)" 
+     @expand-form-studio.window="isCollapsed = false"
      class="mb-8 bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
      
-    <!-- Studio Header -->
-    <div class="p-5 sm:p-6 bg-gradient-to-r from-[#020b18] via-[#051c45] to-[#0a2540] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative overflow-hidden">
+    <!-- Studio Header (Click to Expand / Collapse) -->
+    <div @click="isCollapsed = !isCollapsed" class="p-5 sm:p-6 bg-gradient-to-r from-[#020b18] via-[#051c45] to-[#0a2540] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative overflow-hidden cursor-pointer select-none">
         <div class="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-indigo-500/15 blur-3xl"></div>
         <div class="relative z-10">
             <div class="flex items-center gap-2 flex-wrap">
@@ -528,7 +540,7 @@
             </p>
         </div>
 
-        <div class="relative z-10 flex items-center gap-2.5 flex-wrap shrink-0">
+        <div class="relative z-10 flex items-center gap-2.5 flex-wrap shrink-0" @click.stop>
             <a href="{{ route('admin.courses.export_registrations', $course) }}" class="px-3.5 py-2 rounded-xl text-xs font-bold border border-white/20 bg-white/10 hover:bg-white/20 text-white transition-all flex items-center gap-1.5" title="Download all student registrations & custom question answers as CSV">
                 <i class="fas fa-file-csv text-emerald-400"></i>
                 <span>Export Responses CSV</span>
@@ -563,7 +575,7 @@
     </div>
 
     <!-- Collapsible Studio Workspace -->
-    <div x-show="!isCollapsed" x-transition>
+    <div x-show="!isCollapsed" x-cloak x-transition>
         <!-- 1. 1-Click Conversion Templates Bar (6 Presets) -->
         <div class="p-4 sm:p-5 bg-slate-50/90 border-b border-slate-200/80">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
@@ -1044,7 +1056,7 @@ function courseFormBuilder(config) {
         isOnlineOnly: !!config.isOnlineOnly,
         isCampusOnly: !!config.isCampusOnly,
         currentTemplateKey: '',
-        isCollapsed: false,
+        isCollapsed: true,
         previewAsLoggedIn: false,
         simValues: {},
         isSaving: false,
@@ -1385,253 +1397,299 @@ function courseFormBuilder(config) {
         </div>
     @endforelse
 
-    <!-- Quizzes List -->
-    <h2 class="text-xl font-bold mt-8 mb-4 border-t pt-8 border-gray-200">Course Quizzes</h2>
-    @forelse($course->quizzes as $quiz)
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-4">
-            <div class="px-6 py-4 bg-slate-50 flex justify-between items-center">
-                <h3 class="font-bold text-gray-900 text-lg flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#051c45]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ $quiz->title }}
-                </h3>
-                <div class="flex items-center gap-3">
-                    @if($quiz->is_published)
-                        <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-medium">Published</span>
-                    @else
-                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">Draft</span>
-                    @endif
-                    <a href="{{ route('admin.quizzes.show', [$course, $quiz]) }}" class="text-sm font-semibold text-[#051c45] hover:underline">Manage Questions →</a>
-                    <form method="POST" action="{{ route('admin.courses.quizzes.destroy', [$course, $quiz]) }}" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" onclick="return confirm('Delete this quiz?')" class="text-sm font-medium text-red-500 hover:text-red-700 ml-2">Delete</button>
-                    </form>
-                </div>
+    <!-- Quizzes List (Collapsible by default on All tab) -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden mt-6">
+        <div @click="showQuizzes = !showQuizzes" class="px-5 py-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
+            <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-[#051c45]/10 text-[#051c45] flex items-center justify-center text-xs">
+                    <i class="fas fa-clipboard-question"></i>
+                </span>
+                <h2 class="text-sm font-extrabold text-[#051c45]">Course Quizzes</h2>
+                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full text-[11px] font-bold">{{ $course->quizzes->count() }}</span>
             </div>
-            @if($quiz->description)
-                <div class="px-6 py-3 text-sm text-gray-600 border-t border-slate-100 bg-white">
-                    {{ $quiz->description }}
+            <button type="button" class="text-xs font-bold text-slate-500 hover:text-[#051c45] inline-flex items-center gap-1.5">
+                <span x-text="showQuizzes ? 'Collapse' : 'Expand'"></span>
+                <i class="fas text-[10px]" :class="showQuizzes ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+            </button>
+        </div>
+
+        <div x-show="showQuizzes" x-cloak x-transition class="p-4 pt-2 border-t border-slate-100 space-y-3">
+            @forelse($course->quizzes as $quiz)
+                <div class="bg-slate-50/70 rounded-xl border border-slate-200/80 overflow-hidden">
+                    <div class="px-4 py-3 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">
+                            {{ $quiz->title }}
+                        </h3>
+                        <div class="flex items-center gap-3">
+                            @if($quiz->is_published)
+                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[11px] font-bold">Published</span>
+                            @else
+                                <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-[11px] font-bold">Draft</span>
+                            @endif
+                            <a href="{{ route('admin.quizzes.show', [$course, $quiz]) }}" class="text-xs font-bold text-[#051c45] hover:underline">Manage Questions →</a>
+                            <form method="POST" action="{{ route('admin.courses.quizzes.destroy', [$course, $quiz]) }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" onclick="return confirm('Delete this quiz?')" class="text-xs font-bold text-red-500 hover:text-red-700 ml-2">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    @if($quiz->description)
+                        <div class="px-4 py-2 text-xs text-gray-600 border-t border-slate-100 bg-white">
+                            {{ $quiz->description }}
+                        </div>
+                    @endif
                 </div>
-            @endif
+            @empty
+                <div class="p-4 text-center text-gray-400 text-xs">
+                    No quizzes added yet.
+                </div>
+            @endforelse
         </div>
-    @empty
-        <div class="bg-white rounded-2xl border border-gray-100 p-8 text-center text-gray-500 text-sm">
-            No quizzes added yet.
-        </div>
-    @endforelse
+    </div>
 </div>
 
-<!-- Course Materials -->
-<div class="mb-8" x-show="wsTab === 'all' || wsTab === 'curriculum'">
-    <div class="flex justify-between items-center mb-4 border-t pt-8 border-gray-200">
-        <h2 class="text-xl font-bold text-gray-900">Course Materials</h2>
-        <button onclick="document.getElementById('addMaterialModal').classList.remove('hidden')" class="px-4 py-2 bg-slate-100 text-[#051c45] rounded-lg font-medium hover:bg-slate-200 transition-colors">
-            + Add Material
-        </button>
-    </div>
+<!-- Course Materials (Collapsible by default on All tab) -->
+<div class="mb-4 mt-4" x-show="wsTab === 'all' || wsTab === 'curriculum'">
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div @click="showMaterials = !showMaterials" class="px-5 py-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
+            <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                    <i class="fas fa-folder-open"></i>
+                </span>
+                <h2 class="text-sm font-extrabold text-[#051c45]">Course Materials</h2>
+                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full text-[11px] font-bold">{{ $course->materials->count() }}</span>
+            </div>
+            <div class="flex items-center gap-2" @click.stop>
+                <button onclick="document.getElementById('addMaterialModal').classList.remove('hidden')" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-[#051c45] rounded-lg text-xs font-bold transition-colors">
+                    + Add Material
+                </button>
+                <button type="button" @click="showMaterials = !showMaterials" class="text-xs font-bold text-slate-500 hover:text-[#051c45] inline-flex items-center gap-1.5 px-2 py-1">
+                    <span x-text="showMaterials ? 'Collapse' : 'Expand'"></span>
+                    <i class="fas text-[10px]" :class="showMaterials ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                </button>
+            </div>
+        </div>
 
-    <div class="space-y-4">
-        @forelse($course->materials as $material)
-            <div class="bg-white rounded-2xl border border-gray-100 p-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-slate-100 text-[#051c45] flex items-center justify-center shrink-0">
-                        @if($material->type === 'pdf')
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                        @elseif($material->type === 'zip')
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+        <div x-show="showMaterials" x-cloak x-transition class="p-4 pt-2 border-t border-slate-100 space-y-2.5">
+            @forelse($course->materials as $material)
+                <div class="bg-slate-50/70 rounded-xl border border-slate-200/70 p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-[#051c45] flex items-center justify-center shrink-0 text-xs">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xs text-gray-900">{{ $material->title }}</h4>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-wide">{{ $material->type }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        @if($material->type === 'link')
+                            <a href="{{ $material->external_link }}" target="_blank" class="text-[#051c45] hover:underline text-xs font-bold">View</a>
                         @else
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            <a href="{{ storage_asset($material->file_path) }}" target="_blank" class="text-[#051c45] hover:underline text-xs font-bold">Download</a>
                         @endif
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-gray-900">{{ $material->title }}</h4>
-                        <p class="text-xs text-gray-500 uppercase tracking-wide">{{ $material->type }}</p>
+                        <form method="POST" action="{{ route('admin.courses.materials.destroy', [$course, $material]) }}" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" onclick="return confirm('Delete this material?')" class="text-red-500 hover:text-red-700 text-xs font-bold">Delete</button>
+                        </form>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    @if($material->type === 'link')
-                        <a href="{{ $material->external_link }}" target="_blank" class="text-[#051c45] hover:underline text-sm font-semibold">View</a>
-                    @else
-                        <a href="{{ storage_asset($material->file_path) }}" target="_blank" class="text-[#051c45] hover:underline text-sm font-semibold">Download</a>
-                    @endif
-                    <form method="POST" action="{{ route('admin.courses.materials.destroy', [$course, $material]) }}" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" onclick="return confirm('Delete this material?')" class="text-red-500 hover:text-red-700 text-sm font-medium">Delete</button>
-                    </form>
+            @empty
+                <div class="p-4 text-center text-gray-400 text-xs">
+                    No materials attached to this course.
                 </div>
-            </div>
-        @empty
-            <div class="bg-white rounded-2xl border border-gray-100 p-8 text-center text-gray-500 text-sm">
-                No materials attached to this course.
-            </div>
-        @endforelse
+            @endforelse
+        </div>
     </div>
 </div>
 
-<!-- Enrolled Students -->
-<div class="mb-8" x-show="wsTab === 'all' || wsTab === 'students'">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-gray-900">Enrolled Students</h2>
-        <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">{{ $course->students->count() }} Total</span>
-    </div>
-    
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wide border-b border-gray-100">
-                    <tr>
-                        <th class="px-6 py-4 font-medium">Student</th>
-                        <th class="px-6 py-4 font-medium">Email Status</th>
-                        <th class="px-6 py-4 font-medium">Enrolled On</th>
-                        <th class="px-6 py-4 font-medium text-right">Certificate Status & Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($course->students as $student)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    @if($student->hasCustomProfilePicture())
-                                        <img src="{{ $student->profile_picture_url }}" alt="{{ $student->name }}" class="w-8 h-8 rounded-full object-cover mr-3 shrink-0 border border-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($student->name) }}&background=051c45&color=fff';">
+<!-- Enrolled Students (Collapsible by default on All tab, auto-expanded on Students tab) -->
+<div class="mb-4" x-show="wsTab === 'all' || wsTab === 'students'">
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div @click="showStudents = !showStudents" class="px-5 py-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
+            <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                    <i class="fas fa-users"></i>
+                </span>
+                <h2 class="text-sm font-extrabold text-[#051c45]">Enrolled Students</h2>
+                <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 rounded-full text-[11px] font-bold">{{ $course->students->count() }} Total</span>
+            </div>
+            <button type="button" class="text-xs font-bold text-slate-500 hover:text-[#051c45] inline-flex items-center gap-1.5">
+                <span x-text="(showStudents || wsTab === 'students') ? 'Collapse' : 'Expand'"></span>
+                <i class="fas text-[10px]" :class="(showStudents || wsTab === 'students') ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+            </button>
+        </div>
+
+        <div x-show="showStudents || wsTab === 'students'" x-cloak x-transition class="border-t border-slate-100">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100">
+                        <tr>
+                            <th class="px-5 py-3 font-extrabold">Student</th>
+                            <th class="px-5 py-3 font-extrabold">Email Status</th>
+                            <th class="px-5 py-3 font-extrabold">Enrolled On</th>
+                            <th class="px-5 py-3 font-extrabold text-right">Certificate Status & Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-xs">
+                        @forelse($course->students as $student)
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                <td class="px-5 py-3">
+                                    <div class="flex items-center">
+                                        @if($student->hasCustomProfilePicture())
+                                            <img src="{{ $student->profile_picture_url }}" alt="{{ $student->name }}" class="w-7 h-7 rounded-full object-cover mr-2.5 shrink-0 border border-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($student->name) }}&background=051c45&color=fff';">
+                                        @else
+                                            <div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mr-2.5 shrink-0 text-[11px]">
+                                                {{ substr($student->name, 0, 1) }}
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <div class="font-bold text-gray-900">{{ $student->name }}</div>
+                                            <div class="text-[11px] text-gray-500">{{ $student->email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-3">
+                                    @if($student->email_verified_at)
+                                        <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[11px] font-bold">Verified</span>
                                     @else
-                                        <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mr-3 shrink-0">
-                                            {{ substr($student->name, 0, 1) }}
+                                        <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded text-[11px] font-bold">Unverified</span>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-3 text-xs text-gray-500">
+                                    {{ $student->pivot->created_at->format('M d, Y') }}
+                                </td>
+                                <td class="px-5 py-3 text-right">
+                                    @php
+                                        $studentCert = $course->certificates->firstWhere('user_id', $student->id);
+                                    @endphp
+                                    @if($studentCert)
+                                        <div class="inline-flex items-center gap-2 justify-end">
+                                            <a href="{{ route('courses.certificate', $course) }}?as_user={{ $student->id }}" target="_blank" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded font-mono text-[11px] font-bold transition-colors flex items-center gap-1" title="Click to view & print certificate">
+                                                <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                {{ $studentCert->certificate_number }}
+                                            </a>
+                                            <form method="POST" action="{{ route('admin.courses.certificates.revoke', [$course, $student]) }}" class="inline" onsubmit="return confirm('Revoke certificate for {{ $student->name }}?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded text-xs transition-colors" title="Revoke Certificate">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @else
+                                        <div class="inline-flex items-center gap-2 justify-end">
+                                            @if($course->certificate_enabled)
+                                                <span class="text-[11px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Cohort Unlocked</span>
+                                            @else
+                                                <span class="text-[11px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">Pending Release</span>
+                                            @endif
+                                            <form method="POST" action="{{ route('admin.courses.certificates.issue', [$course, $student]) }}" class="inline">
+                                                @csrf
+                                                <button type="submit" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+                                                    <svg class="w-3 h-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                    Issue Cert
+                                                </button>
+                                            </form>
                                         </div>
                                     @endif
-                                    <div>
-                                        <div class="font-medium text-gray-900">{{ $student->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ $student->email }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                @if($student->email_verified_at)
-                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">Verified</span>
-                                @else
-                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs font-medium">Unverified</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-500">
-                                {{ $student->pivot->created_at->format('M d, Y') }}
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                @php
-                                    $studentCert = $course->certificates->firstWhere('user_id', $student->id);
-                                @endphp
-                                @if($studentCert)
-                                    <div class="inline-flex items-center gap-2 justify-end">
-                                        <a href="{{ route('courses.certificate', $course) }}?as_user={{ $student->id }}" target="_blank" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded font-mono text-[11px] font-bold transition-colors flex items-center gap-1" title="Click to view & print certificate">
-                                            <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            {{ $studentCert->certificate_number }}
-                                        </a>
-                                        <form method="POST" action="{{ route('admin.courses.certificates.revoke', [$course, $student]) }}" class="inline" onsubmit="return confirm('Revoke certificate for {{ $student->name }}?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded text-xs transition-colors" title="Revoke Certificate">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                @else
-                                    <div class="inline-flex items-center gap-2 justify-end">
-                                        @if($course->certificate_enabled)
-                                            <span class="text-[11px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Cohort Unlocked</span>
-                                        @else
-                                            <span class="text-[11px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">Pending Release</span>
-                                        @endif
-                                        <form method="POST" action="{{ route('admin.courses.certificates.issue', [$course, $student]) }}" class="inline">
-                                            @csrf
-                                            <button type="submit" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1">
-                                                <svg class="w-3 h-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                Issue Cert
-                                            </button>
-                                        </form>
-                                    </div>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-gray-500">
-                                No students enrolled yet.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-5 py-6 text-center text-gray-400 text-xs">
+                                    No students enrolled yet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Course Payments & Verifications -->
+<!-- Course Payments & Verifications (Collapsible by default on All tab, auto-expanded on Payments tab) -->
 <div class="mb-8" x-show="wsTab === 'all' || wsTab === 'payments'">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-gray-900">Payments & Verifications</h2>
-        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">{{ $course->payments->count() }} Payments</span>
-    </div>
-    
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-gray-50 text-gray-500 text-sm uppercase tracking-wide border-b border-gray-100">
-                    <tr>
-                        <th class="px-6 py-4 font-medium">Student</th>
-                        <th class="px-6 py-4 font-medium">Transaction Details</th>
-                        <th class="px-6 py-4 font-medium">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($course->payments as $payment)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="font-medium text-gray-900">{{ $payment->user->name }}</div>
-                                <div class="text-xs text-gray-500">{{ $payment->user->email }}</div>
-                                @if(!empty($payment->form_data) && is_array($payment->form_data))
-                                    <div class="mt-1 flex items-center gap-1.5 flex-wrap">
-                                        @foreach($payment->form_data as $fieldKey => $fieldVal)
-                                            @if(!in_array($fieldKey, ['name', 'phone', 'email', 'training_mode']) && !empty($fieldVal))
-                                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-medium" title="{{ ucfirst(str_replace('_', ' ', $fieldKey)) }}">
-                                                    <span class="text-gray-400 capitalize">{{ str_replace('_', ' ', $fieldKey) }}:</span>
-                                                    <span class="font-bold text-gray-900">{{ $fieldVal }}</span>
-                                                </span>
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                @elseif(!empty($payment->notes))
-                                    <div class="text-[10px] text-gray-500 mt-1 italic">{{ $payment->notes }}</div>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="font-bold text-gray-900">৳{{ $payment->amount }}</div>
-                                <div class="text-xs text-gray-500 mt-1">
-                                    <span class="font-semibold">{{ $payment->paymentMethod->provider_name ?? 'Unknown' }}</span> • 
-                                    Trx: <span class="font-mono text-gray-700">{{ $payment->transaction_id }}</span>
-                                </div>
-                                <div class="text-xs text-gray-500 mt-0.5">Sender: {{ $payment->sender_number }}</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <form action="{{ route('admin.payments.updateStatus', $payment) }}" method="POST" class="flex items-center gap-2">
-                                    @csrf
-                                    <select name="status" class="text-sm rounded border-gray-300 py-1 pl-2 pr-8 focus:ring-primary focus:border-primary">
-                                        <option value="pending" {{ $payment->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="processing" {{ $payment->status == 'processing' ? 'selected' : '' }}>Processing</option>
-                                        <option value="verified" {{ $payment->status == 'verified' ? 'selected' : '' }}>Verified (Enrolled)</option>
-                                        <option value="rejected" {{ $payment->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                    </select>
-                                    <button type="submit" class="px-2 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 text-xs font-medium">Update</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div @click="showPayments = !showPayments" class="px-5 py-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
+            <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </span>
+                <h2 class="text-sm font-extrabold text-[#051c45]">Payments & Verifications</h2>
+                <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-bold">{{ $course->payments->count() }} Payments</span>
+            </div>
+            <button type="button" class="text-xs font-bold text-slate-500 hover:text-[#051c45] inline-flex items-center gap-1.5">
+                <span x-text="(showPayments || wsTab === 'payments') ? 'Collapse' : 'Expand'"></span>
+                <i class="fas text-[10px]" :class="(showPayments || wsTab === 'payments') ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+            </button>
+        </div>
+
+        <div x-show="showPayments || wsTab === 'payments'" x-cloak x-transition class="border-t border-slate-100">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-100">
                         <tr>
-                            <td colspan="3" class="px-6 py-8 text-center text-gray-500">
-                                No payments recorded for this course.
-                            </td>
+                            <th class="px-5 py-3 font-extrabold">Student</th>
+                            <th class="px-5 py-3 font-extrabold">Transaction Details</th>
+                            <th class="px-5 py-3 font-extrabold">Status</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-xs">
+                        @forelse($course->payments as $payment)
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                <td class="px-5 py-3">
+                                    <div class="font-bold text-gray-900">{{ $payment->user->name }}</div>
+                                    <div class="text-[11px] text-gray-500">{{ $payment->user->email }}</div>
+                                    @if(!empty($payment->form_data) && is_array($payment->form_data))
+                                        <div class="mt-1 flex items-center gap-1.5 flex-wrap">
+                                            @foreach($payment->form_data as $fieldKey => $fieldVal)
+                                                @if(!in_array($fieldKey, ['name', 'phone', 'email', 'training_mode']) && !empty($fieldVal))
+                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-medium" title="{{ ucfirst(str_replace('_', ' ', $fieldKey)) }}">
+                                                        <span class="text-gray-400 capitalize">{{ str_replace('_', ' ', $fieldKey) }}:</span>
+                                                        <span class="font-bold text-gray-900">{{ $fieldVal }}</span>
+                                                    </span>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    @elseif(!empty($payment->notes))
+                                        <div class="text-[10px] text-gray-500 mt-1 italic">{{ $payment->notes }}</div>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-3">
+                                    <div class="font-bold text-gray-900">৳{{ $payment->amount }}</div>
+                                    <div class="text-[11px] text-gray-500 mt-0.5">
+                                        <span class="font-semibold">{{ $payment->paymentMethod->provider_name ?? 'Unknown' }}</span> • 
+                                        Trx: <span class="font-mono text-gray-700">{{ $payment->transaction_id }}</span>
+                                    </div>
+                                    <div class="text-[11px] text-gray-500 mt-0.5">Sender: {{ $payment->sender_number }}</div>
+                                </td>
+                                <td class="px-5 py-3">
+                                    <form action="{{ route('admin.payments.updateStatus', $payment) }}" method="POST" class="flex items-center gap-2">
+                                        @csrf
+                                        <select name="status" class="text-xs rounded-lg border-gray-300 py-1 pl-2 pr-7 focus:ring-primary focus:border-primary">
+                                            <option value="pending" {{ $payment->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="processing" {{ $payment->status == 'processing' ? 'selected' : '' }}>Processing</option>
+                                            <option value="verified" {{ $payment->status == 'verified' ? 'selected' : '' }}>Verified (Enrolled)</option>
+                                            <option value="rejected" {{ $payment->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                        </select>
+                                        <button type="submit" class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 text-xs font-bold">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="px-5 py-6 text-center text-gray-400 text-xs">
+                                    No payments recorded for this course.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

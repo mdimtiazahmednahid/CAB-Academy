@@ -58,62 +58,62 @@
 <body class="font-sans antialiased bg-[#f8fafc] text-gray-900 pb-28">
 
     <!-- Top Classroom Navigation -->
-    <header class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-white/10 sticky top-0 bg-[#051c45] text-white z-40 pt-safe shadow-md">
-        <div class="flex items-center min-w-0 gap-2 sm:gap-3">
-            <a href="{{ route('courses.show', $course) }}" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0" title="Back to Course Overview">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+    <header class="flex items-center justify-between px-3 sm:px-5 py-2.5 border-b border-white/10 sticky top-0 bg-[#051c45] text-white z-40 pt-safe shadow-xs">
+        <div class="flex items-center min-w-0 gap-2.5">
+            <a href="{{ route('courses.show', $course) }}" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0" title="Back to Course Overview">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
             </a>
             <div class="min-w-0">
-                <h1 class="text-sm sm:text-base font-bold text-white truncate">{{ $lesson->title }}</h1>
-                <p class="text-[11px] text-slate-300 truncate">{{ $course->title }}</p>
+                <h1 class="text-xs sm:text-sm font-bold text-white truncate">{{ $lesson->title }}</h1>
+                <p class="text-[10px] text-slate-300 truncate">{{ $course->title }}</p>
             </div>
         </div>
 
-        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 text-xs font-bold">
+        <div class="flex items-center gap-2 shrink-0">
+            <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 border border-white/15 text-[11px] font-bold">
                 <span class="text-emerald-400">{{ $coursePct }}%</span>
                 <span class="text-slate-300">({{ $doneLessons }}/{{ $totalLessons }})</span>
             </div>
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold transition-colors shadow-xs">
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold transition-colors">
                 <i class="fas fa-th-large text-[10px]"></i>
-                <span>My Dashboard</span>
+                <span>Dashboard</span>
             </a>
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="max-w-6xl mx-auto px-3 sm:px-5 lg:px-6 py-4 sm:py-5 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         <!-- Left Column: Video & Lesson Content (8 cols) -->
-        <div class="lg:col-span-8 space-y-6">
+        <div class="lg:col-span-8 space-y-4">
             @if($embedUrl)
-                <div class="w-full bg-[#020b18] rounded-2xl overflow-hidden shadow-xl border border-slate-200">
+                <div class="w-full bg-[#020b18] rounded-2xl overflow-hidden shadow-md border border-slate-200">
                     <div class="video-container">
                         <iframe src="{{ $embedUrl }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
                 </div>
             @endif
 
-            <main class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
-                <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b border-slate-100">
+            <main class="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/80 shadow-2xs">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-100">
                     <div>
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-[#c30102] block mb-1">
-                            {{ $lesson->section->title ?? 'Course Lesson' }}
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#c30102] block mb-0.5">
+                            {{ $lesson->section->title ?? 'Lesson' }}
                         </span>
-                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">{{ $lesson->title }}</h2>
+                        <h2 class="text-base sm:text-lg font-extrabold text-slate-900">{{ $lesson->title }}</h2>
                     </div>
                     @if($isCompleted)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
                             <i class="fas fa-check-circle"></i> Completed
                         </span>
                     @endif
                 </div>
                 
                 @if($lesson->content)
-                    <div class="prose prose-slate max-w-none text-slate-700 leading-relaxed text-sm sm:text-base">
+                    <div class="prose prose-slate max-w-none text-slate-700 leading-relaxed text-xs sm:text-sm">
                         {!! nl2br(e($lesson->content)) !!}
                     </div>
                 @else
                     @if(!$embedUrl)
-                        <div class="p-8 text-center text-gray-400 bg-gray-50 rounded-2xl">
+                        <div class="p-6 text-center text-gray-400 bg-gray-50 rounded-xl text-xs">
                             No content available for this lesson.
                         </div>
                     @endif
@@ -122,21 +122,21 @@
         </div>
 
         <!-- Right Column: Course Curriculum, Materials & Quizzes Sidebar (4 cols) -->
-        <aside class="lg:col-span-4 space-y-5">
+        <aside class="lg:col-span-4 space-y-4">
             <!-- Course Modules & Lessons List -->
-            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
-                <div class="p-4 sm:p-5 bg-[#051c45] text-white flex items-center justify-between">
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
+                <div class="p-3.5 bg-[#051c45] text-white flex items-center justify-between">
                     <div>
-                        <h3 class="font-bold text-sm">Course Curriculum</h3>
-                        <p class="text-[11px] text-slate-300 mt-0.5">{{ $doneLessons }} of {{ $totalLessons }} lessons completed</p>
+                        <h3 class="font-bold text-xs">Curriculum</h3>
+                        <p class="text-[10px] text-slate-300 mt-0.5">{{ $doneLessons }}/{{ $totalLessons }} completed</p>
                     </div>
-                    <span class="px-2.5 py-1 rounded-lg bg-white/10 text-xs font-extrabold text-emerald-300">{{ $coursePct }}%</span>
+                    <span class="px-2 py-0.5 rounded bg-white/10 text-[11px] font-extrabold text-emerald-300">{{ $coursePct }}%</span>
                 </div>
 
-                <div class="divide-y divide-slate-100 max-h-[420px] overflow-y-auto">
+                <div class="divide-y divide-slate-100 max-h-[380px] overflow-y-auto">
                     @foreach($course->sections as $secIdx => $sec)
-                        <div class="p-3.5 bg-slate-50/70">
-                            <div class="text-xs font-extrabold text-[#051c45] uppercase tracking-wider mb-2 px-1">
+                        <div class="p-3 bg-slate-50/70">
+                            <div class="text-[11px] font-extrabold text-[#051c45] uppercase tracking-wider mb-1.5 px-1">
                                 Module {{ $secIdx + 1 }}: {{ $sec->title }}
                             </div>
                             <div class="space-y-1">
@@ -145,7 +145,7 @@
                                         $secLessonDone = in_array($secLesson->id, $completedIds);
                                         $isCurrent = (int) $secLesson->id === (int) $lesson->id;
                                     @endphp
-                                    <a href="{{ route('lessons.show', [$course, $secLesson]) }}" class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ $isCurrent ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-700 hover:bg-white hover:shadow-2xs' }}">
+                                    <a href="{{ route('lessons.show', [$course, $secLesson]) }}" class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all {{ $isCurrent ? 'bg-[#051c45] text-white shadow-2xs' : 'text-slate-700 hover:bg-white' }}">
                                         <div class="flex items-center gap-2 min-w-0">
                                             @if($secLessonDone)
                                                 <i class="fas fa-check-circle {{ $isCurrent ? 'text-emerald-300' : 'text-emerald-600' }} shrink-0"></i>
@@ -169,13 +169,13 @@
 
             <!-- Course Materials & Quizzes Quick Access -->
             @if(($course->materials && $course->materials->count() > 0) || ($course->quizzes && $course->quizzes->count() > 0))
-                <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+                <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs space-y-3.5">
                     @if($course->materials && $course->materials->count() > 0)
                         <div>
-                            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2.5">Downloadable Resources</h4>
-                            <div class="space-y-2">
+                            <h4 class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-2">Resources</h4>
+                            <div class="space-y-1.5">
                                 @foreach($course->materials as $mat)
-                                    <a href="{{ $mat->type === 'link' ? $mat->external_link : storage_asset($mat->file_path) }}" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 text-xs font-semibold text-[#051c45] transition-colors">
+                                    <a href="{{ $mat->type === 'link' ? $mat->external_link : storage_asset($mat->file_path) }}" target="_blank" class="flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/70 text-xs font-semibold text-[#051c45] transition-colors">
                                         <span class="truncate pr-2"><i class="fas fa-file-download text-[#c30102] mr-1.5"></i>{{ $mat->title }}</span>
                                         <span class="text-[10px] font-bold text-[#c30102] shrink-0">Open &rarr;</span>
                                     </a>
@@ -186,12 +186,12 @@
 
                     @if($course->quizzes && $course->quizzes->count() > 0)
                         <div>
-                            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2.5">Course Quizzes</h4>
-                            <div class="space-y-2">
+                            <h4 class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-2">Quizzes</h4>
+                            <div class="space-y-1.5">
                                 @foreach($course->quizzes as $q)
-                                    <a href="{{ route('quizzes.show', [$course, $q]) }}" class="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 text-xs font-bold text-emerald-900 transition-colors">
+                                    <a href="{{ route('quizzes.show', [$course, $q]) }}" class="flex items-center justify-between p-2 rounded-lg bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 text-xs font-bold text-emerald-900 transition-colors">
                                         <span class="truncate pr-2"><i class="fas fa-clipboard-check text-emerald-600 mr-1.5"></i>{{ $q->title }}</span>
-                                        <span class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] shrink-0">Start Quiz</span>
+                                        <span class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] shrink-0">Start</span>
                                     </a>
                                 @endforeach
                             </div>

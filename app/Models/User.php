@@ -193,6 +193,103 @@ class User extends Authenticatable
         return $this->hasMany(Payment::class);
     }
 
+    /**
+     * Normalize Bangladeshi mobile numbers (e.g. "+8801712-345678", "8801712345678", "1712345678")
+     * into standard 11-digit "01XXXXXXXXX" format.
+     */
+    public static function normalizeBdPhone(?string $raw): string
+    {
+        $digits = preg_replace('/[^0-9]/', '', (string) $raw);
+        if (strlen($digits) === 13 && str_starts_with($digits, '8801')) {
+            $digits = substr($digits, 2);
+        } elseif (strlen($digits) === 10 && preg_match('/^1[3-9]\d{8}$/', $digits)) {
+            $digits = '0' . $digits;
+        }
+        return $digits;
+    }
+
+    /**
+     * Get the user's effective 11-digit mobile number, falling back to their latest payment/enrollment record
+     * if users.phone was empty or stored with a country prefix.
+     */
+    public function getEffectivePhoneAttribute(): string
+    {
+        $direct = self::normalizeBdPhone($this->phone);
+        if (preg_match('/^01[3-9]\d{8}$/', $direct)) {
+            return $direct;
+        }
+
+        try {
+            $recentPayments = $this->relationLoaded('payments')
+                ? $this->payments->sortByDesc('id')
+                : $this->payments()->latest('id')->limit(5)->get();
+
+            foreach ($recentPayments as $payment) {
+                $formPhone = is_array($payment->form_data) ? ($payment->form_data['phone'] ?? null) : null;
+                foreach ([$formPhone, $payment->sender_number] as $candidate) {
+                    $norm = self::normalizeBdPhone($candidate);
+                    if (preg_match('/^01[3-9]\d{8}$/', $norm)) {
+                        if (empty($this->phone)) {
+                            $this->phone = $norm;
+                            try {
+                                static::withoutEvents(fn () => $this->updateQuietly(['phone' => $norm]));
+                            } catch (\Throwable $e) {}
+                        }
+                        return $norm;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        return $direct;
+    }
+
+    /**
+     * Get the user's most recent payment sender mobile number (or effective profile phone) for editable autofill.
+     */
+    public function getLastSenderNumberAttribute(): string
+    {
+        try {
+            $recentPayments = $this->relationLoaded('payments')
+                ? $this->payments->sortByDesc('id')
+                : $this->payments()->latest('id')->limit(5)->get();
+
+            foreach ($recentPayments as $payment) {
+                $norm = self::normalizeBdPhone($payment->sender_number);
+                if (preg_match('/^01[3-9]\d{8}$/', $norm)) {
+                    return $norm;
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        return $this->effective_phone;
+    }
+
+    /**
+     * Get merged custom registration field values from previous enrollments so returning users don't re-type them.
+     */
+    public function getSavedEnrollmentFieldsAttribute(): array
+    {
+        $saved = [];
+        try {
+            $recentPayments = $this->relationLoaded('payments')
+                ? $this->payments->sortBy('id')
+                : $this->payments()->orderBy('id', 'asc')->get();
+
+            foreach ($recentPayments as $payment) {
+                if (is_array($payment->form_data)) {
+                    foreach ($payment->form_data as $k => $v) {
+                        if (!in_array($k, ['name', 'phone', 'email', 'training_mode'], true) && $v !== null && trim((string) $v) !== '') {
+                            $saved[$k] = trim((string) $v);
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        return $saved;
+    }
+
     public function wishlists()
     {
         return $this->hasMany(Wishlist::class);

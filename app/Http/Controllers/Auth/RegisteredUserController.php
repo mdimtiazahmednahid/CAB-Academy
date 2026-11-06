@@ -33,6 +33,7 @@ class RegisteredUserController extends Controller
         $validationRules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'phone' => ['nullable', 'string', 'max:25'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];
 
@@ -54,9 +55,12 @@ class RegisteredUserController extends Controller
 
         $request->validate($validationRules);
 
+        $normalizedPhone = $request->filled('phone') ? User::normalizeBdPhone($request->input('phone')) : null;
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $normalizedPhone ?: null,
             'password' => Hash::make($request->password),
             'preferences' => $request->has('preferences') ? json_encode($request->input('preferences')) : null,
         ]);

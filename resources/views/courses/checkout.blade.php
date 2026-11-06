@@ -59,7 +59,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Sender Number / Account Number</label>
-                                <input type="text" id="sender_number" name="sender_number" required class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
+                                <input type="text" id="sender_number" name="sender_number" value="{{ old('sender_number', auth()->user()?->last_sender_number) }}" required class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Transaction ID (TrxID)</label>

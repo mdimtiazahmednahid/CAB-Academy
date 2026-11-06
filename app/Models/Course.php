@@ -30,6 +30,7 @@ class Course extends Model
         'enrollment_fields',
         'counselor_phone',
         'whatsapp_message',
+        'registration_status',
         'views'
     ];
 
@@ -45,6 +46,42 @@ class Course extends Model
     public function scopePublished($query)
     {
         return $query->where('is_published', true);
+    }
+
+    /**
+     * Determine whether student registration is currently open for this course.
+     * Supports:
+     * - 'open' (default): Registration is open.
+     * - 'closed': Registration is manually closed by Admin.
+     * - 'auto': Registration automatically closes once start_date has passed.
+     */
+    public function isRegistrationOpen(): bool
+    {
+        $status = strtolower(trim((string) ($this->registration_status ?? 'open')));
+
+        if ($status === 'closed') {
+            return false;
+        }
+
+        if ($status === 'auto' && !empty($this->start_date)) {
+            try {
+                return !\Carbon\Carbon::parse($this->start_date)->endOfDay()->isPast();
+            } catch (\Throwable $e) {
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    public function getRegistrationStatusLabelAttribute(): string
+    {
+        if (!$this->isRegistrationOpen()) {
+            return 'Registration Closed';
+        }
+
+        $status = strtolower(trim((string) ($this->registration_status ?? 'open')));
+        return $status === 'auto' ? 'Auto-Close on Start Date' : 'Registration Open';
     }
 
     public function scopeByCategory($query, $category)

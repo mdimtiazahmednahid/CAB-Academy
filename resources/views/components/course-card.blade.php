@@ -170,6 +170,13 @@
         </div>
 
         <!-- 3. Bottom Conversion Zone: Schedule + Centered High-Focus "Enroll Now" Button -->
+        @php
+            $isEnrolledOnCard = auth()->check() && !auth()->user()->isAdmin() && (
+                auth()->user()->relationLoaded('enrolledCourses')
+                    ? auth()->user()->enrolledCourses->contains('id', $course->id)
+                    : auth()->user()->enrolledCourses()->where('courses.id', $course->id)->exists()
+            );
+        @endphp
         <div class="border-t border-slate-200/70 pt-2.5 mt-auto flex flex-col gap-2">
             <!-- Schedule / Start Date + Urgency Badge (Centered) -->
             <div class="flex items-center justify-center text-[11px] sm:text-xs text-slate-600 font-semibold gap-2 flex-wrap">
@@ -185,31 +192,61 @@
                         @endif
                     </span>
                 </div>
-                <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 uppercase tracking-wider">
-                    <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Seats Open</span>
-                </span>
+                @if($isEnrolledOnCard)
+                    <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 uppercase tracking-wider">
+                        <i class="fas fa-check-circle text-[8px] text-emerald-600"></i>
+                        <span>Enrolled</span>
+                    </span>
+                @elseif($course->isRegistrationOpen())
+                    <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 uppercase tracking-wider">
+                        <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>Seats Open</span>
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-1 text-[9px] font-extrabold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-300/80 uppercase tracking-wider">
+                        <i class="fas fa-lock text-[8px]"></i>
+                        <span>Registration Closed</span>
+                    </span>
+                @endif
             </div>
 
             <!-- Centered Prominent High-Conversion Action Button (46px Touch Ergonomics) -->
-            <a 
-                href="{{ route('courses.show', $course) }}" 
-                onclick="event.preventDefault(); openEnrollDrawer({ 
-                    id: {{ $course->id }}, 
-                    title: '{{ addslashes($course->title) }}', 
-                    price: '{{ number_format($course->price, 2) }}', 
-                    rawPrice: {{ $course->price }}, 
-                    batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
-                    venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
-                    attendanceMode: '{{ $course->attendance_mode }}',
-                    whatsapp: '{{ $course->effective_whatsapp_number }}',
-                    fields: {{ json_encode($course->effective_enrollment_fields) }}
-                })"
-                class="btn-ipdp-primary w-full py-3 sm:py-3.5 min-h-[46px] px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase shadow-[0_4px_16px_rgba(195,1,2,0.32)] hover:shadow-[0_8px_24px_rgba(195,1,2,0.48)] flex items-center justify-center gap-2 cursor-pointer group/btn transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center"
-            >
-                <span>Enroll Now</span>
-                <i class="fas fa-arrow-right text-[10px] sm:text-xs group-hover/btn:translate-x-1 transition-transform"></i>
-            </a>
+            @if($isEnrolledOnCard)
+                <a 
+                    href="{{ route('courses.show', $course) }}" 
+                    class="w-full py-3 sm:py-3.5 min-h-[46px] px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase bg-[#051c45] hover:bg-[#082b68] text-white flex items-center justify-center gap-2 transition-all text-center shadow-sm"
+                >
+                    <span>Continue Learning</span>
+                    <i class="fas fa-arrow-right text-[10px] sm:text-xs"></i>
+                </a>
+            @elseif($course->isRegistrationOpen())
+                <a 
+                    href="{{ route('courses.show', $course) }}" 
+                    onclick="event.preventDefault(); openEnrollDrawer({ 
+                        id: {{ $course->id }}, 
+                        title: '{{ addslashes($course->title) }}', 
+                        price: '{{ number_format($course->price, 2) }}', 
+                        rawPrice: {{ $course->price }}, 
+                        batch: '{{ (!empty($course->batch) && $course->show_batch) ? addslashes($course->batch) : '' }}', 
+                        venue: '{{ addslashes($course->venue ?? 'Online Live (Zoom)') }}',
+                        attendanceMode: '{{ $course->attendance_mode }}',
+                        whatsapp: '{{ $course->effective_whatsapp_number }}',
+                        fields: {{ json_encode($course->effective_enrollment_fields) }}
+                    })"
+                    class="btn-ipdp-primary w-full py-3 sm:py-3.5 min-h-[46px] px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase shadow-[0_4px_16px_rgba(195,1,2,0.32)] hover:shadow-[0_8px_24px_rgba(195,1,2,0.48)] flex items-center justify-center gap-2 cursor-pointer group/btn transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center"
+                >
+                    <span>Enroll Now</span>
+                    <i class="fas fa-arrow-right text-[10px] sm:text-xs group-hover/btn:translate-x-1 transition-transform"></i>
+                </a>
+            @else
+                <a 
+                    href="{{ route('courses.show', $course) }}" 
+                    class="w-full py-3 sm:py-3.5 min-h-[46px] px-4 rounded-xl text-xs sm:text-sm font-black tracking-wider uppercase bg-slate-200 text-slate-600 hover:bg-slate-300 flex items-center justify-center gap-2 transition-all text-center"
+                >
+                    <i class="fas fa-lock text-[10px]"></i>
+                    <span>Registration Closed</span>
+                </a>
+            @endif
         </div>
     </div>
 </article>

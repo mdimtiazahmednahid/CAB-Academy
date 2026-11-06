@@ -16,7 +16,7 @@ class DatabaseSchemaRepair
     public static function ensureSchema(bool $force = false): array
     {
         $dbKey = md5(config('database.default') . '_' . config('database.connections.' . config('database.default') . '.database'));
-        $lockFile = storage_path("framework/schema_verified_v11_{$dbKey}.lock");
+        $lockFile = storage_path("framework/schema_verified_v13_{$dbKey}.lock");
         if (!$force && file_exists($lockFile)) {
             return ['status' => 'cached', 'repaired' => []];
         }
@@ -140,6 +140,10 @@ class DatabaseSchemaRepair
                     if (!Schema::hasColumn('courses', 'whatsapp_message')) {
                         $table->text('whatsapp_message')->nullable();
                         $repaired[] = 'courses.whatsapp_message';
+                    }
+                    if (!Schema::hasColumn('courses', 'registration_status')) {
+                        $table->string('registration_status', 20)->default('open');
+                        $repaired[] = 'courses.registration_status';
                     }
                     if (!Schema::hasColumn('courses', 'deleted_at')) {
                         $table->softDeletes();
@@ -405,6 +409,7 @@ class DatabaseSchemaRepair
             }
 
             self::repairInstructorCourseLinks($repaired);
+            self::repairMismatchedUserPhones($repaired);
             self::ensureEssentialAdminAndPaymentMethods();
 
             @file_put_contents($lockFile, json_encode([
@@ -417,6 +422,46 @@ class DatabaseSchemaRepair
         }
 
         return ['status' => 'ok', 'repaired' => $repaired];
+    }
+
+    /**
+     * Normalize existing user phone numbers (stripping +88/88 prefixes) and backfill missing
+     * users.phone from their most recent payment sender_number / form_data['phone'].
+     */
+    public static function repairMismatchedUserPhones(array &$repaired = []): void
+    {
+        try {
+            if (!Schema::hasTable('users') || !Schema::hasTable('payments')) {
+                return;
+            }
+
+            $users = \App\Models\User::with(['payments' => fn ($q) => $q->latest('id')])->get();
+            foreach ($users as $u) {
+                $currentNorm = \App\Models\User::normalizeBdPhone($u->phone);
+                if (preg_match('/^01[3-9]\d{8}$/', $currentNorm)) {
+                    if ($u->phone !== $currentNorm) {
+                        \App\Models\User::withoutEvents(fn () => $u->updateQuietly(['phone' => $currentNorm]));
+                        $repaired[] = "users.phone.normalized:{$u->id}";
+                    }
+                    continue;
+                }
+
+                // Backfill from latest payment if users.phone is missing or invalid
+                foreach ($u->payments as $payment) {
+                    $fdPhone = is_array($payment->form_data) ? ($payment->form_data['phone'] ?? null) : null;
+                    foreach ([$fdPhone, $payment->sender_number] as $candidate) {
+                        $candNorm = \App\Models\User::normalizeBdPhone($candidate);
+                        if (preg_match('/^01[3-9]\d{8}$/', $candNorm)) {
+                            \App\Models\User::withoutEvents(fn () => $u->updateQuietly(['phone' => $candNorm]));
+                            $repaired[] = "users.phone.backfilled:{$u->id}";
+                            break 2;
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('DatabaseSchemaRepair::repairMismatchedUserPhones warning: ' . $e->getMessage());
+        }
     }
 
     /**
