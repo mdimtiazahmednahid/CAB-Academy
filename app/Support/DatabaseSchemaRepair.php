@@ -16,7 +16,7 @@ class DatabaseSchemaRepair
     public static function ensureSchema(bool $force = false): array
     {
         $dbKey = md5(config('database.default') . '_' . config('database.connections.' . config('database.default') . '.database'));
-        $lockFile = storage_path("framework/schema_verified_v10_{$dbKey}.lock");
+        $lockFile = storage_path("framework/schema_verified_v11_{$dbKey}.lock");
         if (!$force && file_exists($lockFile)) {
             return ['status' => 'cached', 'repaired' => []];
         }
@@ -520,6 +520,27 @@ class DatabaseSchemaRepair
                           ->orWhere('value', 'like', '%cab-logo%');
                     })
                     ->update(['value' => '/images/logo.png']);
+
+                // Normalize verbose default section titles & button labels to concise Zero-Redundancy copy
+                \App\Models\Setting::where('key', 'landing_faculty_title')
+                    ->where('value', 'Distinguished Faculty & Industry Fellows')
+                    ->update(['value' => 'Our Faculty']);
+                \App\Models\Setting::where('key', 'landing_jobs_title')
+                    ->where('value', 'Career & Placement Opportunities')
+                    ->update(['value' => 'Career Opportunities']);
+                \App\Models\Setting::where('key', 'landing_jobs_btn_text')
+                    ->where('value', 'Browse All Openings')
+                    ->update(['value' => 'View All']);
+                \App\Models\Setting::where('key', 'landing_blog_title')
+                    ->where('value', 'Knowledge Hub & Publications')
+                    ->update(['value' => 'Insights & Articles']);
+                \App\Models\Setting::where('key', 'landing_blog_btn_text')
+                    ->where('value', 'View All Publications')
+                    ->update(['value' => 'View All']);
+                \App\Models\Setting::where('key', 'landing_courses_bracket_text')
+                    ->whereIn('value', ['Browse All Courses', 'View All Courses'])
+                    ->update(['value' => 'View All']);
+
                 \Illuminate\Support\Facades\Cache::forget('global_settings');
             }
         } catch (\Throwable $e) {

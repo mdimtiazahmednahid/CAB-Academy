@@ -30,59 +30,40 @@
 @section('content')
 <div class="bg-[#f4f7fb] min-h-screen pb-16">
 
-    <!-- 1. Classic Job Portal Search Header -->
-    <section class="bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white pt-8 pb-10 sm:pt-10 sm:pb-12 border-b border-white/10 relative overflow-hidden">
-        <div class="absolute -top-24 -right-24 w-80 h-80 bg-[#c30102]/15 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-[#10b981]/10 rounded-full blur-3xl pointer-events-none"></div>
-
+    <!-- 1. Compact Job Portal Search Header -->
+    <section class="bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white py-6 sm:py-8 border-b border-white/10 relative overflow-hidden">
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Top Row: Title + Quick Stats -->
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-                <div>
-                    <div class="flex items-center gap-2 text-xs text-slate-300 font-medium mb-2 flex-wrap">
-                        @auth
-                            <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1 text-amber-300 hover:text-white font-bold transition-colors">
-                                <i class="fas fa-th-large text-[10px]"></i>
-                                <span>My Dashboard</span>
-                            </a>
-                            <span class="text-slate-500">/</span>
-                        @else
-                            <a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a>
-                            <span class="text-slate-500">/</span>
-                        @endauth
-                        <span class="text-white font-bold">Job Portal</span>
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-bold ml-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            {{ $totalOpenings }} Live {{ \Illuminate\Support\Str::plural('Job', $totalOpenings) }}
-                        </span>
-                    </div>
-                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
-                        Corporate Job & Placement Portal
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white">
+                        Career Portal
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
-                        Verified openings in Commercial Banking, L/C Operations, Supply Chain, Customs & VAT across {{ $partnerCount }}+ hiring companies.
-                    </p>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[11px] font-bold">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        {{ $totalOpenings }} Live {{ \Illuminate\Support\Str::plural('Job', $totalOpenings) }}
+                    </span>
                 </div>
 
-                <div class="flex items-center gap-2.5 shrink-0">
-                    <a href="#employer-post-callout" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition-all">
+                <div class="flex items-center gap-2 shrink-0">
+                    <a href="#employer-post-callout" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition-all">
                         <i class="fas fa-plus-circle text-emerald-400"></i>
-                        <span>For Employers: Post a Job</span>
+                        <span>Post a Job</span>
                     </a>
                 </div>
             </div>
 
             <!-- Job Portal Search Bar (Indeed / LinkedIn Jobs Style) -->
-            <form method="GET" action="{{ route('jobs.index') }}" onsubmit="showJobPortalSkeleton()" class="bg-white p-2 sm:p-2.5 rounded-2xl shadow-xl border border-white/20 flex flex-col md:flex-row items-stretch gap-2">
+            <form method="GET" action="{{ route('jobs.index') }}" onsubmit="showJobPortalSkeleton()" class="bg-white p-2 rounded-2xl shadow-lg border border-white/20 flex flex-col md:flex-row items-stretch gap-2">
                 <!-- Keyword / Role / Company / City Input -->
                 <div class="relative flex-1 flex items-center">
-                    <i class="fas fa-search absolute left-4 text-slate-400 text-sm pointer-events-none"></i>
+                    <i class="fas fa-search absolute left-3.5 text-slate-400 text-xs pointer-events-none"></i>
                     <input 
                         type="text" 
                         name="search" 
                         value="{{ request('search') }}" 
-                        placeholder="Job title, keywords, company, or location (e.g. Commercial Manager, Chittagong, L/C)..." 
-                        class="w-full pl-11 pr-9 py-3 rounded-xl bg-slate-50/70 focus:bg-white border border-transparent focus:border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all"
+                        placeholder="Search job title, company, or city..." 
+                        class="w-full pl-9 pr-8 py-2.5 rounded-xl bg-slate-50/70 focus:bg-white border border-transparent focus:border-slate-200 text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all"
                     >
                     @if(request('search'))
                         <a href="{{ route('jobs.index', request()->except('search')) }}" onclick="showJobPortalSkeleton()" class="absolute right-3 text-slate-400 hover:text-red-500 text-xs" title="Clear search">
@@ -92,7 +73,7 @@
                 </div>
 
                 <!-- Employment Type Dropdown -->
-                <div class="relative md:w-56 flex items-center border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-2">
+                <div class="relative md:w-52 flex items-center border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-2">
                     <i class="fas fa-briefcase absolute left-5 text-slate-400 text-xs pointer-events-none"></i>
                     @php
                         $currentType = (string) request('type', '');
@@ -100,9 +81,9 @@
                     <select 
                         name="type" 
                         onchange="showJobPortalSkeleton(); this.form.submit()"
-                        class="w-full pl-9 pr-8 py-3 rounded-xl bg-slate-50/70 focus:bg-white text-xs sm:text-sm font-bold text-slate-800 focus:outline-none cursor-pointer"
+                        class="w-full pl-9 pr-8 py-2.5 rounded-xl bg-slate-50/70 focus:bg-white text-xs sm:text-sm font-bold text-slate-800 focus:outline-none cursor-pointer"
                     >
-                        <option value="" {{ $currentType === '' ? 'selected' : '' }}>All Job Types ({{ $counts['all'] ?? $totalOpenings }})</option>
+                        <option value="" {{ $currentType === '' ? 'selected' : '' }}>All Types ({{ $counts['all'] ?? $totalOpenings }})</option>
                         <option value="Full-time" {{ strcasecmp($currentType, 'Full-time') === 0 ? 'selected' : '' }}>Full-time</option>
                         <option value="Remote" {{ strcasecmp($currentType, 'Remote') === 0 ? 'selected' : '' }}>Remote / Hybrid</option>
                         <option value="Contract" {{ strcasecmp($currentType, 'Contract') === 0 ? 'selected' : '' }}>Contract</option>
@@ -112,9 +93,9 @@
                 </div>
 
                 <!-- Find Jobs Submit Button -->
-                <button type="submit" class="btn-ipdp-primary px-7 py-3 rounded-xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 shrink-0 cursor-pointer">
+                <button type="submit" class="btn-ipdp-primary px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 shrink-0 cursor-pointer">
                     <i class="fas fa-search text-xs"></i>
-                    <span>Find Jobs</span>
+                    <span>Search</span>
                 </button>
             </form>
         </div>
@@ -351,45 +332,36 @@
                         ];
                     @endphp
 
-                    <article class="liquid-glass-card rounded-2xl p-5 sm:p-6 transition-all duration-300 group hover:-translate-y-0.5 relative overflow-hidden">
-                        <!-- Left Accent Bar on Hover -->
-                        <div class="absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-[#041536] via-[#c30102] to-[#10b981] opacity-70 group-hover:opacity-100 transition-opacity"></div>
+                    <article class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-[#051c45]/30 transition-all duration-200 group relative overflow-hidden">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 sm:gap-4">
 
-                        <div class="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-5">
-
-                            <!-- 1. Left: Auto-Fitted Company Logo OR Rich Curated Monogram Emblem -->
-                            <div class="flex items-start gap-4 flex-1 min-w-0 w-full">
+                            <!-- 1. Left: Compact Company Logo / Monogram + Job Info -->
+                            <div class="flex items-start gap-3.5 flex-1 min-w-0 w-full">
                                 <div 
                                     onclick='openJobBriefDrawer(@json($jobBriefPayload))'
-                                    class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl shrink-0 cursor-pointer transition-transform duration-300 group-hover:scale-105"
+                                    class="relative w-12 h-12 rounded-xl shrink-0 cursor-pointer"
                                 >
                                     @if($logoUrl)
-                                        <!-- Auto-Fitted Image Frame with Skeleton Shimmer: Works for wide, square, or tall company logos without cropping -->
-                                        <div class="img-skeleton-wrapper w-full h-full rounded-2xl bg-white border border-slate-200/90 shadow-sm p-1.5 flex items-center justify-center overflow-hidden">
+                                        <div class="img-skeleton-wrapper w-full h-full rounded-xl bg-white border border-slate-200/90 p-1 flex items-center justify-center overflow-hidden">
                                             <img 
                                                 src="{{ $logoUrl }}" 
                                                 alt="{{ $companyName }}" 
-                                                class="w-full h-full object-contain object-center relative z-10 transition-opacity duration-300"
+                                                class="w-full h-full object-contain object-center relative z-10"
                                                 loading="lazy"
                                                 onload="this.parentElement.classList.add('is-loaded')"
                                                 onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='flex';"
                                             >
                                         </div>
-                                        <!-- Fallback Emblem if image URL fails -->
-                                        <div style="display:none;" class="w-full h-full rounded-2xl bg-gradient-to-br {{ $gradientClass }} text-white shadow-md border border-white/25 items-center justify-center relative overflow-hidden">
-                                            <i class="fas fa-building absolute -bottom-2 -right-2 text-3xl text-white/10 pointer-events-none"></i>
-                                            <span class="text-base sm:text-lg font-black tracking-wider relative z-10">{{ $initials }}</span>
+                                        <div style="display:none;" class="w-full h-full rounded-xl bg-gradient-to-br {{ $gradientClass }} text-white items-center justify-center font-extrabold text-xs">
+                                            {{ $initials }}
                                         </div>
                                     @else
-                                        <!-- Beautiful Curated Corporate Emblem when no image is used -->
-                                        <div class="w-full h-full rounded-2xl bg-gradient-to-br {{ $gradientClass }} text-white shadow-md border border-white/25 flex items-center justify-center relative overflow-hidden">
-                                            <i class="fas fa-building absolute -bottom-2 -right-2 text-3xl text-white/10 pointer-events-none"></i>
-                                            <span class="text-base sm:text-lg font-black tracking-wider relative z-10">{{ $initials }}</span>
+                                        <div class="w-full h-full rounded-xl bg-gradient-to-br {{ $gradientClass }} text-white shadow-2xs flex items-center justify-center font-extrabold text-xs">
+                                            {{ $initials }}
                                         </div>
                                     @endif
 
-                                    <!-- Verified Employer Badge Pin -->
-                                    <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 text-white border-2 border-white flex items-center justify-center text-[8px] shadow-xs" title="Verified Corporate Employer">
+                                    <span class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 text-white border-2 border-white flex items-center justify-center text-[7px]" title="Verified Corporate Employer">
                                         <i class="fas fa-check"></i>
                                     </span>
                                 </div>
@@ -397,8 +369,8 @@
                                 <!-- 2. Center: Job Portal Details -->
                                 <div class="flex-1 min-w-0">
                                     <!-- Top Badges & Title -->
-                                    <div class="flex flex-wrap items-center gap-2 mb-1">
-                                        <h2 class="text-base sm:text-lg font-black text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug">
+                                    <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
+                                        <h2 class="text-sm sm:text-base font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug">
                                             <button 
                                                 type="button" 
                                                 onclick='openJobBriefDrawer(@json($jobBriefPayload))'
@@ -409,84 +381,72 @@
                                         </h2>
 
                                         @if($isRecent)
-                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-[#c30102]/10 text-[#c30102]">
+                                            <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase bg-[#c30102]/10 text-[#c30102]">
                                                 New
                                             </span>
                                         @endif
 
                                         @if($hasApplied)
-                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
-                                                <i class="fas fa-check-circle mr-1"></i>Applied
+                                            <span class="px-2 py-0.2 rounded-full text-[9px] font-extrabold uppercase bg-emerald-100 text-emerald-800">
+                                                Applied
                                             </span>
                                         @endif
                                     </div>
 
                                     <!-- Company Name • Location • Posted Time -->
-                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-slate-600 mb-3">
-                                        <span class="font-bold text-[#051c45] flex items-center gap-1.5">
-                                            <i class="far fa-building text-[#c30102] text-[11px]"></i>
-                                            <span>{{ $companyName }}</span>
-                                        </span>
+                                    <div class="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs font-medium text-slate-500 mb-2">
+                                        <span class="font-bold text-slate-700">{{ $companyName }}</span>
 
                                         @if(!empty($job->location))
                                             <span class="text-slate-300">&bull;</span>
-                                            <span class="flex items-center gap-1 text-slate-600">
-                                                <i class="fas fa-map-marker-alt text-[#c30102] text-[11px]"></i>
+                                            <span class="flex items-center gap-1">
+                                                <i class="fas fa-map-marker-alt text-[#c30102] text-[10px]"></i>
                                                 <span>{{ $job->location }}</span>
                                             </span>
                                         @endif
 
                                         <span class="text-slate-300">&bull;</span>
-                                        <span class="text-slate-400 text-[11px] flex items-center gap-1">
-                                            <i class="far fa-clock text-[10px]"></i>
-                                            <span>{{ $postedAgo }}</span>
-                                        </span>
+                                        <span class="text-slate-400 text-[11px]">{{ $postedAgo }}</span>
                                     </div>
 
-                                    <!-- Job Portal Metadata Pills (Job Type, Salary, Apply Method) -->
-                                    <div class="flex flex-wrap items-center gap-2 mb-3">
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#051c45]/8 text-[#051c45] border border-[#051c45]/12">
-                                            <i class="fas fa-briefcase text-[10px]"></i>
-                                            <span>{{ $job->job_type ?: 'Full-time' }}</span>
+                                    <!-- Job Portal Metadata Pills -->
+                                    <div class="flex flex-wrap items-center gap-1.5">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-700">
+                                            {{ $job->job_type ?: 'Full-time' }}
                                         </span>
 
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
-                                            <i class="fas fa-money-bill-wave text-emerald-600 text-[10px]"></i>
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                            <i class="fas fa-money-bill-wave text-[9px]"></i>
                                             <span>{{ $job->salary_range ?: 'Negotiable' }}</span>
                                         </span>
 
                                         @if(empty($job->apply_link))
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200/60">
-                                                <i class="fas fa-bolt text-[10px]"></i>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700">
+                                                <i class="fas fa-bolt text-[9px]"></i>
                                                 <span>Easy Apply</span>
                                             </span>
                                         @endif
                                     </div>
-
-                                    <!-- Short Role Excerpt -->
-                                    <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                                        {{ $job->description }}
-                                    </p>
                                 </div>
                             </div>
 
-                            <!-- 3. Right: Job Portal Action Column -->
-                            <div class="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto shrink-0 gap-2 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-200/70 sm:min-w-[148px]">
+                            <!-- 3. Right: Compact Action Column -->
+                            <div class="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto shrink-0 gap-2 pt-2.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 sm:min-w-[132px]">
                                 @if(!empty($job->apply_link))
                                     <a 
                                         href="{{ $job->apply_link }}" 
                                         target="_blank" 
                                         rel="noopener noreferrer" 
-                                        class="btn-ipdp-primary flex-1 sm:flex-initial w-full py-2.5 px-4 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all"
+                                        class="btn-ipdp-primary flex-1 sm:flex-initial w-full py-2 px-3.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
                                     >
-                                        <span>Apply Externally</span>
-                                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                                        <span>Apply Now</span>
+                                        <i class="fas fa-external-link-alt text-[9px]"></i>
                                     </a>
                                 @elseif($hasApplied)
                                     <button 
                                         type="button" 
                                         disabled 
-                                        class="flex-1 sm:flex-initial w-full py-2.5 px-4 rounded-xl text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center justify-center gap-1.5 cursor-not-allowed"
+                                        class="flex-1 sm:flex-initial w-full py-2 px-3.5 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center justify-center gap-1.5 cursor-not-allowed"
                                     >
                                         <i class="fas fa-check-circle"></i>
                                         <span>Applied</span>
@@ -495,20 +455,19 @@
                                     <button 
                                         type="button" 
                                         onclick='openApplyModal({{ $job->id }}, @json($job->title), @json($companyName))' 
-                                        class="btn-ipdp-primary flex-1 sm:flex-initial w-full py-2.5 px-4 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+                                        class="btn-ipdp-primary flex-1 sm:flex-initial w-full py-2 px-3.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all"
                                     >
                                         <span>Apply Now</span>
-                                        <i class="fas fa-paper-plane text-[10px]"></i>
+                                        <i class="fas fa-paper-plane text-[9px]"></i>
                                     </button>
                                 @endif
 
                                 <button 
                                     type="button"
                                     onclick='openJobBriefDrawer(@json($jobBriefPayload))'
-                                    class="liquid-glass-pill flex-1 sm:flex-initial w-full py-2 px-3.5 rounded-xl text-xs font-bold text-[#041536] hover:bg-[#041536] hover:text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                    class="flex-1 sm:flex-initial w-full py-1.5 px-3 rounded-xl text-xs font-bold bg-slate-100 hover:bg-[#041536] text-[#041536] hover:text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                                 >
-                                    <i class="far fa-file-alt text-[11px]"></i>
-                                    <span>View Details</span>
+                                    <span>Details</span>
                                 </button>
                             </div>
 
