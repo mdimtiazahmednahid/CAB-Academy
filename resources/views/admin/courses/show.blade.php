@@ -9,110 +9,123 @@
     $pendingCoursePayments = $course->payments->where('status', 'pending')->count();
 @endphp
 
-<div x-data="{ wsTab: 'all', editingTitle: false, titleDraft: @js($course->title), editingPrice: false, priceDraft: @js($course->price), showQuizzes: false, showMaterials: false, showStudents: false, showPayments: false }">
-<div class="mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-    <div class="flex items-center gap-3 flex-wrap flex-1 min-w-0">
-        <a href="{{ route('admin.courses') }}" class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-[#051c45] hover:border-[#051c45] flex items-center justify-center transition-colors shadow-xs shrink-0">
+<div x-data="{ wsTab: 'curriculum', editingTitle: false, titleDraft: @js($course->title), editingPrice: false, priceDraft: @js($course->price), showQuizzes: true, showMaterials: true, showStudents: false, showPayments: false }">
+<div class="mb-6 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-2xs space-y-3.5">
+    <!-- Top Row: Back Button + Full-Width Course Title & Quick Edit -->
+    <div class="flex items-start gap-3">
+        <a href="{{ route('admin.courses') }}" class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-[#051c45] hover:border-[#051c45] flex items-center justify-center transition-colors shrink-0 mt-0.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         </a>
         <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 flex-wrap">
-                <!-- Inline Title Display & 1-Click Quick Editor -->
-                <div x-show="!editingTitle" class="flex items-center gap-2 group">
-                    <h1 @click="editingTitle = true; $nextTick(() => $refs.inlineTitleInput.focus())"
-                        title="Click to edit title only"
-                        class="text-xl sm:text-2xl font-black text-[#051c45] tracking-tight cursor-pointer hover:text-[#c30102] transition-colors">
-                        {{ $course->title }}
-                    </h1>
-                    <button type="button"
-                            @click="editingTitle = true; $nextTick(() => $refs.inlineTitleInput.focus())"
-                            title="Quick-edit course title only"
-                            class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-[#051c45] text-slate-500 hover:text-white text-[11px] font-bold transition-all inline-flex items-center gap-1">
-                        <i class="fas fa-pen text-[9px]"></i>
-                        <span>Edit Title</span>
-                    </button>
-                </div>
-
-                <!-- Inline Title Form (Saves ONLY Title) -->
-                <form x-show="editingTitle" x-cloak method="POST" action="{{ route('admin.courses.update', $course) }}" class="flex items-center gap-2 w-full max-w-xl">
-                    @csrf
-                    <input type="hidden" name="_section_label" value="Course Title">
-                    <input x-ref="inlineTitleInput" type="text" name="title" x-model="titleDraft" required
-                           @keydown.escape.window="editingTitle = false; titleDraft = @js($course->title)"
-                           class="flex-1 rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm font-bold text-[#051c45] py-1.5 px-3">
-                    <button type="submit" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-xs shrink-0">
-                        Save Title
-                    </button>
-                    <button type="button" @click="editingTitle = false; titleDraft = @js($course->title)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold shrink-0">
-                        Cancel
-                    </button>
-                </form>
-
-                <!-- 1-Click Publish / Draft Toggle (Saves ONLY Publish Status) -->
-                <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="inline-block">
-                    @csrf
-                    <input type="hidden" name="_section_label" value="Publish Status">
-                    <input type="hidden" name="is_published" value="{{ $course->is_published ? '0' : '1' }}">
-                    @if($course->is_published)
-                        <button type="submit" title="Click to switch to Draft" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            <span>Published</span>
-                            <i class="fas fa-rotate text-[9px] opacity-60"></i>
-                        </button>
-                    @else
-                        <button type="submit" title="Click to Publish immediately" class="px-2.5 py-1 bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200 rounded-full text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer">
-                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                            <span>Draft (Click to Publish)</span>
-                        </button>
-                    @endif
-                </form>
-
-                <!-- 1-Click Registration Status Selector -->
-                <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="inline-block">
-                    @csrf
-                    <input type="hidden" name="_section_label" value="Registration Status">
-                    <select name="registration_status" onchange="this.form.submit()" class="px-2.5 py-1 rounded-full text-xs font-bold border cursor-pointer {{ !$course->isRegistrationOpen() ? 'bg-rose-50 text-rose-700 border-rose-200' : (($course->registration_status ?? 'open') === 'auto' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200') }}">
-                        <option value="open" {{ ($course->registration_status ?? 'open') === 'open' ? 'selected' : '' }}>Registration: Open</option>
-                        <option value="auto" {{ ($course->registration_status ?? 'open') === 'auto' ? 'selected' : '' }}>Registration: Auto-Close on Start Date</option>
-                        <option value="closed" {{ ($course->registration_status ?? 'open') === 'closed' ? 'selected' : '' }}>Registration: Closed</option>
-                    </select>
-                </form>
-
-                <!-- 1-Click Certificates Toggle (Saves ONLY Certificate Release Status) -->
-                <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="inline-block">
-                    @csrf
-                    <input type="hidden" name="_section_label" value="Certificate Release Status">
-                    <input type="hidden" name="certificate_enabled" value="{{ $course->certificate_enabled ? '0' : '1' }}">
-                    @if($course->certificate_enabled)
-                        <button type="submit" title="Click to Lock Certificates" class="px-2.5 py-1 bg-emerald-100 hover:bg-amber-50 text-emerald-800 hover:text-amber-800 border border-emerald-200 hover:border-amber-200 rounded-full text-xs font-bold inline-flex items-center gap-1 transition-all cursor-pointer">
-                            <i class="fas fa-award text-emerald-600"></i>
-                            <span>Certificates Released</span>
-                        </button>
-                    @else
-                        <button type="submit" title="Click to Release Digital Certificates to Students" class="px-2.5 py-1 bg-amber-50 hover:bg-emerald-50 text-amber-800 hover:text-emerald-800 border border-amber-200 hover:border-emerald-200 rounded-full text-xs font-bold inline-flex items-center gap-1 transition-all cursor-pointer">
-                            <i class="fas fa-lock text-amber-600 text-[10px]"></i>
-                            <span>Certificates Locked (Click to Release)</span>
-                        </button>
-                    @endif
-                </form>
+            <!-- Inline Title Display & 1-Click Quick Editor -->
+            <div x-show="!editingTitle" class="flex items-center gap-2.5 flex-wrap">
+                <h1 @click="editingTitle = true; $nextTick(() => $refs.inlineTitleInput.focus())"
+                    title="Click to edit title only"
+                    class="text-lg sm:text-xl lg:text-2xl font-black text-[#051c45] tracking-tight cursor-pointer hover:text-[#c30102] transition-colors leading-snug">
+                    {{ $course->title }}
+                </h1>
+                <button type="button"
+                        @click="editingTitle = true; $nextTick(() => $refs.inlineTitleInput.focus())"
+                        title="Quick-edit course title only"
+                        class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#051c45] text-slate-600 hover:text-white text-[11px] font-bold transition-all inline-flex items-center gap-1 shrink-0 cursor-pointer">
+                    <i class="fas fa-pen text-[9px]"></i>
+                    <span>Edit Title</span>
+                </button>
             </div>
+
+            <!-- Inline Title Form (Saves ONLY Title) -->
+            <form x-show="editingTitle" x-cloak method="POST" action="{{ route('admin.courses.update', $course) }}" class="flex items-center gap-2 w-full max-w-2xl">
+                @csrf
+                <input type="hidden" name="_section_label" value="Course Title">
+                <input x-ref="inlineTitleInput" type="text" name="title" x-model="titleDraft" required
+                       @keydown.escape.window="editingTitle = false; titleDraft = @js($course->title)"
+                       class="flex-1 rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm font-bold text-[#051c45] py-1.5 px-3">
+                <button type="submit" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-xs shrink-0">
+                    Save Title
+                </button>
+                <button type="button" @click="editingTitle = false; titleDraft = @js($course->title)" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold shrink-0">
+                    Cancel
+                </button>
+            </form>
         </div>
     </div>
-    <div class="flex flex-wrap gap-2">
-        <a href="{{ route('courses.show', $course) }}" target="_blank" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs">
-            <i class="fas fa-arrow-up-right-from-square text-[10px] text-[#c30102]"></i>
-            <span>Public Page</span>
-        </a>
-        <button type="button" @click="wsTab = 'settings'; $nextTick(() => document.getElementById('modularCourseSettings')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs">
-            <i class="fas fa-sliders text-emerald-600"></i>
-            <span>Modular Settings</span>
-        </button>
-        <button onclick="document.getElementById('quizModal').classList.remove('hidden')" class="px-3.5 py-2 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors shadow-xs">
-            + Add Quiz
-        </button>
-        <button onclick="document.getElementById('sectionModal').classList.remove('hidden')" class="px-3.5 py-2 bg-[#c30102] hover:bg-[#a50102] text-white rounded-xl text-xs font-bold transition-colors shadow-xs">
-            + Add Section
-        </button>
+
+    <!-- Bottom Row: Status Controls (Left) + Studio Quick Action Buttons (Right) -->
+    <div class="pt-3 border-t border-slate-100 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+        <div class="flex items-center gap-2 flex-wrap">
+            <!-- 1-Click Publish / Draft Toggle (Saves ONLY Publish Status) -->
+            <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="inline-block">
+                @csrf
+                <input type="hidden" name="_section_label" value="Publish Status">
+                <input type="hidden" name="is_published" value="{{ $course->is_published ? '0' : '1' }}">
+                @if($course->is_published)
+                    <button type="submit" title="Click to switch to Draft" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Published</span>
+                        <i class="fas fa-rotate text-[9px] opacity-60"></i>
+                    </button>
+                @else
+                    <button type="submit" title="Click to Publish immediately" class="px-2.5 py-1 bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200 rounded-full text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                        <span>Draft (Click to Publish)</span>
+                    </button>
+                @endif
+            </form>
+
+            <!-- 1-Click Registration Status Selector -->
+            <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="inline-block">
+                @csrf
+                <input type="hidden" name="_section_label" value="Registration Status">
+                <select name="registration_status" onchange="this.form.submit()" class="px-2.5 py-1 rounded-full text-xs font-bold border cursor-pointer {{ !$course->isRegistrationOpen() ? 'bg-rose-50 text-rose-700 border-rose-200' : (($course->registration_status ?? 'open') === 'auto' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200') }}">
+                    <option value="open" {{ ($course->registration_status ?? 'open') === 'open' ? 'selected' : '' }}>Registration: Open</option>
+                    <option value="auto" {{ ($course->registration_status ?? 'open') === 'auto' ? 'selected' : '' }}>Registration: Auto-Close on Start Date</option>
+                    <option value="closed" {{ ($course->registration_status ?? 'open') === 'closed' ? 'selected' : '' }}>Registration: Closed</option>
+                </select>
+            </form>
+
+            <!-- 1-Click Certificates Toggle (Saves ONLY Certificate Release Status) -->
+            <form method="POST" action="{{ route('admin.courses.update', $course) }}" class="inline-block">
+                @csrf
+                <input type="hidden" name="_section_label" value="Certificate Release Status">
+                <input type="hidden" name="certificate_enabled" value="{{ $course->certificate_enabled ? '0' : '1' }}">
+                @if($course->certificate_enabled)
+                    <button type="submit" title="Click to Lock Certificates" class="px-2.5 py-1 bg-emerald-100 hover:bg-amber-50 text-emerald-800 hover:text-amber-800 border border-emerald-200 hover:border-amber-200 rounded-full text-xs font-bold inline-flex items-center gap-1 transition-all cursor-pointer">
+                        <i class="fas fa-award text-emerald-600"></i>
+                        <span>Certificates Released</span>
+                    </button>
+                @else
+                    <button type="submit" title="Click to Release Digital Certificates to Students" class="px-2.5 py-1 bg-amber-50 hover:bg-emerald-50 text-amber-800 hover:text-emerald-800 border border-amber-200 hover:border-emerald-200 rounded-full text-xs font-bold inline-flex items-center gap-1 transition-all cursor-pointer">
+                        <i class="fas fa-lock text-amber-600 text-[10px]"></i>
+                        <span>Certificates Locked (Click to Release)</span>
+                    </button>
+                @endif
+            </form>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <a href="{{ route('courses.show', $course) }}" target="_blank" class="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5">
+                <i class="fas fa-arrow-up-right-from-square text-[10px] text-[#c30102]"></i>
+                <span>Public Page</span>
+            </a>
+            <a href="{{ route('courses.classroom', $course) }}" target="_blank" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5">
+                <i class="fas fa-laptop-code text-[10px] text-emerald-600"></i>
+                <span>Student Classroom</span>
+            </a>
+            <button type="button" @click="wsTab = 'settings'; $nextTick(() => document.getElementById('modularCourseSettings')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))" class="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer">
+                <i class="fas fa-sliders text-emerald-600"></i>
+                <span>Modular Settings</span>
+            </button>
+            <button type="button" onclick="openQuickLiveClassModal()" class="px-3 py-1.5 bg-[#c30102] hover:bg-[#a50102] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs inline-flex items-center gap-1.5 cursor-pointer">
+                <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                <span>+ Live Class</span>
+            </button>
+            <button onclick="document.getElementById('quizModal').classList.remove('hidden')" class="px-3 py-1.5 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+                + Add Quiz
+            </button>
+            <button onclick="document.getElementById('sectionModal').classList.remove('hidden')" class="px-3 py-1.5 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+                + Add Module
+            </button>
+        </div>
     </div>
 </div>
 
@@ -162,31 +175,34 @@
     </div>
 </div>
 
-<!-- Workspace Filter Tabs -->
+<!-- Workspace Filter Tabs (10MS Studio Layout: Curriculum & Live Classes First) -->
 <div class="mb-6 bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-1.5 overflow-x-auto">
-    <button type="button" @click="wsTab = 'all'" :class="wsTab === 'all' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
-        All Workspace Modules
+    <button type="button" @click="wsTab = 'curriculum'" :class="wsTab === 'curriculum' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
+        <i class="fas fa-layer-group text-amber-400"></i>
+        <span>Curriculum &amp; Live Classes ({{ $course->sections->count() }})</span>
     </button>
-    <button type="button" @click="wsTab = 'settings'" :class="wsTab === 'settings' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5">
+    <button type="button" @click="wsTab = 'settings'" :class="wsTab === 'settings' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
         <i class="fas fa-sliders text-emerald-500"></i>
-        <span>Course Settings (Modular)</span>
+        <span>Course Settings &amp; Poster</span>
     </button>
-    <button type="button" @click="wsTab = 'curriculum'" :class="wsTab === 'curriculum' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
-        Curriculum & Quizzes ({{ $course->sections->count() }})
+    <button type="button" @click="wsTab = 'form'; $dispatch('expand-form-studio')" :class="wsTab === 'form' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+        Registration Form Builder
     </button>
-    <button type="button" @click="wsTab = 'students'; showStudents = true" :class="wsTab === 'students' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+    <button type="button" @click="wsTab = 'students'; showStudents = true" :class="wsTab === 'students' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
         Enrolled Students ({{ $course->students->count() }})
     </button>
-    <button type="button" @click="wsTab = 'payments'; showPayments = true" :class="wsTab === 'payments' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
+    <button type="button" @click="wsTab = 'payments'; showPayments = true" :class="wsTab === 'payments' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
         Payments ({{ $course->payments->count() }})
     </button>
-    <button type="button" @click="wsTab = 'form'; $dispatch('expand-form-studio')" :class="wsTab === 'form' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap">
-        Registration Form Builder
+    <button type="button" @click="wsTab = 'all'" :class="wsTab === 'all' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+        All Modules
     </button>
 </div>
 
 <!-- Direct 1-Click Course Cover Photo Card (Saves ONLY Picture, Never Touches Any Other Setting) -->
-<div class="mb-6 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4"
+<div x-show="wsTab === 'settings' || wsTab === 'all'"
+     x-cloak
+     class="mb-6 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4"
      x-data="{ photoPreview: @js($course->cover_image_url), photoSelected: false, photoBase64: '' }">
     <div class="flex items-center gap-4 w-full lg:w-auto">
         <label for="quick_cover_file_input" title="Click thumbnail to pick a new cover photo" class="relative w-28 h-16 sm:w-36 sm:h-20 rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-inner shrink-0 cursor-pointer group">
@@ -505,6 +521,7 @@
 </script>
 <div id="formBuilderCard" 
      x-show="wsTab === 'all' || wsTab === 'form'"
+     x-cloak
      x-data="courseFormBuilder(window.__courseFormBuilderConfig)" 
      @expand-form-studio.window="isCollapsed = false"
      class="mb-8 bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
@@ -1348,52 +1365,142 @@ function courseFormBuilder(config) {
 }
 </script>
 
-<div class="space-y-6" x-show="wsTab === 'all' || wsTab === 'curriculum'">
+<div class="space-y-5" x-show="wsTab === 'all' || wsTab === 'curriculum'">
+    <!-- 10MS Curriculum & Live Class Builder Header Bar (Always Visible) -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:px-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-xl bg-[#051c45] text-white flex items-center justify-center shrink-0 text-xs">
+                <i class="fas fa-layer-group"></i>
+            </span>
+            <div>
+                <h2 class="text-sm sm:text-base font-extrabold text-[#051c45]">Course Modules &amp; Live Classes</h2>
+                <p class="text-[11px] text-slate-500">{{ $course->sections->count() }} Modules &bull; {{ $totalLessonsCount }} Lessons &amp; Live Sessions</p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <button type="button"
+                    onclick="openQuickLiveClassModal()"
+                    class="px-3.5 py-2 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-extrabold transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                <span>+ Add Live Class (Zoom / Jitsi / Meet)</span>
+            </button>
+
+            <button type="button"
+                    onclick="document.getElementById('sectionModal').classList.remove('hidden')"
+                    class="px-3.5 py-2 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-extrabold transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                <i class="fas fa-plus text-[10px]"></i>
+                <span>+ Add Module</span>
+            </button>
+
+            <form method="POST" action="{{ route('admin.courses.quick_starter_modules', $course) }}" class="inline">
+                @csrf
+                <button type="submit"
+                        class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] border border-slate-200 text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                        title="Auto-create 2 structured 10MS modules">
+                    <i class="fas fa-wand-magic-sparkles text-amber-600 text-[11px]"></i>
+                    <span>1-Click Starter Modules</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
     @forelse($course->sections as $section)
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="font-bold text-gray-900 text-lg flex items-center gap-2">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 flex flex-wrap justify-between items-center gap-2">
+                <h3 class="font-bold text-gray-900 text-base sm:text-lg flex items-center gap-2">
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                     {{ $section->title }}
                 </h3>
-                <div class="flex items-center gap-3">
-                    <button onclick='openEditSectionModal({{ $section->id }}, @json($section->title), {{ $section->order }})' class="text-sm font-medium text-gray-500 hover:text-gray-900">Edit</button>
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <button type="button" onclick="openQuickLiveClassModal({{ $section->id }})" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-[#c30102] border border-rose-200 text-xs font-extrabold inline-flex items-center gap-1 cursor-pointer">
+                        <i class="fas fa-video text-[10px]"></i>
+                        <span>+ Live Class</span>
+                    </button>
+                    <button type="button" onclick="openLessonModal({{ $section->id }})" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#051c45] text-xs font-bold cursor-pointer">+ Add Lesson</button>
+                    <button onclick='openEditSectionModal({{ $section->id }}, @json($section->title), {{ $section->order }})' class="text-xs font-semibold text-gray-500 hover:text-gray-900 cursor-pointer">Edit</button>
                     <form method="POST" action="{{ route('admin.courses.sections.destroy', [$course, $section]) }}" class="inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Delete this section?')" class="text-sm font-medium text-red-500 hover:text-red-700">Delete</button>
+                        <button type="submit" onclick="return confirm('Delete this section?')" class="text-xs font-semibold text-red-500 hover:text-red-700 cursor-pointer">Delete</button>
                     </form>
-                    <button onclick="openLessonModal({{ $section->id }})" class="text-sm font-medium text-primary hover:underline ml-2">+ Add Lesson</button>
                 </div>
             </div>
             
             <div class="divide-y divide-gray-100">
                 @forelse($section->lessons as $lesson)
-                    <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <span class="font-medium text-gray-900">{{ $lesson->title }}</span>
+                    <div class="px-6 py-3.5 flex items-center justify-between hover:bg-gray-50 transition-colors gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            @if($lesson->is_live_class)
+                                <span class="w-6 h-6 rounded-lg bg-rose-50 text-[#c30102] border border-rose-200 flex items-center justify-center shrink-0 text-xs">
+                                    <i class="fas fa-video"></i>
+                                </span>
+                            @elseif($lesson->video_url)
+                                <svg class="w-5 h-5 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            @else
+                                <svg class="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            @endif
+                            <span class="font-semibold text-gray-900 text-sm truncate">{{ $lesson->title }}</span>
+                            @if($lesson->is_live_class)
+                                <span class="px-2 py-0.5 rounded-full bg-rose-50 text-[#c30102] border border-rose-200 text-[10px] font-extrabold shrink-0">
+                                    {{ $lesson->provider_label }}
+                                </span>
+                            @endif
                         </div>
-                        <div class="text-sm text-gray-500 truncate max-w-xs flex items-center gap-3">
-                            {{ $lesson->video_url ? 'Video attached' : 'Text lesson' }}
-                            <button onclick='openEditLessonModal({{ $section->id }}, {{ $lesson->id }}, @json($lesson->title), @json($lesson->video_url ?? ""), @json($lesson->content ?? ""), {{ $lesson->order }})' class="text-xs font-medium text-gray-500 hover:text-gray-900 ml-2">Edit</button>
+                        <div class="text-sm text-gray-500 truncate max-w-xs flex items-center gap-3 shrink-0">
+                            <span class="text-xs">{{ $lesson->video_url ? 'Video attached' : 'Text lesson' }}</span>
+                            <button onclick='openEditLessonModal({{ $section->id }}, {{ $lesson->id }}, @json($lesson->title), @json($lesson->video_url ?? ""), @json($lesson->content ?? ""), {{ $lesson->order }})' class="text-xs font-medium text-gray-500 hover:text-gray-900 ml-2 cursor-pointer">Edit</button>
                             <form method="POST" action="{{ route('admin.courses.lessons.destroy', [$course, $section, $lesson]) }}" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" onclick="return confirm('Delete this lesson?')" class="text-xs font-medium text-red-500 hover:text-red-700">Delete</button>
+                                <button type="submit" onclick="return confirm('Delete this lesson?')" class="text-xs font-medium text-red-500 hover:text-red-700 cursor-pointer">Delete</button>
                             </form>
                         </div>
                     </div>
                 @empty
-                    <div class="px-6 py-4 text-sm text-gray-500 italic">No lessons in this section.</div>
+                    <div class="px-6 py-4 text-sm text-gray-500 italic flex items-center justify-between">
+                        <span>No lessons in this section.</span>
+                        <div class="flex items-center gap-2 not-italic">
+                            <button type="button" onclick="openQuickLiveClassModal({{ $section->id }})" class="text-xs font-bold text-[#c30102] hover:underline cursor-pointer">+ Add Live Class</button>
+                            <span>&bull;</span>
+                            <button type="button" onclick="openLessonModal({{ $section->id }})" class="text-xs font-bold text-[#051c45] hover:underline cursor-pointer">+ Add Lesson</button>
+                        </div>
+                    </div>
                 @endforelse
             </div>
         </div>
     @empty
-        <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-            <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            <h3 class="text-lg font-bold text-gray-900 mb-1">No sections yet</h3>
-            <p class="text-gray-500 text-sm">Add a section to start building your course outline.</p>
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-8 sm:p-10 text-center space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-[#051c45] flex items-center justify-center mx-auto">
+                <i class="fas fa-layer-group text-lg"></i>
+            </div>
+            <div>
+                <h3 class="text-base sm:text-lg font-extrabold text-slate-900">No sections yet</h3>
+                <p class="text-slate-500 text-xs sm:text-sm mt-0.5">Create your first Module, generate 2 Starter Modules in 1 click, or attach a Live Class directly.</p>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+                <form method="POST" action="{{ route('admin.courses.quick_starter_modules', $course) }}" class="inline">
+                    @csrf
+                    <button type="submit" class="px-4 py-2.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-extrabold inline-flex items-center gap-1.5 shadow-xs cursor-pointer">
+                        <i class="fas fa-wand-magic-sparkles text-amber-300"></i>
+                        <span>Generate 2 Starter Modules (1-Click)</span>
+                    </button>
+                </form>
+
+                <button type="button"
+                        onclick="openQuickLiveClassModal()"
+                        class="px-4 py-2.5 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-extrabold inline-flex items-center gap-1.5 shadow-xs cursor-pointer">
+                    <i class="fas fa-video"></i>
+                    <span>+ Add Live Class (Zoom / Jitsi / Meet)</span>
+                </button>
+
+                <button type="button"
+                        onclick="document.getElementById('sectionModal').classList.remove('hidden')"
+                        class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] border border-slate-200 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
+                    <i class="fas fa-plus"></i>
+                    <span>+ Add Custom Module</span>
+                </button>
+            </div>
         </div>
     @endforelse
 
@@ -1506,7 +1613,7 @@ function courseFormBuilder(config) {
 </div>
 
 <!-- Enrolled Students (Collapsible by default on All tab, auto-expanded on Students tab) -->
-<div class="mb-4" x-show="wsTab === 'all' || wsTab === 'students'">
+<div class="mb-4" x-show="wsTab === 'all' || wsTab === 'students'" x-cloak>
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div @click="showStudents = !showStudents" class="px-5 py-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
             <div class="flex items-center gap-2.5">
@@ -1612,7 +1719,7 @@ function courseFormBuilder(config) {
 </div>
 
 <!-- Course Payments & Verifications (Collapsible by default on All tab, auto-expanded on Payments tab) -->
-<div class="mb-8" x-show="wsTab === 'all' || wsTab === 'payments'">
+<div class="mb-8" x-show="wsTab === 'all' || wsTab === 'payments'" x-cloak>
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div @click="showPayments = !showPayments" class="px-5 py-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
             <div class="flex items-center gap-2.5">
@@ -1694,25 +1801,90 @@ function courseFormBuilder(config) {
     </div>
 </div>
 
-<!-- Section Modal -->
+<!-- Section / Module Modal -->
 <div id="sectionModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold">New Section</h3>
+            <h3 class="text-lg font-bold">New Module</h3>
             <button onclick="document.getElementById('sectionModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
         <form method="POST" action="{{ route('admin.courses.sections.store', $course) }}">
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                    <input type="text" name="title" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Module Title</label>
+                    <input type="text" name="title" placeholder="e.g. Module 1: Fundamentals & Core Framework" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Order</label>
-                    <input type="number" name="order" value="0" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <input type="number" name="order" value="{{ $course->sections->count() + 1 }}" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
-                <button type="submit" class="w-full px-4 py-2 bg-primary text-white rounded-lg font-medium hover:opacity-90">Create Section</button>
+                <button type="submit" class="w-full px-4 py-2.5 bg-[#051c45] text-white rounded-xl font-bold hover:opacity-90 cursor-pointer">Create Module</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 1-Click Quick Live Class Modal (Zoom / Jitsi Meet / Google Meet) -->
+<div id="quickLiveClassModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-rose-50 text-[#c30102] flex items-center justify-center">
+                    <i class="fas fa-video"></i>
+                </span>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Add Live Classroom Session</h3>
+                    <p class="text-[11px] text-slate-500">Supports in-browser Jitsi Meet, Zoom Web Client, and Google Meet</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('quickLiveClassModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+        </div>
+        <form method="POST" action="{{ route('admin.courses.quick_live_class', $course) }}">
+            @csrf
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Target Module</label>
+                    <select name="section_id" id="quickLiveSectionId" class="w-full rounded-xl border-gray-300 text-xs font-semibold focus:border-primary focus:ring-primary">
+                        @if($course->sections->count() === 0)
+                            <option value="">Auto-Create "Module 1: Live Classroom &amp; Interactive Sessions"</option>
+                        @else
+                            @foreach($course->sections as $sec)
+                                <option value="{{ $sec->id }}">{{ $sec->title }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Live Class Title</label>
+                    <input type="text" name="title" id="quickLiveTitle" value="Live Interactive Class & Q&A" required class="w-full rounded-xl border-gray-300 text-sm focus:border-primary focus:ring-primary">
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-xs font-bold text-slate-700">Live Meeting URL (Jitsi / Zoom / Google Meet)</label>
+                        <button type="button"
+                                onclick="generateJitsiRoomUrl('quickLiveVideoUrl')"
+                                class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-extrabold inline-flex items-center gap-1 cursor-pointer">
+                            <i class="fas fa-bolt text-amber-500"></i>
+                            <span>Generate Instant In-Browser Jitsi Room</span>
+                        </button>
+                    </div>
+                    <input type="url" name="video_url" id="quickLiveVideoUrl" required placeholder="https://meet.jit.si/... or https://us02web.zoom.us/j/... or https://meet.google.com/..." class="w-full rounded-xl border-gray-300 text-xs font-mono focus:border-primary focus:ring-primary">
+                    <p class="text-[11px] text-slate-500 mt-1">
+                        <strong>Jitsi Meet</strong> &amp; <strong>Zoom</strong> embed directly inside the student web classroom. <strong>Google Meet</strong> launches in a side-by-side pop-out classroom window.
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Session Instructions / Schedule Notes (Optional)</label>
+                    <textarea name="content" rows="2" placeholder="e.g. Please join 5 minutes early with your microphone muted." class="w-full rounded-xl border-gray-300 text-xs focus:border-primary focus:ring-primary"></textarea>
+                </div>
+
+                <button type="submit" class="w-full px-4 py-2.5 bg-[#c30102] hover:bg-[#a50102] text-white rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer">
+                    Save &amp; Publish Live Class
+                </button>
             </div>
         </form>
     </div>
@@ -1722,7 +1894,7 @@ function courseFormBuilder(config) {
 <div id="editSectionModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold">Edit Section</h3>
+            <h3 class="text-lg font-bold">Edit Module</h3>
             <button onclick="document.getElementById('editSectionModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
         <form method="POST" id="editSectionForm" action="">
@@ -1747,7 +1919,7 @@ function courseFormBuilder(config) {
 <div id="lessonModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold">New Lesson</h3>
+            <h3 class="text-lg font-bold">New Lesson or Live Class</h3>
             <button onclick="document.getElementById('lessonModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
         <form method="POST" id="lessonForm" action="">
@@ -1758,12 +1930,19 @@ function courseFormBuilder(config) {
                     <input type="text" name="title" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Video Embed URL (Optional)</label>
-                    <input type="url" name="video_url" placeholder="https://www.youtube.com/embed/..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
-                    <p class="text-xs text-gray-500 mt-1">Use the embed URL for YouTube/Vimeo.</p>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-sm font-medium text-gray-700">Video or Live Class URL (Optional)</label>
+                        <button type="button"
+                                onclick="generateJitsiRoomUrl('newLessonVideoUrl')"
+                                class="px-2 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[11px] font-bold cursor-pointer">
+                            ⚡ Generate Jitsi Live Room
+                        </button>
+                    </div>
+                    <input type="url" name="video_url" id="newLessonVideoUrl" placeholder="YouTube, Vimeo, Zoom, Jitsi Meet, or Google Meet URL..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <p class="text-xs text-gray-500 mt-1">Supports YouTube, Vimeo, Jitsi Meet (<code>meet.jit.si</code>), Zoom (<code>zoom.us</code>), or Google Meet (<code>meet.google.com</code>).</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Text Content (Optional)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Text Content / Notes (Optional)</label>
                     <textarea name="content" rows="4" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary"></textarea>
                 </div>
                 <div>
@@ -1792,8 +1971,15 @@ function courseFormBuilder(config) {
                     <input type="text" name="title" id="editLessonTitle" required class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Video URL (Optional)</label>
-                    <input type="url" name="video_url" id="editLessonVideoUrl" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-sm font-medium text-gray-700">Video or Live Class URL (Optional)</label>
+                        <button type="button"
+                                onclick="generateJitsiRoomUrl('editLessonVideoUrl')"
+                                class="px-2 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[11px] font-bold cursor-pointer">
+                            ⚡ Generate Jitsi Live Room
+                        </button>
+                    </div>
+                    <input type="url" name="video_url" id="editLessonVideoUrl" placeholder="YouTube, Vimeo, Zoom, Jitsi Meet, or Google Meet URL..." class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Text Content (Optional)</label>
@@ -1891,9 +2077,28 @@ function courseFormBuilder(config) {
     function openLessonModal(sectionId) {
         const form = document.getElementById('lessonForm');
         form.reset();
-        // Set the action URL dynamically
         form.action = `/admin/courses/{{ $course->id }}/sections/${sectionId}/lessons`;
         document.getElementById('lessonModal').classList.remove('hidden');
+    }
+
+    function openQuickLiveClassModal(sectionId = null) {
+        const modal = document.getElementById('quickLiveClassModal');
+        const sel = document.getElementById('quickLiveSectionId');
+        if (sel && sectionId) {
+            sel.value = String(sectionId);
+        }
+        const urlInput = document.getElementById('quickLiveVideoUrl');
+        if (urlInput && !urlInput.value) {
+            generateJitsiRoomUrl('quickLiveVideoUrl');
+        }
+        modal.classList.remove('hidden');
+    }
+
+    function generateJitsiRoomUrl(inputId) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
+        input.value = `https://meet.jit.si/ACS-Course{{ $course->id }}-Live-${rand}`;
     }
 
     function openEditSectionModal(sectionId, title, order) {

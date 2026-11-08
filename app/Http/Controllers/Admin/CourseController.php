@@ -162,6 +162,75 @@ class CourseController extends Controller
         return back()->with('success', 'Section created successfully');
     }
 
+    /**
+     * 1-Click Starter Modules Generator for empty courses (e.g., Course #18).
+     */
+    public function quickStarterModules(Request $request, Course $course)
+    {
+        $existingCount = $course->sections()->count();
+
+        $mod1 = $course->sections()->create([
+            'title' => 'Module ' . ($existingCount + 1) . ': Fundamentals & Core Framework',
+            'order' => $existingCount + 1,
+        ]);
+        $mod1->lessons()->create([
+            'title' => 'Program Orientation & Key Terminologies',
+            'content' => 'Welcome to ' . $course->title . '. Review the course roadmap, live session schedule, and downloadable resource sheets.',
+            'order' => 1,
+        ]);
+
+        $mod2 = $course->sections()->create([
+            'title' => 'Module ' . ($existingCount + 2) . ': Practical Case Studies & Live Workshop',
+            'order' => $existingCount + 2,
+        ]);
+        $mod2->lessons()->create([
+            'title' => 'Executing Real-World Case Studies',
+            'content' => 'Hands-on industry documentation, practical templates, and live problem-solving exercises.',
+            'order' => 1,
+        ]);
+
+        return back()->with('success', '2 Starter Modules and initial lessons created! You can now edit titles or attach Live Class / Video links.');
+    }
+
+    /**
+     * 1-Click Live Class Creator (Zoom / Jitsi Meet / Google Meet).
+     * Automatically creates Module 1 if the course currently has 0 modules.
+     */
+    public function quickLiveClass(Request $request, Course $course)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'video_url' => 'required|url|max:1000',
+            'content' => 'nullable|string',
+            'section_id' => 'nullable|integer',
+        ]);
+
+        $section = null;
+        if (!empty($data['section_id'])) {
+            $section = $course->sections()->where('id', $data['section_id'])->first();
+        }
+        if (!$section) {
+            $section = $course->sections()->orderBy('order')->first();
+        }
+        if (!$section) {
+            $section = $course->sections()->create([
+                'title' => 'Module 1: Live Classroom & Interactive Sessions',
+                'order' => 1,
+            ]);
+        }
+
+        $nextOrder = ((int) $section->lessons()->max('order')) + 1;
+
+        $lesson = $section->lessons()->create([
+            'title' => $data['title'],
+            'video_url' => $data['video_url'],
+            'content' => $data['content'] ?? 'Join the live interactive session directly from your web classroom or click the fallback app button if on mobile.',
+            'order' => $nextOrder,
+        ]);
+
+        return back()->with('success', "Live Class \"{$lesson->title}\" added under {$section->title}!");
+    }
+
     public function storeLesson(Request $request, Course $course, Section $section)
     {
         $data = $request->validate([

@@ -286,7 +286,7 @@
             <a href="{{ route('dashboard') }}" class="md:hidden flex items-center shrink-0">
                 <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="Logo" class="h-7 w-7 rounded-lg object-contain bg-white border border-slate-200 p-0.5" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
             </a>
-            <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-[#051c45] truncate">
+            <h1 class="font-extrabold text-xs sm:text-base tracking-tight text-[#051c45] leading-tight">
                 @yield('header_title', 'Student Portal')
             </h1>
             <span class="sr-only">Active Student</span>
@@ -324,7 +324,7 @@
     </header>
 
     <!-- 3. Main Student Portal Content Workspace -->
-    <main class="student-portal-workspace w-full max-w-6xl mx-auto px-3 sm:px-5 lg:px-6 py-4 sm:py-5 min-h-[calc(100vh-3.5rem)]">
+    <main class="student-portal-workspace w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 min-h-[calc(100vh-3.5rem)]">
         @yield('content')
         
         <footer class="mt-10 pt-4 border-t border-slate-200/70 flex items-center justify-between text-[11px] text-slate-400 pb-16 md:pb-4">

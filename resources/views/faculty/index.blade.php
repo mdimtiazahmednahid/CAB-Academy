@@ -55,7 +55,7 @@
                                 </span>
                                 <div class="min-w-0">
                                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block leading-none mb-0.5">Dept 0{{ $dIdx + 1 }}</span>
-                                    <h3 class="text-sm sm:text-base font-extrabold text-[#041536] leading-tight truncate">
+                                    <h3 class="text-xs sm:text-sm font-extrabold text-[#041536] leading-snug">
                                         {{ $dept->name }}
                                     </h3>
                                 </div>

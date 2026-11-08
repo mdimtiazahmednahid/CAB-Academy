@@ -335,6 +335,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/jobs/{job}/apply', [App\Http\Controllers\JobApplicationController::class, 'store'])->name('jobs.apply');
 
     // Authenticated Learning & Quizzes
+    Route::get('/courses/{course}/classroom', [App\Http\Controllers\CourseController::class, 'classroom'])->name('courses.classroom');
     Route::get('/courses/{course}/lessons/{lesson}', [App\Http\Controllers\CourseController::class, 'showLesson'])->name('lessons.show');
     Route::post('/courses/{course}/lessons/{lesson}/complete', [App\Http\Controllers\CourseController::class, 'completeLesson'])->name('lessons.complete');
     Route::get('/courses/{course}/checkout', [App\Http\Controllers\PaymentController::class, 'checkout'])->name('courses.checkout');
@@ -360,6 +361,8 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::delete('/courses/{course}', [AdminCourseController::class, 'destroy'])->name('admin.courses.destroy');
     
     Route::post('/courses/{course}/sections', [AdminCourseController::class, 'storeSection'])->name('admin.courses.sections.store');
+    Route::post('/courses/{course}/quick-starter-modules', [AdminCourseController::class, 'quickStarterModules'])->name('admin.courses.quick_starter_modules');
+    Route::post('/courses/{course}/quick-live-class', [AdminCourseController::class, 'quickLiveClass'])->name('admin.courses.quick_live_class');
     Route::match(['put', 'post'], '/courses/{course}/sections/{section}', [AdminCourseController::class, 'updateSection'])->name('admin.courses.sections.update');
     Route::delete('/courses/{course}/sections/{section}', [AdminCourseController::class, 'destroySection'])->name('admin.courses.sections.destroy');
     

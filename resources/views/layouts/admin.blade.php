@@ -404,8 +404,8 @@
         </div>
     </header>
 
-    <!-- Main Content (Compact Responsive Padding) -->
-    <main class="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-5 lg:p-6">
+    <!-- Main Content (Full Fluid Workspace Width) -->
+    <main class="flex-1 w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         @if($errors->any())
             <div class="mb-6 p-4 bg-rose-50 text-rose-800 rounded-2xl border border-rose-200 shadow-xs">
                 <div class="flex items-center gap-2 mb-1.5 font-bold text-sm">

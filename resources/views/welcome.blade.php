@@ -13,258 +13,151 @@
     {!! \App\Models\Setting::getVal('landing_custom_html') !!}
 @else
 
-{{-- 1. Executive Hero Section (Modern Minimalist Apple/Stripe Architecture) --}}
+{{-- 1. Executive Hero Section (10MS-Inspired Clean Architecture + Integrated 4 Core Tracks) --}}
+    @php
+        \App\Support\DatabaseSchemaRepair::ensureSchema();
+        $dbCategories = \App\Models\Category::active()->ordered()->with('headInstructor')->get();
+        if ($dbCategories->isNotEmpty()) {
+            $runningCategories = $dbCategories->map(function ($cat) {
+                return [
+                    'name' => $cat->name,
+                    'slug' => $cat->slug,
+                    'icon' => $cat->icon ?: 'fa-tag',
+                    'description' => $cat->description,
+                    'subcategories' => $cat->effective_subcategories,
+                    'head' => $cat->resolved_head,
+                    'team' => $cat->resolved_team,
+                ];
+            })->toArray();
+        } else {
+            $runningCategories = collect(\App\Models\Category::getCoreDepartmentsBlueprint())->map(function ($dept) {
+                return [
+                    'name' => $dept['name'],
+                    'slug' => $dept['slug'],
+                    'icon' => $dept['icon'],
+                    'description' => $dept['description'],
+                    'subcategories' => $dept['subcategories'],
+                    'head' => null,
+                    'team' => collect(),
+                ];
+            })->toArray();
+        }
+    @endphp
+
     @if(\App\Models\Setting::getVal('landing_hero_enabled', '1') == '1')
-    <section class="relative min-h-[auto] sm:min-h-[540px] lg:min-h-[600px] flex items-center bg-[#030f26] bg-gradient-to-b from-[#020b1c] via-[#051c45] to-[#041536] text-white py-14 sm:py-20 lg:py-24 overflow-hidden border-b border-white/10">
-        <!-- Subtle Architectural Ambient Glow -->
-        <div class="absolute -top-40 right-0 w-[36rem] h-[36rem] bg-[#c30102]/12 rounded-full blur-[140px] pointer-events-none"></div>
-        <div class="absolute -bottom-40 left-0 w-[36rem] h-[36rem] bg-[#10b981]/10 rounded-full blur-[140px] pointer-events-none"></div>
-
+    <section class="relative bg-[#041536] bg-gradient-to-b from-[#020b1c] to-[#051c45] text-white pt-8 pb-7 sm:pt-10 sm:pb-9 overflow-hidden border-b border-white/10">
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
                 
-                <!-- Left Content: Minimalist Executive Branding -->
-                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-
-                    <!-- Minimalist Trust Pill -->
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] border border-white/15 text-xs font-medium text-slate-200">
-                        <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
-                        <span>{{ \App\Models\Setting::getVal('landing_hero_alumni_text', '10,000+ Corporate Alumni') }}</span>
-                    </div>
-
+                <!-- Left Content: Zero-Redundancy Headline + Subtitle + Direct Actions -->
+                <div class="lg:col-span-7 space-y-4 text-center lg:text-left">
                     @php
-                        $heroTitleText = \App\Models\Setting::getVal('landing_hero_title', \App\Models\Setting::getVal('site_name', 'ACS Academy'));
+                        $rawHeroTitle = trim((string) \App\Models\Setting::getVal('landing_hero_title', \App\Models\Setting::getVal('site_name', 'Academy of Commercial & Supply Chain (ACS)')));
+                        $rawHeroTagline = trim((string) \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.'));
+                        $rawHeroSubtitle = trim((string) \App\Models\Setting::getVal('landing_hero_subtitle', 'Online Professional Certification Masterclasses & Corporate Programs.'));
+
+                        if (in_array(strtolower($rawHeroTitle), ['acs', 'acs academy', 'cab academy'], true) && stripos($rawHeroTagline, 'Academy of Commercial') !== false) {
+                            $heroTitleText = 'Academy of Commercial & Supply Chain (ACS)';
+                            $heroTaglineText = '';
+                        } else {
+                            $heroTitleText = $rawHeroTitle ?: 'Academy of Commercial & Supply Chain (ACS)';
+                            $heroTaglineText = (strcasecmp($rawHeroTagline, 'Learn, Grow, Lead.') === 0 || strcasecmp($rawHeroTagline, $heroTitleText) === 0) ? '' : $rawHeroTagline;
+                        }
+
+                        if (stripos($rawHeroSubtitle, 'Join thousands of students learning in-demand skills') !== false) {
+                            $heroSubtitleText = 'Practical executive certifications and live masterclasses in Export–Import, Letter of Credit (L/C), Customs, VAT & Supply Chain.';
+                        } else {
+                            $heroSubtitleText = $rawHeroSubtitle;
+                        }
+
                         $heroTitleSizing = \App\Models\Setting::getBrandSizing($heroTitleText);
                     @endphp
-                    <div class="space-y-3">
-                        <h1 class="font-black tracking-tight text-white leading-tight" style="{{ $heroTitleSizing['hero_style'] }}">
-                            {!! $heroTitleSizing['formatted_html'] ?? e($heroTitleText) !!}
-                        </h1>
-                        <h3 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-200 leading-snug">
-                            {!! \App\Models\Setting::formatBrandNameHtml(\App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) !!}
-                        </h3>
-                    </div>
+
+                    @if(!empty($heroTaglineText))
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-emerald-300">
+                            <span>{!! \App\Models\Setting::formatBrandNameHtml($heroTaglineText) !!}</span>
+                        </div>
+                    @endif
+
+                    <h1 class="font-black tracking-tight text-white leading-[1.15]" style="{{ $heroTitleSizing['hero_style'] }}">
+                        {!! $heroTitleSizing['formatted_html'] ?? e($heroTitleText) !!}
+                    </h1>
                     
-                    <p class="text-sm sm:text-base lg:text-lg text-slate-300/90 font-normal max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                        {{ \App\Models\Setting::getVal('landing_hero_subtitle', 'Online Professional Certification Masterclasses & Corporate Programs.') }}
+                    <p class="text-sm sm:text-base text-slate-300 font-normal max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        {{ $heroSubtitleText }}
                     </p>
 
-                    <!-- Call-to-Action Buttons -->
-                    <div class="pt-1 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
-                        <a href="{{ \App\Models\Setting::getVal('landing_hero_cta1_url', '#home-category') }}" class="btn-ipdp-primary px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl text-white text-xs sm:text-sm font-bold tracking-wide flex items-center justify-center gap-2.5 transition-all flex-1 sm:flex-initial text-center group">
+                    <div class="pt-1 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                        <a href="{{ \App\Models\Setting::getVal('landing_hero_cta1_url', '#home-category') }}" class="btn-ipdp-primary px-6 py-3 rounded-xl text-white text-xs sm:text-sm font-bold tracking-wide inline-flex items-center justify-center gap-2 transition-all">
                             <span>{{ \App\Models\Setting::getVal('landing_hero_cta1_text', \App\Models\Setting::getVal('landing_cta_text', 'Explore Courses')) }}</span>
-                            <i class="fas fa-arrow-down text-xs group-hover:translate-y-0.5 transition-transform"></i>
+                            <i class="fas fa-arrow-down text-xs"></i>
                         </a>
 
-                        <a href="{{ \App\Models\Setting::getVal('landing_hero_cta2_url', route('catalog.category', 'export-import')) }}" class="px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-white/[0.07] hover:bg-white/[0.14] text-white border border-white/15 text-xs sm:text-sm font-semibold tracking-wide flex items-center justify-center gap-2 transition-all flex-1 sm:flex-initial text-center">
+                        <a href="{{ \App\Models\Setting::getVal('landing_hero_cta2_url', route('catalog.category', 'export-import')) }}" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 text-xs sm:text-sm font-semibold tracking-wide inline-flex items-center justify-center gap-2 transition-all">
                             <span>{{ \App\Models\Setting::getVal('landing_hero_cta2_text', 'Export – Import') }}</span>
                             <i class="fas fa-chevron-right text-[10px] opacity-80"></i>
                         </a>
                     </div>
                 </div>
 
-                <!-- Right Video / Visual Showcase (Minimalist Architectural Frame) -->
+                <!-- Right Video Preview (Clean 16:9 Widescreen Frame) -->
                 <div class="lg:col-span-5">
-                    <div class="relative p-2 rounded-2xl bg-white/[0.06] border border-white/15 shadow-2xl">
-                        <div class="relative rounded-xl overflow-hidden aspect-video sm:aspect-[4/3] flex items-center justify-center bg-slate-900 group">
-                            @php
-                                $heroMediaImg = \App\Models\Setting::getVal('landing_hero_media_image', 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80');
-                                $heroMediaLink = \App\Models\Setting::getVal('landing_hero_media_link', route('catalog.index'));
-                            @endphp
-                            <img 
-                                src="{{ $heroMediaImg }}" 
-                                alt="{{ \App\Models\Setting::getVal('landing_hero_title', 'ACS Academy') }} Executive Training" 
-                                class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
-                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1000&q=80';"
-                            >
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#020b18]/80 via-black/25 to-transparent"></div>
-                            
-                            <!-- Minimalist Play Trigger -->
-                            <a 
-                                href="{{ $heroMediaLink }}" 
-                                class="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#c30102] hover:bg-[#a50102] text-white flex items-center justify-center shadow-xl hover:scale-105 transition-all duration-300 border border-white/20"
-                                aria-label="Explore Courses"
-                            >
-                                <i class="fas fa-play text-base sm:text-lg ml-0.5 text-white"></i>
-                            </a>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-    @endif
-
-{{-- 2. "Our Valuable Clients" (Minimalist Enterprise Sector Grid) --}}
-    @if(\App\Models\Setting::getVal('landing_clients_enabled', '1') == '1')
-    <section class="py-10 sm:py-14 bg-white border-b border-slate-200/70">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-6 sm:mb-8">
-                <h2 class="text-lg sm:text-xl font-bold text-[#051c45] tracking-tight">
-                    {{ \App\Models\Setting::getVal('landing_clients_title', 'Industry Sectors & Enterprise Training') }}
-                </h2>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4 items-stretch">
-                @php
-                    $rawClients = \App\Models\Setting::getVal('landing_clients_data');
-                    if (!empty(trim($rawClients))) {
-                        $clientLines = array_filter(array_map('trim', explode("\n", $rawClients)));
-                        $clients = [];
-                        foreach ($clientLines as $line) {
-                            $parts = array_map('trim', explode('|', $line));
-                            $cName = $parts[0] ?? '';
-                            $cLogo = $parts[1] ?? '';
-                            if ($cName !== '') {
-                                $clients[] = [
-                                    'name' => $cName,
-                                    'logo' => $cLogo ?: null,
-                                ];
-                            }
-                        }
-                    } else {
-                        $clients = [
-                            ['name' => 'Import – Export', 'logo' => null],
-                            ['name' => 'Supply Chain', 'logo' => null],
-                            ['name' => 'Trade Finance', 'logo' => null],
-                            ['name' => 'Customs & Port', 'logo' => null],
-                            ['name' => 'VAT & Tax', 'logo' => null],
-                            ['name' => 'Corporate Law', 'logo' => null],
-                            ['name' => 'Human Resource', 'logo' => null],
-                            ['name' => 'Project Mgmt', 'logo' => null],
-                        ];
-                    }
-                @endphp
-
-                @foreach($clients as $client)
-                    <div class="p-3 sm:p-4 bg-white hover:bg-white rounded-xl sm:rounded-2xl border border-slate-200/80 hover:border-slate-300 shadow-[0_2px_8px_rgba(4,21,54,0.04)] hover:shadow-[0_12px_24px_-6px_rgba(4,21,54,0.1)] hover:border-[#041536]/20 transition-all duration-300 group flex items-center justify-center min-h-[4.25rem] sm:min-h-[4.75rem] h-auto">
-                        @if(!empty($client['logo']))
-                            <img 
-                                src="{{ storage_asset($client['logo']) }}" 
-                                alt="{{ $client['name'] }}" 
-                                class="max-h-8 sm:max-h-12 max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105"
-                                loading="lazy"
-                                onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
-                            >
-                            <span style="display:none;" class="text-xs sm:text-sm font-bold text-slate-700 tracking-tight text-center leading-snug break-words">{{ $client['name'] }}</span>
-                        @else
-                            <span class="text-xs sm:text-sm font-bold text-slate-700 tracking-tight text-center leading-snug break-words">{{ $client['name'] }}</span>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-    @endif
-
-    {{-- 3 & 4. Course Showcase & Sticky Smart Category Navigation --}}
-    <div id="courses-section-wrapper" class="relative">
-        
-        {{-- 3. Sticky Smart Category Navigation Bar (Compact, Icon-Driven, Sticky across Course Section) --}}
-        @if(\App\Models\Setting::getVal('landing_categories_enabled', '1') == '1')
-        <section id="home-category" class="sticky top-16 sm:top-20 z-40 bg-white/95 backdrop-blur-2xl border-y border-slate-200/75 shadow-[0_10px_28px_-6px_rgba(4,21,54,0.08)] py-2.5 transition-all" x-data="{
-            scrollLeft() { $refs.catSlider.scrollBy({ left: -260, behavior: 'smooth' }) },
-            scrollRight() { $refs.catSlider.scrollBy({ left: 260, behavior: 'smooth' }) }
-        }">
-            <!-- Ultra-fine luxury Crimson accent hairline -->
-            <div class="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#c30102]/45 to-transparent pointer-events-none"></div>
-
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between gap-3">
-                    <!-- Compact Category Section Title & Visual Cue (Hidden on mobile for maximum pill space) -->
-                    <div class="hidden sm:flex items-center gap-2 shrink-0 pr-3.5 border-r border-slate-200/90">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#c30102] opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#c30102]"></span>
-                        </span>
-                        <h2 class="text-[11px] font-black uppercase tracking-wider text-[#041536] whitespace-nowrap">
-                            {{ \App\Models\Setting::getVal('landing_categories_title', 'Course Categories') }}
-                        </h2>
-                    </div>
-
-                    @php
-                        \App\Support\DatabaseSchemaRepair::ensureSchema();
-                        $dbCategories = \App\Models\Category::active()->ordered()->with('headInstructor')->get();
-                        if ($dbCategories->isNotEmpty()) {
-                            $runningCategories = $dbCategories->map(function ($cat) {
-                                return [
-                                    'name' => $cat->name,
-                                    'slug' => $cat->slug,
-                                    'icon' => $cat->icon ?: 'fa-tag',
-                                    'description' => $cat->description,
-                                    'subcategories' => $cat->effective_subcategories,
-                                    'head' => $cat->resolved_head,
-                                    'team' => $cat->resolved_team,
-                                ];
-                            })->toArray();
-                        } else {
-                            $runningCategories = collect(\App\Models\Category::getCoreDepartmentsBlueprint())->map(function ($dept) {
-                                return [
-                                    'name' => $dept['name'],
-                                    'slug' => $dept['slug'],
-                                    'icon' => $dept['icon'],
-                                    'description' => $dept['description'],
-                                    'subcategories' => $dept['subcategories'],
-                                    'head' => null,
-                                    'team' => collect(),
-                                ];
-                            })->toArray();
-                        }
-                        $allCatUrl = \App\Models\Setting::getVal('landing_categories_all_url', route('catalog.index'));
-                        $allCatText = \App\Models\Setting::getVal('landing_categories_all_text', 'All');
-                    @endphp
-
-                    <!-- Horizontal Smart Category Navigation Pills with Semantic Icons -->
-                    <div 
-                        x-ref="catSlider" 
-                        class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1 w-full"
-                    >
-                        @foreach($runningCategories as $cat)
-                            <a 
-                                href="{{ route('catalog.category', $cat['slug']) }}" 
-                                class="liquid-glass-pill category-nav-pill shrink-0 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-gradient-to-r hover:from-[#041536] hover:via-[#072152] hover:to-[#041536] text-[#0f172a] hover:text-white border border-slate-200/90 hover:border-[#0a2e6b] text-xs font-bold transition-all duration-300 group shadow-[0_2px_8px_-2px_rgba(4,21,54,0.06)] hover:shadow-[0_8px_20px_-4px_rgba(4,21,54,0.28)] hover:scale-105 active:scale-95 cursor-pointer"
-                            >
-                                <span class="w-6 h-6 rounded-full bg-slate-100 group-hover:bg-[#c30102] text-[#c30102] group-hover:text-white flex items-center justify-center shrink-0 transition-all duration-300 shadow-inner group-hover:shadow-[0_0_10px_rgba(195,1,2,0.6)]">
-                                    <i class="fas {{ $cat['icon'] }} text-[10px] transition-colors"></i>
-                                </span>
-                                <span class="whitespace-nowrap tracking-tight">{{ $cat['name'] }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-
-                    <!-- Navigation Slider Arrows & View All -->
-                    <div class="hidden md:flex items-center gap-2 shrink-0 pl-3.5 border-l border-slate-200/90">
-                        <a href="{{ $allCatUrl }}" class="text-[11px] font-black uppercase tracking-wider text-[#c30102] hover:text-[#041536] transition-colors whitespace-nowrap mr-1 flex items-center gap-1">
-                            <span>{{ $allCatText }}</span>
-                            <i class="fas fa-chevron-right text-[8px]"></i>
+                    <div class="relative rounded-2xl overflow-hidden aspect-video flex items-center justify-center bg-slate-900 border border-white/15 shadow-2xl group">
+                        @php
+                            $heroMediaImg = \App\Models\Setting::getVal('landing_hero_media_image', 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80');
+                            $heroMediaLink = \App\Models\Setting::getVal('landing_hero_media_link', route('catalog.index'));
+                        @endphp
+                        <img 
+                            src="{{ $heroMediaImg }}" 
+                            alt="{{ \App\Models\Setting::getVal('landing_hero_title', 'ACS Academy') }} Executive Training" 
+                            class="absolute inset-0 w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-500"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1000&q=80';"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#020b18]/70 via-black/20 to-transparent"></div>
+                        
+                        <a 
+                            href="{{ $heroMediaLink }}" 
+                            class="relative z-10 w-14 h-14 rounded-full bg-[#c30102] hover:bg-[#a50102] text-white flex items-center justify-center shadow-xl hover:scale-105 transition-all duration-200 border border-white/25"
+                            aria-label="Explore Courses"
+                        >
+                            <i class="fas fa-play text-base ml-0.5 text-white"></i>
                         </a>
-                        <button 
-                            type="button" 
-                            @click="scrollLeft()" 
-                            class="w-7 h-7 rounded-full bg-white hover:bg-[#041536] border border-slate-200/90 hover:border-[#041536] text-slate-600 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
-                            aria-label="Previous Category"
-                        >
-                            <i class="fas fa-chevron-left text-[9px]"></i>
-                        </button>
-                        <button 
-                            type="button" 
-                            @click="scrollRight()" 
-                            class="w-7 h-7 rounded-full bg-white hover:bg-[#041536] border border-slate-200/90 hover:border-[#041536] text-slate-600 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
-                            aria-label="Next Category"
-                        >
-                            <i class="fas fa-chevron-right text-[9px]"></i>
-                        </button>
                     </div>
                 </div>
-            </div>
-        </section>
-        @endif
 
-        {{-- 4. Course Showcase: Clean 10ms-Style Unified Course Grid with Dynamic Track Tabs --}}
+            </div>
+
+            {{-- 10MS-Style Integrated 4 Core Department Cards inside Hero Bottom --}}
+            @if(\App\Models\Setting::getVal('landing_categories_enabled', '1') == '1')
+            <div id="home-category" class="mt-7 pt-6 border-t border-white/10">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+                    @foreach(array_slice($runningCategories, 0, 4) as $cat)
+                        <a 
+                            href="{{ route('catalog.category', $cat['slug']) }}" 
+                            class="category-nav-pill group flex items-center justify-between gap-2.5 p-3 sm:p-3.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-white/25 transition-all"
+                        >
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="w-8 h-8 rounded-lg bg-[#c30102] text-white flex items-center justify-center shrink-0 text-xs shadow-xs">
+                                    <i class="fas {{ $cat['icon'] }}"></i>
+                                </span>
+                                <span class="text-xs sm:text-[13px] font-bold text-white leading-snug">
+                                    {{ $cat['name'] }}
+                                </span>
+                            </div>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-400 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0"></i>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        </div>
+    </section>
+    @endif
+
+    {{-- 2. Course Showcase: Immediate Above-the-Fold 10MS Course Grid --}}
+    <div id="courses-section-wrapper" class="relative">
         @if(\App\Models\Setting::getVal('landing_courses_enabled', '1') == '1')
-        <section class="py-8 sm:py-12 bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9]/70 to-[#ffffff] border-b border-slate-200/80" x-data="{ activeCourseTab: 'all' }">
+        <section class="py-7 sm:py-10 bg-[#f8fafc] border-b border-slate-200/80" x-data="{ activeCourseTab: 'all' }">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 
                 <!-- Compact Section Header + Tabs Bar -->
@@ -418,7 +311,7 @@
                                 </div>
                                 <div class="min-w-0">
                                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block leading-none mb-0.5">Dept 0{{ $dIdx + 1 }}</span>
-                                    <h3 class="text-sm sm:text-base font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-tight truncate">
+                                    <h3 class="text-xs sm:text-sm font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug">
                                         {{ $dept['name'] }}
                                     </h3>
                                 </div>

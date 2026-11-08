@@ -103,7 +103,7 @@
             $instAvatar = $course->instructor_avatar_url;
         @endphp
         <div class="absolute -bottom-10 right-3 z-20 flex items-end justify-end pointer-events-auto">
-            <a href="{{ route('courses.show', $course) }}" title="{{ $instName }} — {{ $instTitle }}" class="block relative group/avatar translate-y-5 sm:translate-y-4">
+            <a href="{{ route('courses.show', $course) }}" title="{{ $instName }} — {{ $instTitle }}" class="block relative group/avatar -translate-y-4">
                 <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-md overflow-hidden bg-white ring-2 ring-slate-100 group-hover:ring-[#c30102]/40 group-hover:scale-105 transition-all duration-300">
                     @if($instAvatar)
                         <img 

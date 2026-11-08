@@ -232,9 +232,9 @@ class Setting extends Model
             'formatted_html' => $formattedHtml,
             'short_name' => $shortName,
             'is_long' => true,
-            'header_style' => 'font-size: clamp(0.72rem, 0.82vw, 0.84rem); line-height: 1.16;',
+            'header_style' => 'font-size: clamp(0.72rem, 0.75vw, 0.78rem); line-height: 1.15;',
             'sidebar_style' => 'font-size: clamp(0.68rem, 0.78vw, 0.76rem); line-height: 1.2;',
-            'hero_style' => 'font-size: clamp(1.55rem, 3.2vw, 2.55rem); line-height: 1.15;',
+            'hero_style' => 'font-size: clamp(1.55rem, 3.0vw, 2.4rem); line-height: 1.14;',
         ];
     }
 
@@ -243,7 +243,7 @@ class Setting extends Model
      */
     public static function getTypographyCss(): string
     {
-        $minFont = (int) self::getVal('ui_min_font_size', 15);
+        $minFont = (int) self::getVal('ui_min_font_size', 16);
         if ($minFont < 12) {
             $minFont = 12;
         }
@@ -278,6 +278,15 @@ class Setting extends Model
             body {
                 max-width: 100vw;
                 overflow-x: clip;
+            }
+            [x-cloak] {
+                display: none !important;
+            }
+            .max-w-7xl {
+                max-width: min(96vw, 1600px) !important;
+            }
+            .max-w-6xl {
+                max-width: min(96vw, 1520px) !important;
             }
             .brand-adaptive-title {
                 word-break: normal;

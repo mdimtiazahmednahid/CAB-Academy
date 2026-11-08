@@ -359,4 +359,101 @@ class DataIntegrityAndSecurityAuditTest extends TestCase
         $this->assertSame($userCountBefore, User::count());
         $this->assertSame('01999887766', $studentNoProfilePhone->fresh()->phone);
     }
+
+    public function test_live_classroom_embedding_and_10ms_module_builder(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $student = User::factory()->create([
+            'name' => 'Tanvir Ahmed',
+            'email' => 'tanvir@example.com',
+            'role' => 'student',
+            'preferences' => ['level' => 'Intermediate'],
+        ]);
+
+        // 1. Course with 0 sections (like Course #18) can still open /courses/{course}/classroom for enrolled students
+        $course = Course::create([
+            'title' => 'Communication Skills for Career Success',
+            'price' => 0,
+            'is_published' => true,
+            'venue' => 'Online Live (Zoom)',
+        ]);
+        $student->enrolledCourses()->syncWithoutDetaching([$course->id]);
+
+        $emptyClassroom = $this->actingAs($student)->get(route('courses.classroom', $course));
+        $emptyClassroom->assertOk();
+        $emptyClassroom->assertSee('Enrolled Classroom Hub');
+        $emptyClassroom->assertSee('Communication Skills for Career Success');
+
+        // 2. Admin can 1-click add a Live Class (Jitsi Meet) to a course with 0 sections -> auto-creates Module 1
+        $this->actingAs($admin)->post(route('admin.courses.quick_live_class', $course), [
+            'title' => 'Batch 18 Live Jitsi Workshop',
+            'video_url' => 'https://meet.jit.si/ACS-Course18-Live-Room1',
+            'content' => 'Bring your worksheet.',
+        ])->assertRedirect();
+
+        $this->assertSame(1, $course->sections()->count());
+        $jitsiLesson = \App\Models\Lesson::where('title', 'Batch 18 Live Jitsi Workshop')->firstOrFail();
+        $this->assertTrue($jitsiLesson->is_live_class);
+        $this->assertSame('jitsi', $jitsiLesson->video_provider);
+
+        // Verify Jitsi stage resolution and WebRTC iframe permissions
+        $jitsiStage = $jitsiLesson->resolveClassroomStage($student);
+        $this->assertTrue($jitsiStage['can_iframe']);
+        $this->assertStringContainsString('meet.jit.si/ACS-Course18-Live-Room1#', $jitsiStage['embed_url']);
+        $this->assertStringContainsString(rawurlencode('"Tanvir Ahmed"'), $jitsiStage['embed_url']);
+
+        $jitsiView = $this->actingAs($student)->get(route('lessons.show', [$course, $jitsiLesson]));
+        $jitsiView->assertOk();
+        $jitsiView->assertSee('Jitsi Meet Live');
+        $jitsiView->assertSee('allow="camera; microphone; fullscreen; display-capture', false);
+
+        // 3. Zoom Live Class converts standard Zoom link into Web Client embed URL + fallback app link
+        $section = $course->sections()->first();
+        $zoomLesson = $section->lessons()->create([
+            'title' => 'Executive Zoom Masterclass',
+            'video_url' => 'https://us02web.zoom.us/j/89123456789?pwd=secretPassword123',
+            'order' => 2,
+        ]);
+        $this->assertTrue($zoomLesson->is_live_class);
+        $this->assertSame('zoom', $zoomLesson->video_provider);
+
+        $zoomStage = $zoomLesson->resolveClassroomStage($student);
+        $this->assertTrue($zoomStage['can_iframe']);
+        $this->assertSame('89123456789', $zoomStage['meeting_id']);
+        $this->assertStringContainsString('https://app.zoom.us/wc/89123456789/join?prefer=1', $zoomStage['embed_url']);
+        $this->assertStringContainsString('pwd=secretPassword123', $zoomStage['embed_url']);
+
+        $zoomView = $this->actingAs($student)->get(route('lessons.show', [$course, $zoomLesson]));
+        $zoomView->assertOk();
+        $zoomView->assertSee('Zoom Live Class');
+        $zoomView->assertSee('Open Zoom App');
+
+        // 4. Google Meet Live Class renders Pop-Out Classroom Stage instead of blocked iframe
+        $gmeetLesson = $section->lessons()->create([
+            'title' => 'Google Meet Mentorship Session',
+            'video_url' => 'https://meet.google.com/abc-defg-hij',
+            'order' => 3,
+        ]);
+        $this->assertTrue($gmeetLesson->is_live_class);
+        $this->assertSame('google_meet', $gmeetLesson->video_provider);
+
+        $gmeetStage = $gmeetLesson->resolveClassroomStage($student);
+        $this->assertFalse($gmeetStage['can_iframe']);
+        $this->assertSame('abc-defg-hij', $gmeetStage['meeting_id']);
+
+        $gmeetView = $this->actingAs($student)->get(route('lessons.show', [$course, $gmeetLesson]));
+        $gmeetView->assertOk();
+        $gmeetView->assertSee('Join Google Meet (Pop-Out Classroom)');
+        $gmeetView->assertSee('abc-defg-hij');
+
+        // 5. Admin can 1-click generate Starter Modules
+        $this->actingAs($admin)->post(route('admin.courses.quick_starter_modules', $course))->assertRedirect();
+        $this->assertSame(3, $course->sections()->count());
+
+        // 6. Student Dashboard displays the Live Class banner & 10MS tabs
+        $dashView = $this->actingAs($student)->get(route('dashboard'));
+        $dashView->assertOk();
+        $dashView->assertSee('Join Live Classroom');
+        $dashView->assertSee('Batch 18 Live Jitsi Workshop');
+    }
 }

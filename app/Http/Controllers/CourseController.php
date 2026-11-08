@@ -121,6 +121,50 @@ class CourseController extends Controller
         return back()->with('success', 'You have successfully enrolled in the course!');
     }
 
+    /**
+     * Unified 10MS-Style Course Classroom Entry Point.
+     * Opens the next incomplete lesson (or live class), or renders the Classroom Hub even if 0 lessons exist yet.
+     */
+    public function classroom(Request $request, Course $course)
+    {
+        $user = auth()->user();
+        abort_if(!$course->is_published && (!$user || !$user->isAdmin()), 404);
+
+        if (!$user->isAdmin() && $course->instructor_id !== $user->id && !$user->enrolledCourses()->where('course_id', $course->id)->exists()) {
+            return redirect()->route('courses.show', $course)->with('error', 'Please enroll in this course to access the classroom.');
+        }
+
+        $course->load([
+            'instructor',
+            'instructorProfile',
+            'materials',
+            'sections' => function ($q) {
+                $q->orderBy('order');
+            },
+            'sections.lessons' => function ($q) {
+                $q->orderBy('order');
+            },
+            'quizzes.questions',
+        ]);
+
+        $completedLessonIds = $user ? $user->completedLessons()->pluck('lesson_id')->toArray() : [];
+        $allLessons = $course->sections->flatMap->lessons;
+
+        if ($allLessons->isNotEmpty()) {
+            $targetLesson = $allLessons->first(fn ($l) => $l->is_live_class && !in_array($l->id, $completedLessonIds))
+                ?? $allLessons->first(fn ($l) => !in_array($l->id, $completedLessonIds))
+                ?? $allLessons->first();
+
+            return $this->showLesson($course, $targetLesson);
+        }
+
+        $lesson = null;
+        $isCompleted = false;
+        $nextLesson = null;
+
+        return view('lessons.show', compact('course', 'lesson', 'isCompleted', 'nextLesson', 'completedLessonIds'));
+    }
+
     public function showLesson(Course $course, Lesson $lesson)
     {
         abort_if(!$course->is_published, 404);
