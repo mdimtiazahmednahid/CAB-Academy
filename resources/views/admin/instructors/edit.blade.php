@@ -38,29 +38,32 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-50/70 rounded-xl border border-slate-200 p-4 space-y-3">
+            @php
+                $deptNames = \App\Models\Category::active()->ordered()->pluck('name')->toArray();
+                if (empty($deptNames)) {
+                    $deptNames = array_column(\App\Models\Category::getCoreDepartmentsBlueprint(), 'name');
+                }
+                $rolesMap = $instructor->department_roles_map;
+            @endphp
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Learning Department</label>
-                @php
-                    $deptNames = \App\Models\Category::active()->ordered()->pluck('name')->toArray();
-                    if (empty($deptNames)) {
-                        $deptNames = array_column(\App\Models\Category::getCoreDepartmentsBlueprint(), 'name');
-                    }
-                @endphp
-                <select name="department" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
-                    <option value="">-- Select Learning Department --</option>
-                    @foreach($deptNames as $dName)
-                        <option value="{{ $dName }}" {{ old('department', $instructor->department) === $dName ? 'selected' : '' }}>{{ $dName }}</option>
-                    @endforeach
-                </select>
+                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Department Roles &amp; Team Memberships</label>
+                <p class="text-[11px] text-slate-500 mt-0.5">Assign this person as Department Head in one department and Team Member in others as needed.</p>
             </div>
-
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Department Role</label>
-                <select name="department_role" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
-                    <option value="team_member" {{ old('department_role', $instructor->department_role ?? 'team_member') === 'team_member' ? 'selected' : '' }}>Department Team Member</option>
-                    <option value="head" {{ old('department_role', $instructor->department_role) === 'head' ? 'selected' : '' }}>Department Head</option>
-                </select>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                @foreach($deptNames as $dName)
+                    @php
+                        $roleVal = old('department_roles.' . $dName, $rolesMap[$dName] ?? 'none');
+                    @endphp
+                    <div class="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-white border border-slate-200">
+                        <span class="text-xs font-bold text-slate-800">{{ $dName }}</span>
+                        <select name="department_roles[{{ $dName }}]" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-semibold focus:border-[#041536] focus:ring-1 focus:ring-[#041536] shrink-0">
+                            <option value="none" {{ $roleVal === 'none' ? 'selected' : '' }}>Not Assigned</option>
+                            <option value="team_member" {{ $roleVal === 'team_member' ? 'selected' : '' }}>Team Member</option>
+                            <option value="head" {{ $roleVal === 'head' ? 'selected' : '' }}>Department Head</option>
+                        </select>
+                    </div>
+                @endforeach
             </div>
         </div>
 

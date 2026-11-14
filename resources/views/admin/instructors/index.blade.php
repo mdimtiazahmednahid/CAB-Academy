@@ -48,14 +48,13 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 max-w-xs">
-                                @if(!empty($instructor->department))
+                                @if(!empty($instructor->department_roles_map))
                                     <div class="mb-1 flex items-center gap-1.5 flex-wrap">
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase {{ $instructor->department_role === 'head' ? 'bg-[#c30102] text-white' : 'bg-[#041536]/10 text-[#041536]' }}">
-                                            {{ $instructor->department_role === 'head' ? 'Department Head' : 'Team Member' }}
-                                        </span>
-                                        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold">
-                                            {{ $instructor->department }}
-                                        </span>
+                                        @foreach($instructor->department_roles_map as $deptName => $deptRole)
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $deptRole === 'head' ? 'bg-[#c30102] text-white' : 'bg-slate-100 text-slate-700' }}">
+                                                {{ $deptRole === 'head' ? 'Head: ' : 'Team: ' }}{{ $deptName }}
+                                            </span>
+                                        @endforeach
                                     </div>
                                 @endif
                                 <div class="font-semibold text-gray-800 text-xs">{{ $instructor->title }}</div>

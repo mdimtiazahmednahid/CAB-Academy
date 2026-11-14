@@ -61,6 +61,11 @@ class CertificateController extends Controller
             'id_label' => Setting::getVal('certificate_id_label', 'CERTIFICATE ID:'),
             'date_label' => Setting::getVal('certificate_date_label', 'DATE:'),
             'batch_label' => Setting::getVal('certificate_batch_label', 'BATCH:'),
+            'institution_font_size' => Setting::getVal('certificate_institution_font_size', '31'),
+            'title_font_size' => Setting::getVal('certificate_title_font_size', '35'),
+            'recipient_font_size' => Setting::getVal('certificate_recipient_font_size', '32'),
+            'course_font_size' => Setting::getVal('certificate_course_font_size', '30'),
+            'body_font_size' => Setting::getVal('certificate_body_font_size', '16.5'),
             'template' => Setting::getVal('certificate_template', 'acs_signature'),
         ];
 
@@ -117,6 +122,11 @@ class CertificateController extends Controller
             'certificate_id_label' => 'nullable|string|max:100',
             'certificate_date_label' => 'nullable|string|max:100',
             'certificate_batch_label' => 'nullable|string|max:100',
+            'certificate_institution_font_size' => 'nullable|numeric|min:14|max:60',
+            'certificate_title_font_size' => 'nullable|numeric|min:16|max:64',
+            'certificate_recipient_font_size' => 'nullable|numeric|min:16|max:64',
+            'certificate_course_font_size' => 'nullable|numeric|min:14|max:56',
+            'certificate_body_font_size' => 'nullable|numeric|min:10|max:32',
             'certificate_logo_file' => 'nullable|image|max:4096',
             'certificate_seal_logo_file' => 'nullable|image|max:4096',
             'certificate_seal_bg_file' => 'nullable|image|max:4096',
@@ -143,6 +153,18 @@ class CertificateController extends Controller
         }
         if (empty($validated['certificate_batch_label'])) {
             $validated['certificate_batch_label'] = 'BATCH:';
+        }
+        $fontDefaults = [
+            'certificate_institution_font_size' => '31',
+            'certificate_title_font_size' => '35',
+            'certificate_recipient_font_size' => '32',
+            'certificate_course_font_size' => '30',
+            'certificate_body_font_size' => '16.5',
+        ];
+        foreach ($fontDefaults as $fontKey => $fontDefault) {
+            if (empty($validated[$fontKey])) {
+                $validated[$fontKey] = $fontDefault;
+            }
         }
 
         // Handle optional file uploads (InfinityFree compatible direct public/uploads/certificates path)

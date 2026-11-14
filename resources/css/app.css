@@ -128,4 +128,17 @@ html, body {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Smooth horizontal avatar strip marquee for department teams exceeding card width */
+@keyframes deptTeamSlide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.animate-dept-team-slide {
+  animation: deptTeamSlide 18s linear infinite;
+}
+
 

@@ -34,11 +34,16 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        if ($this->app->environment('production')
-            || request()->header('X-Forwarded-Proto') === 'https'
-            || str_contains((string) request()->header('CF-Visitor'), 'https')
-            || str_contains((string) request()->getHost(), 'acsacademy.bd')
-            || str_contains((string) request()->getHost(), 'cabacademy.bd')) {
+        $shouldForceHttps = $this->app->environment('production');
+        if (!$shouldForceHttps && $this->app->bound('request')) {
+            $req = $this->app->make('request');
+            $shouldForceHttps = $req->header('X-Forwarded-Proto') === 'https'
+                || str_contains((string) $req->header('CF-Visitor'), 'https')
+                || str_contains((string) $req->getHost(), 'acsacademy.bd')
+                || str_contains((string) $req->getHost(), 'cabacademy.bd');
+        }
+
+        if ($shouldForceHttps) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
     }

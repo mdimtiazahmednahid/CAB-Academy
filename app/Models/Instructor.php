@@ -15,6 +15,7 @@ class Instructor extends Model
         'title',
         'expertise',
         'department',
+        'departments',
         'department_role',
         'avatar',
         'bio',
@@ -28,6 +29,7 @@ class Instructor extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'order' => 'integer',
+        'departments' => 'array',
     ];
 
     protected static function booted(): void
@@ -141,7 +143,70 @@ class Instructor extends Model
      */
     public function isDepartmentHead(): bool
     {
-        return ($this->department_role ?? '') === 'head';
+        return ($this->department_role ?? '') === 'head'
+            || in_array('head', $this->department_roles_map, true);
+    }
+
+    /**
+     * Normalized map of [departmentName => 'head' | 'team_member'].
+     */
+    public function getDepartmentRolesMapAttribute(): array
+    {
+        $map = [];
+        $raw = is_array($this->departments) ? $this->departments : [];
+
+        foreach ($raw as $key => $val) {
+            if (is_string($key) && in_array($val, ['head', 'team_member'], true)) {
+                $dept = trim($key);
+                if ($dept !== '') {
+                    $map[$dept] = $val;
+                }
+            } elseif (is_string($val)) {
+                $dept = trim($val);
+                if ($dept !== '' && !isset($map[$dept])) {
+                    $map[$dept] = 'team_member';
+                }
+            }
+        }
+
+        $primary = trim((string) ($this->department ?? ''));
+        if ($primary !== '' && !isset($map[$primary])) {
+            $map[$primary] = ($this->department_role === 'head') ? 'head' : 'team_member';
+        }
+
+        return $map;
+    }
+
+    /**
+     * Return all department names this instructor belongs to (primary + additional teams).
+     */
+    public function getAllDepartmentsAttribute(): array
+    {
+        return array_keys($this->department_roles_map);
+    }
+
+    /**
+     * Get this instructor's role in a specific department ('head', 'team_member', or null).
+     */
+    public function roleInDepartment(string $departmentName): ?string
+    {
+        return $this->department_roles_map[trim($departmentName)] ?? null;
+    }
+
+    /**
+     * Check whether this instructor is the Department Head of a specific department.
+     */
+    public function isHeadOfDepartment(string $departmentName): bool
+    {
+        return $this->roleInDepartment($departmentName) === 'head';
+    }
+
+    /**
+     * Check whether this instructor is a member of the given department team.
+     */
+    public function belongsToDepartment(string $departmentName): bool
+    {
+        return $this->roleInDepartment($departmentName) !== null;
     }
 
     public function getAvatarUrlAttribute(): string

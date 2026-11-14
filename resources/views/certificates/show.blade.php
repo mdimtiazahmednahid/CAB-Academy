@@ -32,6 +32,13 @@
     $idLabel = \App\Models\Setting::getVal('certificate_id_label', 'CERTIFICATE ID:');
     $dateLabel = \App\Models\Setting::getVal('certificate_date_label', 'DATE:');
     $batchLabel = \App\Models\Setting::getVal('certificate_batch_label', 'BATCH:');
+    $instFontSize = (float) \App\Models\Setting::getVal('certificate_institution_font_size', '31') ?: 31;
+    $titleFontSize = (float) \App\Models\Setting::getVal('certificate_title_font_size', '35') ?: 35;
+    $recipientFontSize = (float) \App\Models\Setting::getVal('certificate_recipient_font_size', '32') ?: 32;
+    $courseFontSize = (float) \App\Models\Setting::getVal('certificate_course_font_size', '30') ?: 30;
+    $bodyFontSize = (float) \App\Models\Setting::getVal('certificate_body_font_size', '16.5') ?: 16.5;
+    $courseTitleLen = mb_strlen((string) $course->title);
+    $courseFontSizeAdjusted = $courseTitleLen > 52 ? round($courseFontSize * 0.8, 1) : $courseFontSize;
     $verifyUrl = route('certificate.verify', $certificate->certificate_number);
     $qrSeed = crc32((string) $certificate->certificate_number);
 
@@ -187,7 +194,7 @@
         .font-playfair { font-family: 'Playfair Display', serif; }
         .font-script { font-family: 'Great Vibes', cursive; }
         .font-sans-body { font-family: 'Montserrat', sans-serif; }
-        .font-display-heavy { font-family: 'Archivo Black', 'Montserrat', sans-serif; }
+        .font-display-heavy { font-family: 'Montserrat', sans-serif; font-weight: 900; }
 
         @page {
             size: A4 landscape;
@@ -211,7 +218,13 @@
             }
             .certificate-wrapper {
                 box-shadow: none !important;
-                border: 8px solid {{ $theme['outer_border_hex'] }} !important;
+                border: 7px solid {{ $theme['outer_border_hex'] }} !important;
+                @if($template === 'acs_signature')
+                border-top-color: #bc2723 !important;
+                border-bottom-color: #98201f !important;
+                border-left-color: #252686 !important;
+                border-right-color: #1c1d79 !important;
+                @endif
                 border-radius: 0 !important;
                 width: 297mm !important;
                 height: 210mm !important;
@@ -232,7 +245,7 @@
             .certificate-inner {
                 height: 100% !important;
                 max-height: 100% !important;
-                padding: 5mm 10mm !important;
+                padding: {{ $template === 'acs_signature' ? '4mm 11mm' : '5mm 10mm' }} !important;
                 box-sizing: border-box !important;
                 display: flex !important;
                 flex-direction: column !important;
@@ -240,12 +253,55 @@
                 overflow: hidden !important;
             }
             .acs-sig-logo {
-                width: 120px !important;
-                height: 120px !important;
+                width: 152px !important;
+                height: 141px !important;
             }
             .acs-sig-watermark {
-                width: 340px !important;
-                height: 340px !important;
+                width: 410px !important;
+                height: 410px !important;
+            }
+            .acs-print-inst {
+                font-size: {{ round($instFontSize * 1.08, 1) }}px !important;
+                line-height: 1.15 !important;
+            }
+            .acs-print-tagline {
+                font-size: 12px !important;
+            }
+            .acs-print-title {
+                font-size: {{ round($titleFontSize * 1.08, 1) }}px !important;
+                line-height: 1.05 !important;
+            }
+            .acs-print-confer {
+                font-size: 18px !important;
+            }
+            .acs-print-recipient {
+                font-size: {{ round($recipientFontSize * 1.08, 1) }}px !important;
+                line-height: 1.15 !important;
+            }
+            .acs-print-body {
+                font-size: {{ round($bodyFontSize * 1.08, 1) }}px !important;
+                line-height: 1.35 !important;
+            }
+            .acs-print-course {
+                font-size: {{ round($courseFontSizeAdjusted * 1.08, 1) }}px !important;
+                line-height: 1.18 !important;
+            }
+            .acs-sig-qr {
+                width: 76px !important;
+                height: 76px !important;
+            }
+            .acs-sig-seal {
+                width: 112px !important;
+                height: 112px !important;
+            }
+            .acs-sig-script {
+                font-size: 30px !important;
+            }
+            .acs-sig-label {
+                font-size: 12px !important;
+            }
+            .acs-sig-id {
+                font-size: 12.5px !important;
             }
             .print-header {
                 margin-bottom: 2mm !important;
@@ -343,7 +399,7 @@
         <!-- ========================================================================= -->
         <!-- DEFAULT TEMPLATE: OFFICIAL ACS SIGNATURE CERTIFICATE (EXACT MATCH)        -->
         <!-- ========================================================================= -->
-        <div class="certificate-wrapper w-full max-w-[1024px] aspect-[1024/723] bg-[#fcf8f6] shadow-2xl border-[8px] sm:border-[10px] {{ $theme['outer_border'] }} border-t-[#bc2723] border-b-[#98201f] border-l-[#252686] border-r-[#1c1d79] relative overflow-hidden flex flex-col justify-between select-none">
+        <div class="certificate-wrapper w-full max-w-[1024px] md:aspect-[1024/718] bg-[#fcf8f6] shadow-2xl border-[6px] sm:border-[7px] {{ $theme['outer_border'] }} border-t-[#bc2723] border-b-[#98201f] border-l-[#252686] border-r-[#1c1d79] relative overflow-hidden flex flex-col justify-between select-none">
 
             <!-- Hidden SEO & Test Compatibility Anchor -->
             <span class="sr-only">ACS Academy • Learn, Grow, Lead. {{ $institutionName }} {{ $facultyEndorsement }}</span>
@@ -375,60 +431,62 @@
             @endif
 
             <!-- Main Certificate Inner Canvas -->
-            <div class="certificate-inner relative z-10 flex-1 flex flex-col justify-between px-5 sm:px-12 lg:px-14 pt-2 sm:pt-3.5 pb-2.5 sm:pb-4">
+            <div class="certificate-inner relative z-10 flex-1 flex flex-col justify-between px-5 sm:px-10 lg:px-12 pt-1.5 sm:pt-2.5 pb-2 sm:pb-3">
 
-                <!-- 1. TOP HEADER: 100% Matched Gold-Rimmed ACS Logo Size (158x146) + Maroon Institution Name + Red Tagline -->
+                <!-- 1. TOP HEADER: 100% Matched Gold-Rimmed ACS Logo + Maroon Institution Name + Red Tagline -->
                 <div class="text-center flex flex-col items-center">
-                    <div class="mb-0.5 sm:mb-1">
+                    <div class="mb-0.5">
                         <img src="{{ $certGoldLogo }}"
                              alt="{{ $institutionName }} Crest"
-                             class="acs-sig-logo w-24 h-24 sm:w-[144px] sm:h-[134px] lg:w-[158px] lg:h-[147px] object-contain mx-auto drop-shadow-xs"
+                             class="acs-sig-logo w-20 h-20 sm:w-[132px] sm:h-[122px] lg:w-[146px] lg:h-[136px] object-contain mx-auto drop-shadow-xs"
                              onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                     </div>
 
-                    <h1 class="font-display-heavy text-sm sm:text-xl lg:text-[26px] font-black tracking-[0.02em] text-[#5b1415] uppercase leading-tight">
+                    <h1 class="acs-print-inst font-display-heavy font-black tracking-[0.015em] text-[#5b1415] uppercase leading-tight sm:whitespace-nowrap"
+                        style="font-size: clamp({{ round($instFontSize * 0.45, 1) }}px, {{ round($instFontSize * 0.1, 2) }}vw, {{ $instFontSize }}px);">
                         {{ $institutionName }}
                     </h1>
 
                     @if(!empty($tagline))
-                        <span class="text-[9px] sm:text-xs lg:text-[12.5px] font-sans-body font-extrabold text-[#991b1b] tracking-[0.06em] uppercase block mt-0.5">
+                        <span class="acs-print-tagline text-[9px] sm:text-[10.5px] lg:text-[11px] font-sans-body font-extrabold text-[#991b1b] tracking-[0.06em] uppercase block mt-0.5">
                             {{ $tagline }}
                         </span>
                     @endif
                 </div>
 
                 <!-- 2. CENTER BODY: Certificate of Appreciation + Recipient + Dotted Line + Participation + Course Title -->
-                <div class="text-center my-auto py-0.5 flex flex-col items-center">
+                <div class="text-center mt-1 sm:mt-2 mb-1 sm:mb-1.5 flex flex-col items-center">
                     <!-- CERTIFICATE OF APPRECIATION -->
-                    <h2 class="font-cormorant text-xl sm:text-3xl lg:text-[36px] font-semibold text-[#641617] uppercase tracking-[0.04em] leading-none">
+                    <h2 class="acs-print-title font-cormorant font-semibold text-[#641617] uppercase tracking-[0.04em] leading-none"
+                        style="font-size: clamp({{ round($titleFontSize * 0.54, 1) }}px, {{ round($titleFontSize * 0.1, 2) }}vw, {{ $titleFontSize }}px);">
                         {{ $certTitle }}
                     </h2>
 
                     <!-- This certificate is proudly presented to -->
-                    <p class="text-xs sm:text-base lg:text-[17.5px] font-sans-body font-bold text-[#1e1b4b] mt-1 sm:mt-1.5">
+                    <p class="acs-print-confer text-xs sm:text-base lg:text-[16.5px] font-sans-body font-bold text-[#1e1b4b] mt-1">
                         {{ $confermentText }}
                     </p>
 
                     <!-- RECIPIENT NAME (Gold-Ochre Bold Uppercase + Wide Finely Dotted Line Below) -->
-                    <div class="mt-1 sm:mt-2 mb-1 sm:mb-1.5 w-full max-w-[760px] border-b-[2px] border-dotted border-[#7c8594] pb-1 px-2">
-                        <h3 class="font-display-heavy text-lg sm:text-2xl lg:text-[30px] font-black text-[#c5832b] uppercase tracking-[0.03em] leading-tight">
+                    <div class="mt-1 sm:mt-1.5 mb-1 w-full max-w-[760px] border-b-[2px] border-dotted border-[#7c8594] pb-0.5 px-2">
+                        <h3 class="acs-print-recipient font-display-heavy font-black text-[#c5832b] uppercase tracking-[0.025em] leading-tight"
+                            style="font-size: clamp({{ round($recipientFontSize * 0.56, 1) }}px, {{ round($recipientFontSize * 0.1, 2) }}vw, {{ $recipientFontSize }}px);">
                             {{ $user->name }}
                         </h3>
                     </div>
 
                     <!-- Completion / Participation Paragraph -->
-                    <p class="text-[11px] sm:text-[14.5px] lg:text-[16.5px] font-sans-body font-medium text-[#1e1b4b] max-w-[840px] mx-auto leading-[1.38]">
+                    <p class="acs-print-body font-sans-body font-medium text-[#1e1b4b] max-w-[820px] mx-auto leading-[1.35]"
+                       style="font-size: clamp({{ round($bodyFontSize * 0.67, 1) }}px, {{ round($bodyFontSize * 0.1, 2) }}vw, {{ $bodyFontSize }}px);">
                         {{ $completionText }}
                     </p>
 
                     <!-- COURSE TITLE (Bold Uppercase with Charcoal-to-Royal-Indigo Gradient Matching Reference) -->
                     @php
-                        $courseTitleLen = mb_strlen((string) $course->title);
-                        $courseTitleSizeClass = $courseTitleLen > 52
-                            ? 'text-sm sm:text-xl lg:text-[22.5px] mt-1.5 sm:mt-2.5'
-                            : 'text-base sm:text-2xl lg:text-[27px] mt-2 sm:mt-3.5';
+                        $courseTitleMarginClass = $courseTitleLen > 52 ? 'mt-1.5 sm:mt-2' : 'mt-1.5 sm:mt-2.5';
                     @endphp
-                    <h4 class="font-display-heavy {{ $courseTitleSizeClass }} font-black text-[#4f4e8c] bg-gradient-to-r from-[#45424a] via-[#53527f] to-[#6868ca] bg-clip-text text-transparent uppercase tracking-[0.02em] leading-[1.2] max-w-[860px]">
+                    <h4 class="acs-print-course font-display-heavy {{ $courseTitleMarginClass }} font-black text-[#4f4e8c] bg-gradient-to-r from-[#45424a] via-[#53527f] to-[#6868ca] bg-clip-text text-transparent uppercase tracking-[0.015em] leading-[1.18] max-w-[880px]"
+                        style="font-size: clamp({{ round($courseFontSizeAdjusted * 0.52, 1) }}px, {{ round($courseFontSizeAdjusted * 0.1, 2) }}vw, {{ $courseFontSizeAdjusted }}px);">
                         {{ $course->title }}
                     </h4>
 
@@ -442,14 +500,14 @@
 
                 <!-- 3. BOTTOM FOOTER: 4-Column Row (QR + Green ID/Date | Lead Trainer | Scalloped Gold Seal | ACS Executive Governing) -->
                 <div>
-                    <div class="grid grid-cols-12 items-end gap-2 sm:gap-4 pt-0.5">
+                    <div class="grid grid-cols-12 items-end gap-2 sm:gap-3 pt-0.5">
 
                         <!-- Col 1 (4 Cols): Scannable Verification QR Box + Green Certificate ID & Date -->
                         <div class="col-span-12 sm:col-span-4 text-left pb-0.5">
                             @if($showQrCode)
                                 <!-- Crisp Scannable-Style Verification QR Card Above Certificate ID -->
-                                <a href="{{ $verifyUrl }}" target="_blank" title="Verify Credential: {{ $certificate->certificate_number }}" class="inline-block bg-white p-1.5 sm:p-2 rounded-xs shadow-xs border border-slate-200/70 mb-1.5 sm:mb-2 ml-2 sm:ml-4 hover:scale-105 transition-transform">
-                                    <svg viewBox="0 0 21 21" class="w-12 h-12 sm:w-[68px] sm:h-[68px] lg:w-[74px] lg:h-[74px] block" shape-rendering="crispEdges">
+                                <a href="{{ $verifyUrl }}" target="_blank" title="Verify Credential: {{ $certificate->certificate_number }}" class="inline-block bg-white p-1.5 rounded-xs shadow-xs border border-slate-200/70 mb-1.5 ml-6 sm:ml-10 hover:scale-105 transition-transform">
+                                    <svg viewBox="0 0 21 21" class="acs-sig-qr w-12 h-12 sm:w-[64px] sm:h-[64px] lg:w-[68px] lg:h-[68px] block" shape-rendering="crispEdges">
                                         <rect width="21" height="21" fill="#ffffff"/>
                                         <!-- Top-Left Finder Pattern -->
                                         <path d="M0,0 h7 v7 h-7 z M1,1 v5 h5 v-5 z M2,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
@@ -482,14 +540,14 @@
 
                             <div class="space-y-0.5">
                                 @if(!empty($course->batch) && $course->show_batch)
-                                    <span class="text-[9px] sm:text-[11px] font-sans-body font-extrabold text-[#2e6f23] uppercase block">
+                                    <span class="acs-sig-id text-[9px] sm:text-[11px] font-sans-body font-extrabold text-[#2e6f23] uppercase block">
                                         {{ $batchLabel }} {{ $course->batch }}
                                     </span>
                                 @endif
-                                <span class="text-[10px] sm:text-xs lg:text-[13px] font-sans-body font-extrabold text-[#2e6f23] uppercase tracking-tight block">
+                                <span class="acs-sig-id text-[10px] sm:text-xs lg:text-[13px] font-sans-body font-extrabold text-[#2e6f23] uppercase tracking-tight block">
                                     {{ $idLabel }} {{ $certificate->certificate_number }}
                                 </span>
-                                <span class="text-[10px] sm:text-xs lg:text-[13px] font-sans-body font-extrabold text-[#2e6f23] uppercase tracking-tight block">
+                                <span class="acs-sig-id text-[10px] sm:text-xs lg:text-[13px] font-sans-body font-extrabold text-[#2e6f23] uppercase tracking-tight block">
                                     {{ $dateLabel }} {{ strtoupper(\Carbon\Carbon::parse($certificate->issue_date)->format('d F Y')) }}
                                 </span>
                             </div>
@@ -499,12 +557,12 @@
                         <div class="col-span-5 sm:col-span-3 text-center pb-1">
                             @if($showSecondary && !empty($secondarySignatoryName))
                                 <div class="min-h-[28px] sm:min-h-[38px] flex items-end justify-center px-2">
-                                    <span class="font-script text-xl sm:text-2xl lg:text-[28px] text-[#111827] leading-none whitespace-nowrap block">
+                                    <span class="acs-sig-script font-script text-xl sm:text-2xl lg:text-[28px] text-[#111827] leading-none whitespace-nowrap block">
                                         {{ $secondarySignatoryName }}
                                     </span>
                                 </div>
                                 <div class="border-t-[2.5px] border-dotted border-[#111827] pt-1 mx-auto max-w-[190px]">
-                                    <span class="text-[9px] sm:text-[11px] lg:text-xs font-sans-body font-extrabold text-[#111827] uppercase tracking-wider block">
+                                    <span class="acs-sig-label text-[9px] sm:text-[11px] lg:text-xs font-sans-body font-extrabold text-[#111827] uppercase tracking-wider block">
                                         {{ $secondarySignatoryTitle ?: $secondarySignatoryName }}
                                     </span>
                                 </div>
@@ -515,7 +573,7 @@
                         <div class="col-span-2 sm:col-span-2 flex flex-col items-center justify-center">
                             @if($showSeal)
                                 @if($certGoldSeal)
-                                    <div class="print-seal relative w-16 h-16 sm:w-24 sm:h-24 lg:w-[106px] lg:h-[106px] flex items-center justify-center select-none" title="{{ $sealText }}">
+                                    <div class="acs-sig-seal relative w-16 h-16 sm:w-24 sm:h-24 lg:w-[106px] lg:h-[106px] flex items-center justify-center select-none" title="{{ $sealText }}">
                                         <!-- Scalloped Metallic Gold Foil Base (240x240 Perfectly Centered at 120,120) -->
                                         <img src="{{ $certGoldSeal }}"
                                              alt="{{ $sealText }}"
@@ -586,12 +644,12 @@
                         <!-- Col 4 (3 Cols): ACS Executive Governing Signature -->
                         <div class="col-span-5 sm:col-span-3 text-center pb-1">
                             <div class="min-h-[30px] sm:min-h-[42px] flex items-end justify-center px-2">
-                                <span class="font-script text-xl sm:text-2xl lg:text-[28px] text-[#111827] leading-none whitespace-nowrap block">
+                                <span class="acs-sig-script font-script text-xl sm:text-2xl lg:text-[28px] text-[#111827] leading-none whitespace-nowrap block">
                                     {{ $primarySignatoryName }}
                                 </span>
                             </div>
                             <div class="border-t-[2.5px] border-dotted border-[#111827] pt-1 mx-auto max-w-[230px]">
-                                <span class="text-[9px] sm:text-[11px] lg:text-xs font-sans-body font-extrabold text-[#111827] uppercase tracking-wider block">
+                                <span class="acs-sig-label text-[9px] sm:text-[11px] lg:text-xs font-sans-body font-extrabold text-[#111827] uppercase tracking-wider block">
                                     {{ $primarySignatoryBoard ?: $primarySignatoryTitle }}
                                 </span>
                             </div>

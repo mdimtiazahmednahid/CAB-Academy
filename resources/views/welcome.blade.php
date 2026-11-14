@@ -317,18 +317,73 @@
                                 </div>
                             </a>
 
-                            <!-- Compact 1-Line Department Head Pill -->
-                            <div class="mb-3 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2">
+                            @php
+                                $deptHead = $dept['head'] ?? null;
+                                $deptHeadName = !empty($deptHead) ? $deptHead->name : 'Department Head';
+                                $deptHeadDefaultAvatar = 'https://ui-avatars.com/api/?name=' . urlencode($deptHeadName) . '&background=051c45&color=fff';
+                                $deptHeadAvatar = !empty($deptHead) ? $deptHead->avatar_url : $deptHeadDefaultAvatar;
+                                $deptTeamProfiles = collect($dept['team'] ?? [])
+                                    ->filter(fn($m) => empty($deptHead) || ($m->id ?? null) !== ($deptHead->id ?? null))
+                                    ->values();
+                                $needsTeamSlide = $deptTeamProfiles->count() > 5;
+                            @endphp
+
+                            <!-- Compact 1-Line Department Head Pill with Real Photo / Avatar Fallback -->
+                            <div class="mb-2.5 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200/80 flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 min-w-0">
-                                    <i class="fas fa-user-tie text-[11px] text-[#c30102] shrink-0"></i>
+                                    <img src="{{ $deptHeadAvatar }}"
+                                         alt="{{ $deptHeadName }}"
+                                         onerror="this.onerror=null; this.src='{{ $deptHeadDefaultAvatar }}';"
+                                         class="w-6 h-6 rounded-full object-cover object-top border border-slate-200 shrink-0 bg-slate-100">
                                     <span class="text-[11px] font-bold text-slate-700 truncate">
-                                        {{ !empty($dept['head']) ? $dept['head']->name : 'Department Head' }}
+                                        {{ $deptHeadName }}
                                     </span>
                                 </div>
                                 <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 shrink-0">
-                                    + Team
+                                    + Team{{ $deptTeamProfiles->isNotEmpty() ? ' (' . $deptTeamProfiles->count() . ')' : '' }}
                                 </span>
                             </div>
+
+                            <!-- Team Member Profiles Row (Only Avatars; Smooth Slide if > 5, Static Otherwise) -->
+                            @if($deptTeamProfiles->isNotEmpty())
+                                <div class="mb-3 px-1 overflow-hidden">
+                                    @if($needsTeamSlide)
+                                        <div class="flex items-center gap-2 w-max animate-dept-team-slide hover:[animation-play-state:paused]">
+                                            @for($loopCopy = 0; $loopCopy < 2; $loopCopy++)
+                                                @foreach($deptTeamProfiles as $member)
+                                                    @php
+                                                        $memberFallback = 'https://ui-avatars.com/api/?name=' . urlencode($member->name) . '&background=051c45&color=fff';
+                                                    @endphp
+                                                    <a href="{{ route('instructors.index') }}"
+                                                       title="{{ $member->name }}{{ !empty($member->title) ? ' — ' . $member->title : '' }}"
+                                                       class="shrink-0 block rounded-full">
+                                                        <img src="{{ $member->avatar_url }}"
+                                                             alt="{{ $member->name }}"
+                                                             onerror="this.onerror=null; this.src='{{ $memberFallback }}';"
+                                                             class="w-7 h-7 rounded-full object-cover object-top border-2 border-white ring-1 ring-slate-200 hover:ring-[#c30102] transition-all shadow-2xs bg-slate-100">
+                                                    </a>
+                                                @endforeach
+                                            @endfor
+                                        </div>
+                                    @else
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            @foreach($deptTeamProfiles as $member)
+                                                @php
+                                                    $memberFallback = 'https://ui-avatars.com/api/?name=' . urlencode($member->name) . '&background=051c45&color=fff';
+                                                @endphp
+                                                <a href="{{ route('instructors.index') }}"
+                                                   title="{{ $member->name }}{{ !empty($member->title) ? ' — ' . $member->title : '' }}"
+                                                   class="shrink-0 block rounded-full">
+                                                    <img src="{{ $member->avatar_url }}"
+                                                         alt="{{ $member->name }}"
+                                                         onerror="this.onerror=null; this.src='{{ $memberFallback }}';"
+                                                         class="w-7 h-7 rounded-full object-cover object-top border-2 border-white ring-1 ring-slate-200 hover:ring-[#c30102] transition-all shadow-2xs bg-slate-100">
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
 
                             <!-- 6 Sub-Tracks (Clean & Compact) -->
                             @if(!empty($dept['subcategories']))
@@ -531,41 +586,108 @@
     </section>
     @endif
 
-    {{-- 7. Our Faculty Section (Compact, Zero-Redundancy Cards) --}}
+    {{-- 7. Our Faculty Section (Smooth Row-by-Row Carousel: max 4 per row, max 3 slides / 12 profiles) --}}
     @if(\App\Models\Setting::getVal('landing_faculty_enabled', '1') == '1')
     @php
-        $landingInstructors = \App\Models\Instructor::where('is_active', true)->orderBy('order', 'asc')->take(4)->get();
+        $landingInstructors = \App\Models\Instructor::where('is_active', true)->orderBy('order', 'asc')->take(12)->get();
+        $facultySlides = $landingInstructors->chunk(4);
+        $facultySlideCount = $facultySlides->count();
         $rawFacultyTitle = \App\Models\Setting::getVal('landing_faculty_title', 'Our Faculty');
         $cleanFacultyTitle = ($rawFacultyTitle === 'Distinguished Faculty & Industry Fellows') ? 'Our Faculty' : $rawFacultyTitle;
     @endphp
     @if($landingInstructors->isNotEmpty())
-    <section id="faculty" class="py-8 sm:py-12 bg-white border-b border-slate-200/80">
+    <section id="faculty" class="py-8 sm:py-12 bg-white border-b border-slate-200/80"
+             x-data="{
+                 activeSlide: 0,
+                 totalSlides: {{ $facultySlideCount }},
+                 timer: null,
+                 start() {
+                     if (this.totalSlides <= 1) return;
+                     this.stop();
+                     this.timer = setInterval(() => {
+                         this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+                     }, 2500);
+                 },
+                 stop() {
+                     if (this.timer) {
+                         clearInterval(this.timer);
+                         this.timer = null;
+                     }
+                 },
+                 prev() {
+                     this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
+                 },
+                 next() {
+                     this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+                 }
+             }"
+             x-init="start()"
+             @mouseenter="stop()"
+             @mouseleave="start()"
+             @focusin="stop()"
+             @focusout="start()"
+             @touchstart.passive="stop()"
+             @touchend.passive="start()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between mb-5 sm:mb-6 pb-3 border-b border-slate-200/80 gap-3">
                 <h2 class="text-xl sm:text-2xl font-extrabold text-[#041536] tracking-tight">
                     {{ $cleanFacultyTitle }}
                 </h2>
-                <a href="{{ route('instructors.index') }}" class="text-xs sm:text-sm font-bold text-[#c30102] hover:text-[#041536] transition-colors inline-flex items-center gap-1.5 group shrink-0">
-                    <span>View All</span>
-                    <i class="fas fa-arrow-right text-xs group-hover:translate-x-0.5 transition-transform"></i>
-                </a>
+                <div class="flex items-center gap-3 shrink-0">
+                    @if($facultySlideCount > 1)
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" @click="prev()" aria-label="Previous faculty row"
+                                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-slate-200 bg-white hover:bg-[#041536] hover:text-white hover:border-[#041536] text-slate-600 flex items-center justify-center transition-colors cursor-pointer">
+                                <i class="fas fa-chevron-left text-[10px]"></i>
+                            </button>
+                            <button type="button" @click="next()" aria-label="Next faculty row"
+                                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-slate-200 bg-white hover:bg-[#041536] hover:text-white hover:border-[#041536] text-slate-600 flex items-center justify-center transition-colors cursor-pointer">
+                                <i class="fas fa-chevron-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    @endif
+                    <a href="{{ route('instructors.index') }}" class="text-xs sm:text-sm font-bold text-[#c30102] hover:text-[#041536] transition-colors inline-flex items-center gap-1.5 group shrink-0">
+                        <span>View All</span>
+                        <i class="fas fa-arrow-right text-xs group-hover:translate-x-0.5 transition-transform"></i>
+                    </a>
+                </div>
             </div>
 
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
-                @foreach($landingInstructors as $inst)
-                    <a href="{{ route('instructors.index') }}" class="bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 text-center shadow-2xs hover:shadow-md transition-all duration-200 group flex flex-col items-center justify-center hover:border-[#051c45]/30">
-                        <div class="relative w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-full overflow-hidden mb-2.5 border-2 border-white shadow-sm bg-white ring-1 ring-slate-200 group-hover:ring-[#c30102]/40 transition-all">
-                            <img src="{{ $inst->avatar_url }}" alt="{{ $inst->name }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($inst->name) }}&background=051c45&color=fff';">
+            <div class="overflow-hidden">
+                <div class="flex transition-transform duration-500 ease-out will-change-transform"
+                     :style="'transform: translateX(-' + (activeSlide * 100) + '%)'">
+                    @foreach($facultySlides as $slideInstructors)
+                        <div class="w-full shrink-0 grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5 px-0.5">
+                            @foreach($slideInstructors as $inst)
+                                <a href="{{ route('instructors.index') }}" class="bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 text-center shadow-2xs hover:shadow-md transition-all duration-200 group flex flex-col items-center justify-center hover:border-[#051c45]/30">
+                                    <div class="relative w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-full overflow-hidden mb-2.5 border-2 border-white shadow-sm bg-white ring-1 ring-slate-200 group-hover:ring-[#c30102]/40 transition-all">
+                                        <img src="{{ $inst->avatar_url }}" alt="{{ $inst->name }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($inst->name) }}&background=051c45&color=fff';">
+                                    </div>
+                                    <h3 class="text-xs sm:text-sm font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug line-clamp-1 mb-0.5">
+                                        {{ $inst->name }}
+                                    </h3>
+                                    <p class="text-[11px] sm:text-xs text-slate-500 font-semibold line-clamp-1">
+                                        {{ $inst->title }}
+                                    </p>
+                                </a>
+                            @endforeach
                         </div>
-                        <h3 class="text-xs sm:text-sm font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug line-clamp-1 mb-0.5">
-                            {{ $inst->name }}
-                        </h3>
-                        <p class="text-[11px] sm:text-xs text-slate-500 font-semibold line-clamp-1">
-                            {{ $inst->title }}
-                        </p>
-                    </a>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
+
+            @if($facultySlideCount > 1)
+                <div class="flex items-center justify-center gap-2 mt-5">
+                    @for($s = 0; $s < $facultySlideCount; $s++)
+                        <button type="button"
+                                @click="activeSlide = {{ $s }}"
+                                aria-label="Show faculty row {{ $s + 1 }}"
+                                class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                :class="activeSlide === {{ $s }} ? 'w-6 bg-[#c30102]' : 'w-2 bg-slate-300 hover:bg-slate-400'">
+                        </button>
+                    @endfor
+                </div>
+            @endif
         </div>
     </section>
     @endif

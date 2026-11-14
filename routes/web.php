@@ -255,20 +255,27 @@ Route::get('/c/{course}', [App\Http\Controllers\CourseController::class, 'shortL
 Route::get('/courses/{course}/og-image.jpg', function (\App\Models\Course $course) use ($streamPublicFile) {
     $strict = request()->boolean('strict');
     $cardPath = \App\Support\SocialImageGenerator::getOrGenerateCourseSocialCard($course, $strict);
-    if ($cardPath && file_exists($cardPath)) {
-        return response()->file($cardPath, [
-            'Content-Type' => 'image/jpeg',
-            'Cache-Control' => 'public, max-age=604800, s-maxage=604800',
-        ]);
-    }
-    if ($strict) {
+    $filePath = ($cardPath && file_exists($cardPath))
+        ? $cardPath
+        : ($strict ? null : public_path('images/og-banner.jpg'));
+
+    if (!$filePath || !file_exists($filePath)) {
         abort(404);
     }
-    return response()->file(public_path('images/og-banner.jpg'), [
+
+    return response()->file($filePath, [
         'Content-Type' => 'image/jpeg',
+        'Content-Length' => (string) filesize($filePath),
         'Cache-Control' => 'public, max-age=604800, s-maxage=604800',
     ]);
-})->name('courses.og_image');
+})->withoutMiddleware([
+    \Illuminate\Session\Middleware\StartSession::class,
+    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+    \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
+    \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+    \Illuminate\Cookie\Middleware\EncryptCookies::class,
+    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+])->name('courses.og_image');
 
 // Public Course Overview & Enrollment Initiator
 Route::get('/courses/{course}', [App\Http\Controllers\CourseController::class, 'show'])->name('courses.show');

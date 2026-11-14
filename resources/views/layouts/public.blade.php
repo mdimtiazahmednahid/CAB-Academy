@@ -85,6 +85,7 @@
     @endphp
     <meta property="og:image" content="{!! $fullOgImg !!}">
     <meta property="og:image:secure_url" content="{!! $secureOgImg !!}">
+    <meta itemprop="image" content="{!! $fullOgImg !!}">
     <meta property="og:image:type" content="{{ $ogMime }}">
     <meta property="og:image:width" content="@yield('og_image_width', '1200')">
     <meta property="og:image:height" content="@yield('og_image_height', '630')">
@@ -381,15 +382,12 @@
                              alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-sm sm:text-[15px] font-black tracking-tight text-[#041536] leading-none">
-                            ACS Academy
-                        </span>
-                        <span class="text-[10px] font-bold text-slate-500 tracking-tight mt-1 leading-none">
-                            Commercial &amp; Supply Chain
-                        </span>
-                        <span class="sr-only brand-adaptive-title" style="{{ $brandSizing['header_style'] ?? '' }}">
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-sm sm:text-[15px] font-black tracking-tight text-[#041536] leading-tight brand-adaptive-title" style="{{ $brandSizing['header_style'] ?? '' }}">
                             {!! $brandSizing['formatted_html'] ?? e($brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy') !!}
+                        </span>
+                        <span class="text-[10px] font-bold text-slate-500 tracking-tight mt-0.5 leading-none">
+                            {{ \App\Models\Setting::getVal('site_tagline', 'Commercial & Supply Chain') }}
                         </span>
                     </div>
                 </a>

@@ -136,20 +136,25 @@ class SocialImageGenerator
             // Already standard landscape (1.91:1): resample directly
             imagecopyresampled($canvas, $src, 0, 0, 0, 0, $tw, $th, $sw, $sh);
         } else {
-            // Vertical flyer or square poster: composite onto 1200x630 with matching blurred backdrop
-            $bgScale = max($tw / $sw, $th / $sh);
+            // Vertical flyer or square poster: composite onto 1200x630 with fast downsampled blurred backdrop
+            $bw = 300;
+            $bh = 158;
+            $blurBuf = imagecreatetruecolor($bw, $bh);
+            $bgScale = max($bw / $sw, $bh / $sh);
             $bgW = (int) ($sw * $bgScale);
             $bgH = (int) ($sh * $bgScale);
-            $bgX = (int) (($tw - $bgW) / 2);
-            $bgY = (int) (($th - $bgH) / 2);
-            imagecopyresampled($canvas, $src, $bgX, $bgY, 0, 0, $bgW, $bgH, $sw, $sh);
+            $bgX = (int) (($bw - $bgW) / 2);
+            $bgY = (int) (($bh - $bgH) / 2);
+            imagecopyresampled($blurBuf, $src, $bgX, $bgY, 0, 0, $bgW, $bgH, $sw, $sh);
 
-            // Fast blur passes
-            for ($i = 0; $i < 10; $i++) {
-                imagefilter($canvas, IMG_FILTER_GAUSSIAN_BLUR);
+            for ($i = 0; $i < 4; $i++) {
+                imagefilter($blurBuf, IMG_FILTER_GAUSSIAN_BLUR);
             }
             // Rich imperial navy overlay (#051c45)
-            imagefilter($canvas, IMG_FILTER_COLORIZE, 5, 28, 69, 55);
+            imagefilter($blurBuf, IMG_FILTER_COLORIZE, 5, 28, 69, 55);
+
+            imagecopyresampled($canvas, $blurBuf, 0, 0, 0, 0, $tw, $th, $bw, $bh);
+            @imagedestroy($blurBuf);
 
             // Foreground: sharp full flyer scaled to fit height 610
             $scale = 610 / $sh;
@@ -165,7 +170,11 @@ class SocialImageGenerator
             imagecopyresampled($canvas, $src, $dx, $dy, 0, 0, $dw, $dh, $sw, $sh);
         }
 
-        $success = @imagejpeg($canvas, $outputPath, 88);
+        // Keep JPEG under 280KB so WhatsApp link preview never drops it for size
+        $success = @imagejpeg($canvas, $outputPath, 85);
+        if ($success && file_exists($outputPath) && filesize($outputPath) > 286720) {
+            @imagejpeg($canvas, $outputPath, 72);
+        }
         @imagedestroy($canvas);
         @imagedestroy($src);
 

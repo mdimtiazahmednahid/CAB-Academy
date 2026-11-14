@@ -398,5 +398,41 @@ class CertificateAndInvoiceTest extends TestCase
         $resUpdated->assertDontSee('id="sealTopArc"', false);
         $resUpdated->assertSee('alt="ACS Seal Logo"', false);
     }
+
+    public function test_admin_can_customize_certificate_font_sizes()
+    {
+        $admin = User::where('role', 'admin')->first();
+
+        $postRes = $this->actingAs($admin)->post('/admin/certificates/settings', [
+            'certificate_institution_name' => 'ACADEMY OF COMMERCIAL & SUPPLY CHAIN-ACS',
+            'certificate_tagline' => 'LEARN .GROW.LEAD',
+            'certificate_title' => 'CERTIFICATE OF APPRECIATION',
+            'certificate_conferment_text' => 'This certificate is proudly presented to',
+            'certificate_completion_text' => 'Successfully participated in the training program.',
+            'certificate_primary_signatory_name' => 'Saidur Rahman',
+            'certificate_primary_signatory_title' => 'ACS EXECUTIVE GOVORNING',
+            'certificate_template' => 'acs_signature',
+            'certificate_institution_font_size' => '34',
+            'certificate_title_font_size' => '38',
+            'certificate_recipient_font_size' => '36',
+            'certificate_course_font_size' => '28',
+            'certificate_body_font_size' => '18',
+        ]);
+        $postRes->assertRedirect();
+
+        $this->assertEquals('34', \App\Models\Setting::getVal('certificate_institution_font_size'));
+        $this->assertEquals('38', \App\Models\Setting::getVal('certificate_title_font_size'));
+        $this->assertEquals('36', \App\Models\Setting::getVal('certificate_recipient_font_size'));
+        $this->assertEquals('28', \App\Models\Setting::getVal('certificate_course_font_size'));
+        $this->assertEquals('18', \App\Models\Setting::getVal('certificate_body_font_size'));
+
+        $previewRes = $this->actingAs($admin)->get('/admin/certificates/preview');
+        $previewRes->assertStatus(200);
+        $previewRes->assertSee('34px', false);
+        $previewRes->assertSee('38px', false);
+        $previewRes->assertSee('36px', false);
+        $previewRes->assertSee('28px', false);
+        $previewRes->assertSee('18px', false);
+    }
 }
 

@@ -374,8 +374,18 @@ class Category extends Model
             $head = $this->relationLoaded('headInstructor')
                 ? $this->headInstructor
                 : Instructor::find($this->head_instructor_id);
-            if ($head && $head->is_active) {
+            if ($head && $head->is_active && ($head->isHeadOfDepartment($this->name) || empty($head->department_roles_map))) {
                 return $head;
+            }
+        }
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('instructors', 'departments')) {
+            $deptHead = Instructor::where('is_active', true)
+                ->orderBy('order')
+                ->get()
+                ->first(fn($inst) => $inst->isHeadOfDepartment($this->name));
+            if ($deptHead) {
+                return $deptHead;
             }
         }
 
@@ -399,11 +409,21 @@ class Category extends Model
             return collect();
         }
 
-        return Instructor::where('is_active', true)
-            ->where('department', $this->name)
-            ->orderByRaw("CASE WHEN department_role = 'head' THEN 0 ELSE 1 END")
+        $hasMultiDept = \Illuminate\Support\Facades\Schema::hasColumn('instructors', 'departments');
+
+        $instructors = Instructor::where('is_active', true)
+            ->when(!$hasMultiDept, fn($q) => $q->where('department', $this->name))
             ->orderBy('order')
             ->get();
+
+        if ($hasMultiDept) {
+            return $instructors
+                ->filter(fn($inst) => $inst->belongsToDepartment($this->name))
+                ->sortBy(fn($inst) => ($inst->isHeadOfDepartment($this->name) ? '0_' : '1_') . str_pad((string) ($inst->order ?? 0), 5, '0', STR_PAD_LEFT))
+                ->values();
+        }
+
+        return $instructors;
     }
 
     public static function getActiveCategories()

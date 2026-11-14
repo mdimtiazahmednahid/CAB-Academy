@@ -41,6 +41,10 @@ class InstructorController extends Controller
             'name' => 'required|string|max:255',
             'title' => 'required|string|max:255',
             'department' => 'nullable|string|max:255',
+            'departments' => 'nullable|array',
+            'departments.*' => 'string|max:255',
+            'department_roles' => 'nullable|array',
+            'department_roles.*' => 'nullable|string|in:none,team_member,head',
             'department_role' => 'nullable|string|in:head,team_member',
             'expertise' => 'required|string|max:255',
             'avatar' => 'nullable|string|max:500',
@@ -89,6 +93,7 @@ class InstructorController extends Controller
 
         $validated['order'] = $request->input('order', 0);
         $validated['is_active'] = $request->has('is_active');
+        $this->prepareDepartmentsPayload($validated, $request);
 
         // Check if an instructor with this email or linked user already exists to prevent conflicting duplicates
         $existingInstructor = null;
@@ -151,9 +156,7 @@ class InstructorController extends Controller
             }
         }
 
-        if ($instructor->department && $instructor->department_role === 'head') {
-            \App\Models\Category::where('name', $instructor->department)->update(['head_instructor_id' => $instructor->id]);
-        }
+        $this->syncDepartmentHeads($instructor);
 
         if ($instructor->user_id) {
             if ($request->boolean('sync_all_courses')) {
@@ -185,6 +188,10 @@ class InstructorController extends Controller
             'name' => 'required|string|max:255',
             'title' => 'required|string|max:255',
             'department' => 'nullable|string|max:255',
+            'departments' => 'nullable|array',
+            'departments.*' => 'string|max:255',
+            'department_roles' => 'nullable|array',
+            'department_roles.*' => 'nullable|string|in:none,team_member,head',
             'department_role' => 'nullable|string|in:head,team_member',
             'expertise' => 'required|string|max:255',
             'avatar' => 'nullable|string|max:500',
@@ -239,13 +246,12 @@ class InstructorController extends Controller
 
         $validated['order'] = $request->input('order', 0);
         $validated['is_active'] = $request->has('is_active');
+        $this->prepareDepartmentsPayload($validated, $request);
 
         $instructor->update($validated);
         $instructor->refresh();
 
-        if ($instructor->department && $instructor->department_role === 'head') {
-            \App\Models\Category::where('name', $instructor->department)->update(['head_instructor_id' => $instructor->id]);
-        }
+        $this->syncDepartmentHeads($instructor);
 
         // Keep linked user record in sync safely
         $user = null;
@@ -315,5 +321,69 @@ class InstructorController extends Controller
         $instructor->delete();
 
         return redirect()->route('admin.instructors.index')->with('success', 'Instructor profile removed successfully.');
+    }
+
+    /**
+     * Normalize primary department and multi-department team assignments safely.
+     */
+    private function prepareDepartmentsPayload(array &$validated, Request $request): void
+    {
+        $rolesMap = [];
+        $submittedRoles = (array) $request->input('department_roles', []);
+
+        if (!empty($submittedRoles)) {
+            foreach ($submittedRoles as $deptName => $role) {
+                $deptName = trim((string) $deptName);
+                if ($deptName !== '' && in_array($role, ['head', 'team_member'], true)) {
+                    $rolesMap[$deptName] = $role;
+                }
+            }
+        } else {
+            // Backward compatibility with legacy single department + department_role / departments[]
+            $primary = trim((string) ($validated['department'] ?? ''));
+            $primaryRole = in_array($validated['department_role'] ?? '', ['head', 'team_member'], true)
+                ? $validated['department_role']
+                : 'team_member';
+            if ($primary !== '') {
+                $rolesMap[$primary] = $primaryRole;
+            }
+            foreach ((array) $request->input('departments', []) as $deptName) {
+                $deptName = trim((string) $deptName);
+                if ($deptName !== '' && !isset($rolesMap[$deptName])) {
+                    $rolesMap[$deptName] = 'team_member';
+                }
+            }
+        }
+
+        unset($validated['department_roles']);
+
+        $headDept = array_search('head', $rolesMap, true);
+        $firstDept = array_key_first($rolesMap);
+        $validated['department'] = $headDept !== false ? $headDept : ($firstDept ?? null);
+        $validated['department_role'] = $headDept !== false ? 'head' : 'team_member';
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('instructors', 'departments')) {
+            $validated['departments'] = $rolesMap;
+        } else {
+            unset($validated['departments']);
+        }
+    }
+
+    /**
+     * Sync head_instructor_id on Learning Department categories for per-department roles.
+     */
+    private function syncDepartmentHeads(Instructor $instructor): void
+    {
+        $rolesMap = $instructor->department_roles_map;
+        $headDepartments = array_keys(array_filter($rolesMap, fn($r) => $r === 'head'));
+
+        if (!empty($headDepartments)) {
+            \App\Models\Category::whereIn('name', $headDepartments)
+                ->update(['head_instructor_id' => $instructor->id]);
+        }
+
+        \App\Models\Category::where('head_instructor_id', $instructor->id)
+            ->when(!empty($headDepartments), fn($q) => $q->whereNotIn('name', $headDepartments))
+            ->update(['head_instructor_id' => null]);
     }
 }

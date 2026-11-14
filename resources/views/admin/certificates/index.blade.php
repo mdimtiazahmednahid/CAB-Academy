@@ -459,6 +459,48 @@
                             >
                         </div>
                     </div>
+
+                    <!-- Typography & Font Sizes (px) -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 space-y-2.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-[#051c45]">Typography &amp; Font Sizes (px)</span>
+                            <button type="button" id="reset_font_sizes_btn" class="text-[11px] font-bold text-[#051c45] hover:underline cursor-pointer">
+                                Reset Default Sizes
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Institution (px)</label>
+                                <input type="number" step="0.5" min="14" max="60" name="certificate_institution_font_size" id="form_inst_font_size"
+                                       value="{{ old('certificate_institution_font_size', $settings['institution_font_size'] ?? '31') }}"
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Cert Title (px)</label>
+                                <input type="number" step="0.5" min="16" max="64" name="certificate_title_font_size" id="form_title_font_size"
+                                       value="{{ old('certificate_title_font_size', $settings['title_font_size'] ?? '35') }}"
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Recipient (px)</label>
+                                <input type="number" step="0.5" min="16" max="64" name="certificate_recipient_font_size" id="form_recipient_font_size"
+                                       value="{{ old('certificate_recipient_font_size', $settings['recipient_font_size'] ?? '32') }}"
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Course Title (px)</label>
+                                <input type="number" step="0.5" min="14" max="56" name="certificate_course_font_size" id="form_course_font_size"
+                                       value="{{ old('certificate_course_font_size', $settings['course_font_size'] ?? '30') }}"
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Body Text (px)</label>
+                                <input type="number" step="0.5" min="10" max="32" name="certificate_body_font_size" id="form_body_font_size"
+                                       value="{{ old('certificate_body_font_size', $settings['body_font_size'] ?? '16.5') }}"
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -537,13 +579,13 @@
                         
                         <!-- Student Name -->
                         <div class="my-1 py-1 border-b border-dotted border-gray-400 inline-block min-w-[180px]">
-                            <h4 class="font-sans text-xs sm:text-sm font-black text-[#c5832b] uppercase">
+                            <h4 id="prev_recipient_name" class="font-sans text-xs sm:text-sm font-black text-[#c5832b] uppercase">
                                 {{ $sampleUser->name }}
                             </h4>
                         </div>
 
                         <!-- Course Title -->
-                        <h5 class="text-[10px] sm:text-xs font-black text-[#4f4e8c] uppercase tracking-wide mt-1">
+                        <h5 id="prev_course_title" class="text-[10px] sm:text-xs font-black text-[#4f4e8c] uppercase tracking-wide mt-1">
                             {{ $sampleCourse->title }}
                         </h5>
                     </div>
@@ -972,5 +1014,45 @@
             }
         });
     });
+
+    // Live Typography / Font Size Preview Scaling
+    const prevRecipientName = document.getElementById('prev_recipient_name');
+    const prevCourseTitle = document.getElementById('prev_course_title');
+    const fontBindings = [
+        { inputId: 'form_inst_font_size', targetEl: prevName, defaultVal: 31 },
+        { inputId: 'form_title_font_size', targetEl: prevCertTitle, defaultVal: 35 },
+        { inputId: 'form_recipient_font_size', targetEl: prevRecipientName, defaultVal: 32 },
+        { inputId: 'form_course_font_size', targetEl: prevCourseTitle, defaultVal: 30 },
+        { inputId: 'form_body_font_size', targetEl: prevConferText, defaultVal: 16.5 },
+    ];
+
+    function syncPreviewFontSizes() {
+        const previewScale = 0.45;
+        fontBindings.forEach(({ inputId, targetEl, defaultVal }) => {
+            const input = document.getElementById(inputId);
+            if (!input || !targetEl) return;
+            const px = parseFloat(input.value) || defaultVal;
+            targetEl.style.fontSize = Math.max(7, (px * previewScale)).toFixed(1) + 'px';
+        });
+    }
+
+    fontBindings.forEach(({ inputId }) => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.addEventListener('input', syncPreviewFontSizes);
+        }
+    });
+
+    const resetFontBtn = document.getElementById('reset_font_sizes_btn');
+    if (resetFontBtn) {
+        resetFontBtn.addEventListener('click', function() {
+            fontBindings.forEach(({ inputId, defaultVal }) => {
+                const input = document.getElementById(inputId);
+                if (input) input.value = defaultVal;
+            });
+            syncPreviewFontSizes();
+        });
+    }
+    syncPreviewFontSizes();
 </script>
 @endsection

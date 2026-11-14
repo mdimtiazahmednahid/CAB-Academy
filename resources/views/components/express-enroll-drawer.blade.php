@@ -339,50 +339,23 @@
         class="fixed inset-y-0 right-0 max-w-full w-full sm:max-w-[500px] bg-[#f8fafc] shadow-[-20px_0_60px_rgba(2,11,28,0.35)] z-50 flex flex-col justify-between overflow-hidden border-l border-white/20"
         style="display: none;"
     >
-        <!-- 1. Upgraded Luxury Drawer Header (Deep Imperial Navy with Ambient Glow & Glass Investment Bar) -->
-        <div class="px-6 pt-5 pb-5 bg-gradient-to-br from-[#031029] via-[#051c45] to-[#0b2d6b] text-white relative overflow-hidden shrink-0">
-            <!-- Subtle Ambient Radial Highlights -->
-            <div class="absolute -top-16 -right-16 w-44 h-44 rounded-full bg-[#c30102]/25 blur-2xl pointer-events-none"></div>
-            <div class="absolute -bottom-16 -left-16 w-44 h-44 rounded-full bg-emerald-500/15 blur-2xl pointer-events-none"></div>
-
+        <!-- 1. Clean Minimalist Drawer Header -->
+        <div class="px-5 py-4 bg-gradient-to-r from-[#031029] via-[#051c45] to-[#0b2d6b] text-white relative shrink-0 border-b border-white/10">
             <button 
                 @click="close()" 
-                class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all hover:rotate-90 z-10 cursor-pointer"
+                class="absolute top-3.5 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all cursor-pointer"
                 aria-label="Close"
             >
                 <i class="fas fa-times text-xs"></i>
             </button>
 
-            <div class="relative z-10 flex items-center flex-wrap gap-1.5 mb-2.5 pr-8">
+            <div class="pr-10 space-y-1">
                 <template x-if="courseBatch">
-                    <span class="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white text-[10px] font-black tracking-wider uppercase shadow-sm">
+                    <span class="inline-block px-2 py-0.5 rounded-full bg-[#c30102] text-white text-[10px] font-bold tracking-wider uppercase">
                         <span x-text="courseBatch"></span>
                     </span>
                 </template>
-                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-[#34d399] text-[10px] font-bold flex items-center gap-1">
-                    <i class="fas fa-bolt text-[9px]"></i>
-                    <span>30-Second Express Enroll</span>
-                </span>
-                <span class="px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-sky-200 text-[10px] font-semibold flex items-center gap-1">
-                    <i class="fas" :class="isOnlineOnly ? 'fa-video text-sky-300' : (isCampusOnly ? 'fa-building text-amber-300' : 'fa-layer-group text-emerald-300')"></i>
-                    <span x-text="isOnlineOnly ? 'Online Live (Zoom)' : (isCampusOnly ? 'Executive Campus' : 'Hybrid Format')"></span>
-                </span>
-            </div>
-
-            <h3 class="relative z-10 text-base sm:text-lg font-extrabold leading-snug text-white pr-6 line-clamp-2 tracking-tight" x-text="courseTitle"></h3>
-
-            <!-- Glass Investment Summary Bar -->
-            <div class="relative z-10 mt-3.5 px-3.5 py-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-emerald-300 text-xs">
-                        <i class="fas fa-shield-check"></i>
-                    </span>
-                    <div>
-                        <span class="block text-[10px] uppercase tracking-wider text-slate-300 font-bold">Total Investment</span>
-                        <span class="block text-[10px] text-emerald-300 font-medium">Instant Portal &amp; Seat Activation</span>
-                    </div>
-                </div>
-                <span class="text-lg sm:text-xl font-black text-white tracking-tight" x-text="courseRawPrice > 0 ? (coursePrice + ' ৳') : 'Free Admission'"></span>
+                <h3 class="text-base sm:text-lg font-extrabold leading-snug text-white line-clamp-2 tracking-tight" x-text="courseTitle"></h3>
             </div>
         </div>
 
@@ -511,39 +484,31 @@
                     </div>
                 </template>
 
-                <!-- Step 1 Card: Student Information & Attendance Format -->
+                <!-- Step 1 Card: Student Information -->
                 <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_2px_12px_rgba(5,28,69,0.04)] space-y-3.5">
-                    <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <div class="pb-2 border-b border-slate-100">
                         <label class="text-xs font-extrabold uppercase tracking-wider text-[#051c45] flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-[#051c45] text-white text-[10px] font-black flex items-center justify-center shadow-xs">1</span>
-                            <span x-text="isLoggedIn ? 'Verified Student Account' : 'Student Information'"></span>
+                            <span class="w-5 h-5 rounded-full bg-[#051c45] text-white text-[10px] font-black flex items-center justify-center">1</span>
+                            <span x-text="isLoggedIn ? 'Student Account' : 'Student Information'"></span>
                         </label>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-500" x-text="courseRawPrice > 0 ? 'Step 1 of 2' : 'Step 1 of 1 • Free Admission'"></span>
                     </div>
 
-                    <!-- Logged-in Student Verified Profile Summary (Editable Autofill) -->
+                    <!-- Logged-in Student Profile Summary (Editable Autofill) -->
                     <template x-if="isLoggedIn">
                         <div class="space-y-3">
-                            <div class="p-3.5 rounded-xl bg-gradient-to-br from-[#051c45]/[0.04] to-emerald-500/[0.06] border border-[#051c45]/15 flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <div class="w-10 h-10 rounded-xl bg-[#051c45] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-xs">
-                                        <span x-text="name ? name.charAt(0).toUpperCase() : 'S'"></span>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="flex items-center gap-1.5">
-                                            <p class="text-xs font-extrabold text-[#051c45] truncate" x-text="name"></p>
-                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-wider shrink-0">
-                                                <i class="fas fa-check-circle text-[8px]"></i> Verified
-                                            </span>
-                                        </div>
-                                        <p class="text-[11px] text-slate-500 truncate mt-0.5" x-text="email"></p>
-                                        <template x-if="phone && !editingSavedPhone">
-                                            <p class="text-[10px] font-mono font-bold text-slate-600 mt-0.5 flex items-center gap-1.5">
-                                                <span><i class="fas fa-mobile-alt text-[#10b981] mr-1"></i><span x-text="phone"></span></span>
-                                                <button type="button" @click="editingSavedPhone = true" class="text-[10px] font-sans font-bold text-[#c30102] hover:underline cursor-pointer">Edit</button>
-                                            </p>
-                                        </template>
-                                    </div>
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-[#051c45] text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                    <span x-text="name ? name.charAt(0).toUpperCase() : 'S'"></span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-xs font-bold text-[#051c45] truncate" x-text="name"></p>
+                                    <p class="text-[11px] text-slate-500 truncate" x-text="email"></p>
+                                    <template x-if="phone && !editingSavedPhone">
+                                        <p class="text-[11px] font-mono font-bold text-slate-700 mt-0.5 flex items-center gap-2">
+                                            <span x-text="phone"></span>
+                                            <button type="button" @click="editingSavedPhone = true" class="text-[10px] font-sans font-bold text-[#c30102] hover:underline cursor-pointer">Edit</button>
+                                        </p>
+                                    </template>
                                 </div>
                             </div>
 
@@ -742,123 +707,74 @@
                         </div>
                     </template>
 
-                    <!-- Upgraded Preferred Attendance Mode Selector (Auto-disables Executive Campus when Course is Online) -->
-                    <div class="pt-1" x-show="isTrainingModeEnabled()">
-                        <div class="flex items-center justify-between mb-1.5">
-                            <label class="block text-xs font-bold text-slate-700" x-text="fieldLabel('training_mode', 'Preferred Attendance Mode')">Preferred Attendance Mode</label>
-                            <template x-if="isOnlineOnly">
-                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    <span>Online Live Program</span>
-                                </span>
-                            </template>
-                            <template x-if="isCampusOnly">
-                                <span class="text-[10px] font-bold text-[#051c45] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                    <i class="fas fa-building text-[9px]"></i>
-                                    <span>Campus-Only Program</span>
-                                </span>
-                            </template>
-                        </div>
+                    <!-- Attendance Mode Selector (Only shown for Hybrid courses where user has a choice) -->
+                    <div class="pt-1" x-show="isTrainingModeEnabled() && !isOnlineOnly && !isCampusOnly">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5" x-text="fieldLabel('training_mode', 'Preferred Attendance Mode')">Preferred Attendance Mode</label>
 
                         <div class="grid grid-cols-2 gap-2.5 text-xs">
-                            <!-- Option 1: Live Online (Zoom) -->
                             <button
                                 type="button"
                                 @click="selectTrainingMode('online_zoom')"
-                                :disabled="isCampusOnly"
-                                :aria-disabled="isCampusOnly ? 'true' : 'false'"
-                                class="relative text-left p-3 rounded-xl border transition-all flex items-start gap-2.5"
-                                :class="isCampusOnly
-                                    ? 'bg-slate-100/80 border-slate-200 text-slate-400 opacity-55 cursor-not-allowed select-none'
-                                    : (trainingMode === 'online_zoom'
-                                        ? 'border-[#051c45] bg-[#051c45]/[0.05] ring-2 ring-[#051c45]/15 text-[#051c45] shadow-xs cursor-pointer'
-                                        : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700 cursor-pointer')"
+                                class="text-left p-3 rounded-xl border transition-all flex items-center gap-2.5 cursor-pointer"
+                                :class="trainingMode === 'online_zoom'
+                                    ? 'border-[#051c45] bg-[#051c45]/[0.05] text-[#051c45]'
+                                    : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'"
                             >
-                                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                                     :class="isCampusOnly ? 'bg-slate-200 text-slate-400' : (trainingMode === 'online_zoom' ? 'bg-[#051c45] text-white' : 'bg-sky-50 text-sky-600')">
-                                    <i class="fas fa-video text-xs"></i>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <div class="font-extrabold text-xs leading-tight flex items-center justify-between gap-1">
-                                        <span class="truncate">Live Online (Zoom)</span>
-                                        <template x-if="trainingMode === 'online_zoom' && !isCampusOnly">
-                                            <i class="fas fa-check-circle text-[#10b981] text-xs shrink-0"></i>
-                                        </template>
-                                    </div>
-                                    <p class="text-[10px] mt-0.5 leading-tight"
-                                       :class="isCampusOnly ? 'text-slate-400' : 'text-slate-500'"
-                                       x-text="isCampusOnly ? 'Unavailable (Campus Only)' : 'HD Live + Recordings'"></p>
-                                </div>
+                                <i class="fas fa-video text-xs"></i>
+                                <span class="font-bold truncate">Live Online (Zoom)</span>
                             </button>
 
-                            <!-- Option 2: Executive Campus (Automatically Disabled when Course is Set Online) -->
                             <button
                                 type="button"
                                 @click="selectTrainingMode('in_person')"
-                                :disabled="isOnlineOnly"
-                                :aria-disabled="isOnlineOnly ? 'true' : 'false'"
-                                class="relative text-left p-3 rounded-xl border transition-all flex items-start gap-2.5"
-                                :class="isOnlineOnly
-                                    ? 'bg-slate-100/80 border-slate-200/90 text-slate-400 opacity-60 cursor-not-allowed select-none'
-                                    : (trainingMode === 'in_person'
-                                        ? 'border-[#051c45] bg-[#051c45]/[0.05] ring-2 ring-[#051c45]/15 text-[#051c45] shadow-xs cursor-pointer'
-                                        : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700 cursor-pointer')"
+                                class="text-left p-3 rounded-xl border transition-all flex items-center gap-2.5 cursor-pointer"
+                                :class="trainingMode === 'in_person'
+                                    ? 'border-[#051c45] bg-[#051c45]/[0.05] text-[#051c45]'
+                                    : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'"
                             >
-                                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                                     :class="isOnlineOnly ? 'bg-slate-200/80 text-slate-400' : (trainingMode === 'in_person' ? 'bg-[#051c45] text-white' : 'bg-slate-100 text-slate-600')">
-                                    <i class="fas" :class="isOnlineOnly ? 'fa-lock text-xs' : 'fa-building text-xs'"></i>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <div class="font-extrabold text-xs leading-tight flex items-center justify-between gap-1">
-                                        <span class="truncate" :class="isOnlineOnly ? 'line-through decoration-slate-300' : ''">Executive Campus</span>
-                                        <template x-if="isOnlineOnly">
-                                            <span class="px-1.5 py-0.2 rounded bg-slate-200 text-slate-600 text-[8px] font-black uppercase tracking-wider shrink-0">Disabled</span>
-                                        </template>
-                                        <template x-if="trainingMode === 'in_person' && !isOnlineOnly">
-                                            <i class="fas fa-check-circle text-[#10b981] text-xs shrink-0"></i>
-                                        </template>
-                                    </div>
-                                    <p class="text-[10px] mt-0.5 leading-tight"
-                                       :class="isOnlineOnly ? 'text-slate-400 font-medium' : 'text-slate-500'"
-                                       x-text="isOnlineOnly ? 'Online-Only Course' : 'In-Person Classroom'"></p>
-                                </div>
+                                <i class="fas fa-building text-xs"></i>
+                                <span class="font-bold truncate">Executive Campus</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 2 Card: Payment or Seat Reservation (Only shown if course is paid) -->
+                <!-- Step 2 Card: Payment (Only shown if course is paid) -->
                 <template x-if="courseRawPrice > 0">
                     <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_2px_12px_rgba(5,28,69,0.04)] space-y-3.5">
-                        <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                        <div class="pb-2 border-b border-slate-100">
                             <label class="text-xs font-extrabold uppercase tracking-wider text-[#051c45] flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full bg-[#051c45] text-white text-[10px] font-black flex items-center justify-center shadow-xs">2</span>
-                                <span>Payment &amp; Confirmation</span>
+                                <span class="w-5 h-5 rounded-full bg-[#051c45] text-white text-[10px] font-black flex items-center justify-center">2</span>
+                                <span>Payment</span>
                             </label>
-                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">Step 2 of 2</span>
                         </div>
 
                         <div class="space-y-3">
-                            <!-- Upgraded bKash Merchant Card -->
-                            <div class="p-3.5 rounded-2xl border border-pink-200/90 bg-gradient-to-br from-pink-50/70 via-white to-pink-50/40 space-y-2.5 shadow-2xs">
+                            <!-- Clean bKash / Nagad Card with Number & Course Amount right below it -->
+                            <div class="p-3.5 rounded-2xl border border-pink-200/90 bg-gradient-to-br from-pink-50/70 via-white to-pink-50/40 space-y-2">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-lg bg-[#e2136e] text-white flex items-center justify-center text-[11px] font-black shadow-xs">b</span>
+                                        <span class="w-6 h-6 rounded-lg bg-[#e2136e] text-white flex items-center justify-center text-[11px] font-black">b</span>
                                         <span class="font-black text-[#e2136e] text-sm tracking-tight">bKash / Nagad</span>
-                                        <span class="text-[9px] bg-[#e2136e]/10 text-[#e2136e] border border-[#e2136e]/20 px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wider">Merchant / Personal</span>
                                     </div>
                                     <button 
                                         type="button" 
                                         @click="copyBkash()"
-                                        class="px-2.5 py-1 rounded-lg bg-white hover:bg-pink-50 border border-pink-200 text-[11px] font-bold text-[#e2136e] transition-all flex items-center gap-1 shadow-2xs cursor-pointer"
+                                        class="px-2.5 py-1 rounded-lg bg-white hover:bg-pink-50 border border-pink-200 text-[11px] font-bold text-[#e2136e] transition-all flex items-center gap-1 whitespace-nowrap shrink-0 cursor-pointer"
                                     >
                                         <i class="far" :class="copied ? 'fa-check-circle text-emerald-600' : 'fa-copy'"></i>
                                         <span x-text="copied ? 'Copied!' : 'Copy Number'"></span>
                                     </button>
                                 </div>
-                                <div class="text-xs font-mono font-bold text-slate-800 bg-white px-3 py-2 rounded-xl border border-pink-100 flex items-center justify-between">
-                                    <span>Account Number: <strong class="text-[#051c45]">{{ $drawerMerchantAccount }}</strong></span>
-                                    <span class="text-[10px] text-[#e2136e] font-sans font-bold">Instant Verify</span>
+                                <div class="bg-white rounded-xl border border-pink-100 divide-y divide-pink-100/70">
+                                    <div class="px-3 py-2 flex items-center justify-between gap-2 text-xs">
+                                        <span class="text-slate-500 font-medium whitespace-nowrap">bKash / Nagad Number</span>
+                                        <strong class="font-mono font-extrabold text-[#051c45] text-sm whitespace-nowrap">{{ $drawerMerchantAccount }}</strong>
+                                    </div>
+                                    <div class="px-3 py-2 flex items-center justify-between gap-2 text-xs">
+                                        <span class="text-slate-500 font-medium whitespace-nowrap">Amount to Send</span>
+                                        <strong class="font-black text-[#c30102] text-sm whitespace-nowrap" x-text="'৳' + coursePrice"></strong>
+                                    </div>
                                 </div>
                             </div>
 
@@ -885,39 +801,21 @@
                                     >
                                 </div>
                             </div>
-
-                            <p class="text-[10px] text-slate-500 flex items-center gap-1.5 px-1">
-                                <i class="fas fa-shield-check text-emerald-600 text-[10px]"></i>
-                                <span>Send the exact course fee to the number above and enter your <strong>Sender Number</strong> &amp; <strong>TrxID</strong> to complete enrollment.</span>
-                            </p>
                         </div>
                     </div>
                 </template>
-
-                <!-- WhatsApp Alternative 1-Tap Link -->
-                <div class="pt-1 text-center">
-                    <a 
-                        :href="'https://wa.me/' + courseWhatsapp + '?text=' + encodeURIComponent('Assalamu Alaikum! I would like to inquire/enroll in *' + courseTitle + '* (Fee: ৳' + courseRawPrice + '). Please share batch details and enrollment procedure: ' + window.location.origin + '/c/' + courseId)"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 text-xs font-bold text-emerald-700 transition-colors"
-                    >
-                        <i class="fab fa-whatsapp text-sm text-[#10b981]"></i>
-                        <span>Need help? 1-Tap WhatsApp Admission Desk</span>
-                    </a>
-                </div>
 
             </div>
 
         </div>
 
         <!-- 3. Drawer Footer Actions -->
-        <div x-show="!isSuccess && !isAlreadyEnrolled" class="px-6 py-4 bg-white border-t border-slate-200/90 shrink-0 shadow-[0_-8px_24px_rgba(5,28,69,0.04)]">
+        <div x-show="!isSuccess && !isAlreadyEnrolled" class="px-5 py-3.5 bg-white border-t border-slate-200/90 shrink-0 shadow-[0_-8px_24px_rgba(5,28,69,0.04)]">
             <button 
                 type="button" 
                 @click="submitEnrollment()" 
                 :disabled="isSubmitting"
-                class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#c30102] via-[#dc0405] to-[#a50102] hover:from-[#a50102] hover:to-[#8b0001] text-white font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_8px_24px_rgba(195,1,2,0.35)] hover:shadow-[0_12px_28px_rgba(195,1,2,0.45)] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer active:scale-[0.99]"
+                class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_8px_24px_rgba(195,1,2,0.3)] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer active:scale-[0.99]"
             >
                 <template x-if="isSubmitting">
                     <i class="fas fa-spinner fa-spin text-base"></i>
@@ -925,12 +823,8 @@
                 <template x-if="!isSubmitting">
                     <i class="fas fa-arrow-right text-xs"></i>
                 </template>
-                <span x-text="isSubmitting ? 'Securing Your Seat...' : (courseRawPrice > 0 ? 'Complete Express Enrollment' : 'Enroll in Free Course')"></span>
+                <span x-text="isSubmitting ? 'Securing Your Seat...' : (courseRawPrice > 0 ? 'Complete Enrollment' : 'Enroll in Free Course')"></span>
             </button>
-            <p class="text-[10px] text-center text-slate-400 font-medium mt-2 flex items-center justify-center gap-1.5">
-                <i class="fas fa-lock text-[#10b981] text-[9px]"></i>
-                <span x-text="isOnlineOnly ? '256-Bit Encrypted • Instant Classroom Access • Verified Certification' : '256-Bit Encrypted • Direct Verified Admission • Executive Campus & Online'"></span>
-            </p>
         </div>
 
     </div>
