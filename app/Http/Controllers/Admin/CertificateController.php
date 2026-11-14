@@ -55,8 +55,12 @@ class CertificateController extends Controller
             'show_seal_text' => Setting::getVal('certificate_show_seal_text', '1'),
             'show_qr_code' => Setting::getVal('certificate_show_qr_code', '1'),
             'show_watermark' => Setting::getVal('certificate_show_watermark', '1'),
-            'logo_url' => Setting::getVal('certificate_logo_url', ''),
-            'seal_logo_url' => Setting::getVal('certificate_seal_logo_url', ''),
+            'logo_url' => Setting::getVal('certificate_logo_url', '/images/certificate-logo-gold.png'),
+            'seal_logo_url' => Setting::getVal('certificate_seal_logo_url', '/images/certificate-logo-gold.png'),
+            'seal_bg_url' => Setting::getVal('certificate_seal_bg_url', '/images/certificate-gold-seal.png'),
+            'id_label' => Setting::getVal('certificate_id_label', 'CERTIFICATE ID:'),
+            'date_label' => Setting::getVal('certificate_date_label', 'DATE:'),
+            'batch_label' => Setting::getVal('certificate_batch_label', 'BATCH:'),
             'template' => Setting::getVal('certificate_template', 'acs_signature'),
         ];
 
@@ -109,12 +113,37 @@ class CertificateController extends Controller
             'certificate_show_watermark' => 'nullable|boolean',
             'certificate_logo_url' => 'nullable|string|max:500',
             'certificate_seal_logo_url' => 'nullable|string|max:500',
+            'certificate_seal_bg_url' => 'nullable|string|max:500',
+            'certificate_id_label' => 'nullable|string|max:100',
+            'certificate_date_label' => 'nullable|string|max:100',
+            'certificate_batch_label' => 'nullable|string|max:100',
             'certificate_logo_file' => 'nullable|image|max:4096',
             'certificate_seal_logo_file' => 'nullable|image|max:4096',
+            'certificate_seal_bg_file' => 'nullable|image|max:4096',
             'certificate_template' => 'required|string|in:acs_signature,classic_navy,modern_emerald,crimson_prestige,minimalist_corporate',
         ]);
 
-        unset($validated['certificate_logo_file'], $validated['certificate_seal_logo_file']);
+        unset($validated['certificate_logo_file'], $validated['certificate_seal_logo_file'], $validated['certificate_seal_bg_file']);
+
+        // Default to the latest gold ACS logo & scalloped seal if cleared
+        if (empty($validated['certificate_logo_url'])) {
+            $validated['certificate_logo_url'] = '/images/certificate-logo-gold.png';
+        }
+        if (empty($validated['certificate_seal_logo_url'])) {
+            $validated['certificate_seal_logo_url'] = '/images/certificate-logo-gold.png';
+        }
+        if (empty($validated['certificate_seal_bg_url'])) {
+            $validated['certificate_seal_bg_url'] = '/images/certificate-gold-seal.png';
+        }
+        if (empty($validated['certificate_id_label'])) {
+            $validated['certificate_id_label'] = 'CERTIFICATE ID:';
+        }
+        if (empty($validated['certificate_date_label'])) {
+            $validated['certificate_date_label'] = 'DATE:';
+        }
+        if (empty($validated['certificate_batch_label'])) {
+            $validated['certificate_batch_label'] = 'BATCH:';
+        }
 
         // Handle optional file uploads (InfinityFree compatible direct public/uploads/certificates path)
         if ($request->hasFile('certificate_logo_file')) {
@@ -137,6 +166,17 @@ class CertificateController extends Controller
             $filename = 'cert_seal_logo_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move($dir, $filename);
             $validated['certificate_seal_logo_url'] = '/uploads/certificates/' . $filename;
+        }
+
+        if ($request->hasFile('certificate_seal_bg_file')) {
+            $file = $request->file('certificate_seal_bg_file');
+            $dir = public_path('uploads/certificates');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $filename = 'cert_seal_bg_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $validated['certificate_seal_bg_url'] = '/uploads/certificates/' . $filename;
         }
 
         $validated['certificate_show_secondary_signature'] = $request->has('certificate_show_secondary_signature') ? '1' : '0';

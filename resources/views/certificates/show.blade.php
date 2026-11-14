@@ -26,8 +26,12 @@
     $showSealText = \App\Models\Setting::getVal('certificate_show_seal_text', '1') == '1';
     $showQrCode = \App\Models\Setting::getVal('certificate_show_qr_code', '1') == '1';
     $showWatermark = \App\Models\Setting::getVal('certificate_show_watermark', '1') == '1';
-    $customLogoUrl = trim((string) \App\Models\Setting::getVal('certificate_logo_url', ''));
-    $customSealLogoUrl = trim((string) \App\Models\Setting::getVal('certificate_seal_logo_url', ''));
+    $customLogoUrl = trim((string) \App\Models\Setting::getVal('certificate_logo_url', '/images/certificate-logo-gold.png'));
+    $customSealLogoUrl = trim((string) \App\Models\Setting::getVal('certificate_seal_logo_url', '/images/certificate-logo-gold.png'));
+    $customSealBgUrl = trim((string) \App\Models\Setting::getVal('certificate_seal_bg_url', '/images/certificate-gold-seal.png'));
+    $idLabel = \App\Models\Setting::getVal('certificate_id_label', 'CERTIFICATE ID:');
+    $dateLabel = \App\Models\Setting::getVal('certificate_date_label', 'DATE:');
+    $batchLabel = \App\Models\Setting::getVal('certificate_batch_label', 'BATCH:');
     $verifyUrl = route('certificate.verify', $certificate->certificate_number);
     $qrSeed = crc32((string) $certificate->certificate_number);
 
@@ -155,9 +159,12 @@
     $certSealLogo = !empty($customSealLogoUrl)
         ? (str_starts_with($customSealLogoUrl, 'http') ? $customSealLogoUrl : asset(ltrim($customSealLogoUrl, '/')))
         : $certGoldLogo;
-    $certGoldSeal = file_exists(public_path('images/certificate-gold-seal.png'))
+    $defaultGoldSeal = file_exists(public_path('images/certificate-gold-seal.png'))
         ? asset('images/certificate-gold-seal.png')
         : null;
+    $certGoldSeal = !empty($customSealBgUrl)
+        ? (str_starts_with($customSealBgUrl, 'http') ? $customSealBgUrl : asset(ltrim($customSealBgUrl, '/')))
+        : $defaultGoldSeal;
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -476,14 +483,14 @@
                             <div class="space-y-0.5">
                                 @if(!empty($course->batch) && $course->show_batch)
                                     <span class="text-[9px] sm:text-[11px] font-sans-body font-extrabold text-[#2e6f23] uppercase block">
-                                        BATCH: {{ $course->batch }}
+                                        {{ $batchLabel }} {{ $course->batch }}
                                     </span>
                                 @endif
                                 <span class="text-[10px] sm:text-xs lg:text-[13px] font-sans-body font-extrabold text-[#2e6f23] uppercase tracking-tight block">
-                                    CERTIFICATE ID: {{ $certificate->certificate_number }}
+                                    {{ $idLabel }} {{ $certificate->certificate_number }}
                                 </span>
                                 <span class="text-[10px] sm:text-xs lg:text-[13px] font-sans-body font-extrabold text-[#2e6f23] uppercase tracking-tight block">
-                                    DATE: {{ strtoupper(\Carbon\Carbon::parse($certificate->issue_date)->format('d F Y')) }}
+                                    {{ $dateLabel }} {{ strtoupper(\Carbon\Carbon::parse($certificate->issue_date)->format('d F Y')) }}
                                 </span>
                             </div>
                         </div>

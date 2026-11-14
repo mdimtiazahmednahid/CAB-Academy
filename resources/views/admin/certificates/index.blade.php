@@ -354,41 +354,108 @@
                         </p>
                     </div>
 
-                    <!-- Custom Header Logo & Custom Seal Inner Logo Upload / URL -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <!-- Dynamic Footer Labels (Certificate ID, Date, Batch) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Certificate ID Prefix Label</label>
+                            <input 
+                                type="text" 
+                                name="certificate_id_label" 
+                                id="form_id_label"
+                                value="{{ old('certificate_id_label', $settings['id_label'] ?? 'CERTIFICATE ID:') }}" 
+                                placeholder="CERTIFICATE ID:"
+                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Date Prefix Label</label>
+                            <input 
+                                type="text" 
+                                name="certificate_date_label" 
+                                id="form_date_label"
+                                value="{{ old('certificate_date_label', $settings['date_label'] ?? 'DATE:') }}" 
+                                placeholder="DATE:"
+                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Batch Prefix Label</label>
+                            <input 
+                                type="text" 
+                                name="certificate_batch_label" 
+                                id="form_batch_label"
+                                value="{{ old('certificate_batch_label', $settings['batch_label'] ?? 'BATCH:') }}" 
+                                placeholder="BATCH:"
+                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Custom Header Logo, Seal Medallion Logo & Gold Seal Base Upload / URL (Default: Latest Gold ACS Assets) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                         <div class="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1.5">
-                            <label class="block text-xs font-bold text-gray-700">Header &amp; Watermark Crest Logo</label>
+                            <div class="flex items-center justify-between">
+                                <label class="block text-xs font-bold text-gray-700">Header &amp; Watermark Logo</label>
+                                <img src="{{ asset(ltrim($settings['logo_url'] ?? '/images/certificate-logo-gold.png', '/')) }}" class="w-6 h-6 object-contain" alt="Current Header Logo">
+                            </div>
                             <input 
                                 type="file" 
                                 name="certificate_logo_file" 
+                                id="form_logo_file"
                                 accept="image/*"
-                                class="block w-full text-[11px] text-gray-600 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-slate-100 file:text-slate-800 hover:file:bg-slate-200"
+                                class="block w-full text-[10px] text-gray-600 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-100 file:text-slate-800 hover:file:bg-slate-200"
                             >
                             <input 
                                 type="text" 
                                 name="certificate_logo_url" 
                                 id="form_logo_url"
-                                value="{{ old('certificate_logo_url', $settings['logo_url'] ?? '') }}" 
-                                placeholder="Leave blank for Official Gold ACS Crest"
-                                class="w-full text-[11px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5"
+                                value="{{ old('certificate_logo_url', $settings['logo_url'] ?? '/images/certificate-logo-gold.png') }}" 
+                                placeholder="/images/certificate-logo-gold.png"
+                                class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2"
                             >
                         </div>
 
                         <div class="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1.5">
-                            <label class="block text-xs font-bold text-gray-700">Inner Gold Seal Medallion Logo</label>
+                            <div class="flex items-center justify-between">
+                                <label class="block text-xs font-bold text-gray-700">Inner Seal Logo</label>
+                                <img src="{{ asset(ltrim($settings['seal_logo_url'] ?? '/images/certificate-logo-gold.png', '/')) }}" class="w-6 h-6 object-contain" alt="Current Seal Logo">
+                            </div>
                             <input 
                                 type="file" 
                                 name="certificate_seal_logo_file" 
+                                id="form_seal_logo_file"
                                 accept="image/*"
-                                class="block w-full text-[11px] text-gray-600 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-amber-50 file:text-amber-900 hover:file:bg-amber-100"
+                                class="block w-full text-[10px] text-gray-600 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-amber-50 file:text-amber-900 hover:file:bg-amber-100"
                             >
                             <input 
                                 type="text" 
                                 name="certificate_seal_logo_url" 
                                 id="form_seal_logo_url"
-                                value="{{ old('certificate_seal_logo_url', $settings['seal_logo_url'] ?? '') }}" 
-                                placeholder="Leave blank for Official Gold ACS Crest"
-                                class="w-full text-[11px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5"
+                                value="{{ old('certificate_seal_logo_url', $settings['seal_logo_url'] ?? '/images/certificate-logo-gold.png') }}" 
+                                placeholder="/images/certificate-logo-gold.png"
+                                class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2"
+                            >
+                        </div>
+
+                        <div class="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-xs font-bold text-gray-700">Scalloped Gold Seal Base</label>
+                                <img src="{{ asset(ltrim($settings['seal_bg_url'] ?? '/images/certificate-gold-seal.png', '/')) }}" class="w-6 h-6 object-contain" alt="Current Gold Seal">
+                            </div>
+                            <input 
+                                type="file" 
+                                name="certificate_seal_bg_file" 
+                                id="form_seal_bg_file"
+                                accept="image/*"
+                                class="block w-full text-[10px] text-gray-600 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-amber-50 file:text-amber-900 hover:file:bg-amber-100"
+                            >
+                            <input 
+                                type="text" 
+                                name="certificate_seal_bg_url" 
+                                id="form_seal_bg_url"
+                                value="{{ old('certificate_seal_bg_url', $settings['seal_bg_url'] ?? '/images/certificate-gold-seal.png') }}" 
+                                placeholder="/images/certificate-gold-seal.png"
+                                class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2"
                             >
                         </div>
                     </div>
@@ -497,17 +564,13 @@
                                     <rect x="14" y="9" width="2" height="2" fill="#111827"/><rect x="16" y="13" width="3" height="2" fill="#111827"/><rect x="13" y="16" width="2" height="3" fill="#111827"/>
                                 </svg>
                             </div>
-                            <span class="font-sans font-extrabold block text-[#2e6f23] text-[7px]">CERTIFICATE ID: ACS-2026-DEMO</span>
-                            <span class="font-sans font-extrabold block text-[#2e6f23] text-[7px]">DATE: {{ strtoupper(now()->format('d F Y')) }}</span>
+                            <span class="font-sans font-extrabold block text-[#2e6f23] text-[7px]"><span id="prev_id_label_text">{{ $settings['id_label'] ?? 'CERTIFICATE ID:' }}</span> ACS-2026-DEMO</span>
+                            <span class="font-sans font-extrabold block text-[#2e6f23] text-[7px]"><span id="prev_date_label_text">{{ $settings['date_label'] ?? 'DATE:' }}</span> {{ strtoupper(now()->format('d F Y')) }}</span>
                         </div>
 
                         <!-- Center: Realistic Scalloped Gold Seal with Curved Text & Inner Logo -->
                         <div id="prev_seal_wrap" class="relative w-16 h-16 flex items-center justify-center shrink-0 {{ ($settings['show_seal'] ?? '1') == '1' ? '' : 'hidden' }}">
-                            @if(file_exists(public_path('images/certificate-gold-seal.png')))
-                                <img src="{{ asset('images/certificate-gold-seal.png') }}" class="w-full h-full object-contain drop-shadow-xs" alt="Gold Seal">
-                            @else
-                                <div class="w-full h-full rounded-full border-2 border-[#b89758] bg-gradient-to-tr from-[#dfba73] via-[#fae3a6] to-[#b89758]"></div>
-                            @endif
+                            <img id="prev_seal_bg_img" src="{{ asset(ltrim($settings['seal_bg_url'] ?? '/images/certificate-gold-seal.png', '/')) }}" class="w-full h-full object-contain drop-shadow-xs" alt="Gold Seal">
                             <svg id="prev_seal_text_svg" viewBox="0 0 240 240" class="w-full h-full absolute inset-0 pointer-events-none {{ ($settings['show_seal_text'] ?? '1') == '1' ? '' : 'hidden' }}">
                                 <defs>
                                     <path id="adminPrevTopArc" d="M 63,120 A 57,57 0 1,1 177,120" />
@@ -743,26 +806,86 @@
 
     // Live Custom Logo URL & File Inputs
     const defaultLogoSrc = "{{ file_exists(public_path('images/certificate-logo-gold.png')) ? asset('images/certificate-logo-gold.png') : asset('images/logo.png') }}";
+    const defaultSealBgSrc = "{{ asset('images/certificate-gold-seal.png') }}";
     const logoUrlInput = document.getElementById('form_logo_url');
     const sealLogoUrlInput = document.getElementById('form_seal_logo_url');
+    const sealBgUrlInput = document.getElementById('form_seal_bg_url');
+    const logoFileInput = document.getElementById('form_logo_file');
+    const sealLogoFileInput = document.getElementById('form_seal_logo_file');
+    const sealBgFileInput = document.getElementById('form_seal_bg_file');
     const prevHeaderLogo = document.getElementById('prev_header_logo');
     const prevWatermarkImg = document.getElementById('prev_watermark_img');
     const prevSealLogoImg = document.getElementById('prev_seal_logo_img');
+    const prevSealBgImg = document.getElementById('prev_seal_bg_img');
+
+    const idLabelInput = document.getElementById('form_id_label');
+    const prevIdLabelText = document.getElementById('prev_id_label_text');
+    if (idLabelInput && prevIdLabelText) {
+        idLabelInput.addEventListener('input', function() {
+            prevIdLabelText.innerText = this.value || 'CERTIFICATE ID:';
+        });
+    }
+    const dateLabelInput = document.getElementById('form_date_label');
+    const prevDateLabelText = document.getElementById('prev_date_label_text');
+    if (dateLabelInput && prevDateLabelText) {
+        dateLabelInput.addEventListener('input', function() {
+            prevDateLabelText.innerText = this.value || 'DATE:';
+        });
+    }
 
     if (logoUrlInput) {
         logoUrlInput.addEventListener('input', function() {
             const url = this.value.trim() || defaultLogoSrc;
             if (prevHeaderLogo) prevHeaderLogo.src = url;
             if (prevWatermarkImg) prevWatermarkImg.src = url;
-            if (prevSealLogoImg && (!sealLogoUrlInput || !sealLogoUrlInput.value.trim())) {
-                prevSealLogoImg.src = url;
-            }
         });
     }
     if (sealLogoUrlInput) {
         sealLogoUrlInput.addEventListener('input', function() {
-            const url = this.value.trim() || (logoUrlInput && logoUrlInput.value.trim()) || defaultLogoSrc;
+            const url = this.value.trim() || defaultLogoSrc;
             if (prevSealLogoImg) prevSealLogoImg.src = url;
+        });
+    }
+    if (sealBgUrlInput) {
+        sealBgUrlInput.addEventListener('input', function() {
+            const url = this.value.trim() || defaultSealBgSrc;
+            if (prevSealBgImg) prevSealBgImg.src = url;
+        });
+    }
+
+    // Instant FileReader preview when Admin selects an image file
+    if (logoFileInput) {
+        logoFileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (prevHeaderLogo) prevHeaderLogo.src = e.target.result;
+                    if (prevWatermarkImg) prevWatermarkImg.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+    if (sealLogoFileInput) {
+        sealLogoFileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (prevSealLogoImg) prevSealLogoImg.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+    if (sealBgFileInput) {
+        sealBgFileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (prevSealBgImg) prevSealBgImg.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
         });
     }
 
