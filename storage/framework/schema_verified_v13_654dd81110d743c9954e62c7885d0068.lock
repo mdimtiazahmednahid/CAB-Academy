@@ -1,1 +1,1 @@
-{"verified_at":"2026-11-14T17:14:38+00:00","repaired":[]}
+{"verified_at":"2026-11-14T17:31:14+00:00","repaired":["courses.counselor_phone","courses.whatsapp_message","courses.registration_status","instructors.department","instructors.department_role","categories.subcategories","categories.head_instructor_id"]}

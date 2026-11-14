@@ -20,6 +20,17 @@
     $sealLine1 = trim($sealParts[0] ?? 'OFFICIAL SEAL');
     $sealLine2 = trim($sealParts[1] ?? 'VERIFIED');
 
+    // Admin Customizer Toggles & Custom Logo Overrides
+    $showSeal = \App\Models\Setting::getVal('certificate_show_seal', '1') == '1';
+    $showSealLogo = \App\Models\Setting::getVal('certificate_show_seal_logo', '1') == '1';
+    $showSealText = \App\Models\Setting::getVal('certificate_show_seal_text', '1') == '1';
+    $showQrCode = \App\Models\Setting::getVal('certificate_show_qr_code', '1') == '1';
+    $showWatermark = \App\Models\Setting::getVal('certificate_show_watermark', '1') == '1';
+    $customLogoUrl = trim((string) \App\Models\Setting::getVal('certificate_logo_url', ''));
+    $customSealLogoUrl = trim((string) \App\Models\Setting::getVal('certificate_seal_logo_url', ''));
+    $verifyUrl = route('certificate.verify', $certificate->certificate_number);
+    $qrSeed = crc32((string) $certificate->certificate_number);
+
     // Theme Palettes (Preserving all 4 previous templates + new default 'acs_signature')
     $themes = [
         'acs_signature' => [
@@ -135,9 +146,15 @@
     ];
 
     $theme = $themes[$template] ?? $themes['acs_signature'];
-    $certGoldLogo = file_exists(public_path('images/certificate-logo-gold.png'))
+    $defaultGoldLogo = file_exists(public_path('images/certificate-logo-gold.png'))
         ? asset('images/certificate-logo-gold.png')
         : (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png'));
+    $certGoldLogo = !empty($customLogoUrl)
+        ? (str_starts_with($customLogoUrl, 'http') ? $customLogoUrl : asset(ltrim($customLogoUrl, '/')))
+        : $defaultGoldLogo;
+    $certSealLogo = !empty($customSealLogoUrl)
+        ? (str_starts_with($customSealLogoUrl, 'http') ? $customSealLogoUrl : asset(ltrim($customSealLogoUrl, '/')))
+        : $certGoldLogo;
     $certGoldSeal = file_exists(public_path('images/certificate-gold-seal.png'))
         ? asset('images/certificate-gold-seal.png')
         : null;
@@ -341,12 +358,14 @@
             </svg>
 
             <!-- Center Faint Large ACS Emblem Watermark (Behind Text, ~38.5% Width) -->
-            <div class="pointer-events-none absolute inset-0 flex items-center justify-center z-0">
-                <img src="{{ $certGoldLogo }}"
-                     alt=""
-                     class="acs-sig-watermark w-64 h-64 sm:w-[370px] sm:h-[370px] lg:w-[396px] lg:h-[396px] object-contain opacity-[0.17] translate-y-4"
-                     onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
-            </div>
+            @if($showWatermark)
+                <div class="pointer-events-none absolute inset-0 flex items-center justify-center z-0">
+                    <img src="{{ $certGoldLogo }}"
+                         alt=""
+                         class="acs-sig-watermark w-64 h-64 sm:w-[370px] sm:h-[370px] lg:w-[396px] lg:h-[396px] object-contain opacity-[0.17] translate-y-4"
+                         onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                </div>
+            @endif
 
             <!-- Main Certificate Inner Canvas -->
             <div class="certificate-inner relative z-10 flex-1 flex flex-col justify-between px-5 sm:px-12 lg:px-14 pt-2 sm:pt-3.5 pb-2.5 sm:pb-4">
@@ -420,41 +439,39 @@
 
                         <!-- Col 1 (4 Cols): Scannable Verification QR Box + Green Certificate ID & Date -->
                         <div class="col-span-12 sm:col-span-4 text-left pb-0.5">
-                            @php
-                                $verifyUrl = route('certificate.verify', $certificate->certificate_number);
-                                $qrSeed = crc32((string) $certificate->certificate_number);
-                            @endphp
-                            <!-- Crisp Scannable-Style Verification QR Card Above Certificate ID -->
-                            <a href="{{ $verifyUrl }}" target="_blank" title="Verify Credential: {{ $certificate->certificate_number }}" class="inline-block bg-white p-1.5 sm:p-2 rounded-xs shadow-xs border border-slate-200/70 mb-1.5 sm:mb-2 ml-2 sm:ml-4 hover:scale-105 transition-transform">
-                                <svg viewBox="0 0 21 21" class="w-12 h-12 sm:w-[68px] sm:h-[68px] lg:w-[74px] lg:h-[74px] block" shape-rendering="crispEdges">
-                                    <rect width="21" height="21" fill="#ffffff"/>
-                                    <!-- Top-Left Finder Pattern -->
-                                    <path d="M0,0 h7 v7 h-7 z M1,1 v5 h5 v-5 z M2,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
-                                    <!-- Top-Right Finder Pattern -->
-                                    <path d="M14,0 h7 v7 h-7 z M15,1 v5 h5 v-5 z M16,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
-                                    <!-- Bottom-Left Finder Pattern -->
-                                    <path d="M0,14 h7 v7 h-7 z M1,15 v5 h5 v-5 z M2,16 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
-                                    <!-- Timing Patterns -->
-                                    <rect x="8" y="6" width="1" height="1" fill="#111827"/>
-                                    <rect x="10" y="6" width="1" height="1" fill="#111827"/>
-                                    <rect x="12" y="6" width="1" height="1" fill="#111827"/>
-                                    <rect x="6" y="8" width="1" height="1" fill="#111827"/>
-                                    <rect x="6" y="10" width="1" height="1" fill="#111827"/>
-                                    <rect x="6" y="12" width="1" height="1" fill="#111827"/>
-                                    <!-- Deterministic Data Modules from Certificate Number -->
-                                    @for($r = 0; $r < 21; $r++)
-                                        @for($c = 0; $c < 21; $c++)
-                                            @php
-                                                $inFinder = ($r < 8 && $c < 8) || ($r < 8 && $c > 12) || ($r > 12 && $c < 8) || $r == 6 || $c == 6;
-                                                $bit = (($qrSeed >> (($r * 7 + $c * 3) % 28)) ^ ($r * 13 + $c * 19)) & 1;
-                                            @endphp
-                                            @if(!$inFinder && $bit)
-                                                <rect x="{{ $c }}" y="{{ $r }}" width="1" height="1" fill="#111827"/>
-                                            @endif
+                            @if($showQrCode)
+                                <!-- Crisp Scannable-Style Verification QR Card Above Certificate ID -->
+                                <a href="{{ $verifyUrl }}" target="_blank" title="Verify Credential: {{ $certificate->certificate_number }}" class="inline-block bg-white p-1.5 sm:p-2 rounded-xs shadow-xs border border-slate-200/70 mb-1.5 sm:mb-2 ml-2 sm:ml-4 hover:scale-105 transition-transform">
+                                    <svg viewBox="0 0 21 21" class="w-12 h-12 sm:w-[68px] sm:h-[68px] lg:w-[74px] lg:h-[74px] block" shape-rendering="crispEdges">
+                                        <rect width="21" height="21" fill="#ffffff"/>
+                                        <!-- Top-Left Finder Pattern -->
+                                        <path d="M0,0 h7 v7 h-7 z M1,1 v5 h5 v-5 z M2,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                        <!-- Top-Right Finder Pattern -->
+                                        <path d="M14,0 h7 v7 h-7 z M15,1 v5 h5 v-5 z M16,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                        <!-- Bottom-Left Finder Pattern -->
+                                        <path d="M0,14 h7 v7 h-7 z M1,15 v5 h5 v-5 z M2,16 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                        <!-- Timing Patterns -->
+                                        <rect x="8" y="6" width="1" height="1" fill="#111827"/>
+                                        <rect x="10" y="6" width="1" height="1" fill="#111827"/>
+                                        <rect x="12" y="6" width="1" height="1" fill="#111827"/>
+                                        <rect x="6" y="8" width="1" height="1" fill="#111827"/>
+                                        <rect x="6" y="10" width="1" height="1" fill="#111827"/>
+                                        <rect x="6" y="12" width="1" height="1" fill="#111827"/>
+                                        <!-- Deterministic Data Modules from Certificate Number -->
+                                        @for($r = 0; $r < 21; $r++)
+                                            @for($c = 0; $c < 21; $c++)
+                                                @php
+                                                    $inFinder = ($r < 8 && $c < 8) || ($r < 8 && $c > 12) || ($r > 12 && $c < 8) || $r == 6 || $c == 6;
+                                                    $bit = (($qrSeed >> (($r * 7 + $c * 3) % 28)) ^ ($r * 13 + $c * 19)) & 1;
+                                                @endphp
+                                                @if(!$inFinder && $bit)
+                                                    <rect x="{{ $c }}" y="{{ $r }}" width="1" height="1" fill="#111827"/>
+                                                @endif
+                                            @endfor
                                         @endfor
-                                    @endfor
-                                </svg>
-                            </a>
+                                    </svg>
+                                </a>
+                            @endif
 
                             <div class="space-y-0.5">
                                 @if(!empty($course->batch) && $course->show_batch)
@@ -489,57 +506,72 @@
 
                         <!-- Col 3 (2 Cols): Metallic Gold Scalloped Seal with 100% Matched ACS Gold Logo & Custom Seal Text -->
                         <div class="col-span-2 sm:col-span-2 flex flex-col items-center justify-center">
-                            @if($certGoldSeal)
-                                <div class="print-seal relative w-16 h-16 sm:w-24 sm:h-24 lg:w-[106px] lg:h-[106px] flex items-center justify-center select-none" title="{{ $sealText }}">
-                                    <!-- Scalloped Metallic Gold Foil Base (240x240 Perfectly Centered at 120,120) -->
-                                    <img src="{{ $certGoldSeal }}"
-                                         alt="{{ $sealText }}"
-                                         class="w-full h-full object-contain drop-shadow-md">
+                            @if($showSeal)
+                                @if($certGoldSeal)
+                                    <div class="print-seal relative w-16 h-16 sm:w-24 sm:h-24 lg:w-[106px] lg:h-[106px] flex items-center justify-center select-none" title="{{ $sealText }}">
+                                        <!-- Scalloped Metallic Gold Foil Base (240x240 Perfectly Centered at 120,120) -->
+                                        <img src="{{ $certGoldSeal }}"
+                                             alt="{{ $sealText }}"
+                                             class="w-full h-full object-contain drop-shadow-md">
 
-                                    <!-- Precision SVG Seal Dial (1:1 240x240 Coordinate System Aligned to Physical Gold Seal Grooves) -->
-                                    <svg viewBox="0 0 240 240" class="w-full h-full absolute inset-0 pointer-events-none">
-                                        <defs>
-                                            <!-- Top clockwise arc centered in the coin annulus (r=57: baseline at 57, cap-top at 69, well inside r=75 groove) -->
-                                            <path id="sealTopArc" d="M 63,120 A 57,57 0 1,1 177,120" />
-                                            <!-- Bottom counter-clockwise arc centered in the coin annulus (r=67: baseline at 67, cap-top at 55, well inside r=75 groove) -->
-                                            <path id="sealBottomArc" d="M 53,120 A 67,67 0 0,0 187,120" />
-                                        </defs>
-                                        <!-- Subtle engraved outer coin rim & inner medallion ring -->
-                                        <circle cx="120" cy="120" r="71" fill="none" stroke="#6b4308" stroke-width="1.3" stroke-dasharray="3 2.5" opacity="0.55" />
-                                        <circle cx="120" cy="120" r="49" fill="none" stroke="#6b4308" stroke-width="1.1" opacity="0.45" />
+                                        <!-- Precision SVG Seal Dial (1:1 240x240 Coordinate System Aligned to Physical Gold Seal Grooves) -->
+                                        @if($showSealText)
+                                            <svg viewBox="0 0 240 240" class="w-full h-full absolute inset-0 pointer-events-none">
+                                                <defs>
+                                                    <!-- Top clockwise arc centered in the coin annulus (r=57: baseline at 57, cap-top at 69, well inside r=75 groove) -->
+                                                    <path id="sealTopArc" d="M 63,120 A 57,57 0 1,1 177,120" />
+                                                    <!-- Bottom counter-clockwise arc centered in the coin annulus (r=67: baseline at 67, cap-top at 55, well inside r=75 groove) -->
+                                                    <path id="sealBottomArc" d="M 53,120 A 67,67 0 0,0 187,120" />
+                                                </defs>
+                                                <!-- Subtle engraved outer coin rim & inner medallion ring -->
+                                                <circle cx="120" cy="120" r="71" fill="none" stroke="#6b4308" stroke-width="1.3" stroke-dasharray="3 2.5" opacity="0.55" />
+                                                @if($showSealLogo)
+                                                    <circle cx="120" cy="120" r="49" fill="none" stroke="#6b4308" stroke-width="1.1" opacity="0.45" />
+                                                @endif
 
-                                        <!-- Top Curved Text (Centered in Top Annulus) -->
-                                        <text fill="#3d2200" font-size="13.5" font-weight="900" font-family="Montserrat, Cinzel, sans-serif" letter-spacing="2.2">
-                                            <textPath href="#sealTopArc" startOffset="50%" text-anchor="middle">
-                                                {{ strtoupper($sealLine1) }}
-                                            </textPath>
-                                        </text>
+                                                <!-- Top Curved Text (Centered in Top Annulus) -->
+                                                @if(!empty($sealLine1))
+                                                    <text fill="#3d2200" font-size="13.5" font-weight="900" font-family="Montserrat, Cinzel, sans-serif" letter-spacing="2.2">
+                                                        <textPath href="#sealTopArc" startOffset="50%" text-anchor="middle">
+                                                            {{ strtoupper($sealLine1) }}
+                                                        </textPath>
+                                                    </text>
+                                                @endif
 
-                                        <!-- Bottom Curved Text (Upright & Centered in Bottom Annulus) -->
-                                        @if(!empty($sealLine2))
-                                            <text fill="#3d2200" font-size="13" font-weight="900" font-family="Montserrat, Cinzel, sans-serif" letter-spacing="2.2">
-                                                <textPath href="#sealBottomArc" startOffset="50%" text-anchor="middle">
-                                                    ★ {{ strtoupper($sealLine2) }} ★
-                                                </textPath>
-                                            </text>
+                                                <!-- Bottom Curved Text (Upright & Centered in Bottom Annulus) -->
+                                                @if(!empty($sealLine2))
+                                                    <text fill="#3d2200" font-size="13" font-weight="900" font-family="Montserrat, Cinzel, sans-serif" letter-spacing="2.2">
+                                                        <textPath href="#sealBottomArc" startOffset="50%" text-anchor="middle">
+                                                            ★ {{ strtoupper($sealLine2) }} ★
+                                                        </textPath>
+                                                    </text>
+                                                @endif
+                                            </svg>
                                         @endif
-                                    </svg>
 
-                                    <!-- Center Embedded 100% Matched Gold-Rimmed ACS Logo Medallion (Centered inside r=49 ring) -->
-                                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                                        <img src="{{ $certGoldLogo }}"
-                                             alt="ACS Seal Logo"
-                                             class="w-[38%] h-[38%] object-contain drop-shadow-xs">
+                                        <!-- Center Embedded 100% Matched Gold-Rimmed ACS Logo Medallion (Centered inside r=49 ring) -->
+                                        @if($showSealLogo)
+                                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                                <img src="{{ $certSealLogo }}"
+                                                     alt="ACS Seal Logo"
+                                                     class="w-[38%] h-[38%] object-contain drop-shadow-xs"
+                                                     onerror="this.onerror=null;this.src='{{ $defaultGoldLogo }}';">
+                                            </div>
+                                        @endif
                                     </div>
-                                </div>
-                            @else
-                                <div class="print-seal w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 {{ $theme['seal_border'] }} bg-gradient-to-tr {{ $theme['seal_bg'] }} p-1 shadow-lg flex items-center justify-center text-center">
-                                    <div class="w-full h-full rounded-full border border-dashed {{ $theme['seal_inner_border'] }} flex flex-col items-center justify-center {{ $theme['seal_text_color'] }}">
-                                        <img src="{{ $certGoldLogo }}" alt="ACS Seal Logo" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-contain mb-0.5">
-                                        <span class="text-[6px] sm:text-[7px] font-cinzel font-black tracking-tighter uppercase">{{ $sealLine1 }}</span>
-                                        <span class="text-[5px] sm:text-[6px] font-cinzel tracking-wider">{{ $sealLine2 }}</span>
+                                @else
+                                    <div class="print-seal w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 {{ $theme['seal_border'] }} bg-gradient-to-tr {{ $theme['seal_bg'] }} p-1 shadow-lg flex items-center justify-center text-center">
+                                        <div class="w-full h-full rounded-full border border-dashed {{ $theme['seal_inner_border'] }} flex flex-col items-center justify-center {{ $theme['seal_text_color'] }}">
+                                            @if($showSealLogo)
+                                                <img src="{{ $certSealLogo }}" alt="ACS Seal Logo" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-contain mb-0.5">
+                                            @endif
+                                            @if($showSealText)
+                                                <span class="text-[6px] sm:text-[7px] font-cinzel font-black tracking-tighter uppercase">{{ $sealLine1 }}</span>
+                                                <span class="text-[5px] sm:text-[6px] font-cinzel tracking-wider">{{ $sealLine2 }}</span>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @endif
                             <span class="sr-only">{{ $sealLine1 }} {{ $sealLine2 }}</span>
                         </div>
@@ -635,8 +667,35 @@
                     <!-- Dual Signature Layout: 4 Columns -->
                     <div class="mt-4 sm:mt-8 pt-3 sm:pt-6 border-t {{ $theme['divider'] }} grid grid-cols-4 items-end text-center print-footer-grid">
                         
-                        <!-- Col 1: Date & Security Serial -->
+                        <!-- Col 1: Verification QR + Date & Security Serial -->
                         <div class="text-left space-y-0.5 sm:space-y-1">
+                            @if($showQrCode)
+                                <a href="{{ $verifyUrl }}" target="_blank" title="Verify Credential: {{ $certificate->certificate_number }}" class="inline-block bg-white p-1.5 rounded-xs shadow-xs border border-slate-200 mb-1 hover:scale-105 transition-transform">
+                                    <svg viewBox="0 0 21 21" class="w-11 h-11 sm:w-14 sm:h-14 block" shape-rendering="crispEdges">
+                                        <rect width="21" height="21" fill="#ffffff"/>
+                                        <path d="M0,0 h7 v7 h-7 z M1,1 v5 h5 v-5 z M2,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                        <path d="M14,0 h7 v7 h-7 z M15,1 v5 h5 v-5 z M16,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                        <path d="M0,14 h7 v7 h-7 z M1,15 v5 h5 v-5 z M2,16 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                        <rect x="8" y="6" width="1" height="1" fill="#111827"/>
+                                        <rect x="10" y="6" width="1" height="1" fill="#111827"/>
+                                        <rect x="12" y="6" width="1" height="1" fill="#111827"/>
+                                        <rect x="6" y="8" width="1" height="1" fill="#111827"/>
+                                        <rect x="6" y="10" width="1" height="1" fill="#111827"/>
+                                        <rect x="6" y="12" width="1" height="1" fill="#111827"/>
+                                        @for($r = 0; $r < 21; $r++)
+                                            @for($c = 0; $c < 21; $c++)
+                                                @php
+                                                    $inFinder = ($r < 8 && $c < 8) || ($r < 8 && $c > 12) || ($r > 12 && $c < 8) || $r == 6 || $c == 6;
+                                                    $bit = (($qrSeed >> (($r * 7 + $c * 3) % 28)) ^ ($r * 13 + $c * 19)) & 1;
+                                                @endphp
+                                                @if(!$inFinder && $bit)
+                                                    <rect x="{{ $c }}" y="{{ $r }}" width="1" height="1" fill="#111827"/>
+                                                @endif
+                                            @endfor
+                                        @endfor
+                                    </svg>
+                                </a>
+                            @endif
                             @if(!empty($course->batch) && $course->show_batch)
                                 <span class="text-[9px] sm:text-[10px] font-mono text-emerald-700 font-bold block">Batch: {{ $course->batch }}</span>
                             @endif
@@ -664,13 +723,22 @@
 
                         <!-- Col 3: Official Seal Simulation -->
                         <div class="flex flex-col items-center justify-center">
-                            <div class="print-seal w-16 h-16 sm:w-20 sm:h-20 lg:w-22 lg:h-22 rounded-full border-4 {{ $theme['seal_border'] }} bg-gradient-to-tr {{ $theme['seal_bg'] }} p-1 shadow-lg flex items-center justify-center text-center">
-                                <div class="w-full h-full rounded-full border border-dashed {{ $theme['seal_inner_border'] }} flex flex-col items-center justify-center {{ $theme['seal_text_color'] }}">
-                                    <i class="fas {{ $theme['seal_icon'] }} text-xs sm:text-base"></i>
-                                    <span class="text-[7px] sm:text-[8px] font-cinzel font-black tracking-tighter uppercase mt-0.5">{{ $sealLine1 }}</span>
-                                    <span class="text-[6px] sm:text-[7px] font-cinzel tracking-wider">{{ $sealLine2 }}</span>
+                            @if($showSeal)
+                                <div class="print-seal w-16 h-16 sm:w-20 sm:h-20 lg:w-22 lg:h-22 rounded-full border-4 {{ $theme['seal_border'] }} bg-gradient-to-tr {{ $theme['seal_bg'] }} p-1 shadow-lg flex items-center justify-center text-center">
+                                    <div class="w-full h-full rounded-full border border-dashed {{ $theme['seal_inner_border'] }} flex flex-col items-center justify-center {{ $theme['seal_text_color'] }}">
+                                        @if($showSealLogo)
+                                            <img src="{{ $certSealLogo }}" alt="ACS Seal Logo" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-contain mb-0.5" onerror="this.onerror=null;this.src='{{ $defaultGoldLogo }}';">
+                                        @else
+                                            <i class="fas {{ $theme['seal_icon'] }} text-xs sm:text-base"></i>
+                                        @endif
+                                        @if($showSealText)
+                                            <span class="text-[7px] sm:text-[8px] font-cinzel font-black tracking-tighter uppercase mt-0.5">{{ $sealLine1 }}</span>
+                                            <span class="text-[6px] sm:text-[7px] font-cinzel tracking-wider">{{ $sealLine2 }}</span>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
+                            <span class="sr-only">{{ $sealLine1 }} {{ $sealLine2 }}</span>
                         </div>
 
                         <!-- Col 4: Primary Signatory (Academic Director) -->
@@ -693,8 +761,35 @@
                     <!-- Single Signature Layout: 3 Columns -->
                     <div class="mt-4 sm:mt-8 pt-3 sm:pt-6 border-t {{ $theme['divider'] }} grid grid-cols-3 items-end text-center print-footer-grid">
                         
-                        <!-- Left: Date & Security Serial -->
+                        <!-- Left: Verification QR + Date & Security Serial -->
                         <div class="text-left space-y-0.5 sm:space-y-1">
+                            @if($showQrCode)
+                                <a href="{{ $verifyUrl }}" target="_blank" title="Verify Credential: {{ $certificate->certificate_number }}" class="inline-block bg-white p-1.5 rounded-xs shadow-xs border border-slate-200 mb-1 hover:scale-105 transition-transform">
+                                    <svg viewBox="0 0 21 21" class="w-11 h-11 sm:w-14 sm:h-14 block" shape-rendering="crispEdges">
+                                        <rect width="21" height="21" fill="#ffffff"/>
+                                        <path d="M0,0 h7 v7 h-7 z M1,1 v5 h5 v-5 z M2,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                        <path d="M14,0 h7 v7 h-7 z M15,1 v5 h5 v-5 z M16,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                        <path d="M0,14 h7 v7 h-7 z M1,15 v5 h5 v-5 z M2,16 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                        <rect x="8" y="6" width="1" height="1" fill="#111827"/>
+                                        <rect x="10" y="6" width="1" height="1" fill="#111827"/>
+                                        <rect x="12" y="6" width="1" height="1" fill="#111827"/>
+                                        <rect x="6" y="8" width="1" height="1" fill="#111827"/>
+                                        <rect x="6" y="10" width="1" height="1" fill="#111827"/>
+                                        <rect x="6" y="12" width="1" height="1" fill="#111827"/>
+                                        @for($r = 0; $r < 21; $r++)
+                                            @for($c = 0; $c < 21; $c++)
+                                                @php
+                                                    $inFinder = ($r < 8 && $c < 8) || ($r < 8 && $c > 12) || ($r > 12 && $c < 8) || $r == 6 || $c == 6;
+                                                    $bit = (($qrSeed >> (($r * 7 + $c * 3) % 28)) ^ ($r * 13 + $c * 19)) & 1;
+                                                @endphp
+                                                @if(!$inFinder && $bit)
+                                                    <rect x="{{ $c }}" y="{{ $r }}" width="1" height="1" fill="#111827"/>
+                                                @endif
+                                            @endfor
+                                        @endfor
+                                    </svg>
+                                </a>
+                            @endif
                             @if(!empty($course->batch) && $course->show_batch)
                                 <span class="text-[9px] sm:text-[10px] font-mono text-emerald-700 font-bold block">Batch: {{ $course->batch }}</span>
                             @endif
@@ -707,13 +802,22 @@
 
                         <!-- Center: Official Seal Simulation -->
                         <div class="flex flex-col items-center justify-center">
-                            <div class="print-seal w-16 h-16 sm:w-20 sm:h-20 lg:w-22 lg:h-22 rounded-full border-4 {{ $theme['seal_border'] }} bg-gradient-to-tr {{ $theme['seal_bg'] }} p-1 shadow-lg flex items-center justify-center text-center">
-                                <div class="w-full h-full rounded-full border border-dashed {{ $theme['seal_inner_border'] }} flex flex-col items-center justify-center {{ $theme['seal_text_color'] }}">
-                                    <i class="fas {{ $theme['seal_icon'] }} text-sm sm:text-lg"></i>
-                                    <span class="text-[7px] sm:text-[8px] font-cinzel font-black tracking-tighter uppercase mt-0.5">{{ $sealLine1 }}</span>
-                                    <span class="text-[6px] sm:text-[7px] font-cinzel tracking-wider">{{ $sealLine2 }}</span>
+                            @if($showSeal)
+                                <div class="print-seal w-16 h-16 sm:w-20 sm:h-20 lg:w-22 lg:h-22 rounded-full border-4 {{ $theme['seal_border'] }} bg-gradient-to-tr {{ $theme['seal_bg'] }} p-1 shadow-lg flex items-center justify-center text-center">
+                                    <div class="w-full h-full rounded-full border border-dashed {{ $theme['seal_inner_border'] }} flex flex-col items-center justify-center {{ $theme['seal_text_color'] }}">
+                                        @if($showSealLogo)
+                                            <img src="{{ $certSealLogo }}" alt="ACS Seal Logo" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-contain mb-0.5" onerror="this.onerror=null;this.src='{{ $defaultGoldLogo }}';">
+                                        @else
+                                            <i class="fas {{ $theme['seal_icon'] }} text-sm sm:text-lg"></i>
+                                        @endif
+                                        @if($showSealText)
+                                            <span class="text-[7px] sm:text-[8px] font-cinzel font-black tracking-tighter uppercase mt-0.5">{{ $sealLine1 }}</span>
+                                            <span class="text-[6px] sm:text-[7px] font-cinzel tracking-wider">{{ $sealLine2 }}</span>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
+                            <span class="sr-only">{{ $sealLine1 }} {{ $sealLine2 }}</span>
                         </div>
 
                         <!-- Right: Primary Signatory -->

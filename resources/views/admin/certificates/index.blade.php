@@ -38,8 +38,9 @@
             </span>
         </div>
 
-        <form method="POST" action="{{ route('admin.certificates.settings.update') }}" class="space-y-5">
+        <form method="POST" action="{{ route('admin.certificates.settings.update') }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
+            <input type="hidden" name="customizer_toggles_present" value="1">
 
             <!-- 1. Design Template Selector -->
             <div>
@@ -288,19 +289,109 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Official Security Seal Stamp Text (Inside Gold Seal)</label>
-                    <input 
-                        type="text" 
-                        name="certificate_seal_text" 
-                        id="form_seal_text"
-                        value="{{ old('certificate_seal_text', $settings['seal_text']) }}" 
-                        placeholder="OFFICIAL SEAL • VERIFIED"
-                        class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
-                    >
-                    <p class="text-[11px] text-gray-500 mt-1">
-                        Tip: Use <strong>•</strong> to split Top &amp; Bottom curved seal text (e.g. <code>OFFICIAL SEAL • VERIFIED</code> or <code>ACS ACADEMY • CERTIFIED</code>) around the center ACS logo inside the seal.
-                    </p>
+                <!-- Official Gold Seal, Overlay Text, Seal Logo & Verification QR Controls -->
+                <div class="pt-3 border-t border-slate-200/80 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black uppercase tracking-wider text-amber-900">
+                            🏅 Official Seal, Overlay Text, Logo &amp; Verification QR Controls
+                        </span>
+                        <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            Full Admin Control
+                        </span>
+                    </div>
+
+                    <!-- Visibility Toggles Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 bg-white p-3 rounded-xl border border-slate-200/80">
+                        <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
+                            <input type="checkbox" name="certificate_show_seal" id="form_show_seal" value="1"
+                                {{ ($settings['show_seal'] ?? '1') == '1' ? 'checked' : '' }}
+                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                            <span>Show Official Gold Seal</span>
+                        </label>
+
+                        <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
+                            <input type="checkbox" name="certificate_show_seal_logo" id="form_show_seal_logo" value="1"
+                                {{ ($settings['show_seal_logo'] ?? '1') == '1' ? 'checked' : '' }}
+                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                            <span>Show Logo Inside Seal</span>
+                        </label>
+
+                        <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
+                            <input type="checkbox" name="certificate_show_seal_text" id="form_show_seal_text" value="1"
+                                {{ ($settings['show_seal_text'] ?? '1') == '1' ? 'checked' : '' }}
+                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                            <span>Show Curved Seal Text</span>
+                        </label>
+
+                        <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
+                            <input type="checkbox" name="certificate_show_qr_code" id="form_show_qr_code" value="1"
+                                {{ ($settings['show_qr_code'] ?? '1') == '1' ? 'checked' : '' }}
+                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                            <span>Show Verification QR Code</span>
+                        </label>
+
+                        <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
+                            <input type="checkbox" name="certificate_show_watermark" id="form_show_watermark" value="1"
+                                {{ ($settings['show_watermark'] ?? '1') == '1' ? 'checked' : '' }}
+                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                            <span>Show Center Logo Watermark</span>
+                        </label>
+                    </div>
+
+                    <!-- Curved Seal Overlay Text -->
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Official Security Seal Stamp Text (Curved Inside Gold Seal)</label>
+                        <input 
+                            type="text" 
+                            name="certificate_seal_text" 
+                            id="form_seal_text"
+                            value="{{ old('certificate_seal_text', $settings['seal_text']) }}" 
+                            placeholder="OFFICIAL SEAL • VERIFIED"
+                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                        >
+                        <p class="text-[11px] text-gray-500 mt-1">
+                            Tip: Use <strong>•</strong> to split Top &amp; Bottom curved seal text (e.g. <code>OFFICIAL SEAL • VERIFIED</code> or <code>ACS ACADEMY • CERTIFIED</code>) around the center ACS logo inside the seal.
+                        </p>
+                    </div>
+
+                    <!-- Custom Header Logo & Custom Seal Inner Logo Upload / URL -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div class="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1.5">
+                            <label class="block text-xs font-bold text-gray-700">Header &amp; Watermark Crest Logo</label>
+                            <input 
+                                type="file" 
+                                name="certificate_logo_file" 
+                                accept="image/*"
+                                class="block w-full text-[11px] text-gray-600 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-slate-100 file:text-slate-800 hover:file:bg-slate-200"
+                            >
+                            <input 
+                                type="text" 
+                                name="certificate_logo_url" 
+                                id="form_logo_url"
+                                value="{{ old('certificate_logo_url', $settings['logo_url'] ?? '') }}" 
+                                placeholder="Leave blank for Official Gold ACS Crest"
+                                class="w-full text-[11px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5"
+                            >
+                        </div>
+
+                        <div class="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1.5">
+                            <label class="block text-xs font-bold text-gray-700">Inner Gold Seal Medallion Logo</label>
+                            <input 
+                                type="file" 
+                                name="certificate_seal_logo_file" 
+                                accept="image/*"
+                                class="block w-full text-[11px] text-gray-600 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-amber-50 file:text-amber-900 hover:file:bg-amber-100"
+                            >
+                            <input 
+                                type="text" 
+                                name="certificate_seal_logo_url" 
+                                id="form_seal_logo_url"
+                                value="{{ old('certificate_seal_logo_url', $settings['seal_logo_url'] ?? '') }}" 
+                                placeholder="Leave blank for Official Gold ACS Crest"
+                                class="w-full text-[11px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5"
+                            >
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -338,58 +429,110 @@
                     {{ $settings['template'] === 'crimson_prestige' ? 'border-[#051c45] bg-gradient-to-b from-white to-[#fff1f2]' : '' }}
                     {{ $settings['template'] === 'minimalist_corporate' ? 'border-slate-300 bg-white' : '' }}
                 ">
+                    @php
+                        $prevHeaderLogo = !empty($settings['logo_url'])
+                            ? (str_starts_with($settings['logo_url'], 'http') ? $settings['logo_url'] : asset(ltrim($settings['logo_url'], '/')))
+                            : (file_exists(public_path('images/certificate-logo-gold.png')) ? asset('images/certificate-logo-gold.png') : (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')));
+                        $prevInnerSealLogo = !empty($settings['seal_logo_url'])
+                            ? (str_starts_with($settings['seal_logo_url'], 'http') ? $settings['seal_logo_url'] : asset(ltrim($settings['seal_logo_url'], '/')))
+                            : $prevHeaderLogo;
+                        $prevSealParts = explode('•', $settings['seal_text'] ?? 'OFFICIAL SEAL • VERIFIED');
+                        $prevSealLine1 = trim($prevSealParts[0] ?? 'OFFICIAL SEAL');
+                        $prevSealLine2 = trim($prevSealParts[1] ?? 'VERIFIED');
+                    @endphp
+
+                    <!-- Center Watermark Preview -->
+                    <div id="prev_watermark_wrap" class="pointer-events-none absolute inset-0 flex items-center justify-center z-0 {{ ($settings['show_watermark'] ?? '1') == '1' ? '' : 'hidden' }}">
+                        <img id="prev_watermark_img" src="{{ $prevHeaderLogo }}" class="w-40 h-40 object-contain opacity-[0.15] translate-y-2" alt="">
+                    </div>
+
                     <!-- Crest / Logo -->
-                    <div class="flex justify-center">
-                        <img src="{{ file_exists(public_path('images/certificate-logo-gold.png')) ? asset('images/certificate-logo-gold.png') : (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')) }}" class="w-16 h-16 object-contain" alt="ACS Crest">
+                    <div class="relative z-10 flex justify-center">
+                        <img id="prev_header_logo" src="{{ $prevHeaderLogo }}" class="w-16 h-16 object-contain drop-shadow-xs" alt="ACS Crest">
                     </div>
 
                     <!-- Institution Name (Live Updated) -->
-                    <h3 id="prev_inst_name" class="font-serif text-sm sm:text-base font-black uppercase tracking-wider text-[#051c45]">
+                    <h3 id="prev_inst_name" class="relative z-10 font-serif text-sm sm:text-base font-black uppercase tracking-wider text-[#5b1415]">
                         {{ $settings['institution_name'] }}
                     </h3>
-                    <p id="prev_tagline" class="text-[8px] font-bold text-[#c30102] uppercase tracking-widest">
+                    <p id="prev_tagline" class="relative z-10 text-[8px] font-bold text-[#991b1b] uppercase tracking-widest">
                         {{ $settings['tagline'] }}
                     </p>
 
                     <!-- Honor Title -->
-                    <div class="pt-2">
-                        <span id="prev_cert_title" class="text-[9px] font-serif uppercase tracking-widest font-bold text-[#b89758] block">
+                    <div class="relative z-10 pt-1.5">
+                        <span id="prev_cert_title" class="text-[11px] font-serif uppercase tracking-wider font-bold text-[#641617] block">
                             {{ $settings['title'] }}
                         </span>
-                        <p id="prev_confer_text" class="text-[8px] text-gray-500 italic">
+                        <p id="prev_confer_text" class="text-[8px] text-gray-700 font-semibold mt-0.5">
                             {{ $settings['conferment_text'] }}
                         </p>
                         
                         <!-- Student Name -->
                         <div class="my-1 py-1 border-b border-dotted border-gray-400 inline-block min-w-[180px]">
-                            <h4 class="font-serif text-sm sm:text-base font-black text-gray-900">
+                            <h4 class="font-sans text-xs sm:text-sm font-black text-[#c5832b] uppercase">
                                 {{ $sampleUser->name }}
                             </h4>
                         </div>
 
                         <!-- Course Title -->
-                        <h5 class="text-[10px] sm:text-xs font-bold text-[#c30102] uppercase tracking-wide mt-1">
+                        <h5 class="text-[10px] sm:text-xs font-black text-[#4f4e8c] uppercase tracking-wide mt-1">
                             {{ $sampleCourse->title }}
                         </h5>
                     </div>
 
-                    <!-- Signatures Preview -->
-                    <div class="pt-3 border-t border-gray-200 flex items-end justify-between text-[8px] text-gray-600">
-                        <div class="text-left">
-                            <span class="font-mono block text-gray-400">Issue: {{ now()->format('M d, Y') }}</span>
-                            <span class="font-mono block font-bold text-[#051c45]">Serial: ACS-2026-DEMO</span>
+                    <!-- Signatures, Verification QR & Scalloped Gold Seal Preview -->
+                    <div class="relative z-10 pt-3 border-t border-gray-200/70 flex items-end justify-between text-[8px] text-gray-600 gap-2">
+                        <!-- Left: QR Code + Serial & Date -->
+                        <div class="text-left space-y-0.5">
+                            <div id="prev_qr_wrap" class="inline-block bg-white p-1 rounded-xs shadow-xs border border-slate-200 mb-1 {{ ($settings['show_qr_code'] ?? '1') == '1' ? '' : 'hidden' }}">
+                                <svg viewBox="0 0 21 21" class="w-9 h-9 block" shape-rendering="crispEdges">
+                                    <rect width="21" height="21" fill="#ffffff"/>
+                                    <path d="M0,0 h7 v7 h-7 z M1,1 v5 h5 v-5 z M2,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                    <path d="M14,0 h7 v7 h-7 z M15,1 v5 h5 v-5 z M16,2 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                    <path d="M0,14 h7 v7 h-7 z M1,15 v5 h5 v-5 z M2,16 h3 v3 h-3 z" fill="#111827" fill-rule="evenodd"/>
+                                    <rect x="8" y="6" width="1" height="1" fill="#111827"/><rect x="10" y="6" width="1" height="1" fill="#111827"/><rect x="12" y="6" width="1" height="1" fill="#111827"/>
+                                    <rect x="6" y="8" width="1" height="1" fill="#111827"/><rect x="6" y="10" width="1" height="1" fill="#111827"/><rect x="6" y="12" width="1" height="1" fill="#111827"/>
+                                    <rect x="9" y="9" width="2" height="2" fill="#111827"/><rect x="12" y="11" width="2" height="1" fill="#111827"/><rect x="8" y="14" width="3" height="2" fill="#111827"/>
+                                    <rect x="14" y="9" width="2" height="2" fill="#111827"/><rect x="16" y="13" width="3" height="2" fill="#111827"/><rect x="13" y="16" width="2" height="3" fill="#111827"/>
+                                </svg>
+                            </div>
+                            <span class="font-sans font-extrabold block text-[#2e6f23] text-[7px]">CERTIFICATE ID: ACS-2026-DEMO</span>
+                            <span class="font-sans font-extrabold block text-[#2e6f23] text-[7px]">DATE: {{ strtoupper(now()->format('d F Y')) }}</span>
                         </div>
-                        <div class="relative w-12 h-12 rounded-full border-2 border-[#b89758] bg-gradient-to-tr from-[#dfba73] via-[#fae3a6] to-[#b89758] flex flex-col items-center justify-center p-0.5 shadow-sm">
-                            <img src="{{ file_exists(public_path('images/certificate-logo-gold.png')) ? asset('images/certificate-logo-gold.png') : (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')) }}" class="w-5 h-5 rounded-full object-contain" alt="Seal Logo">
-                            <span id="prev_seal_text" class="text-[5px] font-black text-[#4a2c00] uppercase tracking-tighter leading-none mt-0.5 truncate max-w-[40px]">
-                                {{ trim(explode('•', $settings['seal_text'] ?? 'OFFICIAL SEAL')[0]) }}
-                            </span>
+
+                        <!-- Center: Realistic Scalloped Gold Seal with Curved Text & Inner Logo -->
+                        <div id="prev_seal_wrap" class="relative w-16 h-16 flex items-center justify-center shrink-0 {{ ($settings['show_seal'] ?? '1') == '1' ? '' : 'hidden' }}">
+                            @if(file_exists(public_path('images/certificate-gold-seal.png')))
+                                <img src="{{ asset('images/certificate-gold-seal.png') }}" class="w-full h-full object-contain drop-shadow-xs" alt="Gold Seal">
+                            @else
+                                <div class="w-full h-full rounded-full border-2 border-[#b89758] bg-gradient-to-tr from-[#dfba73] via-[#fae3a6] to-[#b89758]"></div>
+                            @endif
+                            <svg id="prev_seal_text_svg" viewBox="0 0 240 240" class="w-full h-full absolute inset-0 pointer-events-none {{ ($settings['show_seal_text'] ?? '1') == '1' ? '' : 'hidden' }}">
+                                <defs>
+                                    <path id="adminPrevTopArc" d="M 63,120 A 57,57 0 1,1 177,120" />
+                                    <path id="adminPrevBottomArc" d="M 53,120 A 67,67 0 0,0 187,120" />
+                                </defs>
+                                <circle cx="120" cy="120" r="71" fill="none" stroke="#6b4308" stroke-width="1.3" stroke-dasharray="3 2.5" opacity="0.55" />
+                                <circle cx="120" cy="120" r="49" fill="none" stroke="#6b4308" stroke-width="1.1" opacity="0.45" />
+                                <text fill="#3d2200" font-size="13.5" font-weight="900" font-family="Montserrat, Cinzel, sans-serif" letter-spacing="2.2">
+                                    <textPath id="prev_seal_top_text" href="#adminPrevTopArc" startOffset="50%" text-anchor="middle">{{ strtoupper($prevSealLine1) }}</textPath>
+                                </text>
+                                <text fill="#3d2200" font-size="13" font-weight="900" font-family="Montserrat, Cinzel, sans-serif" letter-spacing="2.2">
+                                    <textPath id="prev_seal_bottom_text" href="#adminPrevBottomArc" startOffset="50%" text-anchor="middle">{{ !empty($prevSealLine2) ? '★ ' . strtoupper($prevSealLine2) . ' ★' : '' }}</textPath>
+                                </text>
+                            </svg>
+                            <div id="prev_seal_logo_wrap" class="absolute inset-0 flex items-center justify-center pointer-events-none z-10 {{ ($settings['show_seal_logo'] ?? '1') == '1' ? '' : 'hidden' }}">
+                                <img id="prev_seal_logo_img" src="{{ $prevInnerSealLogo }}" class="w-[38%] h-[38%] object-contain drop-shadow-xs" alt="Seal Logo">
+                            </div>
                         </div>
+
+                        <!-- Right: Signatory -->
                         <div class="text-right">
-                            <span id="prev_sig_name" class="font-serif italic font-bold block text-gray-900 text-[10px]">
+                            <span id="prev_sig_name" class="font-serif italic font-bold block text-gray-900 text-[10px] border-b border-dotted border-gray-800 pb-0.5">
                                 {{ $settings['primary_signatory_name'] }}
                             </span>
-                            <span id="prev_sig_title" class="block text-gray-500 text-[7px] uppercase">
+                            <span id="prev_sig_title" class="block text-gray-800 font-bold text-[7px] uppercase pt-0.5">
                                 {{ $settings['primary_signatory_title'] }}
                             </span>
                         </div>
@@ -570,11 +713,56 @@
     }
 
     const sealTextInput = document.getElementById('form_seal_text');
-    const prevSealText = document.getElementById('prev_seal_text');
-    if (sealTextInput && prevSealText) {
+    const prevSealTopText = document.getElementById('prev_seal_top_text');
+    const prevSealBottomText = document.getElementById('prev_seal_bottom_text');
+    if (sealTextInput) {
         sealTextInput.addEventListener('input', function() {
-            const parts = (this.value || 'OFFICIAL SEAL').split('•');
-            prevSealText.innerText = (parts[0] || 'OFFICIAL SEAL').trim();
+            const parts = (this.value || 'OFFICIAL SEAL • VERIFIED').split('•');
+            const topStr = (parts[0] || '').trim().toUpperCase();
+            const botStr = (parts[1] || '').trim().toUpperCase();
+            if (prevSealTopText) prevSealTopText.textContent = topStr;
+            if (prevSealBottomText) prevSealBottomText.textContent = botStr ? `★ ${botStr} ★` : '';
+        });
+    }
+
+    // Live Toggle Checkboxes (Seal, Seal Logo, Seal Text, QR Code, Watermark)
+    const bindToggle = (checkboxId, targetId) => {
+        const cb = document.getElementById(checkboxId);
+        const target = document.getElementById(targetId);
+        if (cb && target) {
+            cb.addEventListener('change', function() {
+                target.classList.toggle('hidden', !this.checked);
+            });
+        }
+    };
+    bindToggle('form_show_seal', 'prev_seal_wrap');
+    bindToggle('form_show_seal_logo', 'prev_seal_logo_wrap');
+    bindToggle('form_show_seal_text', 'prev_seal_text_svg');
+    bindToggle('form_show_qr_code', 'prev_qr_wrap');
+    bindToggle('form_show_watermark', 'prev_watermark_wrap');
+
+    // Live Custom Logo URL & File Inputs
+    const defaultLogoSrc = "{{ file_exists(public_path('images/certificate-logo-gold.png')) ? asset('images/certificate-logo-gold.png') : asset('images/logo.png') }}";
+    const logoUrlInput = document.getElementById('form_logo_url');
+    const sealLogoUrlInput = document.getElementById('form_seal_logo_url');
+    const prevHeaderLogo = document.getElementById('prev_header_logo');
+    const prevWatermarkImg = document.getElementById('prev_watermark_img');
+    const prevSealLogoImg = document.getElementById('prev_seal_logo_img');
+
+    if (logoUrlInput) {
+        logoUrlInput.addEventListener('input', function() {
+            const url = this.value.trim() || defaultLogoSrc;
+            if (prevHeaderLogo) prevHeaderLogo.src = url;
+            if (prevWatermarkImg) prevWatermarkImg.src = url;
+            if (prevSealLogoImg && (!sealLogoUrlInput || !sealLogoUrlInput.value.trim())) {
+                prevSealLogoImg.src = url;
+            }
+        });
+    }
+    if (sealLogoUrlInput) {
+        sealLogoUrlInput.addEventListener('input', function() {
+            const url = this.value.trim() || (logoUrlInput && logoUrlInput.value.trim()) || defaultLogoSrc;
+            if (prevSealLogoImg) prevSealLogoImg.src = url;
         });
     }
 

@@ -356,5 +356,47 @@ class CertificateAndInvoiceTest extends TestCase
 
         $this->assertDatabaseMissing('certificates', ['id' => $certificate->id]);
     }
+
+    public function test_admin_can_customize_seal_overlays_logos_and_verification_qr_visibility()
+    {
+        $admin = User::where('role', 'admin')->first();
+
+        // 1. Default preview shows Verification QR code, Seal SVG text, and Seal Logo
+        $resDefault = $this->actingAs($admin)->get('/admin/certificates/preview');
+        $resDefault->assertStatus(200);
+        $resDefault->assertSee('Verify Credential:');
+        $resDefault->assertSee('id="sealTopArc"', false);
+        $resDefault->assertSee('alt="ACS Seal Logo"', false);
+
+        // 2. Admin hides Seal Text and QR Code via customizer toggles and sets custom seal logo URL
+        $postRes = $this->actingAs($admin)->post('/admin/certificates/settings', [
+            'customizer_toggles_present' => '1',
+            'certificate_institution_name' => 'ACADEMY OF COMMERCIAL & SUPPLY CHAIN-ACS',
+            'certificate_tagline' => 'LEARN .GROW.LEAD',
+            'certificate_title' => 'CERTIFICATE OF APPRECIATION',
+            'certificate_conferment_text' => 'This certificate is proudly presented to',
+            'certificate_completion_text' => 'Successfully participated in the training program.',
+            'certificate_primary_signatory_name' => 'Saidur Rahman',
+            'certificate_primary_signatory_title' => 'ACS EXECUTIVE GOVORNING',
+            'certificate_seal_text' => 'CUSTOM TOP • CUSTOM BOTTOM',
+            'certificate_show_seal' => '1',
+            'certificate_show_seal_logo' => '1',
+            // omit certificate_show_seal_text and certificate_show_qr_code to hide them
+            'certificate_seal_logo_url' => '/images/logo.png',
+            'certificate_template' => 'acs_signature',
+        ]);
+        $postRes->assertRedirect();
+
+        $this->assertEquals('0', \App\Models\Setting::getVal('certificate_show_seal_text'));
+        $this->assertEquals('0', \App\Models\Setting::getVal('certificate_show_qr_code'));
+        $this->assertEquals('/images/logo.png', \App\Models\Setting::getVal('certificate_seal_logo_url'));
+
+        // 3. Preview reflects hidden QR & hidden seal text while keeping seal logo
+        $resUpdated = $this->actingAs($admin)->get('/admin/certificates/preview');
+        $resUpdated->assertStatus(200);
+        $resUpdated->assertDontSee('Verify Credential:');
+        $resUpdated->assertDontSee('id="sealTopArc"', false);
+        $resUpdated->assertSee('alt="ACS Seal Logo"', false);
+    }
 }
 

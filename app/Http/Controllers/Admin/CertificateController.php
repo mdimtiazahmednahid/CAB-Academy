@@ -50,6 +50,13 @@ class CertificateController extends Controller
             'secondary_signatory_name' => Setting::getVal('certificate_secondary_signatory_name', 'Lead Trainer'),
             'secondary_signatory_title' => Setting::getVal('certificate_secondary_signatory_title', 'LEAD TRAINER'),
             'seal_text' => Setting::getVal('certificate_seal_text', 'OFFICIAL SEAL • VERIFIED'),
+            'show_seal' => Setting::getVal('certificate_show_seal', '1'),
+            'show_seal_logo' => Setting::getVal('certificate_show_seal_logo', '1'),
+            'show_seal_text' => Setting::getVal('certificate_show_seal_text', '1'),
+            'show_qr_code' => Setting::getVal('certificate_show_qr_code', '1'),
+            'show_watermark' => Setting::getVal('certificate_show_watermark', '1'),
+            'logo_url' => Setting::getVal('certificate_logo_url', ''),
+            'seal_logo_url' => Setting::getVal('certificate_seal_logo_url', ''),
             'template' => Setting::getVal('certificate_template', 'acs_signature'),
         ];
 
@@ -95,16 +102,65 @@ class CertificateController extends Controller
             'certificate_secondary_signatory_name' => 'nullable|string|max:255',
             'certificate_secondary_signatory_title' => 'nullable|string|max:255',
             'certificate_seal_text' => 'nullable|string|max:100',
+            'certificate_show_seal' => 'nullable|boolean',
+            'certificate_show_seal_logo' => 'nullable|boolean',
+            'certificate_show_seal_text' => 'nullable|boolean',
+            'certificate_show_qr_code' => 'nullable|boolean',
+            'certificate_show_watermark' => 'nullable|boolean',
+            'certificate_logo_url' => 'nullable|string|max:500',
+            'certificate_seal_logo_url' => 'nullable|string|max:500',
+            'certificate_logo_file' => 'nullable|image|max:4096',
+            'certificate_seal_logo_file' => 'nullable|image|max:4096',
             'certificate_template' => 'required|string|in:acs_signature,classic_navy,modern_emerald,crimson_prestige,minimalist_corporate',
         ]);
 
+        unset($validated['certificate_logo_file'], $validated['certificate_seal_logo_file']);
+
+        // Handle optional file uploads (InfinityFree compatible direct public/uploads/certificates path)
+        if ($request->hasFile('certificate_logo_file')) {
+            $file = $request->file('certificate_logo_file');
+            $dir = public_path('uploads/certificates');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $filename = 'cert_logo_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $validated['certificate_logo_url'] = '/uploads/certificates/' . $filename;
+        }
+
+        if ($request->hasFile('certificate_seal_logo_file')) {
+            $file = $request->file('certificate_seal_logo_file');
+            $dir = public_path('uploads/certificates');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $filename = 'cert_seal_logo_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $validated['certificate_seal_logo_url'] = '/uploads/certificates/' . $filename;
+        }
+
         $validated['certificate_show_secondary_signature'] = $request->has('certificate_show_secondary_signature') ? '1' : '0';
+
+        // For new checkboxes, if the form submits the customizer_toggles_present marker, read checkboxes; otherwise default to '1' for backwards compatibility with existing tests
+        if ($request->has('customizer_toggles_present')) {
+            $validated['certificate_show_seal'] = $request->has('certificate_show_seal') ? '1' : '0';
+            $validated['certificate_show_seal_logo'] = $request->has('certificate_show_seal_logo') ? '1' : '0';
+            $validated['certificate_show_seal_text'] = $request->has('certificate_show_seal_text') ? '1' : '0';
+            $validated['certificate_show_qr_code'] = $request->has('certificate_show_qr_code') ? '1' : '0';
+            $validated['certificate_show_watermark'] = $request->has('certificate_show_watermark') ? '1' : '0';
+        } else {
+            $validated['certificate_show_seal'] = $request->has('certificate_show_seal') ? '1' : Setting::getVal('certificate_show_seal', '1');
+            $validated['certificate_show_seal_logo'] = $request->has('certificate_show_seal_logo') ? '1' : Setting::getVal('certificate_show_seal_logo', '1');
+            $validated['certificate_show_seal_text'] = $request->has('certificate_show_seal_text') ? '1' : Setting::getVal('certificate_show_seal_text', '1');
+            $validated['certificate_show_qr_code'] = $request->has('certificate_show_qr_code') ? '1' : Setting::getVal('certificate_show_qr_code', '1');
+            $validated['certificate_show_watermark'] = $request->has('certificate_show_watermark') ? '1' : Setting::getVal('certificate_show_watermark', '1');
+        }
 
         foreach ($validated as $key => $val) {
             Setting::setVal($key, $val, 'text', 'certificate');
         }
 
-        return back()->with('success', 'Certificate template and institution branding updated successfully!');
+        return back()->with('success', 'Certificate template, seal, QR code, and institution branding updated successfully!');
     }
 
     /**
