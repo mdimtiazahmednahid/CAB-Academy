@@ -34,10 +34,20 @@
             </div>
         </div>
 
-        <a href="{{ $profileUser->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white text-[#051c45] text-xs font-extrabold hover:bg-slate-100 transition-all self-start sm:self-auto shrink-0">
-            <i class="fas fa-arrow-left text-[10px] text-[#c30102]"></i>
-            <span>Back to Dashboard</span>
-        </a>
+        <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
+            <a href="{{ $profileUser->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white text-[#051c45] text-xs font-extrabold hover:bg-slate-100 transition-all">
+                <i class="fas fa-arrow-left text-[10px] text-[#c30102]"></i>
+                <span>Back to Dashboard</span>
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}" class="m-0">
+                @csrf
+                <button type="submit" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-extrabold shadow-xs transition-all cursor-pointer">
+                    <i class="fas fa-sign-out-alt text-[11px]"></i>
+                    <span>Sign Out</span>
+                </button>
+            </form>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 pb-6">

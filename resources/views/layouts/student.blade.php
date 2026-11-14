@@ -319,6 +319,12 @@
                         {{ strtoupper(substr($portalUser->name, 0, 1)) }}
                     @endif
                 </a>
+                <form method="POST" action="{{ route('logout') }}" class="md:hidden m-0">
+                    @csrf
+                    <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-[#c30102] flex items-center justify-center border border-red-200/70 transition-colors cursor-pointer" title="Sign Out">
+                        <i class="fas fa-sign-out-alt text-xs"></i>
+                    </button>
+                </form>
             @endif
         </div>
     </header>
