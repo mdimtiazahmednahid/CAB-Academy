@@ -36,21 +36,21 @@ class CertificateController extends Controller
 
         // Certificate Global Customization Settings with sensible defaults
         $settings = [
-            'institution_name' => Setting::getVal('certificate_institution_name', 'ACS Academy'),
-            'tagline' => Setting::getVal('certificate_tagline', 'ACS Academy • Learn, Grow, Lead.'),
+            'institution_name' => Setting::getVal('certificate_institution_name', 'ACADEMY OF COMMERCIAL & SUPPLY CHAIN-ACS'),
+            'tagline' => Setting::getVal('certificate_tagline', 'LEARN .GROW.LEAD'),
             'campus_address' => Setting::getVal('certificate_campus_address', 'Mirpur-Pallabi Campus • Dhaka, Bangladesh'),
-            'title' => Setting::getVal('certificate_title', 'Executive Certification of Mastery'),
-            'conferment_text' => Setting::getVal('certificate_conferment_text', 'This is proudly presented and conferred upon'),
-            'completion_text' => Setting::getVal('certificate_completion_text', 'for having successfully completed all prescribed coursework, simulated trade laboratories, case examinations, and demonstrating professional competence in'),
+            'title' => Setting::getVal('certificate_title', 'CERTIFICATE OF APPRECIATION'),
+            'conferment_text' => Setting::getVal('certificate_conferment_text', 'This certificate is proudly presented to'),
+            'completion_text' => Setting::getVal('certificate_completion_text', 'Successfully participated in the training program, demonstrating active engagement and commitment to professional development.'),
             'faculty_endorsement' => Setting::getVal('certificate_faculty_endorsement', 'Delivered under the auspices of the ACS Academy Executive Faculty Board.'),
-            'primary_signatory_name' => Setting::getVal('certificate_primary_signatory_name', 'Academic Director'),
-            'primary_signatory_title' => Setting::getVal('certificate_primary_signatory_title', 'Academic Director'),
-            'primary_signatory_board' => Setting::getVal('certificate_primary_signatory_board', 'ACS Academy Governing Council'),
+            'primary_signatory_name' => Setting::getVal('certificate_primary_signatory_name', 'Saidur Rahman'),
+            'primary_signatory_title' => Setting::getVal('certificate_primary_signatory_title', 'ACS EXECUTIVE GOVORNING'),
+            'primary_signatory_board' => Setting::getVal('certificate_primary_signatory_board', 'ACS EXECUTIVE GOVORNING'),
             'show_secondary_signature' => Setting::getVal('certificate_show_secondary_signature', '1'),
-            'secondary_signatory_name' => Setting::getVal('certificate_secondary_signatory_name', 'Lead Executive Trainer'),
-            'secondary_signatory_title' => Setting::getVal('certificate_secondary_signatory_title', 'Course Director & Faculty Chair'),
+            'secondary_signatory_name' => Setting::getVal('certificate_secondary_signatory_name', 'Lead Trainer'),
+            'secondary_signatory_title' => Setting::getVal('certificate_secondary_signatory_title', 'LEAD TRAINER'),
             'seal_text' => Setting::getVal('certificate_seal_text', 'OFFICIAL SEAL • VERIFIED'),
-            'template' => Setting::getVal('certificate_template', 'classic_navy'),
+            'template' => Setting::getVal('certificate_template', 'acs_signature'),
         ];
 
         // Sample student & course for real-time live preview inside admin
@@ -95,7 +95,7 @@ class CertificateController extends Controller
             'certificate_secondary_signatory_name' => 'nullable|string|max:255',
             'certificate_secondary_signatory_title' => 'nullable|string|max:255',
             'certificate_seal_text' => 'nullable|string|max:100',
-            'certificate_template' => 'required|string|in:classic_navy,modern_emerald,crimson_prestige,minimalist_corporate',
+            'certificate_template' => 'required|string|in:acs_signature,classic_navy,modern_emerald,crimson_prestige,minimalist_corporate',
         ]);
 
         $validated['certificate_show_secondary_signature'] = $request->has('certificate_show_secondary_signature') ? '1' : '0';

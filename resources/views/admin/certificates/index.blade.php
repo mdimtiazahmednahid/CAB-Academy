@@ -46,8 +46,20 @@
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
                     Select Certificate Design Template <span class="text-red-500">*</span>
                 </label>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     
+                    <!-- Template 0 (Default): Official ACS Signature Certificate -->
+                    <label class="relative flex flex-col p-3.5 rounded-2xl border-2 cursor-pointer transition-all {{ $settings['template'] === 'acs_signature' ? 'border-[#b91c1c] bg-[#b91c1c]/5 shadow-sm' : 'border-gray-200 hover:border-gray-300' }}">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-xs text-gray-900">ACS Official Signature</span>
+                            <input type="radio" name="certificate_template" value="acs_signature" {{ $settings['template'] === 'acs_signature' ? 'checked' : '' }} class="text-[#b91c1c] focus:ring-[#b91c1c]">
+                        </div>
+                        <div class="h-10 rounded-lg border-2 border-[#b91c1c] bg-[#fcf8f6] flex items-center justify-center text-[10px] font-sans text-[#5b1415] font-black tracking-wider uppercase">
+                            Official ACS Default
+                        </div>
+                        <p class="text-[10px] text-gray-500 mt-2">Red border, gold-rimmed ACS crest, watermark emblem, and scalloped gold seal.</p>
+                    </label>
+
                     <!-- Template 1: Classic Royal Navy & Gold -->
                     <label class="relative flex flex-col p-3.5 rounded-2xl border-2 cursor-pointer transition-all {{ $settings['template'] === 'classic_navy' ? 'border-[#051c45] bg-[#051c45]/5 shadow-sm' : 'border-gray-200 hover:border-gray-300' }}">
                         <div class="flex items-center justify-between mb-2">
@@ -277,14 +289,18 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">Official Security Seal Stamp Text</label>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Official Security Seal Stamp Text (Inside Gold Seal)</label>
                     <input 
                         type="text" 
                         name="certificate_seal_text" 
+                        id="form_seal_text"
                         value="{{ old('certificate_seal_text', $settings['seal_text']) }}" 
                         placeholder="OFFICIAL SEAL • VERIFIED"
                         class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
                     >
+                    <p class="text-[11px] text-gray-500 mt-1">
+                        Tip: Use <strong>•</strong> to split Top &amp; Bottom curved seal text (e.g. <code>OFFICIAL SEAL • VERIFIED</code> or <code>ACS ACADEMY • CERTIFIED</code>) around the center ACS logo inside the seal.
+                    </p>
                 </div>
             </div>
 
@@ -307,7 +323,8 @@
 
         <div class="bg-slate-900 rounded-3xl p-3 sm:p-5 shadow-2xl border border-slate-800">
             <!-- Simulated Certificate Card -->
-            <div id="previewCard" class="w-full bg-[#fffdf9] rounded-2xl p-4 sm:p-6 border-4 shadow-inner relative overflow-hidden transition-all duration-300
+            <div id="previewCard" class="w-full bg-[#fcf8f6] rounded-2xl p-4 sm:p-6 border-4 shadow-inner relative overflow-hidden transition-all duration-300
+                {{ $settings['template'] === 'acs_signature' ? 'border-[#b91c1c]' : '' }}
                 {{ $settings['template'] === 'classic_navy' ? 'border-[#051c45]' : '' }}
                 {{ $settings['template'] === 'modern_emerald' ? 'border-[#064e3b]' : '' }}
                 {{ $settings['template'] === 'crimson_prestige' ? 'border-[#880102]' : '' }}
@@ -315,6 +332,7 @@
             ">
                 <!-- Inner Border -->
                 <div class="border p-3 sm:p-4 rounded-lg relative text-center space-y-2
+                    {{ $settings['template'] === 'acs_signature' ? 'border-transparent bg-[#fcf8f6]' : '' }}
                     {{ $settings['template'] === 'classic_navy' ? 'border-[#b89758] bg-gradient-to-b from-[#fffefc] to-[#faf6ef]' : '' }}
                     {{ $settings['template'] === 'modern_emerald' ? 'border-[#10b981] bg-gradient-to-b from-white to-[#f0fdf4]' : '' }}
                     {{ $settings['template'] === 'crimson_prestige' ? 'border-[#051c45] bg-gradient-to-b from-white to-[#fff1f2]' : '' }}
@@ -322,7 +340,7 @@
                 ">
                     <!-- Crest / Logo -->
                     <div class="flex justify-center">
-                        <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" class="w-10 h-10 object-contain" alt="ACS Crest">
+                        <img src="{{ file_exists(public_path('images/certificate-logo-gold.png')) ? asset('images/certificate-logo-gold.png') : (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')) }}" class="w-16 h-16 object-contain" alt="ACS Crest">
                     </div>
 
                     <!-- Institution Name (Live Updated) -->
@@ -361,8 +379,11 @@
                             <span class="font-mono block text-gray-400">Issue: {{ now()->format('M d, Y') }}</span>
                             <span class="font-mono block font-bold text-[#051c45]">Serial: ACS-2026-DEMO</span>
                         </div>
-                        <div class="w-10 h-10 rounded-full border-2 border-[#b89758] bg-amber-100 flex items-center justify-center text-[6px] font-bold text-amber-800 text-center leading-none">
-                            SEAL
+                        <div class="relative w-12 h-12 rounded-full border-2 border-[#b89758] bg-gradient-to-tr from-[#dfba73] via-[#fae3a6] to-[#b89758] flex flex-col items-center justify-center p-0.5 shadow-sm">
+                            <img src="{{ file_exists(public_path('images/certificate-logo-gold.png')) ? asset('images/certificate-logo-gold.png') : (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png')) }}" class="w-5 h-5 rounded-full object-contain" alt="Seal Logo">
+                            <span id="prev_seal_text" class="text-[5px] font-black text-[#4a2c00] uppercase tracking-tighter leading-none mt-0.5 truncate max-w-[40px]">
+                                {{ trim(explode('•', $settings['seal_text'] ?? 'OFFICIAL SEAL')[0]) }}
+                            </span>
                         </div>
                         <div class="text-right">
                             <span id="prev_sig_name" class="font-serif italic font-bold block text-gray-900 text-[10px]">
@@ -548,6 +569,15 @@
         });
     }
 
+    const sealTextInput = document.getElementById('form_seal_text');
+    const prevSealText = document.getElementById('prev_seal_text');
+    if (sealTextInput && prevSealText) {
+        sealTextInput.addEventListener('input', function() {
+            const parts = (this.value || 'OFFICIAL SEAL').split('•');
+            prevSealText.innerText = (parts[0] || 'OFFICIAL SEAL').trim();
+        });
+    }
+
     // Dynamic Template Preview Switcher
     const templateRadios = document.querySelectorAll('input[name="certificate_template"]');
     const previewCard = document.getElementById('previewCard');
@@ -556,6 +586,15 @@
     const activeTemplateBadge = document.querySelector('.sticky span.text-slate-500');
 
     const templateStyles = {
+        'acs_signature': {
+            name: 'ACS Official Signature',
+            cardBorder: 'border-[#b91c1c]',
+            innerBorder: 'border-transparent bg-[#fcf8f6]',
+            instColor: 'text-[#5b1415]',
+            tagColor: 'text-[#991b1b]',
+            titleColor: 'text-[#641617]',
+            courseColor: 'text-[#cc292b]'
+        },
         'classic_navy': {
             name: 'Classic Navy & Gold',
             cardBorder: 'border-[#051c45]',

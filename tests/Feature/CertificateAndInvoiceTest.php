@@ -316,7 +316,14 @@ class CertificateAndInvoiceTest extends TestCase
     {
         $admin = User::where('role', 'admin')->first();
 
-        // 1. Preview default or requested template
+        // 0. Preview default ACS Signature template
+        $resDefault = $this->actingAs($admin)->get('/admin/certificates/preview');
+        $resDefault->assertStatus(200);
+        $resDefault->assertSee('border-[#b91c1c]');
+        $resDefault->assertSee('ACADEMY OF COMMERCIAL & SUPPLY CHAIN-ACS');
+        $resDefault->assertSee('CERTIFICATE OF APPRECIATION');
+
+        // 1. Preview all previous 4 templates preserved
         $resNavy = $this->actingAs($admin)->get('/admin/certificates/preview?template=classic_navy');
         $resNavy->assertStatus(200);
         $resNavy->assertSee('border-[#051c45]');
