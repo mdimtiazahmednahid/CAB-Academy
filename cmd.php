@@ -483,6 +483,221 @@ if ($rawCommand !== '') {
             $executionStatus = 'error';
         }
     }
+    // 6d. Sync Previous Production Data Non-Destructively (from database/sync_previous_data.sql)
+    elseif (in_array($cleanCommand, ['db:sync-previous', 'sync:previous', 'sync:prod'])) {
+        try {
+            $autoloadFile = $baseDir . '/vendor/autoload.php';
+            require_once $autoloadFile;
+            $app = require_once $baseDir . '/bootstrap/app.php';
+            $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+            $kernel->bootstrap();
+
+            $syncFile = $baseDir . '/database/sync_previous_data.sql';
+            if (!file_exists($syncFile)) {
+                throw new \Exception("Sync file not found at: {$syncFile}");
+            }
+
+            $sql = file_get_contents($syncFile);
+            if ($sql === false) {
+                throw new \Exception("Unable to read sync file: {$syncFile}");
+            }
+
+            $db = \Illuminate\Support\Facades\DB::connection();
+            $driver = $db->getDriverName();
+            $pdo = $db->getPdo();
+
+            // Parse SQL statements outside string literals and comments
+            $statements = [];
+            $len = strlen($sql);
+            $buf = '';
+            $inSingle = false;
+            $inLineComment = false;
+            $inBlockComment = false;
+
+            for ($i = 0; $i < $len; $i++) {
+                $ch = $sql[$i];
+                $next = ($i + 1 < $len) ? $sql[$i + 1] : '';
+
+                if ($inLineComment) {
+                    if ($ch === "\n") $inLineComment = false;
+                    continue;
+                }
+                if ($inBlockComment) {
+                    if ($ch === '*' && $next === '/') {
+                        $inBlockComment = false;
+                        $i++;
+                    }
+                    continue;
+                }
+                if (!$inSingle) {
+                    if ($ch === '-' && $next === '-') {
+                        $inLineComment = true;
+                        $i++;
+                        continue;
+                    }
+                    if ($ch === '/' && $next === '*') {
+                        $inBlockComment = true;
+                        $i++;
+                        continue;
+                    }
+                    if ($ch === "'") {
+                        $inSingle = true;
+                        $buf .= $ch;
+                        continue;
+                    }
+                    if ($ch === ';') {
+                        $stmt = trim($buf);
+                        if ($stmt !== '') $statements[] = $stmt;
+                        $buf = '';
+                        continue;
+                    }
+                    $buf .= $ch;
+                } else {
+                    $buf .= $ch;
+                    if ($ch === '\\' && $i + 1 < $len) {
+                        $buf .= $sql[$i + 1];
+                        $i++;
+                        continue;
+                    }
+                    if ($ch === "'") {
+                        if ($next === "'") {
+                            $buf .= "'";
+                            $i++;
+                        } else {
+                            $inSingle = false;
+                        }
+                    }
+                }
+            }
+
+            $insertStatements = [];
+            foreach ($statements as $stmt) {
+                if (preg_match('/^INSERT\s+(?:IGNORE\s+)?INTO\s+`?([a-zA-Z0-9_]+)`?\s+/i', $stmt, $m)) {
+                    $insertStatements[] = ['table' => $m[1], 'sql' => $stmt];
+                }
+            }
+
+            $tablesToTrack = array_values(array_unique(array_column($insertStatements, 'table')));
+            $beforeCounts = [];
+            foreach ($tablesToTrack as $t) {
+                try {
+                    $beforeCounts[$t] = (int) $db->table($t)->count();
+                } catch (\Throwable $ignored) {
+                    $beforeCounts[$t] = 0;
+                }
+            }
+
+            $toSqlite = static function (string $stmt): string {
+                $stmt = preg_replace('/^INSERT\s+(?:IGNORE\s+)?INTO\s+/i', 'INSERT OR IGNORE INTO ', $stmt);
+                $out = '';
+                $len = strlen($stmt);
+                $inSingle = false;
+                for ($i = 0; $i < $len; $i++) {
+                    $ch = $stmt[$i];
+                    if (!$inSingle) {
+                        if ($ch === '`') {
+                            $out .= '"';
+                        } elseif ($ch === "'") {
+                            $inSingle = true;
+                            $out .= "'";
+                        } else {
+                            $out .= $ch;
+                        }
+                    } else {
+                        if ($ch === '\\' && $i + 1 < $len) {
+                            $esc = $stmt[$i + 1];
+                            $i++;
+                            $out .= match ($esc) {
+                                "'" => "''",
+                                '"' => '"',
+                                '\\' => '\\',
+                                'n' => "\n",
+                                'r' => "\r",
+                                't' => "\t",
+                                '0' => "\0",
+                                default => $esc,
+                            };
+                        } elseif ($ch === "'") {
+                            if ($i + 1 < $len && $stmt[$i + 1] === "'") {
+                                $out .= "''";
+                                $i++;
+                            } else {
+                                $inSingle = false;
+                                $out .= "'";
+                            }
+                        } else {
+                            $out .= $ch;
+                        }
+                    }
+                }
+                return $out;
+            };
+
+            $executed = 0;
+            $errors = [];
+
+            if ($driver === 'sqlite') {
+                $pdo->exec('PRAGMA foreign_keys = OFF;');
+            } else {
+                $pdo->exec('SET FOREIGN_KEY_CHECKS = 0;');
+            }
+
+            try {
+                foreach ($insertStatements as $idx => $item) {
+                    $execSql = ($driver === 'sqlite')
+                        ? $toSqlite($item['sql'])
+                        : preg_replace('/^INSERT\s+INTO\s+/i', 'INSERT IGNORE INTO ', $item['sql']);
+                    try {
+                        $pdo->exec($execSql);
+                        $executed++;
+                    } catch (\Throwable $e) {
+                        $errors[] = "Statement #{$idx} ({$item['table']}): " . $e->getMessage();
+                    }
+                }
+            } finally {
+                if ($driver === 'sqlite') {
+                    $pdo->exec('PRAGMA foreign_keys = ON;');
+                } else {
+                    $pdo->exec('SET FOREIGN_KEY_CHECKS = 1;');
+                }
+            }
+
+            if (class_exists(\App\Support\DatabaseSchemaRepair::class)) {
+                \App\Support\DatabaseSchemaRepair::ensureSchema(true);
+            }
+            \Illuminate\Support\Facades\Cache::forget('global_settings');
+
+            $output = "ACS Academy Non-Destructive Production Data Sync\n";
+            $output .= "========================================================\n";
+            $output .= "Driver: {$driver} | Statements executed: {$executed} / " . count($insertStatements) . "\n\n";
+
+            $addedAny = false;
+            foreach ($tablesToTrack as $t) {
+                try {
+                    $after = (int) $db->table($t)->count();
+                    $before = $beforeCounts[$t] ?? 0;
+                    $diff = $after - $before;
+                    if ($diff > 0) {
+                        $output .= " ✓ {$t}: {$before} -> {$after} (+{$diff} new)\n";
+                        $addedAny = true;
+                    }
+                } catch (\Throwable $ignored) {
+                }
+            }
+            if (!$addedAny) {
+                $output .= " ✓ All previous production records are already present (0 duplicates added).\n";
+            }
+            if (!empty($errors)) {
+                $output .= "\nWarnings:\n - " . implode("\n - ", $errors) . "\n";
+            }
+
+            $commandOutput = $output;
+            $executionStatus = empty($errors) ? 'success' : 'error';
+        } catch (\Throwable $e) {
+            $commandOutput = "Error syncing previous data: " . $e->getMessage() . "\n" . $e->getTraceAsString();
+            $executionStatus = 'error';
+        }
+    }
     // 7. In-Memory Artisan Command Execution
     else {
         try {
@@ -725,6 +940,18 @@ ob_end_clean();
                             <i class="fas fa-chevron-right text-xs text-sky-400 group-hover:text-sky-700 group-hover:translate-x-1 transition-all"></i>
                         </button>
 
+                        <button onclick="runCommand('db:sync-previous')" class="w-full p-3.5 text-left rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-all flex items-center justify-between group">
+                            <div>
+                                <div class="text-xs font-bold text-indigo-900 flex items-center gap-2">
+                                    <i class="fas fa-sync-alt text-indigo-600"></i>
+                                    <span>Sync Previous Production DB (Keep Current Data)</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-200 text-indigo-900 font-mono">db:sync-previous</span>
+                                </div>
+                                <p class="text-[11px] text-indigo-700 mt-0.5">Imports missing records from database/sync_previous_data.sql without overwriting current rows</p>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs text-indigo-400 group-hover:text-indigo-700 group-hover:translate-x-1 transition-all"></i>
+                        </button>
+
                         <button onclick="runCommand('db:purge-demo')" class="w-full p-3.5 text-left rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all flex items-center justify-between group">
                             <div>
                                 <div class="text-xs font-bold text-amber-900 flex items-center gap-2">
@@ -732,19 +959,19 @@ ob_end_clean();
                                     <span>Purge Demo / Seeded Data (Keep Real Courses)</span>
                                     <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900 font-mono">db:purge-demo</span>
                                 </div>
-                                <p class="text-[11px] text-amber-700 mt-0.5">Removes the 8 seeded demo courses & demo faculty while restoring/keeping all real courses</p>
+                                <p class="text-[11px] text-amber-700 mt-0.5">Removes the seeded demo courses & demo faculty while restoring/keeping all real prod data</p>
                             </div>
                             <i class="fas fa-chevron-right text-xs text-amber-400 group-hover:text-amber-700 group-hover:translate-x-1 transition-all"></i>
                         </button>
 
-                        <button onclick="runCommand('db:seed --force')" class="w-full p-3.5 text-left rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all flex items-center justify-between group">
+                        <button onclick="if(confirm('Warning: This loads demo/sample courses and faculty into the database. Only run this on a fresh test/demo environment, not your live production DB. Continue?')) runCommand('db:seed --force')" class="w-full p-3.5 text-left rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 transition-all flex items-center justify-between group">
                             <div>
                                 <div class="text-xs font-bold text-slate-800 flex items-center gap-2">
                                     <i class="fas fa-seedling text-emerald-600"></i>
-                                    <span>Seed Demo Data</span>
+                                    <span>Seed Demo Data (Demo / Test Only)</span>
                                     <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 font-mono">db:seed --force</span>
                                 </div>
-                                <p class="text-[11px] text-slate-500 mt-0.5">Loads 8 courses, 12 categories, faculty & payment channels</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Loads demo courses, categories, faculty & sample posts (do not mix with production DB)</p>
                             </div>
                             <i class="fas fa-chevron-right text-xs text-slate-400 group-hover:text-slate-700 group-hover:translate-x-1 transition-all"></i>
                         </button>

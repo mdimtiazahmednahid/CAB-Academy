@@ -72,12 +72,12 @@
             </div>
 
             <!-- Articles Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                 @forelse($posts as $post)
-                    <article class="liquid-glass-card bg-white/85 rounded-3xl border border-[#e3e7f0] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group hover:border-[#c4040a]/30">
+                    <article class="liquid-glass-card bg-white/85 rounded-2xl border border-[#e3e7f0] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group hover:border-[#c4040a]/30">
                         <div>
                             <!-- Featured Image -->
-                            <div class="relative aspect-video overflow-hidden bg-gray-100">
+                            <div class="relative h-40 w-full overflow-hidden bg-gray-100">
                                 @php
                                     $blogImg = $post->featured_image_url;
                                 @endphp
@@ -85,28 +85,29 @@
                                     src="{{ $blogImg }}" 
                                     alt="{{ $post->title }}" 
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    loading="lazy"
                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80';"
                                 >
-                                <span class="absolute top-3 left-3 bg-[#c4040a] text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                                <span class="absolute top-2.5 left-2.5 bg-[#c4040a] text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-md">
                                     {{ $post->category }}
                                 </span>
                             </div>
 
                             <!-- Post Body -->
-                            <div class="p-6">
-                                <div class="flex items-center gap-3 text-xs text-slate-500 font-semibold mb-2.5">
+                            <div class="p-4">
+                                <div class="flex items-center gap-2 text-[11px] text-slate-500 font-semibold mb-1.5">
                                     <span><i class="far fa-calendar-alt text-[#c4040a] mr-1"></i> {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Recent' }}</span>
                                     <span>&bull;</span>
                                     <span><i class="far fa-clock text-[#10b981] mr-1"></i> {{ $post->read_time }}</span>
                                 </div>
 
-                                <h3 class="text-base sm:text-lg font-bold text-[#0f131f] group-hover:text-[#c4040a] transition-colors leading-snug mb-3">
+                                <h3 class="text-sm sm:text-base font-bold text-[#0f131f] group-hover:text-[#c4040a] transition-colors leading-snug mb-2 line-clamp-2">
                                     <a href="{{ route('blog.show', $post) }}">
                                         {{ $post->title }}
                                     </a>
                                 </h3>
 
-                                <p class="text-xs sm:text-sm text-[#727f9f] line-clamp-3 leading-relaxed mb-4">
+                                <p class="text-xs text-[#727f9f] line-clamp-2 leading-relaxed mb-3">
                                     {{ $post->excerpt }}
                                 </p>
                             </div>

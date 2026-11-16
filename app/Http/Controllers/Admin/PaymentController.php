@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Notifications\PaymentStatusNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -20,6 +21,8 @@ class PaymentController extends Controller
         $validated = $request->validate([
             'status' => 'required|in:pending,processing,verified,rejected'
         ]);
+
+        $previousStatus = $payment->status;
 
         DB::transaction(function () use ($validated, $payment) {
             if ($validated['status'] === 'verified') {
@@ -62,6 +65,11 @@ class PaymentController extends Controller
                 }
             }
         });
+
+        if ($payment->user && $previousStatus !== $validated['status']) {
+            $payment->loadMissing('course');
+            $payment->user->notify(new PaymentStatusNotification($payment, $validated['status']));
+        }
 
         return back()->with('success', "Payment status updated to " . ucfirst($validated['status']) . ".");
     }

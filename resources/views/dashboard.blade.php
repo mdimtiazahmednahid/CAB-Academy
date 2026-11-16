@@ -236,10 +236,25 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
                 @foreach($unreadNotices as $notice)
-                    <a href="{{ $notice->data['url'] ?? route('notifications.index') }}" class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 transition-all block">
+                    @php
+                        $noticeStatus = $notice->data['status'] ?? null;
+                        $noticeLabel = $notice->data['status_label'] ?? null;
+                        $noticeBadge = match ($noticeStatus) {
+                            'verified' => 'bg-emerald-100 text-emerald-700',
+                            'processing' => 'bg-sky-100 text-sky-700',
+                            'pending' => 'bg-amber-100 text-amber-700',
+                            'rejected' => 'bg-rose-100 text-rose-700',
+                            default => 'bg-slate-200 text-slate-600',
+                        };
+                    @endphp
+                    <a href="{{ !empty($notice->data['url']) && $notice->data['url'] !== '#' ? $notice->data['url'] : route('notifications.index') }}" class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 transition-all block">
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-xs font-extrabold text-[#063b96] line-clamp-1">{{ $notice->data['title'] ?? 'Notice' }}</span>
-                            <span class="text-[10px] text-slate-400 shrink-0">{{ $notice->created_at->diffForHumans() }}</span>
+                            @if($noticeLabel)
+                                <span class="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold shrink-0 {{ $noticeBadge }}">{{ $noticeLabel }}</span>
+                            @else
+                                <span class="text-[10px] text-slate-400 shrink-0">{{ $notice->created_at->diffForHumans() }}</span>
+                            @endif
                         </div>
                         <p class="text-[11px] text-slate-600 line-clamp-1 mt-0.5">{{ $notice->data['message'] ?? '' }}</p>
                     </a>

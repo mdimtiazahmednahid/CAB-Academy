@@ -378,7 +378,7 @@
                     
                     <!-- TAB 1: ALL COURSES (Default) -->
                     <div x-show="activeCourseTab === 'all'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
                             @foreach($courses->take(8) as $course)
                                 <x-course-card :course="$course" />
                             @endforeach
@@ -387,7 +387,7 @@
 
                     <!-- TAB 2: CERTIFICATE COURSES -->
                     <div x-show="activeCourseTab === 'certificate'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
                             @foreach($certificateCourses as $course)
                                 <x-course-card :course="$course" />
                             @endforeach
@@ -396,7 +396,7 @@
 
                     <!-- TAB 3: DAY LONG COURSES -->
                     <div x-show="activeCourseTab === 'day_long'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
                             @foreach($dayLongCourses as $course)
                                 <x-course-card :course="$course" />
                             @endforeach
@@ -581,7 +581,7 @@
             </div>
 
             <!-- Compact Executive Career Cards Horizontal Track (Mobile) / Grid (Desktop) -->
-            <div class="flex overflow-x-auto snap-x snap-mandatory gap-3.5 pb-2 lg:grid lg:grid-cols-3 lg:gap-5 lg:overflow-visible lg:pb-0">
+            <div class="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-4 md:overflow-visible md:pb-0">
                 @php
                     $homeJobGradients = [
                         'from-[#063b96] to-[#1e3a8a]',
@@ -602,7 +602,7 @@
                         $jUrl = !empty($job->apply_link) ? $job->apply_link : route('jobs.index');
                         $jExternal = !empty($job->apply_link);
                     @endphp
-                    <div class="w-[82%] sm:w-[46%] lg:w-auto shrink-0 snap-start bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-[#063b96]/30 transition-all duration-200 flex flex-col justify-between group">
+                    <div class="w-[260px] sm:w-[280px] md:w-auto shrink-0 snap-start bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-[#063b96]/30 transition-all duration-200 flex flex-col justify-between group">
                         <div>
                             <!-- Top Row: Monogram/Logo + Title & Company Inline + Type Badge -->
                             <div class="flex items-start gap-3 mb-3">
@@ -922,13 +922,13 @@
                 </a>
             </div>
 
-            <!-- 3-Column Compact Blog Cards Horizontal Track (Mobile) / Grid (Desktop) -->
-            <div class="flex overflow-x-auto snap-x snap-mandatory gap-3.5 pb-2 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:pb-0">
+            <!-- 4-Column Compact Blog Cards Horizontal Track (Mobile) / Grid (Desktop) -->
+            <div class="flex overflow-x-auto snap-x snap-mandatory gap-3.5 pb-2 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-4 md:overflow-visible md:pb-0">
                 @foreach($recentBlogs as $blog)
-                    <article class="w-[82%] sm:w-[46%] lg:w-auto shrink-0 snap-start group bg-white rounded-2xl shadow-2xs hover:shadow-md border border-slate-200/90 hover:border-[#063b96]/30 overflow-hidden transition-all duration-200 flex flex-col h-full">
+                    <article class="w-[260px] sm:w-[280px] md:w-auto shrink-0 snap-start group bg-white rounded-2xl shadow-2xs hover:shadow-md border border-slate-200/90 hover:border-[#063b96]/30 overflow-hidden transition-all duration-200 flex flex-col h-full">
                         <!-- Cover Image -->
-                        <div class="relative aspect-video w-full overflow-hidden bg-slate-900">
-                            <a href="{{ route('blog.show', $blog->slug) }}">
+                        <div class="relative h-36 sm:h-40 w-full overflow-hidden bg-slate-900">
+                            <a href="{{ route('blog.show', $blog->slug) }}" class="block w-full h-full">
                                 <img 
                                    src="{{ $blog->featured_image_url }}" 
                                    alt="{{ $blog->title }}" 
@@ -937,29 +937,29 @@
                                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80';"
                                 >
                             </a>
-                            <div class="absolute top-2.5 left-2.5">
-                                <span class="inline-block px-2.5 py-0.5 bg-[#063b96]/90 text-white rounded-md text-[10px] font-bold uppercase tracking-wider">
+                            <div class="absolute top-2 left-2">
+                                <span class="inline-block px-2 py-0.5 bg-[#063b96]/90 text-white rounded-md text-[9px] font-bold uppercase tracking-wider">
                                     {{ $blog->category ?? 'Insights' }}
                                 </span>
                             </div>
                         </div>
 
                         <!-- Article Content -->
-                        <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div class="p-3.5 flex-1 flex flex-col justify-between">
                             <div>
-                                <div class="flex items-center gap-2 text-[11px] text-slate-400 font-medium mb-1.5">
+                                <div class="flex items-center gap-1.5 text-[10px] text-slate-400 font-medium mb-1">
                                     <span>{{ $blog->published_at ? $blog->published_at->format('M d, Y') : date('M d, Y') }}</span>
                                     <span>&bull;</span>
                                     <span>{{ $blog->read_time ?? '5 min' }}</span>
                                 </div>
 
-                                <h3 class="text-sm sm:text-base font-extrabold text-[#021f59] group-hover:text-[#c4040a] transition-colors leading-snug mb-1.5 line-clamp-2">
+                                <h3 class="text-sm font-extrabold text-[#021f59] group-hover:text-[#c4040a] transition-colors leading-snug mb-1 line-clamp-2">
                                     <a href="{{ route('blog.show', $blog->slug) }}">
                                         {{ $blog->title }}
                                     </a>
                                 </h3>
 
-                                <p class="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-3">
+                                <p class="text-[11px] text-slate-500 leading-relaxed line-clamp-2 mb-2.5">
                                     {{ $blog->excerpt }}
                                 </p>
                             </div>

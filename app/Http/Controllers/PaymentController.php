@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\PaymentMethod;
 use App\Models\Payment;
 use App\Models\User;
+use App\Notifications\PaymentStatusNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -73,13 +74,13 @@ class PaymentController extends Controller
             return back()->withErrors(['transaction_id' => 'This Transaction ID (TrxID) has already been used.'])->withInput();
         }
 
-        DB::transaction(function () use ($request, $course, $user, $cleanTrx) {
+        $payment = DB::transaction(function () use ($request, $course, $user, $cleanTrx) {
             if (empty($user->phone) && !empty($request->sender_number)) {
                 $user->phone = $request->sender_number;
                 $user->saveQuietly();
             }
 
-            Payment::updateOrCreate(
+            return Payment::updateOrCreate(
                 [
                     'user_id' => $user->id,
                     'course_id' => $course->id,
@@ -93,6 +94,9 @@ class PaymentController extends Controller
                 ]
             );
         });
+
+        $payment->setRelation('course', $course);
+        $user->notify(new PaymentStatusNotification($payment, 'pending'));
 
         return redirect()->route('dashboard')->with('success', 'Your payment has been submitted and is pending verification. You will be enrolled once approved.');
     }
@@ -403,11 +407,11 @@ class PaymentController extends Controller
 
         // If free course
         if ($course->price <= 0) {
-            DB::transaction(function () use ($user, $course, $request, $notes, $formData) {
+            $freePayment = DB::transaction(function () use ($user, $course, $request, $notes, $formData) {
                 $user->enrolledCourses()->syncWithoutDetaching([$course->id]);
 
                 // Create or update zero-amount verified registration record to persist form responses
-                Payment::updateOrCreate(
+                return Payment::updateOrCreate(
                     [
                         'user_id' => $user->id,
                         'course_id' => $course->id,
@@ -424,6 +428,9 @@ class PaymentController extends Controller
                     ]
                 );
             });
+
+            $freePayment->setRelation('course', $course);
+            $user->notify(new PaymentStatusNotification($freePayment, 'verified'));
 
             if ($request->wantsJson()) {
                 return response()->json([
@@ -460,6 +467,9 @@ class PaymentController extends Controller
                 ]
             );
         });
+
+        $payment->setRelation('course', $course);
+        $user->notify(new PaymentStatusNotification($payment, 'pending'));
 
         $message = 'Enrollment request received! Your seat has been reserved. Our academic counselors will verify your payment details shortly.';
 
