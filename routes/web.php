@@ -442,6 +442,7 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');
         Route::post('/settings', [SettingsController::class, 'store'])->name('admin.settings.store');
         Route::post('/settings/seo-ping', [SettingsController::class, 'pingSeo'])->name('admin.settings.seo_ping');
+        Route::post('/settings/backup-now', [SettingsController::class, 'runBackupNow'])->name('admin.settings.backup_now');
         
         Route::get('/announcements', [\App\Http\Controllers\Admin\AnnouncementController::class, 'create'])->name('admin.announcements.create');
         Route::post('/announcements', [\App\Http\Controllers\Admin\AnnouncementController::class, 'store'])->name('admin.announcements.store');
@@ -482,5 +483,22 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::post('/notifications/{id}/mark-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 });
+
+// Token-protected Web-Cron fallback for Google Drive database backups
+Route::get('/cron/backup-google-drive', function (\Illuminate\Http\Request $request) {
+    $expectedToken = (string) config('backup.cron_token', '');
+    $providedToken = (string) $request->query('token', '');
+
+    if ($expectedToken === '' || !hash_equals($expectedToken, $providedToken)) {
+        abort(403, 'Unauthorized backup cron token.');
+    }
+
+    $exitCode = \Illuminate\Support\Facades\Artisan::call('backup:google-drive');
+
+    return response()->json([
+        'status' => $exitCode === 0 ? 'ok' : 'failed',
+        'message' => trim(\Illuminate\Support\Facades\Artisan::output()),
+    ], $exitCode === 0 ? 200 : 500);
+})->name('cron.backup_google_drive');
 
 require __DIR__.'/auth.php';

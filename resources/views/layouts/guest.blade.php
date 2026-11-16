@@ -9,8 +9,10 @@
         <title>{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}</title>
         <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <!-- Fonts: Plus Jakarta Sans & Inter -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -18,27 +20,36 @@
         
         <style>
             :root {
-                --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#051c45') }};
-                --accent-color: #c30102;
+                --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#063b96') }};
+                --accent-color: #c4040a;
+                --gold-color: #dca22c;
             }
             .bg-primary { background-color: var(--primary-color); }
             .text-primary { color: var(--primary-color); }
             .border-primary { border-color: var(--primary-color); }
             .focus-ring-primary:focus-within { outline: 2px solid var(--primary-color); outline-offset: 2px; }
 
-            body { font-family: 'Inter', sans-serif; }
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                -webkit-font-smoothing: antialiased;
+            }
+            h1, h2, h3, h4, .font-display {
+                font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+                letter-spacing: -0.02em;
+            }
             .bg-glass {
                 background: rgba(255, 255, 255, 0.08);
                 backdrop-filter: blur(16px);
-                border: 1px solid rgba(255, 255, 255, 0.15);
+                border: 1px solid rgba(255, 226, 122, 0.25);
             }
         </style>
     </head>
     <body class="antialiased text-gray-900 bg-white overflow-x-hidden">
         <div class="min-h-screen flex w-full overflow-x-hidden">
             
-            <!-- Left Side - Graphic & Branding -->
-            <div class="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-[#031330] via-[#051c45] to-[#0a2540] border-r border-[#1e2d4a] items-center justify-center overflow-hidden">
+            <!-- Left Side - Graphic & Branding (ACS Logo Brushed Royal Cobalt + Gold Border) -->
+            <div class="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden"
+                 style="background: linear-gradient(145deg, #0066e6 0%, #063b96 38%, #021f59 76%, #01143d 100%); border-right: 3px solid #dca22c;">
                 <!-- Background Image -->
                 <div class="absolute inset-0 z-0">
                     <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Students learning" class="w-full h-full object-cover opacity-10 mix-blend-overlay">

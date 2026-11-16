@@ -12,18 +12,25 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: 'var(--primary-color, #051c45)',
-                'primary-dark': 'var(--primary-color-dark, #03112b)',
-                'primary-100': '#dce5f5',
-                'primary-600': 'var(--primary-color, #051c45)',
-                navy: '#051c45',
-                crimson: '#c30102',
+                primary: 'var(--primary-color, #063b96)',
+                'primary-dark': 'var(--primary-color-dark, #021f59)',
+                'primary-100': '#dce8fa',
+                'primary-600': 'var(--primary-color, #063b96)',
+                navy: '#021f59',
+                cobalt: '#063b96',
+                crimson: '#c4040a',
+                gold: {
+                    light: '#ffe27a',
+                    DEFAULT: '#dca22c',
+                    dark: '#8f5e0c',
+                },
                 emerald: {
                     verify: '#10b981',
                 },
             },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                display: ['"Plus Jakarta Sans"', 'Inter', ...defaultTheme.fontFamily.sans],
             },
         },
     },

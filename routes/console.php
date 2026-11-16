@@ -2,6 +2,12 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('backup:google-drive')
+    ->dailyAt('03:00')
+    ->timezone(config('backup.timezone', 'Asia/Dhaka'))
+    ->withoutOverlapping();
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

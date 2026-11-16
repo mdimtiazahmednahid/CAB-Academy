@@ -58,6 +58,8 @@ class CertificateController extends Controller
             'logo_url' => Setting::getVal('certificate_logo_url', '/images/certificate-logo-gold.png'),
             'seal_logo_url' => Setting::getVal('certificate_seal_logo_url', '/images/certificate-logo-gold.png'),
             'seal_bg_url' => Setting::getVal('certificate_seal_bg_url', '/images/certificate-gold-seal.png'),
+            'trainer_signature_url' => Setting::getVal('certificate_trainer_signature_url', '/images/cert-official/sig-trainer.svg'),
+            'governing_signature_url' => Setting::getVal('certificate_governing_signature_url', '/images/cert-official/sig-governing.svg'),
             'id_label' => Setting::getVal('certificate_id_label', 'CERTIFICATE ID:'),
             'date_label' => Setting::getVal('certificate_date_label', 'DATE:'),
             'batch_label' => Setting::getVal('certificate_batch_label', 'BATCH:'),
@@ -130,10 +132,20 @@ class CertificateController extends Controller
             'certificate_logo_file' => 'nullable|image|max:4096',
             'certificate_seal_logo_file' => 'nullable|image|max:4096',
             'certificate_seal_bg_file' => 'nullable|image|max:4096',
+            'certificate_trainer_signature_file' => 'nullable|file|mimes:png,svg,jpg,jpeg,webp|max:2048',
+            'certificate_governing_signature_file' => 'nullable|file|mimes:png,svg,jpg,jpeg,webp|max:2048',
+            'certificate_trainer_signature_url' => 'nullable|string|max:500',
+            'certificate_governing_signature_url' => 'nullable|string|max:500',
             'certificate_template' => 'required|string|in:acs_signature,classic_navy,modern_emerald,crimson_prestige,minimalist_corporate',
         ]);
 
-        unset($validated['certificate_logo_file'], $validated['certificate_seal_logo_file'], $validated['certificate_seal_bg_file']);
+        unset(
+            $validated['certificate_logo_file'],
+            $validated['certificate_seal_logo_file'],
+            $validated['certificate_seal_bg_file'],
+            $validated['certificate_trainer_signature_file'],
+            $validated['certificate_governing_signature_file']
+        );
 
         // Default to the latest gold ACS logo & scalloped seal if cleared
         if (empty($validated['certificate_logo_url'])) {
@@ -199,6 +211,28 @@ class CertificateController extends Controller
             $filename = 'cert_seal_bg_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move($dir, $filename);
             $validated['certificate_seal_bg_url'] = '/uploads/certificates/' . $filename;
+        }
+
+        if ($request->hasFile('certificate_trainer_signature_file')) {
+            $file = $request->file('certificate_trainer_signature_file');
+            $dir = public_path('uploads/certificates');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $filename = 'cert_sig_trainer_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $validated['certificate_trainer_signature_url'] = '/uploads/certificates/' . $filename;
+        }
+
+        if ($request->hasFile('certificate_governing_signature_file')) {
+            $file = $request->file('certificate_governing_signature_file');
+            $dir = public_path('uploads/certificates');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $filename = 'cert_sig_governing_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move($dir, $filename);
+            $validated['certificate_governing_signature_url'] = '/uploads/certificates/' . $filename;
         }
 
         $validated['certificate_show_secondary_signature'] = $request->has('certificate_show_secondary_signature') ? '1' : '0';

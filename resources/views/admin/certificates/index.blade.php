@@ -287,6 +287,41 @@
                             >
                         </div>
                     </div>
+
+                    <!-- Signature Image Uploads (Transparent PNG/SVG Recommended) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <div class="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <label class="block text-xs font-bold text-gray-700">Lead Trainer Signature</label>
+                                <img src="{{ asset(ltrim($settings['trainer_signature_url'] ?? 'images/cert-official/sig-trainer.svg', '/')) }}"
+                                     alt="Lead Trainer Signature"
+                                     class="h-7 w-auto object-contain bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">
+                            </div>
+                            <input type="file"
+                                   name="certificate_trainer_signature_file"
+                                   accept=".png,.svg,.jpg,.jpeg,.webp,image/png,image/svg+xml"
+                                   class="block w-full text-xs text-gray-600 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            <p class="text-[11px] text-slate-500 leading-snug">
+                                Recommended: <strong>600 × 240 px</strong> (5:2 ratio), <strong>transparent PNG or SVG</strong> (max 2 MB). Transparent instructor signature strongly recommended.
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <label class="block text-xs font-bold text-gray-700">ACS Governing Body Signature</label>
+                                <img src="{{ asset(ltrim($settings['governing_signature_url'] ?? 'images/cert-official/sig-governing.svg', '/')) }}"
+                                     alt="ACS Governing Body Signature"
+                                     class="h-7 w-auto object-contain bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">
+                            </div>
+                            <input type="file"
+                                   name="certificate_governing_signature_file"
+                                   accept=".png,.svg,.jpg,.jpeg,.webp,image/png,image/svg+xml"
+                                   class="block w-full text-xs text-gray-600 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            <p class="text-[11px] text-slate-500 leading-snug">
+                                Recommended: <strong>600 × 240 px</strong> (5:2 ratio), <strong>transparent PNG or SVG</strong> (max 2 MB). Transparent background strongly recommended.
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Official Gold Seal, Overlay Text, Seal Logo & Verification QR Controls -->

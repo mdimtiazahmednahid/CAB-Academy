@@ -613,6 +613,105 @@
     </div>
 </form>
 
+<!-- Google Drive Database Backup -->
+<div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    @php
+        $latestBackup = $backupHistory[0] ?? null;
+    @endphp
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-5 border-b border-gray-100">
+        <div>
+            <div class="flex items-center gap-2.5">
+                <h2 class="text-lg font-bold text-gray-900">Google Drive Database Backup</h2>
+                @if(!$backupEnabled)
+                    <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">Disabled</span>
+                @elseif(!$backupConfigured)
+                    <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 border border-amber-200">Setup Required</span>
+                @elseif($latestBackup && ($latestBackup['status'] ?? '') === 'success')
+                    <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Healthy</span>
+                @elseif($latestBackup && ($latestBackup['status'] ?? '') === 'failed')
+                    <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-red-50 text-red-700 border border-red-200">Last Run Failed</span>
+                @else
+                    <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200">Ready</span>
+                @endif
+            </div>
+            <p class="text-sm text-gray-500 mt-1">
+                Daily automated compressed SQL backups at 03:00 AM (Asia/Dhaka), keeping the last {{ config('backup.retention_count', 14) }} backups.
+            </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5">
+            @if(!empty($backupFolderUrl))
+                <a href="{{ $backupFolderUrl }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                    Open Drive Folder
+                </a>
+            @endif
+            <button type="submit" form="backupNowForm" class="px-4 py-2.5 text-sm font-semibold text-white bg-primary hover:opacity-90 rounded-xl shadow-sm transition-all">
+                Backup Now to Google Drive
+            </button>
+        </div>
+    </div>
+
+    @if(!$backupConfigured)
+        <div class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+            <p class="font-semibold">Add these keys to your production <code>.env</code> to activate Google Drive uploads:</p>
+            <p class="font-mono text-[11px] text-amber-800">GOOGLE_DRIVE_CLIENT_ID, GOOGLE_DRIVE_CLIENT_SECRET, GOOGLE_DRIVE_REFRESH_TOKEN, GOOGLE_DRIVE_FOLDER_ID, BACKUP_CRON_TOKEN</p>
+        </div>
+    @endif
+
+    @if(!empty($backupHistory))
+        <div class="mt-5 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead>
+                    <tr class="text-xs uppercase tracking-wider text-gray-400 border-b border-gray-100">
+                        <th class="py-2.5 pr-4 font-semibold">Time (BDT)</th>
+                        <th class="py-2.5 pr-4 font-semibold">Filename</th>
+                        <th class="py-2.5 pr-4 font-semibold">Size</th>
+                        <th class="py-2.5 pr-4 font-semibold">Method</th>
+                        <th class="py-2.5 font-semibold">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($backupHistory as $entry)
+                        <tr>
+                            <td class="py-2.5 pr-4 text-gray-600 whitespace-nowrap">
+                                {{ !empty($entry['ran_at']) ? \Carbon\Carbon::parse($entry['ran_at'])->timezone('Asia/Dhaka')->format('M d, Y h:i A') : '—' }}
+                            </td>
+                            <td class="py-2.5 pr-4 font-mono text-xs text-gray-800">
+                                {{ $entry['filename'] ?? '—' }}
+                            </td>
+                            <td class="py-2.5 pr-4 text-gray-600 whitespace-nowrap">
+                                @if(!empty($entry['size_bytes']))
+                                    {{ number_format($entry['size_bytes'] / 1024, 1) }} KB
+                                @else
+                                    —
+                                @endif
+                            </td>
+                            <td class="py-2.5 pr-4 text-gray-500 text-xs uppercase">
+                                {{ $entry['method'] ?? '—' }}
+                            </td>
+                            <td class="py-2.5">
+                                @if(($entry['status'] ?? '') === 'success')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700">Success</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-red-50 text-red-700" title="{{ $entry['error'] ?? '' }}">Failed</span>
+                                    @if(!empty($entry['error']))
+                                        <p class="text-xs text-red-600 mt-0.5 max-w-md truncate">{{ $entry['error'] }}</p>
+                                    @endif
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @else
+        <p class="mt-4 text-sm text-gray-500">No backup runs recorded yet.</p>
+    @endif
+</div>
+
+<form id="backupNowForm" action="{{ route('admin.settings.backup_now') }}" method="POST" class="hidden">
+    @csrf
+</form>
+
 <form id="seoPingForm" action="{{ route('admin.settings.seo_ping') }}" method="POST" class="hidden">
     @csrf
 </form>

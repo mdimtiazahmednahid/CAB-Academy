@@ -158,10 +158,10 @@
     </script>
     @endif
 
-    <!-- Google Fonts: Inter & Poppins -->
+    <!-- Google Fonts: Plus Jakarta Sans (Display) & Inter (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Tailwind & App JS -->
@@ -170,64 +170,84 @@
 
     <style>
         :root {
-            --color-content-primary: {{ \App\Models\Setting::getVal('primary_color', '#c30102') }};
-            --color-content-secondary: #041536;
+            --color-content-primary: {{ \App\Models\Setting::getVal('primary_color', '#c4040a') }};
+            --color-content-secondary: #021f59;
+            --color-cobalt-accent: #063b96;
+            --color-cobalt-bright: #0066e6;
+            --color-gold-highlight: #ffe27a;
+            --color-gold-mid: #dca22c;
+            --color-gold-deep: #8f5e0c;
             --color-content-accent: #10b981;
             --color-content-bg-alt: #f8fafc;
-            --color-content-heading: #041536;
+            --color-content-heading: #021f59;
             --color-content-text: #334155;
             --color-content-faded: #64748b;
             --color-content-border: #e2e8f0;
-            --color-footer-bg: #020b18;
-            --color-subfooter-bg: #01060e;
+            --color-footer-bg: #01143d;
+            --color-subfooter-bg: #010c28;
+        }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            font-family: 'Inter', 'Poppins', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--color-content-bg-alt);
             color: var(--color-content-text);
         }
 
-        .bg-cab-primary, .bg-ipdp-primary { background-color: #c30102 !important; }
-        .bg-cab-secondary, .bg-ipdp-secondary { background-color: #041536 !important; }
-        .text-cab-primary, .text-ipdp-primary { color: #c30102 !important; }
-        .text-cab-secondary, .text-ipdp-secondary { color: #041536 !important; }
-        .border-cab-primary, .border-ipdp-primary { border-color: #c30102 !important; }
-        .border-cab-secondary, .border-ipdp-secondary { border-color: #041536 !important; }
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            letter-spacing: -0.02em;
+        }
 
-        /* Ultra-Luxury Billion-Dollar Crimson & Obsidian Navy Buttons */
+        .bg-cab-primary, .bg-ipdp-primary { background-color: #c4040a !important; }
+        .bg-cab-secondary, .bg-ipdp-secondary { background-color: #021f59 !important; }
+        .text-cab-primary, .text-ipdp-primary { color: #c4040a !important; }
+        .text-cab-secondary, .text-ipdp-secondary { color: #021f59 !important; }
+        .border-cab-primary, .border-ipdp-primary { border-color: #c4040a !important; }
+        .border-cab-secondary, .border-ipdp-secondary { border-color: #021f59 !important; }
+        .cab-gold-hairline {
+            background: linear-gradient(90deg, transparent 0%, #dca22c 20%, #ffe27a 50%, #dca22c 80%, transparent 100%);
+        }
+
+        /* ACS 24K Gold, Royal Cobalt & Metallic Crimson Gradient Buttons */
         .btn-cab-primary, .btn-ipdp-primary {
-            background: linear-gradient(135deg, #c30102 0%, #d8182b 40%, #b00102 85%, #8f0102 100%) !important;
+            background: linear-gradient(135deg, #ff1e1e 0%, #c4040a 50%, #850004 100%) !important;
             color: #ffffff !important;
-            font-weight: 800;
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            font-weight: 700;
             border-radius: 0.75rem;
             transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 16px -2px rgba(195, 1, 2, 0.38), 0 2px 6px -1px rgba(195, 1, 2, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            letter-spacing: 0.025em;
+            box-shadow: 0 4px 16px -2px rgba(196, 4, 10, 0.38), 0 2px 6px -1px rgba(196, 4, 10, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            letter-spacing: 0.015em;
         }
         .btn-cab-primary:hover, .btn-ipdp-primary:hover {
-            background: linear-gradient(135deg, #a50102 0%, #c30102 50%, #880102 100%) !important;
+            background: linear-gradient(135deg, #e01218 0%, #a50208 52%, #6e0003 100%) !important;
             transform: translateY(-1.5px);
-            box-shadow: 0 10px 28px -2px rgba(195, 1, 2, 0.55), 0 4px 12px -2px rgba(195, 1, 2, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.38);
-            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 28px -2px rgba(196, 4, 10, 0.52), 0 4px 12px -2px rgba(196, 4, 10, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+            border-color: rgba(255, 226, 122, 0.45);
         }
 
         .btn-cab-secondary, .btn-ipdp-secondary {
-            background: linear-gradient(135deg, #041536 0%, #072152 45%, #051c45 80%, #020b18 100%) !important;
+            background: linear-gradient(135deg, #0066e6 0%, #063b96 50%, #021f59 100%) !important;
             color: #ffffff !important;
-            font-weight: 800;
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            font-weight: 700;
             border-radius: 0.75rem;
             transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 16px -2px rgba(4, 21, 54, 0.35), 0 2px 6px -1px rgba(4, 21, 54, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            letter-spacing: 0.025em;
+            box-shadow: 0 4px 16px -2px rgba(6, 59, 150, 0.36), 0 2px 6px -1px rgba(2, 31, 89, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 226, 122, 0.22);
+            letter-spacing: 0.015em;
         }
         .btn-cab-secondary:hover, .btn-ipdp-secondary:hover {
-            background: linear-gradient(135deg, #020b18 0%, #041536 50%, #01060e 100%) !important;
+            background: linear-gradient(135deg, #063b96 0%, #021f59 52%, #01143d 100%) !important;
             transform: translateY(-1.5px);
-            box-shadow: 0 10px 28px -2px rgba(4, 21, 54, 0.52), 0 4px 12px -2px rgba(4, 21, 54, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.28);
-            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 28px -2px rgba(2, 31, 89, 0.52), 0 4px 12px -2px rgba(2, 31, 89, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 226, 122, 0.5);
         }
 
         /* ==========================================================================

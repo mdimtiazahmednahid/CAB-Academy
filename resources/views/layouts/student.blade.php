@@ -45,21 +45,29 @@
 
     <style>
         :root {
-            --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#051c45') }};
+            --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#063b96') }};
         }
         {!! \App\Models\Setting::getTypographyCss() !!}
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+        }
         .bg-primary { background-color: var(--primary-color); }
         .text-primary { color: var(--primary-color); }
         .border-primary { border-color: var(--primary-color); }
         .focus-ring-primary:focus-within { outline: 2px solid var(--primary-color); outline-offset: 2px; }
 
         .btn-ipdp-primary {
-            background: linear-gradient(135deg, #c30102 0%, #9b0000 100%);
+            background: linear-gradient(135deg, #ff1e1e 0%, #c4040a 50%, #850004 100%);
             color: #ffffff;
             transition: all 0.25s ease;
         }
         .btn-ipdp-primary:hover {
-            background: linear-gradient(135deg, #a50102 0%, #7f0000 100%);
+            background: linear-gradient(135deg, #e01218 0%, #a50208 52%, #6e0003 100%);
             transform: translateY(-1px);
         }
         .btn-ipdp-secondary {

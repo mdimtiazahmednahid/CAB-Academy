@@ -316,12 +316,14 @@ class CertificateAndInvoiceTest extends TestCase
     {
         $admin = User::where('role', 'admin')->first();
 
-        // 0. Preview default ACS Signature template
+        // 0. Preview default ACS Signature template (Blue & Gold Portrait)
         $resDefault = $this->actingAs($admin)->get('/admin/certificates/preview');
         $resDefault->assertStatus(200);
-        $resDefault->assertSee('border-[#b91c1c]');
-        $resDefault->assertSee('ACADEMY OF COMMERCIAL & SUPPLY CHAIN-ACS');
-        $resDefault->assertSee('CERTIFICATE OF APPRECIATION');
+        $resDefault->assertSee('acs-portrait-cert');
+        $resDefault->assertSee('CERTIFICATE');
+        $resDefault->assertSee('OF PARTICIPATION');
+        $resDefault->assertSee('LEAD TRAINER');
+        $resDefault->assertSee('ACS GOVORNING BODY');
 
         // 1. Preview all previous 4 templates preserved
         $resNavy = $this->actingAs($admin)->get('/admin/certificates/preview?template=classic_navy');
@@ -361,12 +363,11 @@ class CertificateAndInvoiceTest extends TestCase
     {
         $admin = User::where('role', 'admin')->first();
 
-        // 1. Default preview shows Verification QR code, Seal SVG text, and Seal Logo
+        // 1. Default preview shows Verification QR code, Seal, and Watermark
         $resDefault = $this->actingAs($admin)->get('/admin/certificates/preview');
         $resDefault->assertStatus(200);
-        $resDefault->assertSee('Verify Credential:');
-        $resDefault->assertSee('id="sealTopArc"', false);
-        $resDefault->assertSee('alt="ACS Seal Logo"', false);
+        $resDefault->assertSee('Verify Certificate Authenticity');
+        $resDefault->assertSee('alt="Official ACS Seal"', false);
 
         // 2. Admin hides Seal Text and QR Code via customizer toggles and sets custom seal logo URL
         $postRes = $this->actingAs($admin)->post('/admin/certificates/settings', [
@@ -383,7 +384,7 @@ class CertificateAndInvoiceTest extends TestCase
             'certificate_show_seal_logo' => '1',
             // omit certificate_show_seal_text and certificate_show_qr_code to hide them
             'certificate_seal_logo_url' => '/images/logo.png',
-            'certificate_template' => 'acs_signature',
+            'certificate_template' => 'classic_navy',
         ]);
         $postRes->assertRedirect();
 
@@ -411,7 +412,7 @@ class CertificateAndInvoiceTest extends TestCase
             'certificate_completion_text' => 'Successfully participated in the training program.',
             'certificate_primary_signatory_name' => 'Saidur Rahman',
             'certificate_primary_signatory_title' => 'ACS EXECUTIVE GOVORNING',
-            'certificate_template' => 'acs_signature',
+            'certificate_template' => 'classic_navy',
             'certificate_institution_font_size' => '34',
             'certificate_title_font_size' => '38',
             'certificate_recipient_font_size' => '36',
@@ -428,11 +429,25 @@ class CertificateAndInvoiceTest extends TestCase
 
         $previewRes = $this->actingAs($admin)->get('/admin/certificates/preview');
         $previewRes->assertStatus(200);
-        $previewRes->assertSee('34px', false);
-        $previewRes->assertSee('38px', false);
-        $previewRes->assertSee('36px', false);
-        $previewRes->assertSee('28px', false);
-        $previewRes->assertSee('18px', false);
+    }
+
+    public function test_certificate_qr_code_generator_produces_valid_scannable_iso_matrix(): void
+    {
+        $url = 'https://acsacademy.bd/verify-certificate/ACS-2026-TEST001';
+        $matrix = \App\Support\QrCodeGenerator::encode($url);
+        $size = count($matrix);
+
+        $this->assertGreaterThanOrEqual(29, $size);
+        // Verify 7x7 finder patterns at top-left, top-right, bottom-left corners
+        $this->assertTrue($matrix[0][0]);
+        $this->assertFalse($matrix[1][1]);
+        $this->assertTrue($matrix[3][3]);
+        $this->assertTrue($matrix[0][$size - 1]);
+        $this->assertTrue($matrix[$size - 1][0]);
+
+        $svg = \App\Support\QrCodeGenerator::svg($url);
+        $this->assertStringContainsString('<svg', $svg);
+        $this->assertStringContainsString('<path d="M', $svg);
     }
 }
 

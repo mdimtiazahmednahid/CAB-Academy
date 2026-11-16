@@ -4,17 +4,21 @@
 
 @layer base {
   :root {
-    --brand-navy-obsidian: #020b18;
-    --brand-navy-dark: #041536;
-    --brand-navy: #051c45;
-    --brand-navy-light: #072152;
-    --brand-navy-cobalt: #0a2e6b;
-    --brand-crimson: #c30102;
-    --brand-crimson-hover: #a50102;
-    --brand-crimson-radiant: #dc2626;
+    --brand-navy-obsidian: #01143d;
+    --brand-navy-dark: #021f59;
+    --brand-navy: #021f59;
+    --brand-navy-light: #063b96;
+    --brand-navy-cobalt: #0066e6;
+    --brand-crimson: #c4040a;
+    --brand-crimson-hover: #850004;
+    --brand-crimson-radiant: #ff1e1e;
+    --brand-gold-highlight: #ffe27a;
+    --brand-gold-mid: #dca22c;
+    --brand-gold-deep: #8f5e0c;
     --brand-emerald: #10b981;
     --brand-emerald-dark: #045037;
-    --brand-gold-hairline: rgba(245, 158, 11, 0.25);
+    --brand-silver-rim: rgba(203, 213, 225, 0.55);
+    --brand-gold-hairline: rgba(220, 162, 44, 0.35);
     --brand-surface: #f8fafc;
     --brand-text-dark: #0f172a;
     --brand-text-muted: #475569;
@@ -23,39 +27,63 @@
   
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 
-/* Modern Luxury Button and Component Styles */
+/* Modern Luxury Button and Component Styles (ACS 24K Gold + Royal Cobalt + Metallic Crimson) */
 .btn-cab-primary, .btn-ipdp-primary {
-  background: linear-gradient(135deg, #c30102 0%, #d61726 50%, #b00102 100%) !important;
+  background: linear-gradient(135deg, #ff1e1e 0%, #c4040a 50%, #850004 100%) !important;
   color: #ffffff !important;
-  font-weight: 800;
+  font-weight: 700;
   border-radius: 0.75rem;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(195, 1, 2, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(196, 4, 10, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 .btn-cab-primary:hover, .btn-ipdp-primary:hover {
-  background: linear-gradient(135deg, #b00102 0%, #c30102 50%, #9a0102 100%) !important;
+  background: linear-gradient(135deg, #e01218 0%, #a50208 52%, #6e0003 100%) !important;
   transform: translateY(-1.5px);
-  box-shadow: 0 8px 26px rgba(195, 1, 2, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 26px rgba(196, 4, 10, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.32);
 }
 .btn-cab-primary:active, .btn-ipdp-primary:active {
   transform: translateY(0);
 }
 
 .btn-cab-secondary, .btn-ipdp-secondary {
-  background: linear-gradient(135deg, #041536 0%, #072152 50%, #020b18 100%) !important;
+  background: linear-gradient(135deg, #0066e6 0%, #063b96 50%, #021f59 100%) !important;
   color: #ffffff !important;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(6, 59, 150, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.btn-cab-secondary:hover, .btn-ipdp-secondary:hover {
+  background: linear-gradient(135deg, #063b96 0%, #021f59 52%, #01143d 100%) !important;
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 26px rgba(2, 31, 89, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.btn-cab-gold {
+  background: linear-gradient(135deg, #ffe27a 0%, #dca22c 52%, #8f5e0c 100%) !important;
+  color: #01143d !important;
   font-weight: 800;
   border-radius: 0.75rem;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(4, 21, 54, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 16px rgba(220, 162, 44, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
-.btn-cab-secondary:hover, .btn-ipdp-secondary:hover {
-  background: linear-gradient(135deg, #020b18 0%, #041536 50%, #01060e 100%) !important;
+.btn-cab-gold:hover {
+  filter: brightness(1.04);
   transform: translateY(-1.5px);
-  box-shadow: 0 8px 26px rgba(4, 21, 54, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(220, 162, 44, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+.cab-gold-border {
+  border-color: rgba(220, 162, 44, 0.38);
 }
 
 .btn-cab-whatsapp {

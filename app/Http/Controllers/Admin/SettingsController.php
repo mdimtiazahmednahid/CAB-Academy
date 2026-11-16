@@ -4,16 +4,33 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Support\GoogleDriveBackupClient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
-    public function index()
+    public function index(GoogleDriveBackupClient $drive)
     {
         $settings = Setting::all()->keyBy('key');
-        return view('admin.settings.index', compact('settings'));
+        $rawHistory = isset($settings['google_drive_backup_history'])
+            ? json_decode((string) $settings['google_drive_backup_history']->value, true)
+            : [];
+        $backupHistory = is_array($rawHistory) ? $rawHistory : [];
+        $backupConfigured = $drive->isConfigured();
+        $backupEnabled = (bool) config('backup.enabled', true);
+        $folderId = (string) config('backup.google_drive.folder_id', '');
+        $backupFolderUrl = $folderId !== '' ? 'https://drive.google.com/drive/folders/' . urlencode($folderId) : null;
+
+        return view('admin.settings.index', compact(
+            'settings',
+            'backupHistory',
+            'backupConfigured',
+            'backupEnabled',
+            'backupFolderUrl'
+        ));
     }
 
     public function store(Request $request)
@@ -132,5 +149,17 @@ class SettingsController extends Controller
             'success',
             ($result['message'] ?? 'SEO Sitemap & IndexNow synchronized.') . ' Strictly non-sensitive public pages only.'
         );
+    }
+
+    public function runBackupNow(Request $request)
+    {
+        $exitCode = Artisan::call('backup:google-drive');
+        $output = trim(Artisan::output());
+
+        if ($exitCode !== 0) {
+            return redirect()->back()->with('error', $output !== '' ? $output : 'Google Drive backup failed. Check logs for details.');
+        }
+
+        return redirect()->back()->with('success', $output !== '' ? $output : 'Database backup uploaded to Google Drive successfully.');
     }
 }
