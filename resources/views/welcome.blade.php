@@ -109,7 +109,7 @@
                         $heroPromoMs = max(1500, min(15000, (int) round(($heroPromoSeconds > 0 ? $heroPromoSeconds : 3.5) * 1000)));
                         $heroFacultyCircles = (isset($instructors) && $instructors->isNotEmpty())
                             ? $instructors
-                            : \App\Models\Instructor::orderBy('sort_order')->orderBy('id')->get();
+                            : \App\Models\Instructor::orderBy('order')->orderBy('id')->get();
                     @endphp
                     @if($spotlightCourses->isNotEmpty())
                         <div class="rounded-2xl overflow-hidden relative transition-all duration-300 hover:-translate-y-1"

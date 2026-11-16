@@ -54,11 +54,11 @@ foreach ($requiredDirs as $dir) {
 // Define default master PIN
 $masterPin = 'cab2026';
 
-// Read .env configuration if present
+// Read .env configuration if present (auto-provision .env from .env.production on fresh hosting)
 $envVars = [];
 $envFile = $baseDir . '/.env';
 if (!file_exists($envFile) && file_exists($baseDir . '/.env.production')) {
-    $envFile = $baseDir . '/.env.production';
+    @copy($baseDir . '/.env.production', $envFile);
 }
 if (file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -258,6 +258,19 @@ if ($rawCommand !== '') {
             $commandOutput .= sprintf(" - %-16s: %s\n", $ext, extension_loaded($ext) ? 'LOADED ✓' : 'MISSING ✗');
         }
         $executionStatus = 'success';
+    }
+    // 1b. View Latest Laravel Error Log
+    elseif (in_array($cleanCommand, ['sys:logs', 'logs:view', 'log:tail'])) {
+        $logFile = $baseDir . '/storage/logs/laravel.log';
+        if (!file_exists($logFile)) {
+            $commandOutput = "No log file found at {$logFile}.";
+            $executionStatus = 'success';
+        } else {
+            $lines = @file($logFile, FILE_IGNORE_NEW_LINES);
+            $tail = is_array($lines) ? array_slice($lines, -80) : [];
+            $commandOutput = "Latest Laravel Log (last " . count($tail) . " lines):\n========================================\n" . implode("\n", $tail);
+            $executionStatus = 'success';
+        }
     }
     // 2. Direct Database Connectivity Test (Direct PDO + Guidance)
     elseif ($cleanCommand === 'test:db') {
@@ -905,6 +918,14 @@ ob_end_clean();
                                 <span>Diagnostics</span>
                             </div>
                             <p class="text-[10px] text-slate-500 mt-1">PHP & Modules</p>
+                        </button>
+
+                        <button onclick="runCommand('sys:logs')" class="p-2.5 text-left rounded-xl bg-slate-50 hover:bg-rose-50 border border-slate-200 hover:border-rose-300 transition-all group">
+                            <div class="text-xs font-bold text-slate-800 group-hover:text-rose-700 flex items-center gap-1">
+                                <i class="fas fa-file-alt text-rose-600"></i>
+                                <span>Error Logs</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-1">Latest 500 error</p>
                         </button>
                     </div>
                 </div>
