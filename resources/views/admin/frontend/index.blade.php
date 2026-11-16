@@ -4,7 +4,7 @@
 <div class="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
         <div class="flex items-center gap-2 mb-1">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#041536] text-white">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#021f59] text-white">
                 Landing Page CMS
             </span>
             <span class="text-xs text-gray-500 font-medium">8 Dynamic Sections</span>
@@ -107,7 +107,7 @@
             <div class="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Production Command</div>
 
             <button type="button" @click="activeTab = 'matrix'" 
-                    :class="activeTab === 'matrix' ? 'bg-[#051c45] text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'"
+                    :class="activeTab === 'matrix' ? 'bg-[#063b96] text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'"
                     class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-sliders text-sm text-emerald-400"></i>
@@ -117,17 +117,17 @@
             </button>
 
             <button type="button" @click="activeTab = 'custom_sections'" 
-                    :class="activeTab === 'custom_sections' ? 'bg-[#051c45] text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'"
+                    :class="activeTab === 'custom_sections' ? 'bg-[#063b96] text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'"
                     class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
-                    <i class="fas fa-plus-square text-sm text-[#c30102]"></i>
+                    <i class="fas fa-plus-square text-sm text-[#c4040a]"></i>
                     <span>Custom Sections Builder</span>
                 </span>
                 <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-slate-100 text-slate-700" x-text="customSections.length"></span>
             </button>
 
             <button type="button" @click="activeTab = 'pages'" 
-                    :class="activeTab === 'pages' ? 'bg-[#051c45] text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'"
+                    :class="activeTab === 'pages' ? 'bg-[#063b96] text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'"
                     class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-file-circle-plus text-sm text-blue-500"></i>
@@ -139,7 +139,7 @@
             <div class="px-3 pt-3 pb-1 text-[10px] font-black uppercase tracking-widest text-slate-400 border-t border-slate-100">Homepage Sections (1–9)</div>
 
             <button type="button" @click="activeTab = 'hero'" 
-                    :class="activeTab === 'hero' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'hero' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-compass text-xs"></i>
@@ -149,7 +149,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'clients'" 
-                    :class="activeTab === 'clients' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'clients' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-handshake text-xs"></i>
@@ -159,7 +159,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'categories'" 
-                    :class="activeTab === 'categories' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'categories' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-layer-group text-xs"></i>
@@ -169,7 +169,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'courses'" 
-                    :class="activeTab === 'courses' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'courses' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-graduation-cap text-xs"></i>
@@ -179,7 +179,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'jobs'" 
-                    :class="activeTab === 'jobs' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'jobs' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-briefcase text-xs"></i>
@@ -189,7 +189,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'counseling'" 
-                    :class="activeTab === 'counseling' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'counseling' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-phone-volume text-xs"></i>
@@ -199,7 +199,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'faculty'" 
-                    :class="activeTab === 'faculty' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'faculty' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-user-tie text-xs"></i>
@@ -209,7 +209,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'features'" 
-                    :class="activeTab === 'features' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'features' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-star text-xs"></i>
@@ -219,7 +219,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'blog'" 
-                    :class="activeTab === 'blog' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'blog' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-newspaper text-xs"></i>
@@ -231,7 +231,7 @@
             <div class="px-3 pt-3 pb-1 text-[10px] font-black uppercase tracking-widest text-slate-400 border-t border-slate-100">Inner Pages Content</div>
 
             <button type="button" @click="activeTab = 'about'" 
-                    :class="activeTab === 'about' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'about' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-university text-xs"></i>
@@ -241,7 +241,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'contact'" 
-                    :class="activeTab === 'contact' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'contact' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-map-marker-alt text-xs"></i>
@@ -251,7 +251,7 @@
             </button>
 
             <button type="button" @click="activeTab = 'legal'" 
-                    :class="activeTab === 'legal' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    :class="activeTab === 'legal' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                 <span class="flex items-center gap-2.5">
                     <i class="fas fa-balance-scale text-xs"></i>
@@ -261,7 +261,7 @@
 
             <div class="pt-2 border-t border-gray-100">
                 <button type="button" @click="activeTab = 'mode'" 
-                        :class="activeTab === 'mode' ? 'bg-[#041536] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                        :class="activeTab === 'mode' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                         class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
                     <span class="flex items-center gap-2.5">
                         <i class="fas fa-code text-xs"></i>
@@ -272,7 +272,7 @@
             </div>
             
             <div class="pt-4">
-                <button type="submit" class="w-full py-3 px-4 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-xl shadow-lg shadow-red-900/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-sm">
+                <button type="submit" class="w-full py-3 px-4 bg-[#c4040a] hover:bg-[#a50102] text-white font-bold rounded-xl shadow-lg shadow-red-900/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-sm">
                     <i class="fas fa-save"></i>
                     <span>Save All Changes</span>
                 </button>
@@ -289,18 +289,18 @@
                 <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                         <div>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#051c45]/10 text-[#051c45] mb-1">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#063b96]/10 text-[#063b96] mb-1">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                 <span>1-Click Section Visibility Matrix</span>
                             </span>
-                            <h3 class="text-lg sm:text-xl font-black text-[#051c45]">Homepage Sections Master Control</h3>
+                            <h3 class="text-lg sm:text-xl font-black text-[#063b96]">Homepage Sections Master Control</h3>
                             <p class="text-xs text-slate-500 mt-0.5">Show or hide any landing page section in 1 click, or click "Edit Content" to customize its text, media, and CTAs.</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button type="button" @click="activeTab = 'custom_sections'" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] text-xs font-bold transition-colors">
+                            <button type="button" @click="activeTab = 'custom_sections'" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#063b96] text-xs font-bold transition-colors">
                                 + Add Custom Section
                             </button>
-                            <button type="submit" class="px-4 py-2 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold shadow-xs transition-colors">
+                            <button type="submit" class="px-4 py-2 rounded-xl bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-bold shadow-xs transition-colors">
                                 Save Matrix
                             </button>
                         </div>
@@ -312,14 +312,14 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 01</span>
-                                    <h4 class="text-sm font-extrabold text-[#051c45]">Executive Hero Banner</h4>
+                                    <h4 class="text-sm font-extrabold text-[#063b96]">Executive Hero Banner</h4>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Headline, tagline, trust pill, and video showcase.</p>
                                 </div>
                                 <input type="checkbox" x-model="heroEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <span class="text-[10px] font-black uppercase" :class="heroEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="heroEnabled ? 'Visible on Home' : 'Hidden'"></span>
-                                <button type="button" @click="activeTab = 'hero'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                                <button type="button" @click="activeTab = 'hero'" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a]">Edit Content →</button>
                             </div>
                         </div>
 
@@ -328,14 +328,14 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 02</span>
-                                    <h4 class="text-sm font-extrabold text-[#051c45]">Enterprise Sectors</h4>
+                                    <h4 class="text-sm font-extrabold text-[#063b96]">Enterprise Sectors</h4>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Industry sectors & corporate partner showcase.</p>
                                 </div>
                                 <input type="checkbox" x-model="clientsEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <span class="text-[10px] font-black uppercase" :class="clientsEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="clientsEnabled ? 'Visible on Home' : 'Hidden'"></span>
-                                <button type="button" @click="activeTab = 'clients'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                                <button type="button" @click="activeTab = 'clients'" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a]">Edit Content →</button>
                             </div>
                         </div>
 
@@ -344,14 +344,14 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 03</span>
-                                    <h4 class="text-sm font-extrabold text-[#051c45]">Sticky Category Bar</h4>
+                                    <h4 class="text-sm font-extrabold text-[#063b96]">Sticky Category Bar</h4>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Quick horizontal category filter navigation.</p>
                                 </div>
                                 <input type="checkbox" x-model="categoriesEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <span class="text-[10px] font-black uppercase" :class="categoriesEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="categoriesEnabled ? 'Visible on Home' : 'Hidden'"></span>
-                                <button type="button" @click="activeTab = 'categories'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                                <button type="button" @click="activeTab = 'categories'" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a]">Edit Content →</button>
                             </div>
                         </div>
 
@@ -360,14 +360,14 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 04</span>
-                                    <h4 class="text-sm font-extrabold text-[#051c45]">Course Catalog Grid</h4>
+                                    <h4 class="text-sm font-extrabold text-[#063b96]">Course Catalog Grid</h4>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Certificate & Day-Long Masterclass cards.</p>
                                 </div>
                                 <input type="checkbox" x-model="coursesEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <span class="text-[10px] font-black uppercase" :class="coursesEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="coursesEnabled ? 'Visible on Home' : 'Hidden'"></span>
-                                <button type="button" @click="activeTab = 'courses'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                                <button type="button" @click="activeTab = 'courses'" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a]">Edit Content →</button>
                             </div>
                         </div>
 
@@ -376,14 +376,14 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 05</span>
-                                    <h4 class="text-sm font-extrabold text-[#051c45]">Career & Placement Portal</h4>
+                                    <h4 class="text-sm font-extrabold text-[#063b96]">Career & Placement Portal</h4>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Featured corporate hiring & job listings.</p>
                                 </div>
                                 <input type="checkbox" x-model="jobsEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <span class="text-[10px] font-black uppercase" :class="jobsEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="jobsEnabled ? 'Visible on Home' : 'Hidden'"></span>
-                                <button type="button" @click="activeTab = 'jobs'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                                <button type="button" @click="activeTab = 'jobs'" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a]">Edit Content →</button>
                             </div>
                         </div>
 
@@ -392,14 +392,14 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 06</span>
-                                    <h4 class="text-sm font-extrabold text-[#051c45]">Executive Counseling CTA</h4>
+                                    <h4 class="text-sm font-extrabold text-[#063b96]">Executive Counseling CTA</h4>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Direct phone & WhatsApp admissions strip.</p>
                                 </div>
                                 <input type="checkbox" x-model="counselingEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <span class="text-[10px] font-black uppercase" :class="counselingEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="counselingEnabled ? 'Visible on Home' : 'Hidden'"></span>
-                                <button type="button" @click="activeTab = 'counseling'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                                <button type="button" @click="activeTab = 'counseling'" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a]">Edit Content →</button>
                             </div>
                         </div>
 
@@ -408,14 +408,14 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 07</span>
-                                    <h4 class="text-sm font-extrabold text-[#051c45]">Distinguished Faculty</h4>
+                                    <h4 class="text-sm font-extrabold text-[#063b96]">Distinguished Faculty</h4>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Industry practitioners & instructor profiles.</p>
                                 </div>
                                 <input type="checkbox" x-model="facultyEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <span class="text-[10px] font-black uppercase" :class="facultyEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="facultyEnabled ? 'Visible on Home' : 'Hidden'"></span>
-                                <button type="button" @click="activeTab = 'faculty'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                                <button type="button" @click="activeTab = 'faculty'" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a]">Edit Content →</button>
                             </div>
                         </div>
 
@@ -424,14 +424,14 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 08</span>
-                                    <h4 class="text-sm font-extrabold text-[#051c45]">Institutional Advantages</h4>
+                                    <h4 class="text-sm font-extrabold text-[#063b96]">Institutional Advantages</h4>
                                     <p class="text-[11px] text-slate-500 mt-0.5">6 value proposition cards on Imperial Navy.</p>
                                 </div>
                                 <input type="checkbox" x-model="featuresEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <span class="text-[10px] font-black uppercase" :class="featuresEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="featuresEnabled ? 'Visible on Home' : 'Hidden'"></span>
-                                <button type="button" @click="activeTab = 'features'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                                <button type="button" @click="activeTab = 'features'" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a]">Edit Content →</button>
                             </div>
                         </div>
 
@@ -440,14 +440,14 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div>
                                     <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Section 09</span>
-                                    <h4 class="text-sm font-extrabold text-[#051c45]">Knowledge Hub & Blogs</h4>
+                                    <h4 class="text-sm font-extrabold text-[#063b96]">Knowledge Hub & Blogs</h4>
                                     <p class="text-[11px] text-slate-500 mt-0.5">Latest trade & banking articles grid.</p>
                                 </div>
                                 <input type="checkbox" x-model="blogEnabled" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer mt-1">
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <span class="text-[10px] font-black uppercase" :class="blogEnabled ? 'text-emerald-600' : 'text-slate-400'" x-text="blogEnabled ? 'Visible on Home' : 'Hidden'"></span>
-                                <button type="button" @click="activeTab = 'blog'" class="text-xs font-bold text-[#051c45] hover:text-[#c30102]">Edit Content →</button>
+                                <button type="button" @click="activeTab = 'blog'" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a]">Edit Content →</button>
                             </div>
                         </div>
                     </div>
@@ -461,11 +461,11 @@
                 <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs space-y-5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                         <div>
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-red-50 text-[#c30102]">Dynamic Section Builder</span>
-                            <h3 class="text-xl font-black text-[#051c45] mt-1">Custom Homepage Sections</h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-red-50 text-[#c4040a]">Dynamic Section Builder</span>
+                            <h3 class="text-xl font-black text-[#063b96] mt-1">Custom Homepage Sections</h3>
                             <p class="text-xs text-slate-500">Create unlimited custom sections on the landing page and toggle their visibility anytime without writing code.</p>
                         </div>
-                        <button type="button" @click="addCustomSection()" class="px-4 py-2.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs transition-colors">
+                        <button type="button" @click="addCustomSection()" class="px-4 py-2.5 rounded-xl bg-[#063b96] hover:bg-[#0a2540] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs transition-colors">
                             <i class="fas fa-plus"></i>
                             <span>Add New Section</span>
                         </button>
@@ -476,7 +476,7 @@
                             <i class="fas fa-layer-group text-2xl text-slate-400 mb-2"></i>
                             <p class="text-sm font-bold text-slate-700">No custom homepage sections created yet.</p>
                             <p class="text-xs text-slate-500 mt-1 mb-4">Click "Add New Section" to add corporate training banners, scholarship announcements, or custom blocks.</p>
-                            <button type="button" @click="addCustomSection()" class="px-4 py-2 rounded-xl bg-[#c30102] text-white text-xs font-bold">+ Create First Custom Section</button>
+                            <button type="button" @click="addCustomSection()" class="px-4 py-2 rounded-xl bg-[#c4040a] text-white text-xs font-bold">+ Create First Custom Section</button>
                         </div>
                     </template>
 
@@ -485,7 +485,7 @@
                             <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-4">
                                 <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
                                     <div class="flex items-center gap-3">
-                                        <span class="px-2.5 py-1 rounded-lg bg-[#051c45] text-white text-xs font-black" x-text="'Custom Section #' + (idx + 1)"></span>
+                                        <span class="px-2.5 py-1 rounded-lg bg-[#063b96] text-white text-xs font-black" x-text="'Custom Section #' + (idx + 1)"></span>
                                         <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold">
                                             <input type="checkbox" x-model="sec.is_visible" class="w-4 h-4 accent-emerald-600 rounded">
                                             <span :class="sec.is_visible ? 'text-emerald-700' : 'text-slate-400'" x-text="sec.is_visible ? 'Visible on Homepage' : 'Hidden'"></span>
@@ -499,7 +499,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div class="md:col-span-2">
                                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Section Heading</label>
-                                        <input type="text" x-model="sec.title" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-bold text-[#051c45]">
+                                        <input type="text" x-model="sec.title" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-bold text-[#063b96]">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Visual Theme</label>
@@ -573,22 +573,31 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Title (H1)</label>
                             <input type="text" name="landing_hero_title" value="{{ $settings['landing_hero_title'] ?? 'ACS Academy' }}" 
                                    placeholder="ACS Academy" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Tagline (Crimson Pill)</label>
                             <input type="text" name="landing_hero_tagline" value="{{ $settings['landing_hero_tagline'] ?? 'Learn, Grow, Lead.' }}" 
                                    placeholder="Learn, Grow, Lead." 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Subtitle / Description</label>
-                        <textarea name="landing_hero_subtitle" rows="2" 
-                                  placeholder="Online Professional Certification Masterclasses & Corporate Programs." 
-                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_hero_subtitle'] ?? 'Online Professional Certification Masterclasses & Corporate Programs.' }}</textarea>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Subtitle / Description</label>
+                            <textarea name="landing_hero_subtitle" rows="2" 
+                                      placeholder="Online Professional Certification Masterclasses & Corporate Programs." 
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] resize-none">{{ $settings['landing_hero_subtitle'] ?? 'Online Professional Certification Masterclasses & Corporate Programs.' }}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Promo Slide Duration (Sec)</label>
+                            <input type="number" name="landing_hero_promo_duration" step="0.5" min="1.5" max="15"
+                                   value="{{ $settings['landing_hero_promo_duration'] ?? '3.5' }}"
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
+                            <p class="text-[11px] text-gray-400 mt-1">Default: 3.5s per course banner</p>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -625,7 +634,7 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Social Proof / Alumni Counter Line</label>
                         <input type="text" name="landing_hero_alumni_text" value="{{ $settings['landing_hero_alumni_text'] ?? '10,000+ Corporate Alumni' }}" 
                                placeholder="10,000+ Corporate Alumni" 
-                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                     </div>
 
                     <div class="pt-2 border-t border-gray-100 space-y-4">
@@ -636,13 +645,13 @@
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Poster Image URL</label>
                                 <input type="text" name="landing_hero_media_image" value="{{ $settings['landing_hero_media_image'] ?? 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=80' }}" 
                                        placeholder="https://..." 
-                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Or Upload New Poster Image</label>
                                 <input type="file" name="landing_hero_media_image_file" accept="image/*" 
-                                       class="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs text-gray-600 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#041536] file:text-white hover:file:opacity-90">
+                                       class="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs text-gray-600 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#021f59] file:text-white hover:file:opacity-90">
                             </div>
                         </div>
 
@@ -650,7 +659,7 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Play Button Click Action / Link</label>
                             <input type="text" name="landing_hero_media_link" value="{{ $settings['landing_hero_media_link'] ?? '/courses' }}" 
                                    placeholder="/courses" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
                     </div>
                 </div>
@@ -679,7 +688,7 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Heading</label>
                         <input type="text" name="landing_clients_title" value="{{ $settings['landing_clients_title'] ?? 'Our Valuable Clients' }}" 
                                placeholder="Our Valuable Clients" 
-                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                     </div>
 
                     <div>
@@ -689,7 +698,7 @@
                         </div>
                         <textarea name="landing_clients_data" rows="9" 
                                   placeholder="International Trade & L/C&#10;Supply Chain Management&#10;Customs & Freight Clearance&#10;Corporate Tax & VAT&#10;Commercial Banking & Finance&#10;Industrial HR & Labor Laws&#10;Corporate Law & Compliance&#10;Project Planning & BOQ" 
-                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ $settings['landing_clients_data'] ?? '' }}</textarea>
+                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">{{ $settings['landing_clients_data'] ?? '' }}</textarea>
                         <p class="text-[11px] text-gray-500 mt-1">Format: <code>Sector / Partner Name | Logo URL</code> (if logo URL is omitted, the clean name badge is rendered automatically).</p>
                     </div>
                 </div>
@@ -719,21 +728,21 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Label</label>
                             <input type="text" name="landing_categories_title" value="{{ $settings['landing_categories_title'] ?? 'Course Categories' }}" 
                                    placeholder="Course Categories" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">"View All" Button Text</label>
                             <input type="text" name="landing_categories_all_text" value="{{ $settings['landing_categories_all_text'] ?? 'All' }}" 
                                    placeholder="All" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">"View All" URL</label>
                             <input type="text" name="landing_categories_all_url" value="{{ $settings['landing_categories_all_url'] ?? '/courses' }}" 
                                    placeholder="/courses" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
                     </div>
 
@@ -744,7 +753,7 @@
                         </div>
                         <textarea name="landing_categories_data" rows="6" 
                                   placeholder="Commercial Management | commercial-management | fa-ship&#10;Supply Chain Management | supply-chain-management | fa-truck-fast&#10;Career Development | career-development | fa-compass&#10;Professional Skills & Leadership Development | professional-skills-leadership | fa-award" 
-                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ $settings['landing_categories_data'] ?? '' }}</textarea>
+                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 text-xs font-mono focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">{{ $settings['landing_categories_data'] ?? '' }}</textarea>
                         <p class="text-[11px] text-gray-500 mt-1">Format: <code>Category Name | slug | icon</code>. Example: <code>Export – Import | export-import | fa-ship</code>.</p>
                     </div>
                 </div>
@@ -832,7 +841,7 @@
                     <div class="p-5 bg-red-50/40 rounded-xl border border-red-200/80 space-y-4">
                         <div class="flex items-center justify-between border-b border-red-200/60 pb-2">
                             <h4 class="font-black text-red-950 text-base flex items-center gap-2">
-                                <span class="w-3 h-3 rounded-full bg-[#c30102]"></span>
+                                <span class="w-3 h-3 rounded-full bg-[#c4040a]"></span>
                                 <span>Right Container: Day Long Course Track</span>
                             </h4>
                             <span class="text-xs text-red-800 font-bold bg-red-100 px-2.5 py-0.5 rounded-full">Light Peach Container (.bg-[#fef4f0])</span>
@@ -896,14 +905,14 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Heading</label>
                             <input type="text" name="landing_blog_title" value="{{ $settings['landing_blog_title'] ?? 'Knowledge Hub & Publications' }}" 
                                    placeholder="Knowledge Hub & Publications" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Articles To Display</label>
                             <input type="number" min="1" max="12" name="landing_blog_count" value="{{ $settings['landing_blog_count'] ?? '3' }}" 
                                    placeholder="3" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
                     </div>
 
@@ -911,7 +920,7 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Subtitle / Faculty Insights Blurb</label>
                         <textarea name="landing_blog_subtitle" rows="2" 
                                   placeholder="Thought leadership, customs directives, tax reforms, and supply chain insights by ACS Academy Distinguished Faculty." 
-                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_blog_subtitle'] ?? 'Thought leadership, customs directives, tax reforms, and supply chain insights by ACS Academy Distinguished Faculty.' }}</textarea>
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] resize-none">{{ $settings['landing_blog_subtitle'] ?? 'Thought leadership, customs directives, tax reforms, and supply chain insights by ACS Academy Distinguished Faculty.' }}</textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -919,14 +928,14 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">"View All" Button Text</label>
                             <input type="text" name="landing_blog_btn_text" value="{{ $settings['landing_blog_btn_text'] ?? 'View All Publications' }}" 
                                    placeholder="View All Publications" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">"View All" Button URL</label>
                             <input type="text" name="landing_blog_btn_url" value="{{ $settings['landing_blog_btn_url'] ?? '/blog' }}" 
                                    placeholder="/blog" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
                     </div>
                 </div>
@@ -955,20 +964,20 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Title</label>
                         <input type="text" name="landing_counseling_title" value="{{ $settings['landing_counseling_title'] ?? 'Need To Learn More ?' }}" 
                                placeholder="Need To Learn More ?" 
-                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Subtitle / Guidance Text</label>
                         <textarea name="landing_counseling_subtitle" rows="2" 
                                   placeholder="Connect with our academic counselors for corporate training customized for your organization, batch reservations, or curriculum guidance." 
-                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_counseling_subtitle'] ?? 'Connect with our academic counselors for corporate training customized for your organization, batch reservations, or curriculum guidance.' }}</textarea>
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] resize-none">{{ $settings['landing_counseling_subtitle'] ?? 'Connect with our academic counselors for corporate training customized for your organization, batch reservations, or curriculum guidance.' }}</textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2 border-t border-gray-100">
                         <div class="p-4 bg-gray-50 rounded-xl border border-gray-200/80 space-y-3">
                             <h5 class="text-xs font-black uppercase text-gray-800 flex items-center gap-1.5">
-                                <i class="fas fa-phone-alt text-[#c30102]"></i>
+                                <i class="fas fa-phone-alt text-[#c4040a]"></i>
                                 <span>Phone Hotline</span>
                             </h5>
                             <div>
@@ -1041,7 +1050,7 @@
                             <h4 class="font-bold text-gray-900 text-sm">Section Headings</h4>
                             <p class="text-xs text-gray-500">Configure title displayed on the public home page.</p>
                         </div>
-                        <a href="{{ route('admin.instructors.index') }}" class="px-3.5 py-1.5 bg-[#041536] hover:bg-[#c30102] text-white text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5">
+                        <a href="{{ route('admin.instructors.index') }}" class="px-3.5 py-1.5 bg-[#021f59] hover:bg-[#c4040a] text-white text-xs font-bold rounded-xl transition-all shadow-xs inline-flex items-center gap-1.5">
                             <i class="fas fa-user-plus text-[10px]"></i>
                             <span>Manage Faculty & Photos →</span>
                         </a>
@@ -1050,14 +1059,14 @@
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Title</label>
                         <input type="text" name="landing_faculty_title" value="{{ $settings['landing_faculty_title'] ?? 'Distinguished Faculty & Industry Fellows' }}" 
-                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm font-semibold text-gray-900 focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm font-semibold text-gray-900 focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                     </div>
 
                     <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 flex items-start gap-3">
-                        <i class="fas fa-info-circle text-[#041536] mt-0.5 text-sm"></i>
+                        <i class="fas fa-info-circle text-[#021f59] mt-0.5 text-sm"></i>
                         <div>
                             <span class="font-bold text-gray-900">Dynamic Database Sync:</span>
-                            The landing page automatically showcases all active instructors with their photo, title, and expertise directly from the <a href="{{ route('admin.instructors.index') }}" class="text-[#c30102] font-bold underline hover:text-black">Instructors Directory</a>. Any update to a profile or picture immediately reflects live on the homepage!
+                            The landing page automatically showcases all active instructors with their photo, title, and expertise directly from the <a href="{{ route('admin.instructors.index') }}" class="text-[#c4040a] font-bold underline hover:text-black">Instructors Directory</a>. Any update to a profile or picture immediately reflects live on the homepage!
                         </div>
                     </div>
                 </div>
@@ -1086,7 +1095,7 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Title</label>
                         <input type="text" name="landing_features_title" value="{{ $settings['landing_features_title'] ?? 'Our Features' }}" 
                                placeholder="Our Features" 
-                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                     </div>
 
                     @php
@@ -1160,14 +1169,14 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Section Title</label>
                         <input type="text" name="landing_jobs_title" value="{{ $settings['landing_jobs_title'] ?? 'Career & Placement Opportunities' }}" 
                                placeholder="Career & Placement Opportunities" 
-                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                               class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Subtitle / Explainer</label>
                         <textarea name="landing_jobs_subtitle" rows="2" 
                                   placeholder="Explore openings posted exclusively for ACS Academy certified professionals" 
-                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['landing_jobs_subtitle'] ?? 'Explore openings posted exclusively for ACS Academy certified professionals' }}</textarea>
+                                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] resize-none">{{ $settings['landing_jobs_subtitle'] ?? 'Explore openings posted exclusively for ACS Academy certified professionals' }}</textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1175,14 +1184,14 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Action Button Text</label>
                             <input type="text" name="landing_jobs_btn_text" value="{{ $settings['landing_jobs_btn_text'] ?? 'Browse All Openings' }}" 
                                    placeholder="Browse All Openings" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Action Button URL</label>
                             <input type="text" name="landing_jobs_btn_url" value="{{ $settings['landing_jobs_btn_url'] ?? '/jobs' }}" 
                                    placeholder="/jobs" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
                     </div>
                 </div>
@@ -1195,7 +1204,7 @@
                 <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-blue-100 text-[#051c45]">Inner Page</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-blue-100 text-[#063b96]">Inner Page</span>
                             <span class="text-xs text-gray-500 font-semibold">/about</span>
                         </div>
                         <h3 class="text-lg font-black text-gray-900">About Us Page Customizer</h3>
@@ -1209,19 +1218,19 @@
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Pill / Badge</label>
                             <input type="text" name="about_hero_badge" value="{{ $settings['about_hero_badge'] ?? 'ACS Academy' }}" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Headline Title</label>
                             <input type="text" name="about_hero_title" value="{{ $settings['about_hero_title'] ?? 'South Asia\'s Premier Institute for Commercial Trade & Industry Mastery' }}" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Hero Narrative Description</label>
                             <textarea name="about_hero_desc" rows="3" 
-                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_hero_desc'] ?? 'ACS Academy stands as the gold standard for executive trade education, supply chain logistics, customs clearance, and corporate compliance.' }}</textarea>
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] resize-none">{{ $settings['about_hero_desc'] ?? 'ACS Academy stands as the gold standard for executive trade education, supply chain logistics, customs clearance, and corporate compliance.' }}</textarea>
                         </div>
                     </div>
 
@@ -1276,7 +1285,7 @@
                             <input type="text" name="about_mission_title" value="{{ $settings['about_mission_title'] ?? 'Our Mission' }}" 
                                    class="w-full px-4 py-2 rounded-xl border border-gray-300 text-sm mb-2 font-bold">
                             <textarea name="about_mission_text" rows="3" 
-                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_mission_text'] ?? 'To engineer real-world competency and career breakthroughs for professionals through industry-vetted coursework, simulated trade laboratories, and personalized mentoring by C-suite practitioners.' }}</textarea>
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] resize-none">{{ $settings['about_mission_text'] ?? 'To engineer real-world competency and career breakthroughs for professionals through industry-vetted coursework, simulated trade laboratories, and personalized mentoring by C-suite practitioners.' }}</textarea>
                         </div>
 
                         <div>
@@ -1284,7 +1293,7 @@
                             <input type="text" name="about_vision_title" value="{{ $settings['about_vision_title'] ?? 'Our Vision' }}" 
                                    class="w-full px-4 py-2 rounded-xl border border-gray-300 text-sm mb-2 font-bold">
                             <textarea name="about_vision_text" rows="3" 
-                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_vision_text'] ?? 'To be South Asia\'s preeminent institute for commercial trade, customs navigation, and supply chain excellence, recognized worldwide for ethical leadership and operational mastery.' }}</textarea>
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] resize-none">{{ $settings['about_vision_text'] ?? 'To be South Asia\'s preeminent institute for commercial trade, customs navigation, and supply chain excellence, recognized worldwide for ethical leadership and operational mastery.' }}</textarea>
                         </div>
 
                         <div>
@@ -1292,7 +1301,7 @@
                             <input type="text" name="about_philosophy_title" value="{{ $settings['about_philosophy_title'] ?? 'Core Philosophy' }}" 
                                    class="w-full px-4 py-2 rounded-xl border border-gray-300 text-sm mb-2 font-bold">
                             <textarea name="about_philosophy_text" rows="3" 
-                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ $settings['about_philosophy_text'] ?? 'Zero Fluff, 100% Applicability. Every case study, L/C draft, bill of lading, and VAT audit calculation directly reflects the current regulatory landscape of the National Board of Revenue (NBR) and Bangladesh Bank.' }}</textarea>
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] resize-none">{{ $settings['about_philosophy_text'] ?? 'Zero Fluff, 100% Applicability. Every case study, L/C draft, bill of lading, and VAT audit calculation directly reflects the current regulatory landscape of the National Board of Revenue (NBR) and Bangladesh Bank.' }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -1316,26 +1325,26 @@
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Campus Name / Facility Title</label>
                             <input type="text" name="contact_campus_name" value="{{ $settings['contact_campus_name'] ?? 'ACS Academy Corporate Campus' }}" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Physical Campus Address</label>
                             <input type="text" name="contact_address" value="{{ $settings['contact_address'] ?? 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216' }}" 
-                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Executive Hotline (Displayed)</label>
                                 <input type="text" name="contact_hotline" value="{{ $settings['contact_hotline'] ?? '01917-054664' }}" 
-                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Official Inquiries Email</label>
                                 <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? 'commercialacademy868@gmail.com' }}" 
-                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                             </div>
                         </div>
 
@@ -1343,13 +1352,13 @@
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">WhatsApp Number (e.g. 8801917054664)</label>
                                 <input type="text" name="contact_whatsapp" value="{{ $settings['contact_whatsapp'] ?? '8801917054664' }}" 
-                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Office & Support Hours</label>
                                 <input type="text" name="contact_hours" value="{{ $settings['contact_hours'] ?? '9:00 AM – 8:00 PM, Saturday to Thursday' }}" 
-                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                             </div>
                         </div>
                     </div>
@@ -1363,7 +1372,7 @@
                 <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-5">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-red-100 text-[#c30102]">Compliance Desk</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-red-100 text-[#c4040a]">Compliance Desk</span>
                             <span class="text-xs text-gray-500 font-semibold">Privacy, Terms & Refund Policies</span>
                         </div>
                         <h3 class="text-lg font-black text-gray-900">Legal Policy Overrides</h3>
@@ -1375,21 +1384,21 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Privacy Policy Content (HTML / Text)</label>
                             <textarea name="policy_privacy_content" rows="6" 
                                       placeholder="Leave blank to use default corporate privacy policy..." 
-                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536] font-mono">{{ $settings['policy_privacy_content'] ?? '' }}</textarea>
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] font-mono">{{ $settings['policy_privacy_content'] ?? '' }}</textarea>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Terms of Service Content (HTML / Text)</label>
                             <textarea name="policy_terms_content" rows="6" 
                                       placeholder="Leave blank to use default corporate terms of service..." 
-                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536] font-mono">{{ $settings['policy_terms_content'] ?? '' }}</textarea>
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] font-mono">{{ $settings['policy_terms_content'] ?? '' }}</textarea>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Refund & Cancellation Policy Content (HTML / Text)</label>
                             <textarea name="policy_refund_content" rows="6" 
                                       placeholder="Leave blank to use default corporate refund policy..." 
-                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536] font-mono">{{ $settings['policy_refund_content'] ?? '' }}</textarea>
+                                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-xs focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] font-mono">{{ $settings['policy_refund_content'] ?? '' }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -1405,10 +1414,10 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                         <div>
                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">Page Access Control</span>
-                            <h3 class="text-xl font-black text-[#051c45] mt-1">Built-In Public Pages Visibility</h3>
+                            <h3 class="text-xl font-black text-[#063b96] mt-1">Built-In Public Pages Visibility</h3>
                             <p class="text-xs text-slate-500">Show or hide built-in platform pages from navigation menus and public access (admins can always preview hidden pages).</p>
                         </div>
-                        <button type="submit" class="px-4 py-2 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold shadow-xs transition-colors">
+                        <button type="submit" class="px-4 py-2 rounded-xl bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-bold shadow-xs transition-colors">
                             Save Page States
                         </button>
                     </div>
@@ -1417,7 +1426,7 @@
                         <!-- Careers & Jobs -->
                         <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageJobsEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
                             <div class="min-w-0">
-                                <div class="text-xs font-extrabold text-[#051c45] truncate">Careers & Jobs Portal</div>
+                                <div class="text-xs font-extrabold text-[#063b96] truncate">Careers & Jobs Portal</div>
                                 <div class="text-[11px] font-mono text-slate-400">/jobs</div>
                             </div>
                             <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
@@ -1429,7 +1438,7 @@
                         <!-- Instructors Directory -->
                         <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageInstructorsEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
                             <div class="min-w-0">
-                                <div class="text-xs font-extrabold text-[#051c45] truncate">Instructors Directory</div>
+                                <div class="text-xs font-extrabold text-[#063b96] truncate">Instructors Directory</div>
                                 <div class="text-[11px] font-mono text-slate-400">/instructors</div>
                             </div>
                             <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
@@ -1441,7 +1450,7 @@
                         <!-- Blog & Knowledge Hub -->
                         <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageBlogEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
                             <div class="min-w-0">
-                                <div class="text-xs font-extrabold text-[#051c45] truncate">Knowledge Hub & Blogs</div>
+                                <div class="text-xs font-extrabold text-[#063b96] truncate">Knowledge Hub & Blogs</div>
                                 <div class="text-[11px] font-mono text-slate-400">/blog</div>
                             </div>
                             <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
@@ -1453,7 +1462,7 @@
                         <!-- Community Feed -->
                         <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageFeedEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
                             <div class="min-w-0">
-                                <div class="text-xs font-extrabold text-[#051c45] truncate">Community Discussion Feed</div>
+                                <div class="text-xs font-extrabold text-[#063b96] truncate">Community Discussion Feed</div>
                                 <div class="text-[11px] font-mono text-slate-400">/feed</div>
                             </div>
                             <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
@@ -1465,7 +1474,7 @@
                         <!-- About Us -->
                         <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageAboutEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
                             <div class="min-w-0">
-                                <div class="text-xs font-extrabold text-[#051c45] truncate">About Us Page</div>
+                                <div class="text-xs font-extrabold text-[#063b96] truncate">About Us Page</div>
                                 <div class="text-[11px] font-mono text-slate-400">/about</div>
                             </div>
                             <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
@@ -1477,7 +1486,7 @@
                         <!-- Contact & Support -->
                         <div class="p-4 rounded-xl border flex items-center justify-between gap-3 transition-all" :class="pageContactEnabled ? 'bg-white border-slate-200' : 'bg-slate-50 border-slate-200/60 opacity-75'">
                             <div class="min-w-0">
-                                <div class="text-xs font-extrabold text-[#051c45] truncate">Contact & Admissions</div>
+                                <div class="text-xs font-extrabold text-[#063b96] truncate">Contact & Admissions</div>
                                 <div class="text-[11px] font-mono text-slate-400">/contact</div>
                             </div>
                             <label class="inline-flex items-center gap-2 cursor-pointer shrink-0">
@@ -1493,10 +1502,10 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
                         <div>
                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-blue-50 text-blue-700 border border-blue-200">Custom Page Engine</span>
-                            <h3 class="text-xl font-black text-[#051c45] mt-1">Custom Standalone Pages (`/page/{slug}`)</h3>
+                            <h3 class="text-xl font-black text-[#063b96] mt-1">Custom Standalone Pages (`/page/{slug}`)</h3>
                             <p class="text-xs text-slate-500">Create unlimited custom pages (e.g., Corporate Training, Scholarships, Accreditation), publish or hide them, and attach them to the Header or Footer.</p>
                         </div>
-                        <button type="button" @click="addCustomPage()" class="px-4 py-2.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs transition-colors">
+                        <button type="button" @click="addCustomPage()" class="px-4 py-2.5 rounded-xl bg-[#063b96] hover:bg-[#0a2540] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs transition-colors">
                             <i class="fas fa-plus"></i>
                             <span>Create New Page</span>
                         </button>
@@ -1507,7 +1516,7 @@
                             <i class="fas fa-file-circle-plus text-2xl text-slate-400 mb-2"></i>
                             <p class="text-sm font-bold text-slate-700">No custom standalone pages created yet.</p>
                             <p class="text-xs text-slate-500 mt-1 mb-4">Click "Create New Page" to launch a dedicated page with its own URL slug and navigation link.</p>
-                            <button type="button" @click="addCustomPage()" class="px-4 py-2 rounded-xl bg-[#c30102] text-white text-xs font-bold">+ Create First Page</button>
+                            <button type="button" @click="addCustomPage()" class="px-4 py-2 rounded-xl bg-[#c4040a] text-white text-xs font-bold">+ Create First Page</button>
                         </div>
                     </template>
 
@@ -1516,22 +1525,22 @@
                             <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-4">
                                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
                                     <div class="flex flex-wrap items-center gap-3">
-                                        <span class="px-2.5 py-1 rounded-lg bg-[#051c45] text-white text-xs font-black" x-text="cPage.title || ('Page #' + (pIdx + 1))"></span>
+                                        <span class="px-2.5 py-1 rounded-lg bg-[#063b96] text-white text-xs font-black" x-text="cPage.title || ('Page #' + (pIdx + 1))"></span>
                                         <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold">
                                             <input type="checkbox" x-model="cPage.is_published" class="w-4 h-4 accent-emerald-600 rounded">
                                             <span :class="cPage.is_published ? 'text-emerald-700' : 'text-slate-400'" x-text="cPage.is_published ? 'Published' : 'Hidden (Draft)'"></span>
                                         </label>
                                         <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-700">
-                                            <input type="checkbox" x-model="cPage.show_in_header" class="w-3.5 h-3.5 accent-[#051c45] rounded">
+                                            <input type="checkbox" x-model="cPage.show_in_header" class="w-3.5 h-3.5 accent-[#063b96] rounded">
                                             <span>Header Nav</span>
                                         </label>
                                         <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-700">
-                                            <input type="checkbox" x-model="cPage.show_in_footer" class="w-3.5 h-3.5 accent-[#051c45] rounded">
+                                            <input type="checkbox" x-model="cPage.show_in_footer" class="w-3.5 h-3.5 accent-[#063b96] rounded">
                                             <span>Footer Link</span>
                                         </label>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <a :href="'/page/' + (cPage.slug || '')" target="_blank" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-[#051c45] hover:bg-slate-100">
+                                        <a :href="'/page/' + (cPage.slug || '')" target="_blank" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold text-[#063b96] hover:bg-slate-100">
                                             Preview ↗
                                         </a>
                                         <button type="button" @click="removeCustomPage(pIdx)" class="text-xs font-bold text-rose-600 hover:text-rose-800 px-2.5 py-1 rounded-lg hover:bg-rose-50">
@@ -1543,7 +1552,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Page Title</label>
-                                        <input type="text" x-model="cPage.title" placeholder="e.g. Corporate Training Solutions" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-bold text-[#051c45]">
+                                        <input type="text" x-model="cPage.title" placeholder="e.g. Corporate Training Solutions" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm font-bold text-[#063b96]">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">URL Slug (`/page/{slug}`)</label>
@@ -1593,7 +1602,7 @@
 
                     <!-- 1. Public Front-Facing Pages -->
                     <div>
-                        <h4 class="text-xs font-black uppercase tracking-wider text-[#041536] mb-3 flex items-center gap-2">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#021f59] mb-3 flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                             <span>1. Public Discovery & Catalog Pages (Indexable)</span>
                         </h4>
@@ -1624,7 +1633,7 @@
                                         </div>
                                         <span class="text-[11px] font-mono text-slate-500 block truncate">{{ $p['route'] }}</span>
                                     </div>
-                                    <a href="{{ $p['url'] }}" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#041536] hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 shadow-sm shrink-0 transition-all">
+                                    <a href="{{ $p['url'] }}" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#021f59] hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 shadow-sm shrink-0 transition-all">
                                         <span>Open</span>
                                         <i class="fas fa-external-link-alt text-[10px]"></i>
                                     </a>
@@ -1635,7 +1644,7 @@
 
                     <!-- 2. Legal Compliance Suite -->
                     <div class="pt-4 border-t border-gray-100">
-                        <h4 class="text-xs font-black uppercase tracking-wider text-[#041536] mb-3 flex items-center gap-2">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#021f59] mb-3 flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                             <span>2. Institutional Trust & Legal Compliance Pages</span>
                         </h4>
@@ -1653,7 +1662,7 @@
                                         <span class="text-xs font-bold text-gray-900 block truncate">{{ $lp['name'] }}</span>
                                         <span class="text-[11px] font-mono text-slate-500 block truncate">{{ $lp['route'] }}</span>
                                     </div>
-                                    <a href="{{ $lp['url'] }}" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#041536] hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 shadow-sm shrink-0 transition-all">
+                                    <a href="{{ $lp['url'] }}" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#021f59] hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 shadow-sm shrink-0 transition-all">
                                         <span>Open</span>
                                         <i class="fas fa-external-link-alt text-[10px]"></i>
                                     </a>
@@ -1664,7 +1673,7 @@
 
                     <!-- 3. Student Authenticated Learning Suite -->
                     <div class="pt-4 border-t border-gray-100">
-                        <h4 class="text-xs font-black uppercase tracking-wider text-[#041536] mb-3 flex items-center gap-2">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-[#021f59] mb-3 flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-purple-500"></span>
                             <span>3. Student Authenticated Learning Suite</span>
                         </h4>
@@ -1683,7 +1692,7 @@
                                         <span class="text-xs font-bold text-gray-900 block truncate">{{ $sp['name'] }}</span>
                                         <span class="text-[11px] font-mono text-slate-500 block truncate">{{ $sp['route'] }} • {{ $sp['desc'] }}</span>
                                     </div>
-                                    <a href="{{ $sp['url'] }}" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#041536] hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 shadow-sm shrink-0 transition-all">
+                                    <a href="{{ $sp['url'] }}" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#021f59] hover:text-white border border-slate-200 text-slate-700 text-xs font-semibold inline-flex items-center gap-1 shadow-sm shrink-0 transition-all">
                                         <span>Open</span>
                                         <i class="fas fa-external-link-alt text-[10px]"></i>
                                     </a>
@@ -1707,7 +1716,7 @@
 
                     <div>
                         <label for="landing_page_mode" class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Mode</label>
-                        <select id="landing_page_mode" name="landing_page_mode" x-model="mode" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                        <select id="landing_page_mode" name="landing_page_mode" x-model="mode" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                             <option value="default">Default Section-by-Section Template (Recommended)</option>
                             <option value="custom">Custom Raw HTML Code</option>
                         </select>
@@ -1717,7 +1726,7 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Raw HTML / Blade Content</label>
                         <textarea name="landing_custom_html" rows="18" 
                                   placeholder="<div class='custom-landing-page'>...</div>" 
-                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 font-mono text-xs focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ $settings['landing_custom_html'] ?? '' }}</textarea>
+                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 font-mono text-xs focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">{{ $settings['landing_custom_html'] ?? '' }}</textarea>
                     </div>
                 </div>
             </div>

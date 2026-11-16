@@ -22,7 +22,7 @@ class PwaTypographyAndCmsTest extends TestCase
         $response->assertJson([
             'name' => 'Academy of Commercial and Supply Chain',
             'display' => 'standalone',
-            'theme_color' => '#051c45',
+            'theme_color' => '#021f59',
         ]);
 
         $data = $response->json();

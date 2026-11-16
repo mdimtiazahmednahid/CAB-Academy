@@ -35,23 +35,23 @@
             <a href="{{ route('admin.accounting.index') }}" class="text-xs font-bold text-gray-500 hover:text-gray-900 flex items-center gap-1.5">
                 <i class="fas fa-arrow-left"></i> Back to Accounting
             </a>
-            <button onclick="window.print()" class="px-5 py-2 rounded-xl bg-[#051c45] text-white text-xs font-bold shadow-md hover:bg-[#072559] flex items-center gap-2">
+            <button onclick="window.print()" class="px-5 py-2 rounded-xl bg-[#063b96] text-white text-xs font-bold shadow-md hover:bg-[#072559] flex items-center gap-2">
                 <i class="fas fa-print"></i> Print Statement
             </button>
         </div>
 
         <!-- Statement Masthead -->
-        <div class="flex items-start justify-between border-b-2 border-[#051c45] pb-6 mb-6">
+        <div class="flex items-start justify-between border-b-2 border-[#063b96] pb-6 mb-6">
             <div class="flex items-center gap-4">
                 <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $institutionName }} Crest" class="w-16 h-16 object-contain rounded-xl p-1 border border-slate-200" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-black text-[#051c45] tracking-tight uppercase leading-tight">{!! \App\Models\Setting::formatBrandNameHtml($institutionName) !!}</h1>
+                    <h1 class="text-xl sm:text-2xl font-black text-[#063b96] tracking-tight uppercase leading-tight">{!! \App\Models\Setting::formatBrandNameHtml($institutionName) !!}</h1>
                     <p class="text-xs text-slate-500 font-semibold mt-0.5">{{ $ledgerSubtitle }}</p>
                     <p class="text-[11px] text-slate-400 mt-0.5">{{ $campusAddress }} | Hotline: {{ $hotlinePhone }}</p>
                 </div>
             </div>
             <div class="text-right">
-                <span class="inline-block px-3 py-1 bg-[#051c45] text-white text-xs font-mono font-bold rounded-lg uppercase">
+                <span class="inline-block px-3 py-1 bg-[#063b96] text-white text-xs font-mono font-bold rounded-lg uppercase">
                     {{ $fiscalYear }}
                 </span>
                 <p class="text-xs text-slate-500 mt-2 font-mono">Date: {{ date('d F Y') }}</p>
@@ -71,7 +71,7 @@
             </div>
             <div class="text-center">
                 <span class="text-xs text-slate-500 font-bold uppercase">Net Cash Balance</span>
-                <div class="text-xl font-black {{ $netMargin >= 0 ? 'text-[#051c45]' : 'text-red-600' }} font-mono mt-1">
+                <div class="text-xl font-black {{ $netMargin >= 0 ? 'text-[#063b96]' : 'text-red-600' }} font-mono mt-1">
                     ৳{{ number_format($netMargin, 2) }}
                 </div>
             </div>

@@ -1,75 +1,80 @@
-const CACHE_NAME = 'acs-academy-pwa-v6';
-const OFFLINE_ASSETS = [
-    '/images/logo.png'
+const CACHE_VERSION = 'acs-pwa-v1';
+const OFFLINE_URL = '/offline';
+const PRECACHE_ASSETS = [
+  OFFLINE_URL,
+  '/manifest.json',
+  '/images/logo.png',
+  '/images/icons/icon-192x192.png'
 ];
 
 self.addEventListener('install', (event) => {
-    self.skipWaiting();
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(OFFLINE_ASSETS).catch(() => {});
-        })
-    );
+  event.waitUntil(
+    caches.open(CACHE_VERSION)
+      .then((cache) => cache.addAll(PRECACHE_ASSETS))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((keys) =>
-            Promise.all(
-                keys.map((key) => {
-                    if (key !== CACHE_NAME) {
-                        return caches.delete(key);
-                    }
-                })
-            )
-        )
-    );
-    self.clients.claim();
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(
+        keys.filter((k) => k !== CACHE_VERSION).map((k) => caches.delete(k))
+      ))
+      .then(() => self.clients.claim())
+  );
 });
 
+function shouldBypass(url) {
+  const path = url.pathname;
+  return (
+    path.startsWith('/admin') ||
+    path.startsWith('/login') ||
+    path.startsWith('/register') ||
+    path.startsWith('/logout') ||
+    path.startsWith('/cron') ||
+    path.includes('/checkout') ||
+    path.includes('/express-enroll')
+  );
+}
+
 self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET') {
-        return;
-    }
+  const req = event.request;
+  if (req.method !== 'GET') return;
 
-    // Never intercept HTML page navigations (/login, /dashboard, /admin, /cmd.php, etc.)
-    // so CSRF tokens, auth redirects, and single-threaded local dev servers never stall or cache stale HTML.
-    if (event.request.mode === 'navigate' || (event.request.headers.get('accept') || '').includes('text/html')) {
-        return;
-    }
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  if (shouldBypass(url)) return;
 
-    const url = new URL(event.request.url);
-    const isStaticAsset = url.origin === self.location.origin && (
-        url.pathname.startsWith('/build/') ||
-        url.pathname.startsWith('/images/') ||
-        url.pathname.startsWith('/uploads/') ||
-        url.pathname.startsWith('/storage/')
-    );
-
-    if (!isStaticAsset) {
-        return;
-    }
-
+  // Navigation requests: Network-First with offline fallback
+  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                if (response && response.status === 200 && response.type === 'basic') {
-                    const ct = (response.headers.get('content-type') || '').toLowerCase();
-                    const isCss = url.pathname.endsWith('.css');
-                    const isJs = url.pathname.endsWith('.js');
-                    const validMime = isCss
-                        ? ct.includes('text/css')
-                        : (isJs ? ct.includes('javascript') : !ct.includes('text/html'));
-                    if (validMime) {
-                        const clone = response.clone();
-                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone)).catch(() => {});
-                    }
-                }
-                return response;
-            })
-            .catch(async () => {
-                const cached = await caches.match(event.request);
-                return cached || Response.error();
-            })
+      fetch(req)
+        .then((res) => {
+          if (res && res.status === 200) {
+            const copy = res.clone();
+            caches.open(CACHE_VERSION).then((cache) => cache.put(req, copy));
+          }
+          return res;
+        })
+        .catch(() => caches.match(req).then((cached) => cached || caches.match(OFFLINE_URL)))
     );
+    return;
+  }
+
+  // Static assets: Stale-While-Revalidate
+  if (/\.(?:css|js|png|jpg|jpeg|webp|svg|woff2?)$/i.test(url.pathname)) {
+    event.respondWith(
+      caches.match(req).then((cached) => {
+        const networkFetch = fetch(req).then((res) => {
+          if (res && res.status === 200) {
+            const copy = res.clone();
+            caches.open(CACHE_VERSION).then((cache) => cache.put(req, copy));
+          }
+          return res;
+        }).catch(() => cached);
+        return cached || networkFetch;
+      })
+    );
+  }
 });

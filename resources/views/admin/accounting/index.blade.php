@@ -9,7 +9,7 @@
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
             <div class="flex items-center gap-2 mb-1">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#051c45] text-white">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#063b96] text-white">
                     <i class="fas fa-coins text-[#10b981] mr-1.5"></i> {{ $templateSettings['effective_institution_name'] ?? \App\Models\Setting::getVal('site_name', 'ACS Academy') }} &bull; Treasury
                 </span>
                 <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider">{{ $templateSettings['accounting_fiscal_year'] ?? 'FY 2026-2027' }}</span>
@@ -20,7 +20,7 @@
 
         <div class="flex flex-wrap items-center gap-3">
             <button type="button" @click="templateModalOpen = true" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all">
-                <i class="fas fa-sliders-h text-[#051c45]"></i>
+                <i class="fas fa-sliders-h text-[#063b96]"></i>
                 <span>Template Options</span>
             </button>
             <a href="{{ route('admin.accounting.statement') }}" target="_blank" class="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 text-xs font-bold shadow-sm inline-flex items-center gap-2 transition-all">
@@ -31,7 +31,7 @@
                 <i class="fas fa-minus-circle text-red-600"></i>
                 <span>Record Expense</span>
             </button>
-            <button @click="tuitionModalOpen = true" class="px-4 py-2.5 rounded-xl bg-[#051c45] hover:bg-[#072559] text-white text-xs font-bold shadow-md shadow-blue-950/20 inline-flex items-center gap-2 transition-all">
+            <button @click="tuitionModalOpen = true" class="px-4 py-2.5 rounded-xl bg-[#063b96] hover:bg-[#072559] text-white text-xs font-bold shadow-md shadow-blue-950/20 inline-flex items-center gap-2 transition-all">
                 <i class="fas fa-plus-circle text-[#10b981]"></i>
                 <span>Record Campus Receipt</span>
             </button>
@@ -72,7 +72,7 @@
                 </span>
             </div>
             <div class="mt-3">
-                <div class="text-2xl font-black text-[#051c45] tracking-tight">৳{{ number_format($monthlyRealizedRevenue, 2) }}</div>
+                <div class="text-2xl font-black text-[#063b96] tracking-tight">৳{{ number_format($monthlyRealizedRevenue, 2) }}</div>
                 <div class="text-[11px] font-semibold text-gray-500 mt-1">Current Billing Cycle</div>
             </div>
         </div>
@@ -130,7 +130,7 @@
         <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                    <i class="fas fa-wallet text-[#051c45]"></i>
+                    <i class="fas fa-wallet text-[#063b96]"></i>
                     <span>Channel Realization</span>
                 </h3>
                 <span class="text-xs text-gray-400 font-semibold">{{ $paymentMethodStats->count() }} Gateways</span>
@@ -147,7 +147,7 @@
                             <span class="text-emerald-700 font-mono">৳{{ number_format($mStat->realized_amount, 2) }} ({{ $percentage }}%)</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
-                            <div class="bg-[#051c45] h-1.5 rounded-full" style="width: {{ $percentage }}%"></div>
+                            <div class="bg-[#063b96] h-1.5 rounded-full" style="width: {{ $percentage }}%"></div>
                         </div>
                         <div class="text-[10px] text-gray-400 mt-1.5 flex justify-between">
                             <span>Total Invocations: {{ $mStat->total_count }}</span>
@@ -164,7 +164,7 @@
         <div class="lg:col-span-7 bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                    <i class="fas fa-graduation-cap text-[#c30102]"></i>
+                    <i class="fas fa-graduation-cap text-[#c4040a]"></i>
                     <span>Program Tuition Yield</span>
                 </h3>
                 <span class="text-xs text-gray-400 font-semibold">Active Catalog</span>
@@ -218,7 +218,7 @@
 
             <form method="GET" action="{{ route('admin.accounting.index') }}" class="flex flex-wrap items-center gap-2.5">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by student, email, TrxID, invoice..." 
-                       class="text-xs px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#051c45] w-full sm:w-64">
+                       class="text-xs px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#063b96] w-full sm:w-64">
 
                 <select name="status" class="text-xs px-3 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none">
                     <option value="">All Statuses</option>
@@ -303,7 +303,7 @@
                                 <form action="{{ route('admin.payments.updateStatus', $tx) }}" method="POST" class="inline-flex items-center gap-1.5">
                                     @csrf
                                     <select name="status" onchange="this.form.submit()" 
-                                            class="text-[11px] font-semibold border-gray-300 rounded-lg py-1 pl-2 pr-6 shadow-sm focus:ring-[#051c45]">
+                                            class="text-[11px] font-semibold border-gray-300 rounded-lg py-1 pl-2 pr-6 shadow-sm focus:ring-[#063b96]">
                                         <option value="pending" {{ $tx->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="verified" {{ $tx->status === 'verified' ? 'selected' : '' }}>Verify</option>
                                         <option value="rejected" {{ $tx->status === 'rejected' ? 'selected' : '' }}>Reject</option>
@@ -407,28 +407,28 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Student Full Name *</label>
-                        <input type="text" name="student_name" required placeholder="e.g. Md. Tariqul Islam" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]">
+                        <input type="text" name="student_name" required placeholder="e.g. Md. Tariqul Islam" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Student Email *</label>
-                        <input type="email" name="student_email" required placeholder="tariqul@gmail.com" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]">
+                        <input type="email" name="student_email" required placeholder="tariqul@gmail.com" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Phone / WhatsApp</label>
-                        <input type="tel" name="student_phone" placeholder="017xxxxxxxx" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]">
+                        <input type="tel" name="student_phone" placeholder="017xxxxxxxx" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Tuition Fee Paid (৳) *</label>
-                        <input type="number" step="0.01" name="amount" required placeholder="e.g. 5000" class="w-full text-xs font-mono font-bold rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]">
+                        <input type="number" step="0.01" name="amount" required placeholder="e.g. 5000" class="w-full text-xs font-mono font-bold rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Enrolled Program *</label>
-                    <select name="course_id" required class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]">
+                    <select name="course_id" required class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]">
                         <option value="">Select Course</option>
                         @foreach($allCourses as $c)
                             <option value="{{ $c->id }}">{{ $c->title }} ({{ $c->formatted_price }})</option>
@@ -439,7 +439,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Payment Channel *</label>
-                        <select name="payment_type" required class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]">
+                        <select name="payment_type" required class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]">
                             <option value="campus_cash">Mirpur Campus Cash</option>
                             <option value="bank_transfer">Corporate Bank Transfer</option>
                             <option value="bkash_merchant">bKash Merchant Direct</option>
@@ -448,20 +448,20 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Receipt / Trx Reference</label>
-                        <input type="text" name="transaction_id" placeholder="e.g. CASH-1049 or Bank Slip" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]">
+                        <input type="text" name="transaction_id" placeholder="e.g. CASH-1049 or Bank Slip" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Accounting Notes</label>
-                    <textarea name="notes" rows="2" placeholder="e.g. Collected at campus reception, printed invoice given to student." class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"></textarea>
+                    <textarea name="notes" rows="2" placeholder="e.g. Collected at campus reception, printed invoice given to student." class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]"></textarea>
                 </div>
 
                 <div class="pt-3 border-t border-gray-100 flex items-center justify-end gap-2.5">
                     <button type="button" @click="tuitionModalOpen = false" class="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold">
                         Cancel
                     </button>
-                    <button type="submit" class="px-5 py-2.5 bg-[#051c45] hover:bg-[#072559] text-white text-xs font-bold rounded-xl shadow-md">
+                    <button type="submit" class="px-5 py-2.5 bg-[#063b96] hover:bg-[#072559] text-white text-xs font-bold rounded-xl shadow-md">
                         Record & Auto-Enroll Student
                     </button>
                 </div>
@@ -576,7 +576,7 @@
                         name="accounting_institution_name"
                         value="{{ $templateSettings['accounting_institution_name'] ?? '' }}"
                         placeholder="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}"
-                        class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                        class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]"
                     >
                 </div>
 
@@ -588,7 +588,7 @@
                             name="accounting_invoice_prefix"
                             value="{{ $templateSettings['accounting_invoice_prefix'] ?? 'INV' }}"
                             placeholder="INV"
-                            class="w-full text-xs font-mono uppercase rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                            class="w-full text-xs font-mono uppercase rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]"
                         >
                     </div>
                     <div>
@@ -598,7 +598,7 @@
                             name="accounting_fiscal_year"
                             value="{{ $templateSettings['accounting_fiscal_year'] ?? 'FY 2026-27' }}"
                             placeholder="FY 2026-27"
-                            class="w-full text-xs font-mono rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                            class="w-full text-xs font-mono rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]"
                         >
                     </div>
                 </div>
@@ -610,7 +610,7 @@
                         name="accounting_ledger_subtitle"
                         value="{{ $templateSettings['accounting_ledger_subtitle'] ?? '' }}"
                         placeholder="Institutional Financial Ledger & Tuition Realization Audit"
-                        class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                        class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]"
                     >
                 </div>
 
@@ -622,7 +622,7 @@
                             name="accounting_signatory_title"
                             value="{{ $templateSettings['accounting_signatory_title'] ?? '' }}"
                             placeholder="Director of Finance"
-                            class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                            class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]"
                         >
                     </div>
                     <div>
@@ -632,7 +632,7 @@
                             name="accounting_footer_note"
                             value="{{ $templateSettings['accounting_footer_note'] ?? '' }}"
                             placeholder="Audit Document Verified & Sealed"
-                            class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]"
+                            class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]"
                         >
                     </div>
                 </div>
@@ -641,7 +641,7 @@
                     <button type="button" @click="templateModalOpen = false" class="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold">
                         Cancel
                     </button>
-                    <button type="submit" class="px-5 py-2.5 bg-[#051c45] hover:bg-[#072559] text-white text-xs font-bold rounded-xl shadow-md">
+                    <button type="submit" class="px-5 py-2.5 bg-[#063b96] hover:bg-[#072559] text-white text-xs font-bold rounded-xl shadow-md">
                         Save Template Options
                     </button>
                 </div>

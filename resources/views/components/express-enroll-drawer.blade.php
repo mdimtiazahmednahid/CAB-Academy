@@ -340,7 +340,7 @@
         style="display: none;"
     >
         <!-- 1. Clean Minimalist Drawer Header -->
-        <div class="px-5 py-4 bg-gradient-to-r from-[#031029] via-[#051c45] to-[#0b2d6b] text-white relative shrink-0 border-b border-white/10">
+        <div class="px-5 py-4 bg-gradient-to-r from-[#031029] via-[#063b96] to-[#0b2d6b] text-white relative shrink-0 border-b border-white/10">
             <button 
                 @click="close()" 
                 class="absolute top-3.5 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white flex items-center justify-center transition-all cursor-pointer"
@@ -351,7 +351,7 @@
 
             <div class="pr-10 space-y-1">
                 <template x-if="courseBatch">
-                    <span class="inline-block px-2 py-0.5 rounded-full bg-[#c30102] text-white text-[10px] font-bold tracking-wider uppercase">
+                    <span class="inline-block px-2 py-0.5 rounded-full bg-[#c4040a] text-white text-[10px] font-bold tracking-wider uppercase">
                         <span x-text="courseBatch"></span>
                     </span>
                 </template>
@@ -364,7 +364,7 @@
             
             <!-- Error Alert -->
             <div x-show="errorMessage" class="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 font-semibold flex items-center gap-2.5 shadow-xs" style="display: none;">
-                <i class="fas fa-exclamation-circle text-[#c30102] text-sm shrink-0"></i>
+                <i class="fas fa-exclamation-circle text-[#c4040a] text-sm shrink-0"></i>
                 <span x-text="errorMessage"></span>
             </div>
 
@@ -389,7 +389,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Attendance Mode:</span>
-                        <span class="font-bold text-[#051c45]" x-text="trainingMode === 'in_person' ? 'Executive Campus (In-Person)' : 'Live Online (Zoom)'"></span>
+                        <span class="font-bold text-[#063b96]" x-text="trainingMode === 'in_person' ? 'Executive Campus (In-Person)' : 'Live Online (Zoom)'"></span>
                     </div>
                     <template x-for="(val, key) in customFields" :key="key">
                         <template x-if="val && val.toString().trim()">
@@ -402,27 +402,27 @@
                     <template x-if="successData.transaction_id">
                         <div class="flex justify-between border-t border-gray-200 pt-2">
                             <span class="text-gray-500">Reference TrxID:</span>
-                            <span class="font-mono font-bold text-[#c30102]" x-text="successData.transaction_id"></span>
+                            <span class="font-mono font-bold text-[#c4040a]" x-text="successData.transaction_id"></span>
                         </div>
                     </template>
                 </div>
 
                 <!-- Student Portal Login Credentials Card -->
-                <div class="p-4 bg-[#051c45]/5 rounded-2xl border border-[#051c45]/15 text-xs text-left space-y-2 max-w-sm mx-auto">
-                    <div class="flex items-center gap-1.5 font-black text-[#051c45] uppercase tracking-wider text-[11px]">
-                        <i class="fas fa-key text-[#c30102]"></i>
+                <div class="p-4 bg-[#063b96]/5 rounded-2xl border border-[#063b96]/15 text-xs text-left space-y-2 max-w-sm mx-auto">
+                    <div class="flex items-center gap-1.5 font-black text-[#063b96] uppercase tracking-wider text-[11px]">
+                        <i class="fas fa-key text-[#c4040a]"></i>
                         <span>Your Student Portal Login Credentials</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Login ID (Mobile / Email):</span>
-                        <span class="font-mono font-bold text-[#051c45]" x-text="successData.login_id || phone"></span>
+                        <span class="font-mono font-bold text-[#063b96]" x-text="successData.login_id || phone"></span>
                     </div>
                     <div class="flex justify-between" x-show="!isLoggedIn && password">
                         <span class="text-gray-600">Password / PIN:</span>
                         <span class="font-mono font-bold text-[#10b981]" x-text="password"></span>
                     </div>
-                    <p class="text-[10px] text-gray-500 leading-snug pt-1 border-t border-[#051c45]/10">
-                        Use your mobile number (or email) and this password/PIN at <span class="font-semibold text-[#051c45]">/login</span> anytime to access your classroom &amp; certificates.
+                    <p class="text-[10px] text-gray-500 leading-snug pt-1 border-t border-[#063b96]/10">
+                        Use your mobile number (or email) and this password/PIN at <span class="font-semibold text-[#063b96]">/login</span> anytime to access your classroom &amp; certificates.
                     </p>
                 </div>
 
@@ -448,7 +448,7 @@
                     <i class="fas fa-user-check"></i>
                 </div>
                 <div>
-                    <h4 class="text-lg font-black text-[#051c45]">Already Enrolled</h4>
+                    <h4 class="text-lg font-black text-[#063b96]">Already Enrolled</h4>
                     <p class="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed mt-1">
                         Your account is already enrolled in this course. No additional registration or payment is required.
                     </p>
@@ -487,8 +487,8 @@
                 <!-- Step 1 Card: Student Information -->
                 <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_2px_12px_rgba(5,28,69,0.04)] space-y-3.5">
                     <div class="pb-2 border-b border-slate-100">
-                        <label class="text-xs font-extrabold uppercase tracking-wider text-[#051c45] flex items-center gap-2">
-                            <span class="w-5 h-5 rounded-full bg-[#051c45] text-white text-[10px] font-black flex items-center justify-center">1</span>
+                        <label class="text-xs font-extrabold uppercase tracking-wider text-[#063b96] flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-[#063b96] text-white text-[10px] font-black flex items-center justify-center">1</span>
                             <span x-text="isLoggedIn ? 'Student Account' : 'Student Information'"></span>
                         </label>
                     </div>
@@ -497,16 +497,16 @@
                     <template x-if="isLoggedIn">
                         <div class="space-y-3">
                             <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-lg bg-[#051c45] text-white font-bold text-xs flex items-center justify-center shrink-0">
+                                <div class="w-9 h-9 rounded-lg bg-[#063b96] text-white font-bold text-xs flex items-center justify-center shrink-0">
                                     <span x-text="name ? name.charAt(0).toUpperCase() : 'S'"></span>
                                 </div>
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-xs font-bold text-[#051c45] truncate" x-text="name"></p>
+                                    <p class="text-xs font-bold text-[#063b96] truncate" x-text="name"></p>
                                     <p class="text-[11px] text-slate-500 truncate" x-text="email"></p>
                                     <template x-if="phone && !editingSavedPhone">
                                         <p class="text-[11px] font-mono font-bold text-slate-700 mt-0.5 flex items-center gap-2">
                                             <span x-text="phone"></span>
-                                            <button type="button" @click="editingSavedPhone = true" class="text-[10px] font-sans font-bold text-[#c30102] hover:underline cursor-pointer">Edit</button>
+                                            <button type="button" @click="editingSavedPhone = true" class="text-[10px] font-sans font-bold text-[#c4040a] hover:underline cursor-pointer">Edit</button>
                                         </p>
                                     </template>
                                 </div>
@@ -516,7 +516,7 @@
                             <template x-if="!phone || editingSavedPhone">
                                 <div>
                                     <div class="flex items-center justify-between mb-1">
-                                        <label class="block text-xs font-bold text-slate-700">Mobile Number (11 Digits) <span class="text-[#c30102]">*</span></label>
+                                        <label class="block text-xs font-bold text-slate-700">Mobile Number (11 Digits) <span class="text-[#c4040a]">*</span></label>
                                         <template x-if="hasSavedPhone">
                                             <button type="button" @click="editingSavedPhone = false" class="text-[10px] font-bold text-slate-500 hover:text-slate-800 cursor-pointer">Done</button>
                                         </template>
@@ -530,7 +530,7 @@
                                             x-model="phone"
                                             @input="if (!senderNumber || senderNumber.length < 11) senderNumber = phone"
                                             placeholder="017xxxxxxxx" 
-                                            class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
+                                            class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:bg-white focus:outline-none transition-all"
                                             required
                                         >
                                     </div>
@@ -544,7 +544,7 @@
                         <div class="space-y-3.5">
                             <!-- Full Name -->
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1"><span x-text="fieldLabel('name', 'Full Name')">Full Name</span> <span class="text-[#c30102]">*</span></label>
+                                <label class="block text-xs font-bold text-slate-700 mb-1"><span x-text="fieldLabel('name', 'Full Name')">Full Name</span> <span class="text-[#c4040a]">*</span></label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
                                         <i class="far fa-user text-xs"></i>
@@ -554,7 +554,7 @@
                                         x-model="name"
                                         :placeholder="fieldPlaceholder('name', 'e.g. Tanvir Ahmed')"
                                         placeholder="e.g. Tanvir Ahmed" 
-                                        class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
+                                        class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:bg-white focus:outline-none transition-all"
                                         required
                                     >
                                 </div>
@@ -563,7 +563,7 @@
                             <!-- Mobile & Email Grid -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div :class="isEmailEnabled ? '' : 'sm:col-span-2'">
-                                    <label class="block text-xs font-bold text-slate-700 mb-1"><span x-text="fieldLabel('phone', 'Mobile (11 Digits)')">Mobile (11 Digits)</span> <span class="text-[#c30102]">*</span></label>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1"><span x-text="fieldLabel('phone', 'Mobile (11 Digits)')">Mobile (11 Digits)</span> <span class="text-[#c4040a]">*</span></label>
                                     <div class="relative">
                                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
                                             <i class="fas fa-mobile-alt text-xs"></i>
@@ -574,7 +574,7 @@
                                             @input="if (!senderNumber || senderNumber.length < 11) senderNumber = phone"
                                             :placeholder="fieldPlaceholder('phone', '017xxxxxxxx')"
                                             placeholder="017xxxxxxxx" 
-                                            class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
+                                            class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:bg-white focus:outline-none transition-all"
                                             required
                                         >
                                     </div>
@@ -583,7 +583,7 @@
                                     <div>
                                         <label class="block text-xs font-bold text-slate-700 mb-1">
                                             <span x-text="fieldLabel('email', 'Email Address')">Email Address</span>
-                                            <span x-show="isEmailRequired" class="text-[#c30102] font-bold">*</span>
+                                            <span x-show="isEmailRequired" class="text-[#c4040a] font-bold">*</span>
                                             <span x-show="!isEmailRequired" class="text-slate-400 font-normal text-[10px]">(Optional)</span>
                                         </label>
                                         <div class="relative">
@@ -595,7 +595,7 @@
                                                 x-model="email"
                                                 :placeholder="fieldPlaceholder('email', 'name@company.com')"
                                                 placeholder="name@company.com" 
-                                                class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
+                                                class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:bg-white focus:outline-none transition-all"
                                                 :required="isEmailRequired"
                                             >
                                         </div>
@@ -604,14 +604,14 @@
                             </div>
 
                             <!-- Set Login Password / PIN (At least 4 Digits/Chars) for Returning Login -->
-                            <div class="p-3.5 bg-gradient-to-br from-[#051c45]/[0.03] to-[#051c45]/[0.07] border border-[#051c45]/15 rounded-xl space-y-2">
+                            <div class="p-3.5 bg-gradient-to-br from-[#063b96]/[0.03] to-[#063b96]/[0.07] border border-[#063b96]/15 rounded-xl space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <label class="text-xs font-extrabold text-[#051c45] flex items-center gap-1.5">
-                                        <i class="fas fa-lock text-[#c30102] text-[11px]"></i>
+                                    <label class="text-xs font-extrabold text-[#063b96] flex items-center gap-1.5">
+                                        <i class="fas fa-lock text-[#c4040a] text-[11px]"></i>
                                         <span>Set Login Password / PIN (Min 4 Digits)</span>
-                                        <span class="text-[#c30102] font-bold">*</span>
+                                        <span class="text-[#c4040a] font-bold">*</span>
                                     </label>
-                                    <button type="button" @click="showPassword = !showPassword" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-[#051c45] hover:bg-slate-50 transition-colors cursor-pointer">
+                                    <button type="button" @click="showPassword = !showPassword" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-[#063b96] hover:bg-slate-50 transition-colors cursor-pointer">
                                         <span x-text="showPassword ? 'Hide' : 'Show'"></span>
                                     </button>
                                 </div>
@@ -624,12 +624,12 @@
                                         x-model="password"
                                         minlength="4"
                                         placeholder="Enter at least 4 digits or characters (e.g. 1234)" 
-                                        class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-3.5 py-2 text-xs text-[#0f131f] font-mono focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:outline-none transition-all"
+                                        class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-3.5 py-2 text-xs text-[#0f131f] font-mono focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:outline-none transition-all"
                                         required
                                     >
                                 </div>
                                 <p class="text-[10px] text-slate-600 leading-snug flex items-center gap-1.5">
-                                    <i class="fas fa-info-circle text-[#051c45] text-[10px] shrink-0"></i>
+                                    <i class="fas fa-info-circle text-[#063b96] text-[10px] shrink-0"></i>
                                     <span>Use your <strong>11-digit mobile number (or email)</strong> + this PIN to log in anytime from any device.</span>
                                 </p>
                             </div>
@@ -641,7 +641,7 @@
                         <div class="pt-0.5">
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">
                                 <span x-text="field.label || field.name"></span>
-                                <span x-show="field.is_required" class="text-[#c30102] font-bold">*</span>
+                                <span x-show="field.is_required" class="text-[#c4040a] font-bold">*</span>
                                 <span x-show="!field.is_required" class="text-slate-400 font-normal text-[10px]">(Optional)</span>
                             </label>
 
@@ -651,7 +651,7 @@
                                     x-model="customFields[field.name]"
                                     :placeholder="field.placeholder || ''"
                                     rows="2"
-                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
+                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-[#0f131f] focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:bg-white focus:outline-none transition-all"
                                 ></textarea>
                             </template>
 
@@ -659,7 +659,7 @@
                             <template x-if="field.type === 'select'">
                                 <select
                                     x-model="customFields[field.name]"
-                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
+                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:bg-white focus:outline-none transition-all"
                                 >
                                     <option value="" x-text="field.placeholder || ('Select ' + (field.label || field.name))"></option>
                                     <template x-for="opt in fieldOptions(field)" :key="opt">
@@ -677,7 +677,7 @@
                                             @click="customFields[field.name] = opt"
                                             class="px-3 py-2 rounded-xl border text-left text-[11px] font-bold transition-all flex items-center justify-between gap-1.5 cursor-pointer"
                                             :class="customFields[field.name] === opt
-                                                ? 'border-[#051c45] bg-[#051c45] text-white shadow-xs'
+                                                ? 'border-[#063b96] bg-[#063b96] text-white shadow-xs'
                                                 : 'border-slate-200 bg-[#f8fafc] hover:bg-white hover:border-slate-300 text-slate-700'"
                                         >
                                             <span class="truncate" x-text="opt"></span>
@@ -690,7 +690,7 @@
                             <!-- Checkbox Toggle -->
                             <template x-if="field.type === 'checkbox'">
                                 <label class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 bg-[#f8fafc] hover:bg-white cursor-pointer transition-all">
-                                    <input type="checkbox" x-model="customFields[field.name]" true-value="Yes" false-value="" class="rounded border-slate-300 text-[#051c45] focus:ring-[#051c45]">
+                                    <input type="checkbox" x-model="customFields[field.name]" true-value="Yes" false-value="" class="rounded border-slate-300 text-[#063b96] focus:ring-[#063b96]">
                                     <span class="text-xs font-medium text-slate-700" x-text="field.placeholder || field.label"></span>
                                 </label>
                             </template>
@@ -701,7 +701,7 @@
                                     :type="field.type || 'text'" 
                                     x-model="customFields[field.name]"
                                     :placeholder="field.placeholder || ''"
-                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white focus:outline-none transition-all"
+                                    class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-medium text-[#0f131f] focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:bg-white focus:outline-none transition-all"
                                 >
                             </template>
                         </div>
@@ -717,7 +717,7 @@
                                 @click="selectTrainingMode('online_zoom')"
                                 class="text-left p-3 rounded-xl border transition-all flex items-center gap-2.5 cursor-pointer"
                                 :class="trainingMode === 'online_zoom'
-                                    ? 'border-[#051c45] bg-[#051c45]/[0.05] text-[#051c45]'
+                                    ? 'border-[#063b96] bg-[#063b96]/[0.05] text-[#063b96]'
                                     : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'"
                             >
                                 <i class="fas fa-video text-xs"></i>
@@ -729,7 +729,7 @@
                                 @click="selectTrainingMode('in_person')"
                                 class="text-left p-3 rounded-xl border transition-all flex items-center gap-2.5 cursor-pointer"
                                 :class="trainingMode === 'in_person'
-                                    ? 'border-[#051c45] bg-[#051c45]/[0.05] text-[#051c45]'
+                                    ? 'border-[#063b96] bg-[#063b96]/[0.05] text-[#063b96]'
                                     : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'"
                             >
                                 <i class="fas fa-building text-xs"></i>
@@ -743,8 +743,8 @@
                 <template x-if="courseRawPrice > 0">
                     <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_2px_12px_rgba(5,28,69,0.04)] space-y-3.5">
                         <div class="pb-2 border-b border-slate-100">
-                            <label class="text-xs font-extrabold uppercase tracking-wider text-[#051c45] flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full bg-[#051c45] text-white text-[10px] font-black flex items-center justify-center">2</span>
+                            <label class="text-xs font-extrabold uppercase tracking-wider text-[#063b96] flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full bg-[#063b96] text-white text-[10px] font-black flex items-center justify-center">2</span>
                                 <span>Payment</span>
                             </label>
                         </div>
@@ -769,11 +769,11 @@
                                 <div class="bg-white rounded-xl border border-pink-100 divide-y divide-pink-100/70">
                                     <div class="px-3 py-2 flex items-center justify-between gap-2 text-xs">
                                         <span class="text-slate-500 font-medium whitespace-nowrap">bKash / Nagad Number</span>
-                                        <strong class="font-mono font-extrabold text-[#051c45] text-sm whitespace-nowrap">{{ $drawerMerchantAccount }}</strong>
+                                        <strong class="font-mono font-extrabold text-[#063b96] text-sm whitespace-nowrap">{{ $drawerMerchantAccount }}</strong>
                                     </div>
                                     <div class="px-3 py-2 flex items-center justify-between gap-2 text-xs">
                                         <span class="text-slate-500 font-medium whitespace-nowrap">Amount to Send</span>
-                                        <strong class="font-black text-[#c30102] text-sm whitespace-nowrap" x-text="'৳' + coursePrice"></strong>
+                                        <strong class="font-black text-[#c4040a] text-sm whitespace-nowrap" x-text="'৳' + coursePrice"></strong>
                                     </div>
                                 </div>
                             </div>
@@ -781,22 +781,22 @@
                             <!-- TrxID and Sender Input (Required for all paid courses) -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <div>
-                                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Sender Mobile Number <span class="text-[#c30102]">*</span></label>
+                                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Sender Mobile Number <span class="text-[#c4040a]">*</span></label>
                                     <input 
                                         type="tel" 
                                         x-model="senderNumber"
                                         placeholder="017xxxxxxxx" 
-                                        class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white"
+                                        class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:bg-white"
                                         required
                                     >
                                 </div>
                                 <div>
-                                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Transaction ID (TrxID) <span class="text-[#c30102]">*</span></label>
+                                    <label class="block text-[11px] font-bold text-slate-700 mb-1">Transaction ID (TrxID) <span class="text-[#c4040a]">*</span></label>
                                     <input 
                                         type="text" 
                                         x-model="transactionId"
                                         placeholder="e.g. 9J283KA9Q" 
-                                        class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-[#0f131f] font-mono uppercase focus:outline-none focus:ring-2 focus:ring-[#051c45]/20 focus:border-[#051c45] focus:bg-white"
+                                        class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-[#0f131f] font-mono uppercase focus:outline-none focus:ring-2 focus:ring-[#063b96]/20 focus:border-[#063b96] focus:bg-white"
                                         required
                                     >
                                 </div>
@@ -815,7 +815,7 @@
                 type="button" 
                 @click="submitEnrollment()" 
                 :disabled="isSubmitting"
-                class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_8px_24px_rgba(195,1,2,0.3)] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer active:scale-[0.99]"
+                class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#c4040a] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_8px_24px_rgba(195,1,2,0.3)] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer active:scale-[0.99]"
             >
                 <template x-if="isSubmitting">
                     <i class="fas fa-spinner fa-spin text-base"></i>

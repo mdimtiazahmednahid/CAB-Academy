@@ -13,7 +13,7 @@
 <div class="mb-6 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-2xs space-y-3.5">
     <!-- Top Row: Back Button + Full-Width Course Title & Quick Edit -->
     <div class="flex items-start gap-3">
-        <a href="{{ route('admin.courses') }}" class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-[#051c45] hover:border-[#051c45] flex items-center justify-center transition-colors shrink-0 mt-0.5">
+        <a href="{{ route('admin.courses') }}" class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-[#063b96] hover:border-[#063b96] flex items-center justify-center transition-colors shrink-0 mt-0.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         </a>
         <div class="flex-1 min-w-0">
@@ -21,13 +21,13 @@
             <div x-show="!editingTitle" class="flex items-center gap-2.5 flex-wrap">
                 <h1 @click="editingTitle = true; $nextTick(() => $refs.inlineTitleInput.focus())"
                     title="Click to edit title only"
-                    class="text-lg sm:text-xl lg:text-2xl font-black text-[#051c45] tracking-tight cursor-pointer hover:text-[#c30102] transition-colors leading-snug">
+                    class="text-lg sm:text-xl lg:text-2xl font-black text-[#063b96] tracking-tight cursor-pointer hover:text-[#c4040a] transition-colors leading-snug">
                     {{ $course->title }}
                 </h1>
                 <button type="button"
                         @click="editingTitle = true; $nextTick(() => $refs.inlineTitleInput.focus())"
                         title="Quick-edit course title only"
-                        class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#051c45] text-slate-600 hover:text-white text-[11px] font-bold transition-all inline-flex items-center gap-1 shrink-0 cursor-pointer">
+                        class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#063b96] text-slate-600 hover:text-white text-[11px] font-bold transition-all inline-flex items-center gap-1 shrink-0 cursor-pointer">
                     <i class="fas fa-pen text-[9px]"></i>
                     <span>Edit Title</span>
                 </button>
@@ -39,7 +39,7 @@
                 <input type="hidden" name="_section_label" value="Course Title">
                 <input x-ref="inlineTitleInput" type="text" name="title" x-model="titleDraft" required
                        @keydown.escape.window="editingTitle = false; titleDraft = @js($course->title)"
-                       class="flex-1 rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm font-bold text-[#051c45] py-1.5 px-3">
+                       class="flex-1 rounded-xl border-slate-300 focus:border-[#063b96] focus:ring-[#063b96] text-sm font-bold text-[#063b96] py-1.5 px-3">
                 <button type="submit" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-xs shrink-0">
                     Save Title
                 </button>
@@ -104,25 +104,25 @@
 
         <div class="flex flex-wrap items-center gap-2">
             <a href="{{ route('courses.show', $course) }}" target="_blank" class="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5">
-                <i class="fas fa-arrow-up-right-from-square text-[10px] text-[#c30102]"></i>
+                <i class="fas fa-arrow-up-right-from-square text-[10px] text-[#c4040a]"></i>
                 <span>Public Page</span>
             </a>
             <a href="{{ route('courses.classroom', $course) }}" target="_blank" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5">
                 <i class="fas fa-laptop-code text-[10px] text-emerald-600"></i>
                 <span>Student Classroom</span>
             </a>
-            <button type="button" @click="wsTab = 'settings'; $nextTick(() => document.getElementById('modularCourseSettings')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))" class="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer">
+            <button type="button" @click="wsTab = 'settings'; $nextTick(() => document.getElementById('modularCourseSettings')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))" class="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-[#063b96] border border-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer">
                 <i class="fas fa-sliders text-emerald-600"></i>
                 <span>Modular Settings</span>
             </button>
-            <button type="button" onclick="openQuickLiveClassModal()" class="px-3 py-1.5 bg-[#c30102] hover:bg-[#a50102] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs inline-flex items-center gap-1.5 cursor-pointer">
+            <button type="button" onclick="openQuickLiveClassModal()" class="px-3 py-1.5 bg-[#c4040a] hover:bg-[#a50102] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs inline-flex items-center gap-1.5 cursor-pointer">
                 <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
                 <span>+ Live Class</span>
             </button>
-            <button onclick="document.getElementById('quizModal').classList.remove('hidden')" class="px-3 py-1.5 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+            <button onclick="document.getElementById('quizModal').classList.remove('hidden')" class="px-3 py-1.5 bg-[#063b96] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs cursor-pointer">
                 + Add Quiz
             </button>
-            <button onclick="document.getElementById('sectionModal').classList.remove('hidden')" class="px-3 py-1.5 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+            <button onclick="document.getElementById('sectionModal').classList.remove('hidden')" class="px-3 py-1.5 bg-[#063b96] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs cursor-pointer">
                 + Add Module
             </button>
         </div>
@@ -145,7 +145,7 @@
                 <i class="fas fa-pen text-[9px]"></i> Edit Fee
             </button>
         </div>
-        <div x-show="!editingPrice" class="text-xl font-black text-[#051c45] mt-1">৳{{ number_format($realizedCourseRevenue, 0) }}</div>
+        <div x-show="!editingPrice" class="text-xl font-black text-[#063b96] mt-1">৳{{ number_format($realizedCourseRevenue, 0) }}</div>
         <div x-show="!editingPrice" class="text-[11px] text-slate-500 mt-0.5">
             Fee: <strong class="text-slate-700">{{ $course->formatted_price }}</strong>
             @if($pendingCoursePayments > 0) &bull; <span class="text-amber-600 font-bold">{{ $pendingCoursePayments }} Pending</span> @endif
@@ -160,41 +160,41 @@
     </div>
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
         <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Enrolled Students</div>
-        <div class="text-xl font-black text-[#051c45] mt-1">{{ $course->students->count() }}</div>
+        <div class="text-xl font-black text-[#063b96] mt-1">{{ $course->students->count() }}</div>
         <div class="text-[11px] text-emerald-600 font-semibold mt-0.5">{{ $course->certificates->count() }} Certificates Issued</div>
     </div>
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
         <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Curriculum Outline</div>
-        <div class="text-xl font-black text-[#051c45] mt-1">{{ $course->sections->count() }} Sections</div>
+        <div class="text-xl font-black text-[#063b96] mt-1">{{ $course->sections->count() }} Sections</div>
         <div class="text-[11px] text-slate-500 mt-0.5">{{ $totalLessonsCount }} Video & Text Lessons</div>
     </div>
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
         <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Assessments & Files</div>
-        <div class="text-xl font-black text-[#051c45] mt-1">{{ $course->quizzes->count() }} Quizzes</div>
+        <div class="text-xl font-black text-[#063b96] mt-1">{{ $course->quizzes->count() }} Quizzes</div>
         <div class="text-[11px] text-slate-500 mt-0.5">{{ $course->materials->count() }} Downloadable Resources</div>
     </div>
 </div>
 
 <!-- Workspace Filter Tabs (10MS Studio Layout: Curriculum & Live Classes First) -->
 <div class="mb-6 bg-white p-2 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-1.5 overflow-x-auto">
-    <button type="button" @click="wsTab = 'curriculum'" :class="wsTab === 'curriculum' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
+    <button type="button" @click="wsTab = 'curriculum'" :class="wsTab === 'curriculum' ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
         <i class="fas fa-layer-group text-amber-400"></i>
         <span>Curriculum &amp; Live Classes ({{ $course->sections->count() }})</span>
     </button>
-    <button type="button" @click="wsTab = 'settings'" :class="wsTab === 'settings' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
+    <button type="button" @click="wsTab = 'settings'" :class="wsTab === 'settings' ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer">
         <i class="fas fa-sliders text-emerald-500"></i>
         <span>Course Settings &amp; Poster</span>
     </button>
-    <button type="button" @click="wsTab = 'form'; $dispatch('expand-form-studio')" :class="wsTab === 'form' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+    <button type="button" @click="wsTab = 'form'; $dispatch('expand-form-studio')" :class="wsTab === 'form' ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
         Registration Form Builder
     </button>
-    <button type="button" @click="wsTab = 'students'; showStudents = true" :class="wsTab === 'students' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+    <button type="button" @click="wsTab = 'students'; showStudents = true" :class="wsTab === 'students' ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
         Enrolled Students ({{ $course->students->count() }})
     </button>
-    <button type="button" @click="wsTab = 'payments'; showPayments = true" :class="wsTab === 'payments' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+    <button type="button" @click="wsTab = 'payments'; showPayments = true" :class="wsTab === 'payments' ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
         Payments ({{ $course->payments->count() }})
     </button>
-    <button type="button" @click="wsTab = 'all'" :class="wsTab === 'all' ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
+    <button type="button" @click="wsTab = 'all'" :class="wsTab === 'all' ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer">
         All Modules
     </button>
 </div>
@@ -227,7 +227,7 @@
                 <span>Faculty:</span>
                 <img src="{{ $course->instructor_avatar_url }}" alt="{{ $course->instructor_name }}" class="w-4 h-4 rounded-full object-cover border border-slate-300 inline-block" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($course->instructor_name) }}&background=051c45&color=fff';">
                 <span class="font-semibold text-slate-800">{{ $course->instructor_name }}</span>
-                <span>&bull; Fee: <span class="font-bold text-[#051c45]">{{ $course->formatted_price }}</span></span>
+                <span>&bull; Fee: <span class="font-bold text-[#063b96]">{{ $course->formatted_price }}</span></span>
                 <span>&bull; Format: <span class="font-semibold text-slate-700">{{ $course->venue ?: 'Online Live (Zoom)' }}</span></span>
             </p>
         </div>
@@ -251,8 +251,8 @@
                        reader.readAsDataURL(file);
                    }
                ">
-        <label for="quick_cover_file_input" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#051c45] border border-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-2xs">
-            <i class="fas fa-image text-[#051c45]"></i>
+        <label for="quick_cover_file_input" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#063b96] border border-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-2xs">
+            <i class="fas fa-image text-[#063b96]"></i>
             <span x-text="photoSelected ? 'Choose Different Picture' : 'Select New Picture'"></span>
         </label>
         <button x-show="photoSelected" x-cloak type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-extrabold transition-all inline-flex items-center gap-1.5 shadow-sm">
@@ -264,7 +264,7 @@
 
 <!-- Modular Course Settings Studio (3 Independent Non-Destructive Cards) -->
 <div id="modularCourseSettings" x-show="wsTab === 'settings'" x-cloak class="mb-8 space-y-5">
-    <div class="bg-gradient-to-r from-[#051c45] to-[#0a2540] text-white p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+    <div class="bg-gradient-to-r from-[#063b96] to-[#0a2540] text-white p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
         <div>
             <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-black uppercase tracking-wider">Modular Non-Destructive Settings</span>
             <h2 class="text-lg font-black mt-1">Independent Course Settings Cards</h2>
@@ -284,18 +284,18 @@
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                         <span class="text-[10px] font-black uppercase tracking-wider text-indigo-600">Module 1</span>
-                        <h3 class="text-sm font-black text-[#051c45]">Identity, Category & Faculty</h3>
+                        <h3 class="text-sm font-black text-[#063b96]">Identity, Category & Faculty</h3>
                     </div>
                     <i class="fas fa-id-card text-slate-300 text-lg"></i>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Course Title <span class="text-rose-500">*</span></label>
-                    <input type="text" name="title" value="{{ $course->title }}" required class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-bold text-[#051c45]">
+                    <input type="text" name="title" value="{{ $course->title }}" required class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs font-bold text-[#063b96]">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Category</label>
-                        <input list="category-options-modular" type="text" name="category" value="{{ $course->category }}" placeholder="e.g. Leadership" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                        <input list="category-options-modular" type="text" name="category" value="{{ $course->category }}" placeholder="e.g. Leadership" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">
                         <datalist id="category-options-modular">
                             @foreach(\App\Models\Category::active()->ordered()->get() as $cat)
                                 <option value="{{ $cat->name }}">Department: {{ $cat->name }}</option>
@@ -307,13 +307,13 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Level</label>
-                        <input type="text" name="level" value="{{ $course->level }}" placeholder="e.g. Executive / Certificate" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                        <input type="text" name="level" value="{{ $course->level }}" placeholder="e.g. Executive / Certificate" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">
                     </div>
                 </div>
                 @if(auth()->user()->isAdmin() && isset($instructors))
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Assigned Faculty / Instructor</label>
-                    <select name="instructor_id" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-semibold">
+                    <select name="instructor_id" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs font-semibold">
                         <option value="">-- No Instructor Assigned --</option>
                         @foreach($instructors as $instructor)
                             <option value="{{ $instructor->id }}" {{ $course->instructor_id == $instructor->id ? 'selected' : '' }}>
@@ -325,18 +325,18 @@
                 @endif
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Short Card Excerpt (1-2 sentences)</label>
-                    <input type="text" name="short_description" value="{{ $course->short_description }}" placeholder="Brief summary shown on catalog cards" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                    <input type="text" name="short_description" value="{{ $course->short_description }}" placeholder="Brief summary shown on catalog cards" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Full Overview / Description</label>
-                    <textarea name="description" rows="3" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">{{ $course->description }}</textarea>
+                    <textarea name="description" rows="3" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">{{ $course->description }}</textarea>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Target Audience / Who Should Attend</label>
-                    <textarea name="target_audience" rows="2" placeholder="e.g. Commercial Executives, Entrepreneurs..." class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">{{ $course->target_audience }}</textarea>
+                    <textarea name="target_audience" rows="2" placeholder="e.g. Commercial Executives, Entrepreneurs..." class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">{{ $course->target_audience }}</textarea>
                 </div>
             </div>
-            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-extrabold transition-all shadow-xs flex items-center justify-center gap-2">
+            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#063b96] hover:bg-[#0a2540] text-white text-xs font-extrabold transition-all shadow-xs flex items-center justify-center gap-2">
                 <i class="fas fa-check text-emerald-400"></i>
                 <span>Save Identity & Faculty Only</span>
             </button>
@@ -351,7 +351,7 @@
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                         <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Module 2</span>
-                        <h3 class="text-sm font-black text-[#051c45]">Tuition Fee, Schedule & Format</h3>
+                        <h3 class="text-sm font-black text-[#063b96]">Tuition Fee, Schedule & Format</h3>
                     </div>
                     <i class="fas fa-calendar-check text-slate-300 text-lg"></i>
                 </div>
@@ -361,20 +361,20 @@
                             <label class="block text-xs font-bold text-slate-700">Price (৳ BDT)</label>
                             <button type="button" @click="modPrice = 0" class="text-[10px] font-bold text-emerald-600 hover:underline">Set Free (৳0)</button>
                         </div>
-                        <input type="number" step="0.01" min="0" name="price" x-model="modPrice" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-black text-[#051c45]">
+                        <input type="number" step="0.01" min="0" name="price" x-model="modPrice" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs font-black text-[#063b96]">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Starting Date</label>
-                        <input type="date" name="start_date" value="{{ $course->start_date ? $course->start_date->format('Y-m-d') : '' }}" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                        <input type="date" name="start_date" value="{{ $course->start_date ? $course->start_date->format('Y-m-d') : '' }}" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Duration / Schedule</label>
-                    <input type="text" name="duration" value="{{ $course->duration }}" placeholder="e.g. 1.5 Hours / 8 Weeks" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                    <input type="text" name="duration" value="{{ $course->duration }}" placeholder="e.g. 1.5 Hours / 8 Weeks" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Attendance Format / Venue</label>
-                    <input type="text" name="venue" x-model="modVenue" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-semibold">
+                    <input type="text" name="venue" x-model="modVenue" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs font-semibold">
                     <div class="grid grid-cols-3 gap-1.5 mt-1.5">
                         <button type="button" @click="modVenue = 'Online Live (Zoom)'" class="px-2 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold transition-colors">Online Only</button>
                         <button type="button" @click="modVenue = 'Executive Campus'" class="px-2 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[10px] font-bold transition-colors">Campus Only</button>
@@ -384,12 +384,12 @@
                 <div class="grid grid-cols-2 gap-3 pt-1">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Batch Label</label>
-                        <input type="text" name="batch" value="{{ $course->batch }}" placeholder="e.g. 105th Batch" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+                        <input type="text" name="batch" value="{{ $course->batch }}" placeholder="e.g. 105th Batch" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">
                     </div>
                     <div class="flex items-end">
                         <input type="hidden" name="show_batch" value="0">
                         <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors w-full">
-                            <input type="checkbox" name="show_batch" value="1" {{ $course->show_batch ? 'checked' : '' }} class="rounded text-[#051c45] focus:ring-[#051c45]">
+                            <input type="checkbox" name="show_batch" value="1" {{ $course->show_batch ? 'checked' : '' }} class="rounded text-[#063b96] focus:ring-[#063b96]">
                             <span class="text-[11px] font-bold text-slate-700">Show Batch</span>
                         </label>
                     </div>
@@ -410,13 +410,13 @@
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                         <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600">Module 3</span>
-                        <h3 class="text-sm font-black text-[#051c45]">Counselor WhatsApp & Visibility</h3>
+                        <h3 class="text-sm font-black text-[#063b96]">Counselor WhatsApp & Visibility</h3>
                     </div>
                     <i class="fab fa-whatsapp text-emerald-500 text-lg"></i>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Per-Course Counselor Phone / WhatsApp</label>
-                    <input type="text" name="counselor_phone" value="{{ $course->counselor_phone }}" placeholder="Blank = Global ({{ \App\Models\Setting::getVal('contact_hotline', '01917-054664') }})" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs font-semibold">
+                    <input type="text" name="counselor_phone" value="{{ $course->counselor_phone }}" placeholder="Blank = Global ({{ \App\Models\Setting::getVal('contact_hotline', '01917-054664') }})" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs font-semibold">
                     <p class="text-[10px] text-slate-400 mt-1">Active on page: <strong class="text-slate-700">{{ $course->effective_counselor_phone }}</strong></p>
                 </div>
                 <div>
@@ -424,7 +424,7 @@
                         <label class="block text-xs font-bold text-slate-700">Custom WhatsApp Inquiry Message</label>
                         <button type="button" @click="waMsg = ''" class="text-[10px] font-bold text-slate-400 hover:text-rose-600">Reset Default</button>
                     </div>
-                    <textarea name="whatsapp_message" x-model="waMsg" rows="3" placeholder="Assalamu Alaikum! I would like to inquire/enroll in *{title}* (Fee: {price}). Please share batch details and enrollment procedure: {url}" class="w-full rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs"></textarea>
+                    <textarea name="whatsapp_message" x-model="waMsg" rows="3" placeholder="Assalamu Alaikum! I would like to inquire/enroll in *{title}* (Fee: {price}). Please share batch details and enrollment procedure: {url}" class="w-full rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs"></textarea>
                     <div class="flex flex-wrap gap-1 mt-1.5">
                         <span class="text-[10px] text-slate-400 mr-1">Insert tag:</span>
                         <button type="button" @click="waMsg = (waMsg || '') + ' *{title}*'" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-[10px] font-mono text-slate-700">{title}</button>
@@ -446,7 +446,7 @@
                     </label>
                 </div>
             </div>
-            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-extrabold transition-all shadow-xs flex items-center justify-center gap-2">
+            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-[#063b96] hover:bg-[#0a2540] text-white text-xs font-extrabold transition-all shadow-xs flex items-center justify-center gap-2">
                 <i class="fab fa-whatsapp text-emerald-400"></i>
                 <span>Save WhatsApp & Status Only</span>
             </button>
@@ -459,14 +459,14 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-4">
             <div>
                 <span class="text-[10px] font-black uppercase tracking-wider text-[#1877F2]">Module 4 • Social & Open Graph Studio</span>
-                <h3 class="text-sm font-black text-[#051c45]">Facebook Rich Link Preview & Auto-Generated Stylish Captions</h3>
+                <h3 class="text-sm font-black text-[#063b96]">Facebook Rich Link Preview & Auto-Generated Stylish Captions</h3>
                 <p class="text-xs text-slate-500">Automatically formatted in Unicode Bold Serif (<span class="font-serif">{{ $course->stylish_post_header }}</span>) with dynamic start date.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <button type="button"
                         @click="navigator.clipboard.writeText({{ Js::from($course->stylish_post_header) }}); copiedKey = 'header'; setTimeout(() => copiedKey = '', 2000)"
-                        class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] text-xs font-bold transition-all inline-flex items-center gap-1.5">
-                    <i class="fas fa-font text-[#c30102]"></i>
+                        class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#063b96] text-xs font-bold transition-all inline-flex items-center gap-1.5">
+                    <i class="fas fa-font text-[#c4040a]"></i>
                     <span x-text="copiedKey === 'header' ? 'Copied Headline!' : 'Copy Bold Headline'"></span>
                 </button>
                 <button type="button"
@@ -496,7 +496,7 @@
                 </div>
                 <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <div class="text-[11px] text-slate-600 leading-snug">
-                        <strong class="text-[#051c45] block">Updated Course Photo or Start Date?</strong>
+                        <strong class="text-[#063b96] block">Updated Course Photo or Start Date?</strong>
                         Click Refresh on Facebook Sharing Debugger to clear Facebook's cached preview.
                     </div>
                     <a href="{{ $course->facebook_debugger_url }}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-white hover:bg-slate-100 text-[#1877F2] border border-slate-200 text-xs font-extrabold whitespace-nowrap inline-flex items-center gap-1.5 shadow-2xs shrink-0">
@@ -527,7 +527,7 @@
      class="mb-8 bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden">
      
     <!-- Studio Header (Click to Expand / Collapse) -->
-    <div @click="isCollapsed = !isCollapsed" class="p-5 sm:p-6 bg-gradient-to-r from-[#020b18] via-[#051c45] to-[#0a2540] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative overflow-hidden cursor-pointer select-none">
+    <div @click="isCollapsed = !isCollapsed" class="p-5 sm:p-6 bg-gradient-to-r from-[#01143d] via-[#063b96] to-[#0a2540] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative overflow-hidden cursor-pointer select-none">
         <div class="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-indigo-500/15 blur-3xl"></div>
         <div class="relative z-10">
             <div class="flex items-center gap-2 flex-wrap">
@@ -568,7 +568,7 @@
                 <span x-text="isCollapsed ? 'Expand Studio' : 'Compact View'"></span>
             </button>
 
-            <button type="button" @click="saveForm(false)" :disabled="isSaving" class="px-4 py-2.5 bg-gradient-to-r from-[#c30102] to-[#a50102] hover:from-[#a50102] hover:to-[#8b0001] disabled:opacity-50 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg flex items-center gap-1.5 cursor-pointer">
+            <button type="button" @click="saveForm(false)" :disabled="isSaving" class="px-4 py-2.5 bg-gradient-to-r from-[#c4040a] to-[#a50102] hover:from-[#a50102] hover:to-[#8b0001] disabled:opacity-50 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg flex items-center gap-1.5 cursor-pointer">
                 <i class="fas" :class="isSaving ? 'fa-spinner fa-spin' : 'fa-check-circle'"></i>
                 <span x-text="isSaving ? 'Saving...' : 'Save Form Setup'"></span>
             </button>
@@ -616,12 +616,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 <template x-for="(tpl, key) in templates" :key="key">
                     <div class="text-left p-3.5 rounded-2xl border transition-all relative group flex flex-col justify-between"
-                         :class="currentTemplateKey === key ? 'border-[#051c45] bg-[#051c45]/[0.04] shadow-sm ring-2 ring-[#051c45]/15' : 'border-slate-200/90 bg-white hover:border-indigo-300 hover:shadow-xs'">
+                         :class="currentTemplateKey === key ? 'border-[#063b96] bg-[#063b96]/[0.04] shadow-sm ring-2 ring-[#063b96]/15' : 'border-slate-200/90 bg-white hover:border-indigo-300 hover:shadow-xs'">
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-1.5">
                                 <div class="flex items-center gap-2 min-w-0">
                                     <span class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs"
-                                          :class="currentTemplateKey === key ? 'bg-[#051c45] text-white' : 'bg-slate-100 text-slate-700 group-hover:bg-indigo-50 group-hover:text-indigo-600'">
+                                          :class="currentTemplateKey === key ? 'bg-[#063b96] text-white' : 'bg-slate-100 text-slate-700 group-hover:bg-indigo-50 group-hover:text-indigo-600'">
                                         <i class="fas" :class="tpl.icon || 'fa-layer-group'"></i>
                                     </span>
                                     <span class="text-xs font-extrabold text-slate-900 truncate" x-text="tpl.name"></span>
@@ -643,7 +643,7 @@
                                 <span>Load Preset</span>
                                 <i class="fas fa-arrow-right text-[9px]"></i>
                             </button>
-                            <button type="button" @click="applyTemplate(key, true)" class="px-2.5 py-1 rounded-lg bg-[#051c45] hover:bg-[#0a2540] text-white font-bold text-[10px] transition-colors cursor-pointer flex items-center gap-1">
+                            <button type="button" @click="applyTemplate(key, true)" class="px-2.5 py-1 rounded-lg bg-[#063b96] hover:bg-[#0a2540] text-white font-bold text-[10px] transition-colors cursor-pointer flex items-center gap-1">
                                 <i class="fas fa-bolt text-amber-400 text-[9px]"></i>
                                 <span>1-Click Apply & Save</span>
                             </button>
@@ -689,7 +689,7 @@
             <div class="xl:col-span-7 space-y-4">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
-                        <i class="fas fa-list-check text-[#051c45]"></i>
+                        <i class="fas fa-list-check text-[#063b96]"></i>
                         <span>Configured Registration Questions (<span x-text="fields.length"></span>)</span>
                     </h3>
                     <span class="text-[11px] text-slate-400">Changes reflect immediately in the live preview &rarr;</span>
@@ -716,7 +716,7 @@
                                     </div>
                                     <div class="min-w-0">
                                         <div class="flex items-center gap-1.5">
-                                            <span class="font-mono text-[11px] font-bold text-[#051c45] truncate" x-text="field.name"></span>
+                                            <span class="font-mono text-[11px] font-bold text-[#063b96] truncate" x-text="field.name"></span>
                                             <template x-if="['name', 'phone'].includes(field.name)">
                                                 <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[9px] font-bold">Core</span>
                                             </template>
@@ -731,7 +731,7 @@
                                     <input type="text" 
                                            x-model="field.label" 
                                            placeholder="Label shown to student"
-                                           class="w-full rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white text-xs font-semibold text-slate-800 py-1.5 px-2.5 focus:border-[#051c45] focus:ring-[#051c45]/20">
+                                           class="w-full rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white text-xs font-semibold text-slate-800 py-1.5 px-2.5 focus:border-[#063b96] focus:ring-[#063b96]/20">
                                 </div>
 
                                 <!-- Field Input Type (3 Cols) -->
@@ -740,7 +740,7 @@
                                     <select x-model="field.type" 
                                             @change="onFieldTypeChange(field)"
                                             :disabled="['name', 'phone', 'email', 'training_mode'].includes(field.name)"
-                                            class="w-full rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white text-xs font-semibold text-slate-700 py-1.5 pl-2.5 pr-7 focus:border-[#051c45] focus:ring-[#051c45]/20 disabled:opacity-60">
+                                            class="w-full rounded-xl border-slate-200 bg-slate-50/70 focus:bg-white text-xs font-semibold text-slate-700 py-1.5 pl-2.5 pr-7 focus:border-[#063b96] focus:ring-[#063b96]/20 disabled:opacity-60">
                                         <option value="text">Short Text</option>
                                         <option value="select">Dropdown Select</option>
                                         <option value="radio">Choice Pills (1-Tap)</option>
@@ -798,7 +798,7 @@
                                         <input type="text"
                                                x-model="field.placeholder"
                                                placeholder="Helper text inside input (e.g. Square Group)"
-                                               class="w-full rounded-lg border-slate-200 bg-slate-50/60 focus:bg-white text-[11px] text-slate-600 py-1 px-2.5 focus:border-[#051c45] focus:ring-[#051c45]/15">
+                                               class="w-full rounded-lg border-slate-200 bg-slate-50/60 focus:bg-white text-[11px] text-slate-600 py-1 px-2.5 focus:border-[#063b96] focus:ring-[#063b96]/15">
                                     </div>
                                 </div>
 
@@ -825,7 +825,7 @@
                 <!-- Create Custom Question Builder Box -->
                 <div class="p-4 sm:p-5 bg-gradient-to-br from-slate-50 to-indigo-50/30 rounded-2xl border border-indigo-100 shadow-2xs space-y-3">
                     <div class="flex items-center justify-between">
-                        <div class="text-xs font-black text-[#051c45] uppercase tracking-wider flex items-center gap-1.5">
+                        <div class="text-xs font-black text-[#063b96] uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fas fa-plus-square text-indigo-600"></i>
                             <span>Create Your Own Custom Question</span>
                         </div>
@@ -834,17 +834,17 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
                         <div class="sm:col-span-5">
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Question Label <span class="text-[#c30102]">*</span></label>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Question Label <span class="text-[#c4040a]">*</span></label>
                             <input type="text" 
                                    x-model="newField.label" 
                                    @input="if (!newField.customKeyEdited) newField.name = autoSlug(newField.label)"
                                    placeholder="e.g. Years of Banking Experience" 
-                                   class="w-full rounded-xl border-slate-300 bg-white text-xs font-medium py-2 px-3 focus:border-[#051c45] focus:ring-[#051c45]/20">
+                                   class="w-full rounded-xl border-slate-300 bg-white text-xs font-medium py-2 px-3 focus:border-[#063b96] focus:ring-[#063b96]/20">
                         </div>
 
                         <div class="sm:col-span-3">
                             <label class="block text-[11px] font-bold text-slate-700 mb-1">Question Type</label>
-                            <select x-model="newField.type" class="w-full rounded-xl border-slate-300 bg-white text-xs font-semibold py-2 pl-3 pr-7 focus:border-[#051c45] focus:ring-[#051c45]/20">
+                            <select x-model="newField.type" class="w-full rounded-xl border-slate-300 bg-white text-xs font-semibold py-2 pl-3 pr-7 focus:border-[#063b96] focus:ring-[#063b96]/20">
                                 <option value="text">Short Text</option>
                                 <option value="select">Dropdown Select</option>
                                 <option value="radio">Choice Pills (1-Tap)</option>
@@ -859,13 +859,13 @@
 
                         <div class="sm:col-span-2 pb-2">
                             <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
-                                <input type="checkbox" x-model="newField.is_required" class="rounded text-[#051c45] focus:ring-[#051c45]">
+                                <input type="checkbox" x-model="newField.is_required" class="rounded text-[#063b96] focus:ring-[#063b96]">
                                 <span>Mandatory *</span>
                             </label>
                         </div>
 
                         <div class="sm:col-span-2">
-                            <button type="button" @click="addCustomField()" class="w-full py-2 px-3 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1">
+                            <button type="button" @click="addCustomField()" class="w-full py-2 px-3 bg-[#063b96] hover:bg-[#0a2540] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1">
                                 <i class="fas fa-plus text-[10px]"></i>
                                 <span>Add</span>
                             </button>
@@ -875,7 +875,7 @@
                     <!-- Extra row for Dropdown/Radio choices or Placeholder when creating a new field -->
                     <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
                         <div :class="['select', 'radio'].includes(newField.type) ? 'sm:col-span-5' : 'sm:col-span-12'">
-                            <input type="text" x-model="newField.placeholder" placeholder="Optional placeholder / hint text (e.g. Enter your current department)" class="w-full rounded-xl border-slate-200 bg-white/80 text-xs py-1.5 px-3 focus:border-[#051c45]">
+                            <input type="text" x-model="newField.placeholder" placeholder="Optional placeholder / hint text (e.g. Enter your current department)" class="w-full rounded-xl border-slate-200 bg-white/80 text-xs py-1.5 px-3 focus:border-[#063b96]">
                         </div>
                         <template x-if="['select', 'radio'].includes(newField.type)">
                             <div class="sm:col-span-7">
@@ -894,17 +894,17 @@
                         <span>Live Interactive Student Drawer Preview</span>
                     </span>
                     <div class="inline-flex rounded-lg bg-slate-200/80 p-0.5 text-[10px] font-bold">
-                        <button type="button" @click="previewAsLoggedIn = false" :class="!previewAsLoggedIn ? 'bg-white text-[#051c45] shadow-2xs' : 'text-slate-600'" class="px-2 py-0.5 rounded-md transition-all cursor-pointer">Guest View</button>
-                        <button type="button" @click="previewAsLoggedIn = true" :class="previewAsLoggedIn ? 'bg-white text-[#051c45] shadow-2xs' : 'text-slate-600'" class="px-2 py-0.5 rounded-md transition-all cursor-pointer">Logged-In View</button>
+                        <button type="button" @click="previewAsLoggedIn = false" :class="!previewAsLoggedIn ? 'bg-white text-[#063b96] shadow-2xs' : 'text-slate-600'" class="px-2 py-0.5 rounded-md transition-all cursor-pointer">Guest View</button>
+                        <button type="button" @click="previewAsLoggedIn = true" :class="previewAsLoggedIn ? 'bg-white text-[#063b96] shadow-2xs' : 'text-slate-600'" class="px-2 py-0.5 rounded-md transition-all cursor-pointer">Logged-In View</button>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-3xl shadow-xl border border-slate-200/90 overflow-hidden">
                     <!-- Simulated Drawer Header -->
-                    <div class="p-5 bg-gradient-to-br from-[#020b18] via-[#051c45] to-[#0a2a66] text-white">
+                    <div class="p-5 bg-gradient-to-br from-[#01143d] via-[#063b96] to-[#0a2a66] text-white">
                         <div class="flex items-center gap-2 mb-1.5">
                             @if(!empty($course->batch) && $course->show_batch)
-                                <span class="px-2 py-0.5 rounded bg-[#c30102] text-white text-[9px] font-black uppercase">
+                                <span class="px-2 py-0.5 rounded bg-[#c4040a] text-white text-[9px] font-black uppercase">
                                     {{ $course->batch }}
                                 </span>
                             @endif
@@ -924,7 +924,7 @@
                     <!-- Simulated Interactive Form Body -->
                     <div class="p-5 space-y-3.5 bg-white max-h-[540px] overflow-y-auto">
                         <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                            <span class="text-[11px] font-black text-[#051c45] uppercase tracking-wider">1. Student Information</span>
+                            <span class="text-[11px] font-black text-[#063b96] uppercase tracking-wider">1. Student Information</span>
                             <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Interactive Test Mode</span>
                         </div>
 
@@ -932,7 +932,7 @@
                         <template x-if="previewAsLoggedIn">
                             <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/80 flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-[#051c45] text-white font-black text-xs flex items-center justify-center">S</div>
+                                    <div class="w-8 h-8 rounded-lg bg-[#063b96] text-white font-black text-xs flex items-center justify-center">S</div>
                                     <div>
                                         <div class="text-xs font-extrabold text-[#0f131f]">Enrolling as Logged-In Student</div>
                                         <div class="text-[10px] text-slate-500">Name & Email auto-filled from profile</div>
@@ -948,7 +948,7 @@
                                 <div>
                                     <label class="block text-xs font-bold text-slate-700 mb-1">
                                         <span x-text="getFieldProp('name', 'label', 'Full Name')"></span>
-                                        <span class="text-[#c30102]">*</span>
+                                        <span class="text-[#c4040a]">*</span>
                                     </label>
                                     <input type="text" :placeholder="getFieldProp('name', 'placeholder', 'e.g. Tanvir Ahmed')" class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700">
                                 </div>
@@ -957,7 +957,7 @@
                                     <div :class="isEmailEnabled ? '' : 'sm:col-span-2'">
                                         <label class="block text-xs font-bold text-slate-700 mb-1">
                                             <span x-text="getFieldProp('phone', 'label', 'Mobile (11 Digits)')"></span>
-                                            <span class="text-[#c30102]">*</span>
+                                            <span class="text-[#c4040a]">*</span>
                                         </label>
                                         <input type="tel" :placeholder="getFieldProp('phone', 'placeholder', '017xxxxxxxx')" class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700">
                                     </div>
@@ -965,7 +965,7 @@
                                         <div>
                                             <label class="block text-xs font-bold text-slate-700 mb-1">
                                                 <span x-text="getFieldProp('email', 'label', 'Email Address')"></span>
-                                                <span x-show="isEmailRequired" class="text-[#c30102] font-bold">*</span>
+                                                <span x-show="isEmailRequired" class="text-[#c4040a] font-bold">*</span>
                                                 <span x-show="!isEmailRequired" class="text-slate-400 font-normal text-[10px]">(Optional)</span>
                                             </label>
                                             <input type="email" :placeholder="getFieldProp('email', 'placeholder', 'name@company.com')" class="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700">
@@ -980,7 +980,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">
                                     <span x-text="field.label || field.name"></span>
-                                    <span x-show="field.is_required" class="text-[#c30102] font-bold">*</span>
+                                    <span x-show="field.is_required" class="text-[#c4040a] font-bold">*</span>
                                     <span x-show="!field.is_required" class="text-slate-400 font-normal text-[10px]">(Optional)</span>
                                 </label>
 
@@ -1003,7 +1003,7 @@
                                             <button type="button"
                                                     @click="simValues[field.name] = opt"
                                                     class="px-2.5 py-2 rounded-xl border text-left text-[11px] font-bold transition-all flex items-center justify-between gap-1 cursor-pointer"
-                                                    :class="simValues[field.name] === opt ? 'border-[#051c45] bg-[#051c45] text-white' : 'border-slate-200 bg-[#f8fafc] text-slate-700 hover:bg-white'">
+                                                    :class="simValues[field.name] === opt ? 'border-[#063b96] bg-[#063b96] text-white' : 'border-slate-200 bg-[#f8fafc] text-slate-700 hover:bg-white'">
                                                 <span class="truncate" x-text="opt"></span>
                                                 <i class="fas fa-check-circle text-[10px]" :class="simValues[field.name] === opt ? 'text-[#10b981]' : 'text-transparent'"></i>
                                             </button>
@@ -1013,7 +1013,7 @@
 
                                 <template x-if="field.type === 'checkbox'">
                                     <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-[#f8fafc] text-xs font-medium text-slate-700 cursor-pointer">
-                                        <input type="checkbox" class="rounded text-[#051c45]">
+                                        <input type="checkbox" class="rounded text-[#063b96]">
                                         <span x-text="field.placeholder || field.label"></span>
                                     </label>
                                 </template>
@@ -1033,7 +1033,7 @@
                                 </template>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs">
-                                <div class="p-2.5 rounded-xl border border-[#051c45] bg-[#051c45]/5 text-[#051c45] font-bold text-center flex items-center justify-center gap-1.5">
+                                <div class="p-2.5 rounded-xl border border-[#063b96] bg-[#063b96]/5 text-[#063b96] font-bold text-center flex items-center justify-center gap-1.5">
                                     <i class="fas fa-video text-[10px]"></i>
                                     <span>Live Online Zoom</span>
                                 </div>
@@ -1046,7 +1046,7 @@
                         </div>
 
                         <div class="pt-2">
-                            <button type="button" @click="saveForm(false)" class="w-full py-3 bg-gradient-to-r from-[#c30102] to-[#a50102] text-white font-black uppercase tracking-wider rounded-xl text-xs text-center shadow-md cursor-pointer">
+                            <button type="button" @click="saveForm(false)" class="w-full py-3 bg-gradient-to-r from-[#c4040a] to-[#a50102] text-white font-black uppercase tracking-wider rounded-xl text-xs text-center shadow-md cursor-pointer">
                                 {{ (float) $course->price > 0 ? '→ Complete Express Enrollment' : '→ Enroll in Free Course' }}
                             </button>
                         </div>
@@ -1369,11 +1369,11 @@ function courseFormBuilder(config) {
     <!-- 10MS Curriculum & Live Class Builder Header Bar (Always Visible) -->
     <div class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:px-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-            <span class="w-9 h-9 rounded-xl bg-[#051c45] text-white flex items-center justify-center shrink-0 text-xs">
+            <span class="w-9 h-9 rounded-xl bg-[#063b96] text-white flex items-center justify-center shrink-0 text-xs">
                 <i class="fas fa-layer-group"></i>
             </span>
             <div>
-                <h2 class="text-sm sm:text-base font-extrabold text-[#051c45]">Course Modules &amp; Live Classes</h2>
+                <h2 class="text-sm sm:text-base font-extrabold text-[#063b96]">Course Modules &amp; Live Classes</h2>
                 <p class="text-[11px] text-slate-500">{{ $course->sections->count() }} Modules &bull; {{ $totalLessonsCount }} Lessons &amp; Live Sessions</p>
             </div>
         </div>
@@ -1381,14 +1381,14 @@ function courseFormBuilder(config) {
         <div class="flex flex-wrap items-center gap-2">
             <button type="button"
                     onclick="openQuickLiveClassModal()"
-                    class="px-3.5 py-2 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-extrabold transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                    class="px-3.5 py-2 rounded-xl bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-extrabold transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
                 <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
                 <span>+ Add Live Class (Zoom / Jitsi / Meet)</span>
             </button>
 
             <button type="button"
                     onclick="document.getElementById('sectionModal').classList.remove('hidden')"
-                    class="px-3.5 py-2 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-extrabold transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                    class="px-3.5 py-2 rounded-xl bg-[#063b96] hover:bg-[#0a2540] text-white text-xs font-extrabold transition-all inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
                 <i class="fas fa-plus text-[10px]"></i>
                 <span>+ Add Module</span>
             </button>
@@ -1396,7 +1396,7 @@ function courseFormBuilder(config) {
             <form method="POST" action="{{ route('admin.courses.quick_starter_modules', $course) }}" class="inline">
                 @csrf
                 <button type="submit"
-                        class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] border border-slate-200 text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                        class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#063b96] border border-slate-200 text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer"
                         title="Auto-create 2 structured 10MS modules">
                     <i class="fas fa-wand-magic-sparkles text-amber-600 text-[11px]"></i>
                     <span>1-Click Starter Modules</span>
@@ -1413,11 +1413,11 @@ function courseFormBuilder(config) {
                     {{ $section->title }}
                 </h3>
                 <div class="flex flex-wrap items-center gap-2.5">
-                    <button type="button" onclick="openQuickLiveClassModal({{ $section->id }})" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-[#c30102] border border-rose-200 text-xs font-extrabold inline-flex items-center gap-1 cursor-pointer">
+                    <button type="button" onclick="openQuickLiveClassModal({{ $section->id }})" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-[#c4040a] border border-rose-200 text-xs font-extrabold inline-flex items-center gap-1 cursor-pointer">
                         <i class="fas fa-video text-[10px]"></i>
                         <span>+ Live Class</span>
                     </button>
-                    <button type="button" onclick="openLessonModal({{ $section->id }})" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#051c45] text-xs font-bold cursor-pointer">+ Add Lesson</button>
+                    <button type="button" onclick="openLessonModal({{ $section->id }})" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#063b96] text-xs font-bold cursor-pointer">+ Add Lesson</button>
                     <button onclick='openEditSectionModal({{ $section->id }}, @json($section->title), {{ $section->order }})' class="text-xs font-semibold text-gray-500 hover:text-gray-900 cursor-pointer">Edit</button>
                     <form method="POST" action="{{ route('admin.courses.sections.destroy', [$course, $section]) }}" class="inline">
                         @csrf
@@ -1432,7 +1432,7 @@ function courseFormBuilder(config) {
                     <div class="px-6 py-3.5 flex items-center justify-between hover:bg-gray-50 transition-colors gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             @if($lesson->is_live_class)
-                                <span class="w-6 h-6 rounded-lg bg-rose-50 text-[#c30102] border border-rose-200 flex items-center justify-center shrink-0 text-xs">
+                                <span class="w-6 h-6 rounded-lg bg-rose-50 text-[#c4040a] border border-rose-200 flex items-center justify-center shrink-0 text-xs">
                                     <i class="fas fa-video"></i>
                                 </span>
                             @elseif($lesson->video_url)
@@ -1442,7 +1442,7 @@ function courseFormBuilder(config) {
                             @endif
                             <span class="font-semibold text-gray-900 text-sm truncate">{{ $lesson->title }}</span>
                             @if($lesson->is_live_class)
-                                <span class="px-2 py-0.5 rounded-full bg-rose-50 text-[#c30102] border border-rose-200 text-[10px] font-extrabold shrink-0">
+                                <span class="px-2 py-0.5 rounded-full bg-rose-50 text-[#c4040a] border border-rose-200 text-[10px] font-extrabold shrink-0">
                                     {{ $lesson->provider_label }}
                                 </span>
                             @endif
@@ -1461,9 +1461,9 @@ function courseFormBuilder(config) {
                     <div class="px-6 py-4 text-sm text-gray-500 italic flex items-center justify-between">
                         <span>No lessons in this section.</span>
                         <div class="flex items-center gap-2 not-italic">
-                            <button type="button" onclick="openQuickLiveClassModal({{ $section->id }})" class="text-xs font-bold text-[#c30102] hover:underline cursor-pointer">+ Add Live Class</button>
+                            <button type="button" onclick="openQuickLiveClassModal({{ $section->id }})" class="text-xs font-bold text-[#c4040a] hover:underline cursor-pointer">+ Add Live Class</button>
                             <span>&bull;</span>
-                            <button type="button" onclick="openLessonModal({{ $section->id }})" class="text-xs font-bold text-[#051c45] hover:underline cursor-pointer">+ Add Lesson</button>
+                            <button type="button" onclick="openLessonModal({{ $section->id }})" class="text-xs font-bold text-[#063b96] hover:underline cursor-pointer">+ Add Lesson</button>
                         </div>
                     </div>
                 @endforelse
@@ -1471,7 +1471,7 @@ function courseFormBuilder(config) {
         </div>
     @empty
         <div class="bg-white rounded-2xl border border-slate-200/80 p-8 sm:p-10 text-center space-y-4">
-            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-[#051c45] flex items-center justify-center mx-auto">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-[#063b96] flex items-center justify-center mx-auto">
                 <i class="fas fa-layer-group text-lg"></i>
             </div>
             <div>
@@ -1481,7 +1481,7 @@ function courseFormBuilder(config) {
             <div class="flex flex-wrap items-center justify-center gap-2.5 pt-1">
                 <form method="POST" action="{{ route('admin.courses.quick_starter_modules', $course) }}" class="inline">
                     @csrf
-                    <button type="submit" class="px-4 py-2.5 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-extrabold inline-flex items-center gap-1.5 shadow-xs cursor-pointer">
+                    <button type="submit" class="px-4 py-2.5 rounded-xl bg-[#063b96] hover:bg-[#0a2540] text-white text-xs font-extrabold inline-flex items-center gap-1.5 shadow-xs cursor-pointer">
                         <i class="fas fa-wand-magic-sparkles text-amber-300"></i>
                         <span>Generate 2 Starter Modules (1-Click)</span>
                     </button>
@@ -1489,14 +1489,14 @@ function courseFormBuilder(config) {
 
                 <button type="button"
                         onclick="openQuickLiveClassModal()"
-                        class="px-4 py-2.5 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-extrabold inline-flex items-center gap-1.5 shadow-xs cursor-pointer">
+                        class="px-4 py-2.5 rounded-xl bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-extrabold inline-flex items-center gap-1.5 shadow-xs cursor-pointer">
                     <i class="fas fa-video"></i>
                     <span>+ Add Live Class (Zoom / Jitsi / Meet)</span>
                 </button>
 
                 <button type="button"
                         onclick="document.getElementById('sectionModal').classList.remove('hidden')"
-                        class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] border border-slate-200 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
+                        class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#063b96] border border-slate-200 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
                     <i class="fas fa-plus"></i>
                     <span>+ Add Custom Module</span>
                 </button>
@@ -1508,13 +1508,13 @@ function courseFormBuilder(config) {
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden mt-6">
         <div @click="showQuizzes = !showQuizzes" class="px-5 py-3.5 flex justify-between items-center cursor-pointer hover:bg-slate-50 transition-colors select-none">
             <div class="flex items-center gap-2.5">
-                <span class="w-7 h-7 rounded-lg bg-[#051c45]/10 text-[#051c45] flex items-center justify-center text-xs">
+                <span class="w-7 h-7 rounded-lg bg-[#063b96]/10 text-[#063b96] flex items-center justify-center text-xs">
                     <i class="fas fa-clipboard-question"></i>
                 </span>
-                <h2 class="text-sm font-extrabold text-[#051c45]">Course Quizzes</h2>
+                <h2 class="text-sm font-extrabold text-[#063b96]">Course Quizzes</h2>
                 <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full text-[11px] font-bold">{{ $course->quizzes->count() }}</span>
             </div>
-            <button type="button" class="text-xs font-bold text-slate-500 hover:text-[#051c45] inline-flex items-center gap-1.5">
+            <button type="button" class="text-xs font-bold text-slate-500 hover:text-[#063b96] inline-flex items-center gap-1.5">
                 <span x-text="showQuizzes ? 'Collapse' : 'Expand'"></span>
                 <i class="fas text-[10px]" :class="showQuizzes ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
             </button>
@@ -1533,7 +1533,7 @@ function courseFormBuilder(config) {
                             @else
                                 <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-[11px] font-bold">Draft</span>
                             @endif
-                            <a href="{{ route('admin.quizzes.show', [$course, $quiz]) }}" class="text-xs font-bold text-[#051c45] hover:underline">Manage Questions →</a>
+                            <a href="{{ route('admin.quizzes.show', [$course, $quiz]) }}" class="text-xs font-bold text-[#063b96] hover:underline">Manage Questions →</a>
                             <form method="POST" action="{{ route('admin.courses.quizzes.destroy', [$course, $quiz]) }}" class="inline">
                                 @csrf
                                 @method('DELETE')
@@ -1564,14 +1564,14 @@ function courseFormBuilder(config) {
                 <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
                     <i class="fas fa-folder-open"></i>
                 </span>
-                <h2 class="text-sm font-extrabold text-[#051c45]">Course Materials</h2>
+                <h2 class="text-sm font-extrabold text-[#063b96]">Course Materials</h2>
                 <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full text-[11px] font-bold">{{ $course->materials->count() }}</span>
             </div>
             <div class="flex items-center gap-2" @click.stop>
-                <button onclick="document.getElementById('addMaterialModal').classList.remove('hidden')" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-[#051c45] rounded-lg text-xs font-bold transition-colors">
+                <button onclick="document.getElementById('addMaterialModal').classList.remove('hidden')" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-[#063b96] rounded-lg text-xs font-bold transition-colors">
                     + Add Material
                 </button>
-                <button type="button" @click="showMaterials = !showMaterials" class="text-xs font-bold text-slate-500 hover:text-[#051c45] inline-flex items-center gap-1.5 px-2 py-1">
+                <button type="button" @click="showMaterials = !showMaterials" class="text-xs font-bold text-slate-500 hover:text-[#063b96] inline-flex items-center gap-1.5 px-2 py-1">
                     <span x-text="showMaterials ? 'Collapse' : 'Expand'"></span>
                     <i class="fas text-[10px]" :class="showMaterials ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                 </button>
@@ -1582,7 +1582,7 @@ function courseFormBuilder(config) {
             @forelse($course->materials as $material)
                 <div class="bg-slate-50/70 rounded-xl border border-slate-200/70 p-3 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-[#051c45] flex items-center justify-center shrink-0 text-xs">
+                        <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-[#063b96] flex items-center justify-center shrink-0 text-xs">
                             <i class="fas fa-file-alt"></i>
                         </div>
                         <div>
@@ -1592,9 +1592,9 @@ function courseFormBuilder(config) {
                     </div>
                     <div class="flex items-center gap-3">
                         @if($material->type === 'link')
-                            <a href="{{ $material->external_link }}" target="_blank" class="text-[#051c45] hover:underline text-xs font-bold">View</a>
+                            <a href="{{ $material->external_link }}" target="_blank" class="text-[#063b96] hover:underline text-xs font-bold">View</a>
                         @else
-                            <a href="{{ storage_asset($material->file_path) }}" target="_blank" class="text-[#051c45] hover:underline text-xs font-bold">Download</a>
+                            <a href="{{ storage_asset($material->file_path) }}" target="_blank" class="text-[#063b96] hover:underline text-xs font-bold">Download</a>
                         @endif
                         <form method="POST" action="{{ route('admin.courses.materials.destroy', [$course, $material]) }}" class="inline">
                             @csrf
@@ -1620,10 +1620,10 @@ function courseFormBuilder(config) {
                 <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
                     <i class="fas fa-users"></i>
                 </span>
-                <h2 class="text-sm font-extrabold text-[#051c45]">Enrolled Students</h2>
+                <h2 class="text-sm font-extrabold text-[#063b96]">Enrolled Students</h2>
                 <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 rounded-full text-[11px] font-bold">{{ $course->students->count() }} Total</span>
             </div>
-            <button type="button" class="text-xs font-bold text-slate-500 hover:text-[#051c45] inline-flex items-center gap-1.5">
+            <button type="button" class="text-xs font-bold text-slate-500 hover:text-[#063b96] inline-flex items-center gap-1.5">
                 <span x-text="(showStudents || wsTab === 'students') ? 'Collapse' : 'Expand'"></span>
                 <i class="fas text-[10px]" :class="(showStudents || wsTab === 'students') ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
             </button>
@@ -1726,10 +1726,10 @@ function courseFormBuilder(config) {
                 <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
                     <i class="fas fa-file-invoice-dollar"></i>
                 </span>
-                <h2 class="text-sm font-extrabold text-[#051c45]">Payments & Verifications</h2>
+                <h2 class="text-sm font-extrabold text-[#063b96]">Payments & Verifications</h2>
                 <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-bold">{{ $course->payments->count() }} Payments</span>
             </div>
-            <button type="button" class="text-xs font-bold text-slate-500 hover:text-[#051c45] inline-flex items-center gap-1.5">
+            <button type="button" class="text-xs font-bold text-slate-500 hover:text-[#063b96] inline-flex items-center gap-1.5">
                 <span x-text="(showPayments || wsTab === 'payments') ? 'Collapse' : 'Expand'"></span>
                 <i class="fas text-[10px]" :class="(showPayments || wsTab === 'payments') ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
             </button>
@@ -1819,7 +1819,7 @@ function courseFormBuilder(config) {
                     <label class="block text-sm font-medium text-gray-700 mb-1">Order</label>
                     <input type="number" name="order" value="{{ $course->sections->count() + 1 }}" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
                 </div>
-                <button type="submit" class="w-full px-4 py-2.5 bg-[#051c45] text-white rounded-xl font-bold hover:opacity-90 cursor-pointer">Create Module</button>
+                <button type="submit" class="w-full px-4 py-2.5 bg-[#063b96] text-white rounded-xl font-bold hover:opacity-90 cursor-pointer">Create Module</button>
             </div>
         </form>
     </div>
@@ -1830,7 +1830,7 @@ function courseFormBuilder(config) {
     <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl">
         <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
-                <span class="w-8 h-8 rounded-xl bg-rose-50 text-[#c30102] flex items-center justify-center">
+                <span class="w-8 h-8 rounded-xl bg-rose-50 text-[#c4040a] flex items-center justify-center">
                     <i class="fas fa-video"></i>
                 </span>
                 <div>
@@ -1882,7 +1882,7 @@ function courseFormBuilder(config) {
                     <textarea name="content" rows="2" placeholder="e.g. Please join 5 minutes early with your microphone muted." class="w-full rounded-xl border-gray-300 text-xs focus:border-primary focus:ring-primary"></textarea>
                 </div>
 
-                <button type="submit" class="w-full px-4 py-2.5 bg-[#c30102] hover:bg-[#a50102] text-white rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer">
+                <button type="submit" class="w-full px-4 py-2.5 bg-[#c4040a] hover:bg-[#a50102] text-white rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer">
                     Save &amp; Publish Live Class
                 </button>
             </div>
@@ -2017,7 +2017,7 @@ function courseFormBuilder(config) {
                     <input type="checkbox" name="is_published" id="quiz_is_published" value="1" class="rounded text-primary focus:ring-primary mr-2">
                     <label for="quiz_is_published" class="text-sm font-medium text-gray-700">Publish immediately</label>
                 </div>
-                <button type="submit" class="w-full px-4 py-2 bg-[#051c45] text-white rounded-lg font-medium hover:opacity-90">Create Quiz</button>
+                <button type="submit" class="w-full px-4 py-2 bg-[#063b96] text-white rounded-lg font-medium hover:opacity-90">Create Quiz</button>
             </div>
         </form>
     </div>
@@ -2051,10 +2051,10 @@ function courseFormBuilder(config) {
                 </div>
                 <div id="fileField" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-1">File Upload</label>
-                    <input type="file" name="file_path" accept=".pdf,.zip" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-[#051c45] hover:file:bg-slate-200">
+                    <input type="file" name="file_path" accept=".pdf,.zip" class="w-full rounded-lg border-gray-300 focus:border-primary focus:ring-primary text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-slate-100 file:text-[#063b96] hover:file:bg-slate-200">
                     <p class="text-xs text-gray-500 mt-1">Max 10MB.</p>
                 </div>
-                <button type="submit" class="w-full px-4 py-2 bg-[#051c45] text-white rounded-lg font-medium hover:opacity-90 mt-2">Add Material</button>
+                <button type="submit" class="w-full px-4 py-2 bg-[#063b96] text-white rounded-lg font-medium hover:opacity-90 mt-2">Add Material</button>
             </div>
         </form>
     </div>

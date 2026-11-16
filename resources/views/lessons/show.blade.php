@@ -12,7 +12,7 @@
     {!! acs_inline_compiled_css() !!}
     <style>
         :root {
-            --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#051c45') }};
+            --primary-color: {{ \App\Models\Setting::getVal('primary_color', '#063b96') }};
         }
         {!! \App\Models\Setting::getTypographyCss() !!}
         .bg-primary { background-color: var(--primary-color); }
@@ -26,7 +26,7 @@
             height: 0;
             overflow: hidden;
             width: 100%;
-            background: #020b18;
+            background: #01143d;
         }
         .video-container iframe {
             position: absolute;
@@ -60,7 +60,7 @@
       }">
 
     <!-- 10MS Top Classroom Header Bar -->
-    <header class="flex items-center justify-between px-3 sm:px-6 py-2.5 border-b border-white/10 sticky top-0 bg-[#051c45] text-white z-40 pt-safe shadow-sm">
+    <header class="flex items-center justify-between px-3 sm:px-6 py-2.5 border-b border-white/10 sticky top-0 bg-[#063b96] text-white z-40 pt-safe shadow-sm">
         <div class="flex items-center min-w-0 gap-3">
             <a href="{{ route('dashboard') }}" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0" title="Back to Student Dashboard">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
@@ -71,7 +71,7 @@
                         {{ $lesson ? $lesson->title : $course->title }}
                     </h1>
                     @if($stage && $stage['is_live'])
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#c30102] text-white text-[10px] font-black uppercase tracking-wider shrink-0">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#c4040a] text-white text-[10px] font-black uppercase tracking-wider shrink-0">
                             <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
                             <span>LIVE</span>
                         </span>
@@ -95,7 +95,7 @@
                 <span>Course Info</span>
             </a>
 
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-extrabold transition-colors">
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-extrabold transition-colors">
                 <i class="fas fa-th-large text-[10px]"></i>
                 <span>My Courses</span>
             </a>
@@ -110,11 +110,11 @@
 
             @if($lesson && $stage && $stage['is_live'] && $stage['can_iframe'])
                 <!-- CASE A: IN-BROWSER LIVE CLASSROOM STAGE (JITSI MEET / ZOOM WEB CLIENT) -->
-                <div id="live-classroom-stage" class="w-full bg-[#020b18] rounded-2xl overflow-hidden shadow-lg border border-slate-800">
+                <div id="live-classroom-stage" class="w-full bg-[#01143d] rounded-2xl overflow-hidden shadow-lg border border-slate-800">
                     <!-- Live Stage Top Control Bar -->
-                    <div class="px-4 py-2.5 bg-[#051c45] border-b border-white/10 flex flex-wrap items-center justify-between gap-2 text-white">
+                    <div class="px-4 py-2.5 bg-[#063b96] border-b border-white/10 flex flex-wrap items-center justify-between gap-2 text-white">
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#c30102] text-white text-[10px] font-black uppercase tracking-wider shrink-0">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#c4040a] text-white text-[10px] font-black uppercase tracking-wider shrink-0">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                                 <span>{{ $stage['provider_label'] }}</span>
                             </span>
@@ -153,7 +153,7 @@
                     </div>
 
                     <!-- Responsive WebRTC Live Class Iframe -->
-                    <div class="relative w-full min-h-[460px] sm:min-h-[540px] bg-[#020b18]">
+                    <div class="relative w-full min-h-[460px] sm:min-h-[540px] bg-[#01143d]">
                         <iframe id="live-classroom-iframe"
                                 src="{{ $stage['embed_url'] }}"
                                 class="w-full h-[460px] sm:h-[540px] border-0"
@@ -164,9 +164,9 @@
 
             @elseif($lesson && $stage && $stage['provider'] === 'google_meet')
                 <!-- CASE B: GOOGLE MEET LIVE STAGE (POP-OUT CLASSROOM LAUNCHER) -->
-                <div class="w-full bg-gradient-to-br from-[#020b18] via-[#051c45] to-[#0a2a66] rounded-2xl p-6 sm:p-10 text-white shadow-lg border border-white/15 relative overflow-hidden">
+                <div class="w-full bg-gradient-to-br from-[#01143d] via-[#063b96] to-[#0a2a66] rounded-2xl p-6 sm:p-10 text-white shadow-lg border border-white/15 relative overflow-hidden">
                     <div class="max-w-xl mx-auto text-center space-y-4 relative z-10">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c30102] text-white text-[11px] font-black uppercase tracking-wider">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c4040a] text-white text-[11px] font-black uppercase tracking-wider">
                             <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
                             <span>Google Meet Live Classroom</span>
                         </div>
@@ -203,7 +203,7 @@
 
             @elseif($lesson && $embedUrl)
                 <!-- CASE C: RECORDED VIDEO STAGE (YOUTUBE / VIMEO / CUSTOM) -->
-                <div class="w-full bg-[#020b18] rounded-2xl overflow-hidden shadow-md border border-slate-200">
+                <div class="w-full bg-[#01143d] rounded-2xl overflow-hidden shadow-md border border-slate-200">
                     <div class="video-container">
                         <iframe src="{{ $embedUrl }}"
                                 frameborder="0"
@@ -214,7 +214,7 @@
 
             @elseif(!$lesson)
                 <!-- CASE D: 0-LESSON LIVE BATCH ORIENTATION STAGE (E.G., COURSE #18) -->
-                <div class="w-full bg-gradient-to-br from-[#031029] via-[#051c45] to-[#0a2a66] rounded-2xl p-5 sm:p-7 text-white shadow-md border border-white/15">
+                <div class="w-full bg-gradient-to-br from-[#031029] via-[#063b96] to-[#0a2a66] rounded-2xl p-5 sm:p-7 text-white shadow-md border border-white/15">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div class="space-y-2">
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[11px] font-extrabold uppercase tracking-wider">
@@ -252,11 +252,11 @@
                 <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#c30102]">
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#c4040a]">
                                 {{ $lesson->section->title ?? 'Module' }}
                             </span>
                             @if($stage && $stage['is_live'])
-                                <span class="px-2 py-0.5 rounded bg-rose-50 text-[#c30102] border border-rose-200 text-[10px] font-extrabold">
+                                <span class="px-2 py-0.5 rounded bg-rose-50 text-[#c4040a] border border-rose-200 text-[10px] font-extrabold">
                                     {{ $stage['provider_label'] }}
                                 </span>
                             @endif
@@ -279,7 +279,7 @@
                                 <span>Completed</span>
                             </button>
                         @else
-                            <button type="submit" class="px-4 py-2.5 rounded-xl font-extrabold text-white bg-[#051c45] hover:bg-[#082b66] transition-all flex items-center gap-1.5 text-xs cursor-pointer shadow-2xs">
+                            <button type="submit" class="px-4 py-2.5 rounded-xl font-extrabold text-white bg-[#063b96] hover:bg-[#082b66] transition-all flex items-center gap-1.5 text-xs cursor-pointer shadow-2xs">
                                 <i class="fas fa-check-circle text-emerald-400"></i>
                                 <span>Mark as Complete</span>
                             </button>
@@ -299,7 +299,7 @@
                 <div class="flex items-center gap-1 p-2 bg-slate-50 border-b border-slate-200/70 overflow-x-auto">
                     <button type="button"
                             @click="classTab = 'notes'"
-                            :class="classTab === 'notes' ? 'bg-[#051c45] text-white shadow-2xs' : 'text-slate-600 hover:bg-white'"
+                            :class="classTab === 'notes' ? 'bg-[#063b96] text-white shadow-2xs' : 'text-slate-600 hover:bg-white'"
                             class="px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer">
                         <i class="fas fa-book-open text-[11px]"></i>
                         <span>Class Notes</span>
@@ -307,7 +307,7 @@
 
                     <button type="button"
                             @click="classTab = 'resources'"
-                            :class="classTab === 'resources' ? 'bg-[#051c45] text-white shadow-2xs' : 'text-slate-600 hover:bg-white'"
+                            :class="classTab === 'resources' ? 'bg-[#063b96] text-white shadow-2xs' : 'text-slate-600 hover:bg-white'"
                             class="px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer">
                         <i class="fas fa-folder-open text-[11px]"></i>
                         <span>Resources ({{ $materialsCount }})</span>
@@ -315,7 +315,7 @@
 
                     <button type="button"
                             @click="classTab = 'quizzes'"
-                            :class="classTab === 'quizzes' ? 'bg-[#051c45] text-white shadow-2xs' : 'text-slate-600 hover:bg-white'"
+                            :class="classTab === 'quizzes' ? 'bg-[#063b96] text-white shadow-2xs' : 'text-slate-600 hover:bg-white'"
                             class="px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer">
                         <i class="fas fa-clipboard-check text-[11px]"></i>
                         <span>Quizzes ({{ $quizzesCount }})</span>
@@ -323,7 +323,7 @@
 
                     <button type="button"
                             @click="classTab = 'certificate'"
-                            :class="classTab === 'certificate' ? 'bg-[#051c45] text-white shadow-2xs' : 'text-slate-600 hover:bg-white'"
+                            :class="classTab === 'certificate' ? 'bg-[#063b96] text-white shadow-2xs' : 'text-slate-600 hover:bg-white'"
                             class="px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all whitespace-nowrap inline-flex items-center gap-1.5 cursor-pointer">
                         <i class="fas fa-award text-[11px]"></i>
                         <span>Certificate</span>
@@ -355,17 +355,17 @@
                                 <a href="{{ $mat->type === 'link' ? $mat->external_link : storage_asset($mat->file_path) }}"
                                    target="_blank"
                                    rel="noopener noreferrer"
-                                   class="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-xs font-bold text-[#051c45] transition-all group">
+                                   class="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-xs font-bold text-[#063b96] transition-all group">
                                     <div class="flex items-center gap-3 min-w-0">
-                                        <span class="w-9 h-9 rounded-lg bg-[#c30102]/10 text-[#c30102] flex items-center justify-center shrink-0">
+                                        <span class="w-9 h-9 rounded-lg bg-[#c4040a]/10 text-[#c4040a] flex items-center justify-center shrink-0">
                                             <i class="fas {{ $mat->type === 'link' ? 'fa-link' : 'fa-file-pdf' }}"></i>
                                         </span>
                                         <div class="min-w-0">
-                                            <div class="truncate group-hover:text-[#c30102] transition-colors">{{ $mat->title }}</div>
+                                            <div class="truncate group-hover:text-[#c4040a] transition-colors">{{ $mat->title }}</div>
                                             <div class="text-[10px] text-slate-400 uppercase font-semibold">{{ $mat->type }} Resource</div>
                                         </div>
                                     </div>
-                                    <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-extrabold text-[#051c45] shrink-0">
+                                    <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-extrabold text-[#063b96] shrink-0">
                                         Open &rarr;
                                     </span>
                                 </a>
@@ -438,7 +438,7 @@
         <!-- RIGHT COLUMN: 10MS Collapsible Module Accordions + Quick Resources -->
         <aside :class="theaterMode ? 'lg:col-span-12' : 'lg:col-span-4'" class="lg:col-span-4 min-w-0 space-y-4">
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
-                <div class="p-4 bg-[#051c45] text-white flex items-center justify-between">
+                <div class="p-4 bg-[#063b96] text-white flex items-center justify-between">
                     <div>
                         <h3 class="font-extrabold text-xs sm:text-sm">Course Curriculum</h3>
                         <p class="text-[11px] text-slate-300 mt-0.5">{{ $course->sections->count() }} Modules &bull; {{ $doneLessons }}/{{ $totalLessons }} Completed</p>
@@ -459,7 +459,7 @@
                                         @click="openModuleId = (openModuleId === {{ (int) $sec->id }} ? 0 : {{ (int) $sec->id }})"
                                         class="w-full px-4 py-3 bg-slate-50/80 hover:bg-slate-100/80 flex items-center justify-between gap-2 text-left transition-colors cursor-pointer">
                                     <div class="min-w-0">
-                                        <div class="text-xs font-extrabold text-[#051c45] truncate">
+                                        <div class="text-xs font-extrabold text-[#063b96] truncate">
                                             {{ str_starts_with(strtolower($sec->title), 'module') ? $sec->title : 'Module ' . ($secIdx + 1) . ': ' . $sec->title }}
                                         </div>
                                         <div class="text-[10px] font-semibold text-slate-500 mt-0.5">
@@ -467,7 +467,7 @@
                                         </div>
                                     </div>
                                     <i class="fas fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200 shrink-0"
-                                       :class="openModuleId === {{ (int) $sec->id }} ? 'rotate-180 text-[#051c45]' : ''"></i>
+                                       :class="openModuleId === {{ (int) $sec->id }} ? 'rotate-180 text-[#063b96]' : ''"></i>
                                 </button>
 
                                 <!-- Module Lessons List -->
@@ -479,14 +479,14 @@
                                             $isLiveItem = $secLesson->is_live_class;
                                         @endphp
                                         <a href="{{ route('lessons.show', [$course, $secLesson]) }}"
-                                           class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ $isCurrent ? 'bg-[#051c45] text-white shadow-2xs' : 'text-slate-700 hover:bg-slate-50' }}">
+                                           class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all {{ $isCurrent ? 'bg-[#063b96] text-white shadow-2xs' : 'text-slate-700 hover:bg-slate-50' }}">
                                             <div class="flex items-center gap-2.5 min-w-0">
                                                 @if($secLessonDone)
                                                     <i class="fas fa-check-circle {{ $isCurrent ? 'text-emerald-300' : 'text-emerald-600' }} shrink-0"></i>
                                                 @elseif($isCurrent)
                                                     <i class="fas fa-play-circle text-amber-300 shrink-0"></i>
                                                 @elseif($isLiveItem)
-                                                    <span class="w-2 h-2 rounded-full bg-[#c30102] shrink-0"></span>
+                                                    <span class="w-2 h-2 rounded-full bg-[#c4040a] shrink-0"></span>
                                                 @else
                                                     <i class="far fa-circle text-slate-400 shrink-0"></i>
                                                 @endif
@@ -494,7 +494,7 @@
                                             </div>
 
                                             @if($isLiveItem)
-                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider {{ $isCurrent ? 'bg-[#c30102] text-white' : 'bg-rose-50 text-[#c30102] border border-rose-200' }} shrink-0">
+                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider {{ $isCurrent ? 'bg-[#c4040a] text-white' : 'bg-rose-50 text-[#c4040a] border border-rose-200' }} shrink-0">
                                                     LIVE
                                                 </span>
                                             @elseif($secLesson->video_url)

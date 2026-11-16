@@ -71,7 +71,7 @@
             cursor: pointer;
         }
         .btn-primary {
-            background: #c30102;
+            background: #c4040a;
             color: #ffffff;
             border: none;
             box-shadow: 0 4px 14px rgba(195, 1, 2, 0.4);

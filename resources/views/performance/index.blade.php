@@ -42,7 +42,7 @@
     </div>
 
     <div class="bg-white rounded-xl p-3.5 border border-slate-200/80 flex items-center gap-3 shadow-2xs">
-        <div class="w-9 h-9 rounded-lg bg-[#051c45]/10 text-[#051c45] flex items-center justify-center shrink-0 text-base">
+        <div class="w-9 h-9 rounded-lg bg-[#063b96]/10 text-[#063b96] flex items-center justify-center shrink-0 text-base">
             ✨
         </div>
         <div>
@@ -55,7 +55,7 @@
 <!-- Recent Quizzes -->
 <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
     <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-        <h2 class="text-sm font-extrabold text-[#051c45]">Recent Quizzes</h2>
+        <h2 class="text-sm font-extrabold text-[#063b96]">Recent Quizzes</h2>
         <span class="text-[11px] font-bold text-slate-400">{{ $attempts->count() }} Attempts</span>
     </div>
 

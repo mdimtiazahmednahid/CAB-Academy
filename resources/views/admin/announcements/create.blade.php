@@ -65,10 +65,10 @@
 
     <!-- Dedicated Course Selector when "Specific Course" is selected -->
     <div x-show="audience === 'course'" x-cloak class="p-4 bg-blue-50/60 border border-blue-200 rounded-xl space-y-2">
-        <label for="course_id" class="block text-xs font-black uppercase tracking-wider text-[#051c45]">
-            <i class="fas fa-graduation-cap text-[#c30102] mr-1"></i> Select Target Course *
+        <label for="course_id" class="block text-xs font-black uppercase tracking-wider text-[#063b96]">
+            <i class="fas fa-graduation-cap text-[#c4040a] mr-1"></i> Select Target Course *
         </label>
-        <select id="course_id" name="course_id" :required="audience === 'course'" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-semibold text-slate-800 focus:ring-[#051c45]">
+        <select id="course_id" name="course_id" :required="audience === 'course'" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-semibold text-slate-800 focus:ring-[#063b96]">
             <option value="">-- Choose a Course --</option>
             @foreach($courses ?? [] as $c)
                 <option value="{{ $c->id }}" {{ old('course_id') == $c->id ? 'selected' : '' }}>
@@ -92,7 +92,7 @@
         <label for="post_to_feed" class="text-xs font-bold text-gray-800 cursor-pointer">Also Pin & Broadcast to Community Feed (/feed)</label>
     </div>
 
-    <button type="submit" class="w-full bg-[#051c45] hover:bg-[#072559] text-white font-bold py-3.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md">
+    <button type="submit" class="w-full bg-[#063b96] hover:bg-[#072559] text-white font-bold py-3.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
         Send Targeted Notification
     </button>

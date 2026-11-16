@@ -69,7 +69,7 @@
     <div x-show="open"
          x-transition.opacity
          @click="open = false"
-         class="fixed inset-0 bg-[#020b18]/75 backdrop-blur-xs"></div>
+         class="fixed inset-0 bg-[#01143d]/75 backdrop-blur-xs"></div>
 
     <!-- Modal Card (Same Design as Admin Course Studio Module 4) -->
     <div x-show="open"
@@ -78,7 +78,7 @@
          class="relative z-10 w-full max-w-3xl bg-white rounded-3xl border border-slate-200/90 shadow-2xl overflow-hidden my-auto">
 
         <!-- Header -->
-        <div class="px-5 sm:px-6 py-4 bg-gradient-to-r from-[#020b18] via-[#051c45] to-[#0a2540] text-white flex items-center justify-between gap-3">
+        <div class="px-5 sm:px-6 py-4 bg-gradient-to-r from-[#01143d] via-[#063b96] to-[#0a2540] text-white flex items-center justify-between gap-3">
             <div class="min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                     <span class="px-2.5 py-0.5 rounded-full bg-[#1877F2]/25 border border-[#1877F2]/40 text-blue-200 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1">
@@ -130,10 +130,10 @@
                     <div class="px-4 py-3 bg-[#f2f3f5]/80 group-hover:bg-[#ebedf0]/90 transition-colors border-t border-[#dadde1] flex items-center justify-between gap-3">
                         <div class="min-w-0 flex-1">
                             <div class="text-xs sm:text-[13px] font-normal text-[#65676b] uppercase tracking-tight truncate" x-text="course.displayDomain"></div>
-                            <h4 class="text-[15px] sm:text-base font-serif font-bold text-[#050505] group-hover:text-[#c30102] underline decoration-[#050505]/40 group-hover:decoration-[#c30102] transition-colors line-clamp-2 leading-snug mt-0.5 tracking-tight"
+                            <h4 class="text-[15px] sm:text-base font-serif font-bold text-[#050505] group-hover:text-[#c4040a] underline decoration-[#050505]/40 group-hover:decoration-[#c4040a] transition-colors line-clamp-2 leading-snug mt-0.5 tracking-tight"
                                 x-text="course.stylishTitle"></h4>
                         </div>
-                        <span class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white font-extrabold text-xs sm:text-[13px] shrink-0 transition-all shadow-[0_0_18px_rgba(195,1,2,0.55)] group-hover:shadow-[0_0_24px_rgba(225,29,72,0.8)] group-hover:scale-105 inline-flex items-center gap-1.5 select-none">
+                        <span class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#c4040a] to-[#e11d48] text-white font-extrabold text-xs sm:text-[13px] shrink-0 transition-all shadow-[0_0_18px_rgba(195,1,2,0.55)] group-hover:shadow-[0_0_24px_rgba(225,29,72,0.8)] group-hover:scale-105 inline-flex items-center gap-1.5 select-none">
                             <i class="fas fa-bolt text-amber-300 text-[11px] animate-pulse"></i>
                             <span>Enroll Now</span>
                         </span>
@@ -159,7 +159,7 @@
                 <div class="grid grid-cols-1 gap-2">
                     <button type="button"
                             @click="copyText(course.socialCaption, 'full')"
-                            class="w-full py-2.5 px-3.5 rounded-xl bg-[#051c45] hover:bg-[#082860] text-white text-xs font-extrabold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                            class="w-full py-2.5 px-3.5 rounded-xl bg-[#063b96] hover:bg-[#082860] text-white text-xs font-extrabold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer">
                         <i class="fas fa-wand-magic-sparkles text-amber-300"></i>
                         <span x-text="copiedKey === 'full' ? '✓ Copied Full Stylish Post + Link!' : 'Copy Full Stylish Post + Link'"></span>
                     </button>
@@ -167,14 +167,14 @@
                     <div class="grid grid-cols-2 gap-2">
                         <button type="button"
                                 @click="copyText(course.postHeader, 'header')"
-                                class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                            <i class="fas fa-font text-[#c30102]"></i>
+                                class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#063b96] text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i class="fas fa-font text-[#c4040a]"></i>
                             <span x-text="copiedKey === 'header' ? '✓ Copied!' : 'Copy Bold Title'"></span>
                         </button>
 
                         <button type="button"
                                 @click="copyText(course.shortUrl, 'link')"
-                                class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                                class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#063b96] text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                             <i class="fas fa-link text-emerald-600"></i>
                             <span x-text="copiedKey === 'link' ? '✓ Copied!' : 'Copy Short Link'"></span>
                         </button>

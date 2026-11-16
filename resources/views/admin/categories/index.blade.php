@@ -3,7 +3,7 @@
 @section('content')
 <div class="mb-4 flex items-center justify-between gap-3">
     <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">4 Learning Departments</h2>
-    <a href="{{ route('admin.categories.create') }}" class="px-3.5 py-2 bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold rounded-xl shadow-2xs transition-all inline-flex items-center gap-1.5">
+    <a href="{{ route('admin.categories.create') }}" class="px-3.5 py-2 bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-bold rounded-xl shadow-2xs transition-all inline-flex items-center gap-1.5">
         <i class="fas fa-plus"></i>
         <span>Add Department</span>
     </a>
@@ -42,7 +42,7 @@
                         </td>
                         <td class="py-3.5 px-4">
                             <div class="flex items-start gap-3">
-                                <div class="w-9 h-9 rounded-xl bg-slate-100 text-[#051c45] flex items-center justify-center text-sm border border-slate-200 shrink-0 mt-0.5">
+                                <div class="w-9 h-9 rounded-xl bg-slate-100 text-[#063b96] flex items-center justify-center text-sm border border-slate-200 shrink-0 mt-0.5">
                                     <i class="fas {{ str_starts_with($category->icon, 'fa-') ? $category->icon : 'fa-' . $category->icon }}"></i>
                                 </div>
                                 <div>
@@ -63,7 +63,7 @@
                         <td class="py-3.5 px-4">
                             @if($head)
                                 <div class="flex items-center gap-2">
-                                    <span class="px-2 py-0.5 rounded bg-[#c30102]/10 text-[#c30102] text-[10px] font-extrabold uppercase">Head</span>
+                                    <span class="px-2 py-0.5 rounded bg-[#c4040a]/10 text-[#c4040a] text-[10px] font-extrabold uppercase">Head</span>
                                     <span class="text-xs font-bold text-gray-900">{{ $head->name }}</span>
                                 </div>
                                 <div class="text-[11px] text-gray-500 mt-1">
@@ -77,7 +77,7 @@
                             @php
                                 $deptCourseCount = $category->department_courses_count;
                             @endphp
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $deptCourseCount > 0 ? 'bg-blue-50 text-[#051c45] border border-blue-200' : 'bg-gray-100 text-gray-500' }}">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold {{ $deptCourseCount > 0 ? 'bg-blue-50 text-[#063b96] border border-blue-200' : 'bg-gray-100 text-gray-500' }}">
                                 {{ $deptCourseCount }} courses
                             </span>
                         </td>
@@ -94,13 +94,13 @@
                         </td>
                         <td class="py-3.5 px-4 text-right">
                             <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('admin.categories.edit', $category) }}" class="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-[#051c45] transition-colors" title="Edit Category">
+                                <a href="{{ route('admin.categories.edit', $category) }}" class="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-[#063b96] transition-colors" title="Edit Category">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this category?');" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-[#c30102] transition-colors" title="Delete Category">
+                                    <button type="submit" class="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-[#c4040a] transition-colors" title="Delete Category">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>

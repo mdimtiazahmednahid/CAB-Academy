@@ -14,8 +14,8 @@
         'Internship' => 0,
     ];
     $emblemGradients = [
-        'from-[#051c45] via-[#0a2540] to-[#1e3a8a]',
-        'from-[#7f1d1d] via-[#991b1b] to-[#c30102]',
+        'from-[#063b96] via-[#0a2540] to-[#1e3a8a]',
+        'from-[#7f1d1d] via-[#991b1b] to-[#c4040a]',
         'from-[#064e3b] via-[#065f46] to-[#059669]',
         'from-[#1e1b4b] via-[#312e81] to-[#4338ca]',
         'from-[#0f172a] via-[#1e293b] to-[#334155]',
@@ -31,7 +31,7 @@
 <div class="bg-[#f4f7fb] min-h-screen pb-16">
 
     <!-- 1. Compact Job Portal Search Header -->
-    <section class="bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white py-6 sm:py-8 border-b border-white/10 relative overflow-hidden">
+    <section class="bg-gradient-to-r from-[#031330] via-[#063b96] to-[#0a2540] text-white py-6 sm:py-8 border-b border-white/10 relative overflow-hidden">
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Top Row: Title + Quick Stats -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
@@ -134,12 +134,12 @@
             <aside class="lg:col-span-3 space-y-5 lg:sticky lg:top-24">
                 <div class="liquid-glass-card rounded-2xl p-5 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
-                        <h2 class="text-xs font-black uppercase tracking-wider text-[#041536] flex items-center gap-2">
-                            <i class="fas fa-filter text-[#c30102]"></i>
+                        <h2 class="text-xs font-black uppercase tracking-wider text-[#021f59] flex items-center gap-2">
+                            <i class="fas fa-filter text-[#c4040a]"></i>
                             <span>Filter Jobs</span>
                         </h2>
                         @if(request()->filled('search') || request()->filled('type') || request()->filled('sort'))
-                            <a href="{{ route('jobs.index') }}" class="text-[11px] font-bold text-[#c30102] hover:underline">
+                            <a href="{{ route('jobs.index') }}" class="text-[11px] font-bold text-[#c4040a] hover:underline">
                                 Reset All
                             </a>
                         @endif
@@ -169,10 +169,10 @@
                                 <a 
                                     href="{{ route('jobs.index', $urlParams) }}" 
                                     onclick="showJobPortalSkeleton()"
-                                    class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all {{ $isSelected ? 'bg-[#051c45] text-white shadow-sm' : 'text-slate-700 hover:bg-slate-100/90' }}"
+                                    class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all {{ $isSelected ? 'bg-[#063b96] text-white shadow-sm' : 'text-slate-700 hover:bg-slate-100/90' }}"
                                 >
                                     <span class="flex items-center gap-2">
-                                        <span class="w-3.5 h-3.5 rounded flex items-center justify-center border {{ $isSelected ? 'bg-[#c30102] border-[#c30102] text-white' : 'border-slate-300 bg-white' }}">
+                                        <span class="w-3.5 h-3.5 rounded flex items-center justify-center border {{ $isSelected ? 'bg-[#c4040a] border-[#c4040a] text-white' : 'border-slate-300 bg-white' }}">
                                             @if($isSelected)
                                                 <i class="fas fa-check text-[8px]"></i>
                                             @endif
@@ -194,14 +194,14 @@
                             <a 
                                 href="{{ route('jobs.index', array_merge(request()->query(), ['sort' => 'newest'])) }}"
                                 onclick="showJobPortalSkeleton()"
-                                class="px-3 py-2 rounded-xl text-center text-xs font-bold border transition-all {{ request('sort', 'newest') === 'newest' ? 'bg-[#051c45]/10 border-[#051c45] text-[#051c45]' : 'border-slate-200 text-slate-600 hover:bg-slate-50' }}"
+                                class="px-3 py-2 rounded-xl text-center text-xs font-bold border transition-all {{ request('sort', 'newest') === 'newest' ? 'bg-[#063b96]/10 border-[#063b96] text-[#063b96]' : 'border-slate-200 text-slate-600 hover:bg-slate-50' }}"
                             >
                                 Newest
                             </a>
                             <a 
                                 href="{{ route('jobs.index', array_merge(request()->query(), ['sort' => 'company'])) }}"
                                 onclick="showJobPortalSkeleton()"
-                                class="px-3 py-2 rounded-xl text-center text-xs font-bold border transition-all {{ request('sort') === 'company' ? 'bg-[#051c45]/10 border-[#051c45] text-[#051c45]' : 'border-slate-200 text-slate-600 hover:bg-slate-50' }}"
+                                class="px-3 py-2 rounded-xl text-center text-xs font-bold border transition-all {{ request('sort') === 'company' ? 'bg-[#063b96]/10 border-[#063b96] text-[#063b96]' : 'border-slate-200 text-slate-600 hover:bg-slate-50' }}"
                             >
                                 Company A-Z
                             </a>
@@ -212,11 +212,11 @@
                 <!-- Candidate Placement Support Box -->
                 <div class="liquid-glass-card rounded-2xl p-5 space-y-3">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-9 h-9 rounded-xl bg-[#051c45] text-white flex items-center justify-center text-sm shrink-0">
+                        <div class="w-9 h-9 rounded-xl bg-[#063b96] text-white flex items-center justify-center text-sm shrink-0">
                             <i class="fas fa-user-shield text-emerald-400"></i>
                         </div>
                         <div>
-                            <h3 class="text-xs font-black text-[#041536]">Verified Placement Cell</h3>
+                            <h3 class="text-xs font-black text-[#021f59]">Verified Placement Cell</h3>
                             <p class="text-[11px] text-slate-500">Direct CV & Certificate Referral</p>
                         </div>
                     </div>
@@ -232,24 +232,24 @@
                 <!-- Feed Header Bar -->
                 <div class="liquid-glass-card rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-2">
                     <div class="text-xs sm:text-sm font-bold text-slate-700">
-                        Showing <span class="font-black text-[#041536]">{{ $jobs->count() }}</span>
+                        Showing <span class="font-black text-[#021f59]">{{ $jobs->count() }}</span>
                         {{ $currentType ? $currentType : '' }}
                         {{ \Illuminate\Support\Str::plural('job', $jobs->count()) }}
                         @if(request('search'))
-                            matching <span class="text-[#c30102] font-black">"{{ request('search') }}"</span>
+                            matching <span class="text-[#c4040a] font-black">"{{ request('search') }}"</span>
                         @endif
                     </div>
 
                     @if(request()->filled('search') || request()->filled('type'))
                         <div class="flex items-center gap-2">
                             @if(request('type'))
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#051c45]/10 text-[#051c45] text-xs font-bold">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#063b96]/10 text-[#063b96] text-xs font-bold">
                                     <span>{{ request('type') }}</span>
                                     <a href="{{ route('jobs.index', request()->except('type')) }}" class="hover:text-red-600"><i class="fas fa-times text-[10px]"></i></a>
                                 </span>
                             @endif
                             @if(request('search'))
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#c30102]/10 text-[#c30102] text-xs font-bold">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#c4040a]/10 text-[#c4040a] text-xs font-bold">
                                     <span>"{{ request('search') }}"</span>
                                     <a href="{{ route('jobs.index', request()->except('search')) }}" class="hover:text-red-700"><i class="fas fa-times text-[10px]"></i></a>
                                 </span>
@@ -332,7 +332,7 @@
                         ];
                     @endphp
 
-                    <article class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-[#051c45]/30 transition-all duration-200 group relative overflow-hidden">
+                    <article class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-[#063b96]/30 transition-all duration-200 group relative overflow-hidden">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 sm:gap-4">
 
                             <!-- 1. Left: Compact Company Logo / Monogram + Job Info -->
@@ -370,7 +370,7 @@
                                 <div class="flex-1 min-w-0">
                                     <!-- Top Badges & Title -->
                                     <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
-                                        <h2 class="text-sm sm:text-base font-extrabold text-[#041536] group-hover:text-[#c30102] transition-colors leading-snug">
+                                        <h2 class="text-sm sm:text-base font-extrabold text-[#021f59] group-hover:text-[#c4040a] transition-colors leading-snug">
                                             <button 
                                                 type="button" 
                                                 onclick='openJobBriefDrawer(@json($jobBriefPayload))'
@@ -381,7 +381,7 @@
                                         </h2>
 
                                         @if($isRecent)
-                                            <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase bg-[#c30102]/10 text-[#c30102]">
+                                            <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold uppercase bg-[#c4040a]/10 text-[#c4040a]">
                                                 New
                                             </span>
                                         @endif
@@ -400,7 +400,7 @@
                                         @if(!empty($job->location))
                                             <span class="text-slate-300">&bull;</span>
                                             <span class="flex items-center gap-1">
-                                                <i class="fas fa-map-marker-alt text-[#c30102] text-[10px]"></i>
+                                                <i class="fas fa-map-marker-alt text-[#c4040a] text-[10px]"></i>
                                                 <span>{{ $job->location }}</span>
                                             </span>
                                         @endif
@@ -465,7 +465,7 @@
                                 <button 
                                     type="button"
                                     onclick='openJobBriefDrawer(@json($jobBriefPayload))'
-                                    class="flex-1 sm:flex-initial w-full py-1.5 px-3 rounded-xl text-xs font-bold bg-slate-100 hover:bg-[#041536] text-[#041536] hover:text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                    class="flex-1 sm:flex-initial w-full py-1.5 px-3 rounded-xl text-xs font-bold bg-slate-100 hover:bg-[#021f59] text-[#021f59] hover:text-white transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                                 >
                                     <span>Details</span>
                                 </button>
@@ -475,10 +475,10 @@
                     </article>
                 @empty
                     <div class="py-16 px-6 text-center liquid-glass-card rounded-3xl">
-                        <div class="w-16 h-16 rounded-2xl bg-[#051c45]/10 text-[#051c45] flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <div class="w-16 h-16 rounded-2xl bg-[#063b96]/10 text-[#063b96] flex items-center justify-center mx-auto mb-4 text-2xl">
                             <i class="fas fa-briefcase"></i>
                         </div>
-                        <h3 class="text-lg font-black text-[#041536] mb-1">No Matching Jobs Found</h3>
+                        <h3 class="text-lg font-black text-[#021f59] mb-1">No Matching Jobs Found</h3>
                         <p class="text-xs sm:text-sm text-slate-600 mb-6 max-w-md mx-auto">
                             We couldn't find any active positions matching your current search or filter. Try clearing your filters to browse all open roles.
                         </p>
@@ -493,11 +493,11 @@
                 <!-- Employer Recruitment Banner -->
                 <div id="employer-post-callout" class="liquid-glass-card rounded-2xl p-6 sm:p-7 mt-6 flex flex-col sm:flex-row items-center justify-between gap-5">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#051c45] text-white flex items-center justify-center text-xl shrink-0 shadow-md">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#063b96] text-white flex items-center justify-center text-xl shrink-0 shadow-md">
                             <i class="fas fa-handshake text-emerald-400"></i>
                         </div>
                         <div>
-                            <h3 class="text-sm sm:text-base font-black text-[#041536]">
+                            <h3 class="text-sm sm:text-base font-black text-[#021f59]">
                                 Hiring Commercial, L/C, Supply Chain, or VAT Professionals?
                             </h3>
                             <p class="text-xs text-slate-600 mt-0.5">
@@ -519,10 +519,10 @@
 
 <!-- Slide-Over Drawer: Full Job Description & Company Brief -->
 <div id="jobBriefDrawer" class="fixed inset-0 z-50 hidden">
-    <div onclick="closeJobBriefDrawer()" class="fixed inset-0 bg-[#041536]/60 backdrop-blur-sm transition-opacity"></div>
+    <div onclick="closeJobBriefDrawer()" class="fixed inset-0 bg-[#021f59]/60 backdrop-blur-sm transition-opacity"></div>
     <div class="fixed inset-y-0 right-0 max-w-full w-full sm:max-w-xl bg-white shadow-2xl z-10 flex flex-col justify-between overflow-hidden border-l border-slate-200">
         <!-- Drawer Header -->
-        <div class="p-6 bg-gradient-to-r from-[#020b1c] via-[#051c45] to-[#0a2540] text-white relative">
+        <div class="p-6 bg-gradient-to-r from-[#020b1c] via-[#063b96] to-[#0a2540] text-white relative">
             <button onclick="closeJobBriefDrawer()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer">
                 <i class="fas fa-times text-sm"></i>
             </button>
@@ -531,7 +531,7 @@
                 <!-- Auto-Fitted Logo or Monogram inside Drawer -->
                 <div id="briefLogoBox" class="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-md overflow-hidden">
                     <img id="briefLogoImg" src="" alt="" class="w-full h-full object-contain hidden">
-                    <span id="briefLogoInitials" class="text-base font-black text-[#051c45]">CA</span>
+                    <span id="briefLogoInitials" class="text-base font-black text-[#063b96]">CA</span>
                 </div>
                 <div>
                     <div class="flex items-center gap-2 mb-1">
@@ -564,7 +564,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Location</span>
-                        <span id="briefLocation" class="text-xs sm:text-sm font-extrabold text-[#041536] mt-0.5 block"></span>
+                        <span id="briefLocation" class="text-xs sm:text-sm font-extrabold text-[#021f59] mt-0.5 block"></span>
                     </div>
                     <div class="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block">Salary / Package</span>
@@ -573,8 +573,8 @@
                 </div>
 
                 <div>
-                    <h4 class="text-xs font-black uppercase tracking-wider text-[#041536] mb-2.5 flex items-center gap-1.5">
-                        <i class="fas fa-file-alt text-[#c30102]"></i>
+                    <h4 class="text-xs font-black uppercase tracking-wider text-[#021f59] mb-2.5 flex items-center gap-1.5">
+                        <i class="fas fa-file-alt text-[#c4040a]"></i>
                         <span>Full Job Description & Requirements</span>
                     </h4>
                     <div id="briefDescription" class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50/70 p-4 rounded-2xl border border-slate-200/70"></div>
@@ -600,7 +600,7 @@
 </div>
 
 <!-- Candidate Application Modal (Authenticated & Guest Support) -->
-<div id="applyModal" class="fixed inset-0 bg-[#041536]/65 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+<div id="applyModal" class="fixed inset-0 bg-[#021f59]/65 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
     <div class="liquid-glass-card !bg-white rounded-3xl p-6 sm:p-8 w-full max-w-lg shadow-2xl border border-slate-200 relative">
         <div class="flex justify-between items-start mb-5 pb-4 border-b border-slate-200/80">
             <div>
@@ -608,8 +608,8 @@
                     <i class="fas fa-shield-alt text-[9px]"></i>
                     <span>{{ $siteName }} Easy Apply</span>
                 </span>
-                <h3 class="text-lg font-black text-[#041536] mt-1.5 leading-snug">
-                    Apply for: <span id="applyJobTitle" class="text-[#c30102]"></span>
+                <h3 class="text-lg font-black text-[#021f59] mt-1.5 leading-snug">
+                    Apply for: <span id="applyJobTitle" class="text-[#c4040a]"></span>
                 </h3>
                 <p id="applyCompany" class="text-xs text-slate-500 font-bold mt-0.5"></p>
             </div>
@@ -625,7 +625,7 @@
                     <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs">
                         <div>
                             <span class="text-slate-400 font-bold block text-[10px] uppercase">Applicant</span>
-                            <span class="font-extrabold text-[#041536]">{{ auth()->user()->name }}</span>
+                            <span class="font-extrabold text-[#021f59]">{{ auth()->user()->name }}</span>
                             <span class="text-slate-500 block text-[11px]">{{ auth()->user()->email }}</span>
                         </div>
                         <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200">
@@ -634,7 +634,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-black text-[#041536] uppercase tracking-wider mb-1.5">
+                        <label class="block text-xs font-black text-[#021f59] uppercase tracking-wider mb-1.5">
                             Upload Resume / CV (PDF, DOC, DOCX • Max 5MB) <span class="text-red-500">*</span>
                         </label>
                         <input 
@@ -642,18 +642,18 @@
                             name="resume" 
                             accept=".pdf,.doc,.docx" 
                             required 
-                            class="w-full text-xs text-slate-700 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-[#041536] file:text-white hover:file:bg-[#c30102] file:cursor-pointer cursor-pointer border border-slate-300 rounded-xl p-1.5 bg-white"
+                            class="w-full text-xs text-slate-700 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-[#021f59] file:text-white hover:file:bg-[#c4040a] file:cursor-pointer cursor-pointer border border-slate-300 rounded-xl p-1.5 bg-white"
                         >
                     </div>
 
                     <div>
-                        <label class="block text-xs font-black text-[#041536] uppercase tracking-wider mb-1.5">
+                        <label class="block text-xs font-black text-[#021f59] uppercase tracking-wider mb-1.5">
                             Cover Note / Key Qualifications (Optional)
                         </label>
                         <textarea 
                             name="cover_letter" 
                             rows="4" 
-                            class="w-full rounded-xl border border-slate-300 p-3 text-xs sm:text-sm text-[#041536] focus:border-[#051c45] focus:ring-2 focus:ring-[#051c45]/15 focus:outline-none resize-none" 
+                            class="w-full rounded-xl border border-slate-300 p-3 text-xs sm:text-sm text-[#021f59] focus:border-[#063b96] focus:ring-2 focus:ring-[#063b96]/15 focus:outline-none resize-none" 
                             placeholder="Briefly mention your relevant commercial, L/C, supply chain, or tax experience..."
                         ></textarea>
                     </div>
@@ -671,11 +671,11 @@
             </form>
         @else
             <div class="space-y-5 text-center py-2">
-                <div class="w-14 h-14 rounded-2xl bg-[#051c45]/10 text-[#051c45] flex items-center justify-center mx-auto text-2xl border border-[#051c45]/20">
+                <div class="w-14 h-14 rounded-2xl bg-[#063b96]/10 text-[#063b96] flex items-center justify-center mx-auto text-2xl border border-[#063b96]/20">
                     <i class="fas fa-user-check"></i>
                 </div>
                 <div>
-                    <h4 class="text-base font-black text-[#041536] mb-1">
+                    <h4 class="text-base font-black text-[#021f59] mb-1">
                         Sign In to Submit Your CV
                     </h4>
                     <p class="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">

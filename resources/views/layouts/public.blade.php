@@ -7,9 +7,9 @@
 
     <title>@yield('title', 'Course Catalog') - {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}</title>
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/icons/icon-180x180.png') }}">
     <link rel="manifest" href="{{ route('pwa.manifest') }}">
-    <meta name="theme-color" content="#051c45">
+    <meta name="theme-color" content="#021f59">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="{{ \App\Models\Setting::getBrandSizing()['short_name'] }}">
@@ -159,10 +159,13 @@
     @endif
 
     <!-- Google Fonts: Plus Jakarta Sans (Display) & Inter (Body) -->
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//ui-avatars.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
     <!-- Tailwind & App JS -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -194,7 +197,8 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--color-content-bg-alt);
+            background: linear-gradient(180deg, #e8f0fe 0%, #f2f6ff 35%, #e6eefc 70%, #f0f5ff 100%);
+            background-attachment: fixed;
             color: var(--color-content-text);
         }
 
@@ -213,23 +217,108 @@
             background: linear-gradient(90deg, transparent 0%, #dca22c 20%, #ffe27a 50%, #dca22c 80%, transparent 100%);
         }
 
+        /* Standalone fallbacks for updated ACS logo hex utilities */
+        .bg-\[\#01143d\] { background-color: #01143d !important; }
+        .bg-\[\#021f59\] { background-color: #021f59 !important; }
+        .bg-\[\#063b96\] { background-color: #063b96 !important; }
+        .bg-\[\#c4040a\] { background-color: #c4040a !important; }
+        .text-\[\#021f59\] { color: #021f59 !important; }
+        .text-\[\#063b96\] { color: #063b96 !important; }
+        .text-\[\#c4040a\] { color: #c4040a !important; }
+
+        @keyframes acsWordGlow {
+            0%, 48%, 100% {
+                color: #64748b;
+                -webkit-text-fill-color: #64748b;
+            }
+            20% {
+                color: #be123c;
+                -webkit-text-fill-color: #be123c;
+            }
+        }
+        .acs-glow-word {
+            display: inline-block;
+            animation: acsWordGlow 5.4s ease-in-out infinite;
+        }
+
+        /* Subtle, Eye-Soothing Sheen on Institution Title */
+        @keyframes acsTitleShimmer {
+            0%, 70% {
+                background-position: 120% center;
+            }
+            100% {
+                background-position: -120% center;
+            }
+        }
+        .acs-title-sequence {
+            background-image: linear-gradient(110deg, #021f59 0%, #021f59 44%, #1e40af 50%, #021f59 56%, #021f59 100%);
+            background-size: 240% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: acsTitleShimmer 10s ease-in-out infinite;
+        }
+        .acs-hero-title-sequence {
+            background-image: linear-gradient(110deg, #ffffff 0%, #ffffff 44%, #fef3c7 50%, #ffffff 56%, #ffffff 100%);
+            background-size: 240% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: acsTitleShimmer 11s ease-in-out infinite;
+        }
+
+        /* Enroll Buttons Everywhere: Calm Velvety Crimson Glow */
+        @keyframes acsEnrollGlow {
+            0%, 100% {
+                box-shadow: 0 4px 14px -2px rgba(176, 20, 28, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            }
+            50% {
+                box-shadow: 0 6px 20px 0 rgba(176, 20, 28, 0.42), 0 0 12px 1px rgba(220, 162, 44, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+            }
+        }
+        .btn-cab-primary, .btn-ipdp-primary {
+            animation: acsEnrollGlow 4s ease-in-out infinite;
+        }
+
+        /* Course / Enroll Page CTA Dance */
+        @keyframes acsEnrollDance {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+                box-shadow: 0 6px 20px rgba(196, 4, 10, 0.45), 0 0 0 0 rgba(255, 226, 122, 0);
+            }
+            25% {
+                transform: translateY(-3px) scale(1.03);
+                box-shadow: 0 10px 28px rgba(196, 4, 10, 0.65), 0 0 18px 2px rgba(255, 226, 122, 0.55);
+            }
+            50% {
+                transform: translateY(0) scale(1);
+            }
+            75% {
+                transform: translateY(-2px) scale(1.02);
+            }
+        }
+        .enroll-dance-pill, .enroll-dance-cta {
+            animation: acsEnrollDance 2.4s ease-in-out infinite !important;
+            will-change: transform, box-shadow;
+        }
+
         /* ACS 24K Gold, Royal Cobalt & Metallic Crimson Gradient Buttons */
         .btn-cab-primary, .btn-ipdp-primary {
-            background: linear-gradient(135deg, #ff1e1e 0%, #c4040a 50%, #850004 100%) !important;
+            background: linear-gradient(135deg, #d62839 0%, #b0141c 52%, #8a0e16 100%) !important;
             color: #ffffff !important;
             font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
             font-weight: 700;
             border-radius: 0.75rem;
             transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 16px -2px rgba(196, 4, 10, 0.38), 0 2px 6px -1px rgba(196, 4, 10, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 14px -2px rgba(176, 20, 28, 0.28), 0 2px 6px -1px rgba(176, 20, 28, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.26);
             border: 1px solid rgba(255, 255, 255, 0.16);
             letter-spacing: 0.015em;
         }
         .btn-cab-primary:hover, .btn-ipdp-primary:hover {
-            background: linear-gradient(135deg, #e01218 0%, #a50208 52%, #6e0003 100%) !important;
+            background: linear-gradient(135deg, #b0141c 0%, #940f17 52%, #6e080e 100%) !important;
             transform: translateY(-1.5px);
-            box-shadow: 0 10px 28px -2px rgba(196, 4, 10, 0.52), 0 4px 12px -2px rgba(196, 4, 10, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.38);
-            border-color: rgba(255, 226, 122, 0.45);
+            box-shadow: 0 8px 22px -2px rgba(176, 20, 28, 0.38), 0 4px 10px -2px rgba(176, 20, 28, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+            border-color: rgba(255, 226, 122, 0.35);
         }
 
         .btn-cab-secondary, .btn-ipdp-secondary {
@@ -354,13 +443,13 @@
     $headerCustomPages = collect($customPagesList)->filter(fn($p) => !empty($p['show_in_header']))->values();
     $footerCustomPages = collect($customPagesList)->filter(fn($p) => !empty($p['show_in_footer']))->values();
 @endphp
-<body class="antialiased min-h-screen flex flex-col selection:bg-[#c30102] selection:text-white pb-16 lg:pb-0" x-data="{ searchModalOpen: false }">
+<body class="antialiased min-h-screen flex flex-col selection:bg-[#c4040a] selection:text-white pb-16 lg:pb-0" x-data="{ searchModalOpen: false }">
 
-    <!-- 0. Top Minimalist Contact Bar (Zero Fluff, Pure Utility) -->
-    <div class="bg-[#020b18] text-white py-1.5 px-4 text-[11px] font-medium border-b border-white/10 hidden sm:block relative z-50">
+    <!-- 0. Top Minimalist Contact Bar (Deep Ribbon Navy + 24K Gold Accent) -->
+    <div class="bg-[#01143d] text-white py-1.5 px-4 text-[11px] font-medium border-b border-[#dca22c]/30 hidden sm:block relative z-50">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-2 text-slate-300 font-medium truncate">
-                <i class="fas fa-map-marker-alt text-[#c30102] text-[10px]"></i>
+                <i class="fas fa-map-marker-alt text-[#ffe27a] text-[10px]"></i>
                 <a href="{{ route('contact.index') }}" class="hover:text-white transition-colors truncate">
                     {{ \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka-1216') }}
                 </a>
@@ -372,7 +461,7 @@
                     $topWhatsapp = \App\Models\Setting::getVal('contact_whatsapp', '8801917054664');
                 @endphp
                 <a href="tel:{{ $topHotlineTel }}" class="hover:text-white flex items-center gap-1.5 transition-colors font-semibold">
-                    <i class="fas fa-phone-alt text-[#c30102] text-[10px]"></i>
+                    <i class="fas fa-phone-alt text-[#ffe27a] text-[10px]"></i>
                     <span>{{ $topHotline }}</span>
                 </a>
                 <span class="text-white/20">&bull;</span>
@@ -389,40 +478,51 @@
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_1px_12px_rgba(5,28,69,0.05)] transition-all w-full">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div class="flex justify-between items-center h-16 sm:h-[4.25rem] gap-4 lg:gap-6 w-full min-w-0">
-                
-                <!-- Clean 2-Line Institution Brand Lockup (Zero 4-Line Wrapping) -->
-                <a href="{{ url('/') }}" class="flex items-center gap-2.5 shrink-0 group">
+    <!-- Floating Pure Liquid Glass Header (Matched to Floating Footer: Blue / Gold / Red) -->
+    <header class="sticky top-0 pt-2 pb-1 z-50 px-2.5 sm:px-4 lg:px-6 transition-all w-full pointer-events-none">
+        <div class="pointer-events-auto max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full rounded-2xl"
+             style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.88) 0%, rgba(248, 250, 252, 0.78) 100%); backdrop-filter: blur(24px) saturate(210%); -webkit-backdrop-filter: blur(24px) saturate(210%); border: 1px solid rgba(220, 162, 44, 0.48); box-shadow: 0 12px 32px -6px rgba(2, 31, 89, 0.20), 0 4px 12px rgba(196, 4, 10, 0.10), inset 0 1.5px 0 rgba(255, 255, 255, 0.96);">
+            <div class="flex justify-between items-center h-16 sm:h-[4.25rem] gap-2 sm:gap-4 lg:gap-6 w-full min-w-0">
+
+                <!-- Clean 2-Line Institution Brand Lockup (Logo Left, Text Centered on Mobile / Left on Desktop) -->
+                <a href="{{ url('/') }}" class="flex items-center gap-2.5 flex-1 lg:flex-initial lg:shrink-0 group min-w-0">
                     <div class="relative shrink-0">
-                        <img class="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-full bg-white border border-slate-200/80 group-hover:scale-105 transition-transform duration-200" 
+                        <img class="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-full bg-white border border-[#dca22c]/40 group-hover:scale-105 transition-transform duration-200" 
                              src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" 
                              alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                     </div>
-                    <div class="flex flex-col min-w-0">
-                        <span class="text-sm sm:text-[15px] font-black tracking-tight text-[#041536] leading-tight brand-adaptive-title" style="{{ $brandSizing['header_style'] ?? '' }}">
+                    <div class="flex flex-col flex-1 lg:flex-initial min-w-0 text-center lg:text-left">
+                        <span class="acs-title-sequence text-xs sm:text-[15px] font-black tracking-tight text-[#021f59] leading-tight brand-adaptive-title" style="{{ $brandSizing['header_style'] ?? '' }}">
                             {!! $brandSizing['formatted_html'] ?? e($brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy') !!}
                         </span>
+                        @php
+                            $navTagline = \App\Models\Setting::getVal('site_tagline', 'Learn, Grow, Lead.');
+                            $isLearnGrowLead = stripos($navTagline, 'learn') !== false && stripos($navTagline, 'grow') !== false && stripos($navTagline, 'lead') !== false;
+                        @endphp
                         <span class="text-[10px] font-bold text-slate-500 tracking-tight mt-0.5 leading-none">
-                            {{ \App\Models\Setting::getVal('site_tagline', 'Commercial & Supply Chain') }}
+                            @if($isLearnGrowLead)
+                                <span class="acs-glow-word">Learn,</span>
+                                <span class="acs-glow-word" style="animation-delay: 1.6s;">Grow,</span>
+                                <span class="acs-glow-word" style="animation-delay: 3.2s;">Lead.</span>
+                            @else
+                                {{ $navTagline }}
+                            @endif
                         </span>
                     </div>
                 </a>
 
                 <!-- Desktop Navigation Menu (Generous Spacing, Zero Clutter) -->
                 <nav class="hidden lg:flex items-center justify-center flex-1 min-w-0 gap-1 xl:gap-2 text-[13px] font-semibold text-slate-700" x-data="{ courseDropdown: false, communityDropdown: false }">
-                    <a href="{{ url('/') }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('/') ? 'text-[#c30102] font-bold bg-slate-50' : '' }}">
+                    <a href="{{ url('/') }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c4040a] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('/') ? 'text-[#c4040a] font-bold bg-slate-50' : '' }}">
                         <span>Home</span>
                     </a>
 
                     <!-- Course Dropdown -->
                     <div class="relative py-1.5" @mouseenter="courseDropdown = true" @mouseleave="courseDropdown = false" @click.away="courseDropdown = false">
-                        <a href="{{ route('catalog.index') }}" @click="if (window.innerWidth < 1280) { $event.preventDefault(); courseDropdown = !courseDropdown; }" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('catalog*') || request()->is('courses*') ? 'text-[#c30102] font-bold bg-slate-50' : '' }}">
+                        <a href="{{ route('catalog.index') }}" @click="if (window.innerWidth < 1280) { $event.preventDefault(); courseDropdown = !courseDropdown; }" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:text-[#c4040a] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('catalog*') || request()->is('courses*') ? 'text-[#c4040a] font-bold bg-slate-50' : '' }}">
                             <span>Courses</span>
-                            <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="courseDropdown ? 'rotate-180 text-[#c30102]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="courseDropdown ? 'rotate-180 text-[#c4040a]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </a>
                         <!-- Submenu -->
                         <div 
@@ -436,8 +536,8 @@
                             class="absolute top-full left-0 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200/80 p-2 z-50 pt-2"
                             style="display: none;"
                         >
-                            <a href="{{ route('catalog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
-                                <i class="fas fa-layer-group text-xs text-[#c30102]"></i>
+                            <a href="{{ route('catalog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-semibold text-slate-800">
+                                <i class="fas fa-layer-group text-xs text-[#c4040a]"></i>
                                 <span>All Courses</span>
                             </a>
                             @php
@@ -459,16 +559,16 @@
                                     $publicDayLongCount = 0;
                                 }
                             @endphp
-                            <a href="{{ route('catalog.certificate') }}" class="flex items-center justify-between gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                            <a href="{{ route('catalog.certificate') }}" class="flex items-center justify-between gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-semibold text-slate-800">
                                 <span class="flex items-center gap-2.5">
-                                    <i class="fas fa-award text-xs text-[#051c45]"></i>
+                                    <i class="fas fa-award text-xs text-[#063b96]"></i>
                                     <span>Certificate Programs</span>
                                 </span>
                                 @if($publicCertCount > 0)
                                     <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-slate-100 text-slate-700">{{ $publicCertCount }}</span>
                                 @endif
                             </a>
-                            <a href="{{ route('catalog.day_long') }}" class="flex items-center justify-between gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                            <a href="{{ route('catalog.day_long') }}" class="flex items-center justify-between gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-semibold text-slate-800">
                                 <span class="flex items-center gap-2.5">
                                     <i class="fas fa-calendar-day text-xs text-[#10b981]"></i>
                                     <span>Day Long Masterclasses</span>
@@ -495,8 +595,8 @@
                                     4 Core Learning Departments
                                 </div>
                                 @foreach($publicNavCategories as $pCat)
-                                    <a href="{{ route('catalog.category', $pCat->slug) }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-700">
-                                        <i class="fas {{ $pCat->icon ?? 'fa-layer-group' }} text-[11px] text-[#051c45]"></i>
+                                    <a href="{{ route('catalog.category', $pCat->slug) }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-semibold text-slate-700">
+                                        <i class="fas {{ $pCat->icon ?? 'fa-layer-group' }} text-[11px] text-[#063b96]"></i>
                                         <span>{{ $pCat->name }}</span>
                                     </a>
                                 @endforeach
@@ -505,41 +605,41 @@
                     </div>
 
                     @if(\App\Models\Setting::isPageEnabled('jobs'))
-                    <a href="{{ route('jobs.index') }}" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('jobs*') ? 'text-[#c30102] font-bold bg-slate-50' : '' }}">
+                    <a href="{{ route('jobs.index') }}" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:text-[#c4040a] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('jobs*') ? 'text-[#c4040a] font-bold bg-slate-50' : '' }}">
                         <span>Careers</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                     </a>
                     @endif
 
                     @if(\App\Models\Setting::isPageEnabled('instructors'))
-                    <a href="{{ route('instructors.index') }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('instructors*') || request()->is('faculty*') ? 'text-[#c30102] font-bold bg-slate-50' : '' }}">
+                    <a href="{{ route('instructors.index') }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c4040a] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('instructors*') || request()->is('faculty*') ? 'text-[#c4040a] font-bold bg-slate-50' : '' }}">
                         <span>Instructors</span>
                     </a>
                     @endif
 
                     @if(\App\Models\Setting::isPageEnabled('about'))
-                    <a href="{{ route('about.index') }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('about.*') ? 'text-[#c30102] font-bold bg-slate-50' : '' }}">
+                    <a href="{{ route('about.index') }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c4040a] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('about.*') ? 'text-[#c4040a] font-bold bg-slate-50' : '' }}">
                         <span>About</span>
                     </a>
                     @endif
 
                     @if(\App\Models\Setting::isPageEnabled('contact'))
-                    <a href="{{ route('contact.index') }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('contact.*') ? 'text-[#c30102] font-bold bg-slate-50' : '' }}">
+                    <a href="{{ route('contact.index') }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c4040a] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->routeIs('contact.*') ? 'text-[#c4040a] font-bold bg-slate-50' : '' }}">
                         <span>Contact</span>
                     </a>
                     @endif
 
                     @foreach($headerCustomPages as $customNavPage)
-                        <a href="{{ route('pages.show', $customNavPage['slug']) }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('page/' . $customNavPage['slug']) ? 'text-[#c30102] font-bold bg-slate-50' : '' }}">
+                        <a href="{{ route('pages.show', $customNavPage['slug']) }}" class="px-2.5 py-1.5 rounded-lg hover:text-[#c4040a] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('page/' . $customNavPage['slug']) ? 'text-[#c4040a] font-bold bg-slate-50' : '' }}">
                             <span>{{ $customNavPage['title'] }}</span>
                         </a>
                     @endforeach
 
                     <!-- Community & Insights Dropdown -->
                     <div class="relative py-1.5" @mouseenter="communityDropdown = true" @mouseleave="communityDropdown = false" @click.away="communityDropdown = false">
-                        <button type="button" @click="communityDropdown = !communityDropdown" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:text-[#c30102] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('feed*') || request()->is('blog*') || request()->is('verify-certificate*') ? 'text-[#c30102] font-bold bg-slate-50' : '' }}">
+                        <button type="button" @click="communityDropdown = !communityDropdown" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:text-[#c4040a] hover:bg-slate-50 transition-all whitespace-nowrap {{ request()->is('feed*') || request()->is('blog*') || request()->is('verify-certificate*') ? 'text-[#c4040a] font-bold bg-slate-50' : '' }}">
                             <span>Community</span>
-                            <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="communityDropdown ? 'rotate-180 text-[#c30102]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="communityDropdown ? 'rotate-180 text-[#c4040a]' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div 
                             x-show="communityDropdown" 
@@ -553,33 +653,33 @@
                             style="display: none;"
                         >
                             @if(\App\Models\Setting::isPageEnabled('feed'))
-                            <a href="{{ route('feed.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
-                                <i class="fas fa-comments text-xs text-[#051c45]"></i>
+                            <a href="{{ route('feed.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-semibold text-slate-800">
+                                <i class="fas fa-comments text-xs text-[#063b96]"></i>
                                 <span>Community Discussion Feed</span>
                             </a>
                             @endif
                             @if(\App\Models\Setting::isPageEnabled('blog'))
-                            <a href="{{ route('blog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
-                                <i class="fas fa-book-reader text-xs text-[#c30102]"></i>
+                            <a href="{{ route('blog.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-semibold text-slate-800">
+                                <i class="fas fa-book-reader text-xs text-[#c4040a]"></i>
                                 <span>Knowledge Hub & Blogs</span>
                             </a>
                             @endif
                             @if(\App\Models\Setting::isPageEnabled('verify_certificate'))
-                            <a href="{{ route('certificate.verify') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c30102] transition-colors font-semibold text-slate-800">
+                            <a href="{{ route('certificate.verify') }}" class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-semibold text-slate-800">
                                 <i class="fas fa-shield-alt text-xs text-[#10b981]"></i>
                                 <span>Verify Certificate</span>
                             </a>
                             @endif
                             <div class="border-t border-slate-100 my-1"></div>
-                            <a href="{{ route('legal.privacy') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                            <a href="{{ route('legal.privacy') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-medium text-slate-600">
                                 <i class="fas fa-user-shield text-[11px] text-slate-400"></i>
                                 <span>Privacy Policy</span>
                             </a>
-                            <a href="{{ route('legal.terms') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                            <a href="{{ route('legal.terms') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-medium text-slate-600">
                                 <i class="fas fa-file-contract text-[11px] text-slate-400"></i>
                                 <span>Terms of Service</span>
                             </a>
-                            <a href="{{ route('legal.refund') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c30102] transition-colors font-medium text-slate-600">
+                            <a href="{{ route('legal.refund') }}" class="flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs hover:bg-slate-50 hover:text-[#c4040a] transition-colors font-medium text-slate-600">
                                 <i class="fas fa-undo-alt text-[11px] text-slate-400"></i>
                                 <span>Refund Policy</span>
                             </a>
@@ -589,7 +689,7 @@
 
                 <!-- Actions: Search, Wishlist, Auth -->
                 <div class="hidden sm:flex items-center gap-2.5 shrink-0">
-                    <button type="button" @click="searchModalOpen = true" class="xl:hidden w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-[#041536] inline-flex items-center justify-center transition-colors shrink-0" title="Search Courses">
+                    <button type="button" @click="searchModalOpen = true" class="xl:hidden w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-[#021f59] inline-flex items-center justify-center transition-colors shrink-0" title="Search Courses">
                         <i class="fas fa-search text-xs"></i>
                     </button>
 
@@ -601,16 +701,16 @@
                                 placeholder="Search courses..." 
                                 @focus="expanded = true" 
                                 @blur="expanded = false"
-                                :class="expanded ? 'w-44 ring-2 ring-[#c30102]/20 border-[#c30102] bg-white' : 'w-36 bg-slate-100/90 border-slate-200/80'"
+                                :class="expanded ? 'w-44 ring-2 ring-[#c4040a]/20 border-[#c4040a] bg-white' : 'w-36 bg-slate-100/90 border-slate-200/80'"
                                 class="transition-all duration-200 text-xs py-2 pl-8 pr-3 rounded-xl border text-slate-800 outline-none placeholder:text-slate-400 font-medium"
                             >
                             <i class="fas fa-search text-[11px] text-slate-400 absolute left-3 pointer-events-none"></i>
                         </form>
                     </div>
 
-                    <a href="{{ route('wishlist.index') }}" title="Saved Wishlist" class="relative w-9 h-9 rounded-xl bg-slate-100/90 hover:bg-red-50 border border-slate-200/70 text-[#c30102] flex items-center justify-center transition-colors shrink-0">
+                    <a href="{{ route('wishlist.index') }}" title="Saved Wishlist" class="relative w-9 h-9 rounded-xl bg-slate-100/90 hover:bg-red-50 border border-slate-200/70 text-[#c4040a] flex items-center justify-center transition-colors shrink-0">
                         <i class="fas fa-heart text-sm"></i>
-                        <span id="wishlist-count-badge" class="absolute -top-1 -right-1 bg-[#c30102] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow {{ auth()->check() && auth()->user()->wishlists()->count() > 0 ? '' : 'hidden' }}">
+                        <span id="wishlist-count-badge" class="absolute -top-1 -right-1 bg-[#c4040a] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow {{ auth()->check() && auth()->user()->wishlists()->count() > 0 ? '' : 'hidden' }}">
                             {{ auth()->check() ? auth()->user()->wishlists()->count() : 0 }}
                         </span>
                     </a>
@@ -634,7 +734,7 @@
 
                 <!-- Mobile & Tablet Hamburger Toggle -->
                 <div class="lg:hidden flex items-center" x-data="{ open: false }">
-                    <button @click="open = !open" class="p-2 text-slate-700 hover:text-[#c30102] focus:outline-none" aria-label="Toggle navigation">
+                    <button @click="open = !open" class="p-2 text-slate-700 hover:text-[#c4040a] focus:outline-none" aria-label="Toggle navigation">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                     <!-- Mobile Drawer -->
@@ -645,61 +745,61 @@
                                 type="text" 
                                 name="search" 
                                 placeholder="Search courses & masterclasses..." 
-                                class="w-full bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl text-xs py-2.5 pl-3.5 pr-9 text-slate-800 focus:ring-2 focus:ring-[#c30102]/20 focus:border-[#c30102] outline-none transition-all"
+                                class="w-full bg-slate-100 hover:bg-slate-50 focus:bg-white border border-slate-200 rounded-xl text-xs py-2.5 pl-3.5 pr-9 text-slate-800 focus:ring-2 focus:ring-[#c4040a]/20 focus:border-[#c4040a] outline-none transition-all"
                             >
-                            <button type="submit" class="absolute right-3 top-2.5 text-slate-400 hover:text-[#c30102]">
+                            <button type="submit" class="absolute right-3 top-2.5 text-slate-400 hover:text-[#c4040a]">
                                 <i class="fas fa-search text-xs"></i>
                             </button>
                         </form>
-                        <a href="{{ url('/') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Home</a>
-                        <a href="{{ route('catalog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Course Catalog</a>
-                        <a href="{{ route('catalog.certificate') }}" class="flex items-center justify-between py-2 hover:text-[#c30102] border-b border-slate-100 text-xs pl-2 text-slate-600">
+                        <a href="{{ url('/') }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">Home</a>
+                        <a href="{{ route('catalog.index') }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">Course Catalog</a>
+                        <a href="{{ route('catalog.certificate') }}" class="flex items-center justify-between py-2 hover:text-[#c4040a] border-b border-slate-100 text-xs pl-2 text-slate-600">
                             <span>↳ Certificate Programs</span>
                             @if(isset($publicCertCount) && $publicCertCount > 0)
                                 <span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-100 text-slate-700">{{ $publicCertCount }}</span>
                             @endif
                         </a>
-                        <a href="{{ route('catalog.day_long') }}" class="flex items-center justify-between py-2 hover:text-[#c30102] border-b border-slate-100 text-xs pl-2 text-slate-600">
+                        <a href="{{ route('catalog.day_long') }}" class="flex items-center justify-between py-2 hover:text-[#c4040a] border-b border-slate-100 text-xs pl-2 text-slate-600">
                             <span>↳ Day Long Masterclasses</span>
                             @if(isset($publicDayLongCount) && $publicDayLongCount > 0)
                                 <span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-100 text-slate-700">{{ $publicDayLongCount }}</span>
                             @endif
                         </a>
                         @if(\App\Models\Setting::isPageEnabled('instructors'))
-                        <a href="{{ route('instructors.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Instructors</a>
+                        <a href="{{ route('instructors.index') }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">Instructors</a>
                         @endif
                         @if(\App\Models\Setting::isPageEnabled('blog'))
-                        <a href="{{ route('blog.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Blog & Insights</a>
+                        <a href="{{ route('blog.index') }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">Blog & Insights</a>
                         @endif
                         @if(\App\Models\Setting::isPageEnabled('feed'))
-                        <a href="{{ route('feed.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Community Feed</a>
+                        <a href="{{ route('feed.index') }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">Community Feed</a>
                         @endif
                         @if(isset($publicNavCategories) && $publicNavCategories->isNotEmpty())
                             @foreach($publicNavCategories->take(4) as $mCat)
-                                <a href="{{ route('catalog.category', $mCat->slug) }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">{{ $mCat->name }}</a>
+                                <a href="{{ route('catalog.category', $mCat->slug) }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">{{ $mCat->name }}</a>
                             @endforeach
                         @endif
                         @if(\App\Models\Setting::isPageEnabled('about'))
-                        <a href="{{ route('about.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">About Us</a>
+                        <a href="{{ route('about.index') }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">About Us</a>
                         @endif
                         @if(\App\Models\Setting::isPageEnabled('jobs'))
-                        <a href="{{ route('jobs.index') }}" class="flex items-center justify-between py-2 hover:text-[#c30102] border-b border-slate-100">
+                        <a href="{{ route('jobs.index') }}" class="flex items-center justify-between py-2 hover:text-[#c4040a] border-b border-slate-100">
                             <span>Careers & Jobs</span>
                             <span class="px-1.5 py-0.5 rounded-full text-[9px] bg-emerald-500 text-white font-black uppercase tracking-wider">Hiring</span>
                         </a>
                         @endif
                         @if(\App\Models\Setting::isPageEnabled('verify_certificate'))
-                        <a href="{{ route('certificate.verify') }}" class="flex items-center justify-between py-2 hover:text-[#c30102] border-b border-slate-100">
+                        <a href="{{ route('certificate.verify') }}" class="flex items-center justify-between py-2 hover:text-[#c4040a] border-b border-slate-100">
                             <span>Verify Certificate</span>
                             <span class="text-[9px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700">Official</span>
                         </a>
                         @endif
                         @foreach($headerCustomPages as $customNavPage)
-                            <a href="{{ route('pages.show', $customNavPage['slug']) }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">{{ $customNavPage['title'] }}</a>
+                            <a href="{{ route('pages.show', $customNavPage['slug']) }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">{{ $customNavPage['title'] }}</a>
                         @endforeach
-                        <a href="{{ route('wishlist.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">My Wishlist</a>
+                        <a href="{{ route('wishlist.index') }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">My Wishlist</a>
                         @if(\App\Models\Setting::isPageEnabled('contact'))
-                        <a href="{{ route('contact.index') }}" class="block py-2 hover:text-[#c30102] border-b border-slate-100">Contact & Support</a>
+                        <a href="{{ route('contact.index') }}" class="block py-2 hover:text-[#c4040a] border-b border-slate-100">Contact & Support</a>
                         @endif
                         <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between py-2 hover:text-[#1877F2] border-b border-slate-100 text-[#1877F2] font-bold">
                             <span class="inline-flex items-center gap-2"><i class="fab fa-facebook text-sm"></i> Official Facebook Page</span>
@@ -707,9 +807,9 @@
                         </a>
                         <div class="pt-2 pb-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Institutional Policies</div>
                         <div class="grid grid-cols-3 gap-2 pb-2 border-b border-slate-100 text-[11px]">
-                            <a href="{{ route('legal.privacy') }}" class="text-slate-600 hover:text-[#c30102]">Privacy</a>
-                            <a href="{{ route('legal.terms') }}" class="text-slate-600 hover:text-[#c30102]">Terms</a>
-                            <a href="{{ route('legal.refund') }}" class="text-slate-600 hover:text-[#c30102]">Refund</a>
+                            <a href="{{ route('legal.privacy') }}" class="text-slate-600 hover:text-[#c4040a]">Privacy</a>
+                            <a href="{{ route('legal.terms') }}" class="text-slate-600 hover:text-[#c4040a]">Terms</a>
+                            <a href="{{ route('legal.refund') }}" class="text-slate-600 hover:text-[#c4040a]">Refund</a>
                         </div>
                         <div class="pt-3">
                             @auth
@@ -733,12 +833,13 @@
                     </div>
                 </div>
             </div>
+        <div class="h-[2px] w-[96%] mx-auto rounded-full opacity-85" style="background: linear-gradient(90deg, #0066e6 0%, #dca22c 50%, #c4040a 100%);"></div>
         </div>
     </header>
 
     @auth
-        <!-- Authenticated Portal Quick-Navigation Bar (Prevents Logged-In Students from Getting Lost on Public Pages) -->
-        <div class="bg-[#051c45] text-white border-b border-white/10 py-1.5 px-4 text-[11px] relative z-40">
+        <!-- Authenticated Portal Quick-Navigation Bar (Royal Cobalt + 24K Gold Accent) -->
+        <div class="bg-[#021f59] text-white border-b border-[#dca22c]/30 py-1.5 px-4 text-[11px] relative z-40">
             <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -753,7 +854,7 @@
                     @endif
                 </div>
                 <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-[#c30102] hover:bg-[#a50102] text-white font-bold text-[11px] shadow-xs transition-all">
+                    <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-[#c4040a] hover:bg-[#a50102] text-white font-bold text-[11px] shadow-xs transition-all">
                         <i class="fas fa-arrow-left text-[9px]"></i>
                         <span>{{ auth()->user()->isAdmin() ? 'Admin Console' : 'My Dashboard' }}</span>
                     </a>
@@ -767,7 +868,7 @@
                             <span>Performance</span>
                         </a>
                         <a href="{{ route('wishlist.index') }}" class="hidden sm:inline-flex items-center gap-1 text-slate-300 hover:text-white font-semibold text-[11px] transition-colors">
-                            <i class="fas fa-heart text-[10px] text-[#c30102]"></i>
+                            <i class="fas fa-heart text-[10px] text-[#c4040a]"></i>
                             <span>Saved Wishlist</span>
                         </a>
                     @endif
@@ -781,123 +882,115 @@
         @yield('content')
     </main>
 
-    <!-- Footer & Subfooter -->
-    <footer id="contact" class="bg-[#020b18] text-slate-300 pt-16 pb-8 border-t border-slate-800/80 mt-16 text-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-                <!-- Col 1: About Institute -->
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <img class="h-11 w-11 shrink-0 object-contain rounded-full bg-white p-0.5 shadow-md" 
+    <!-- Clean, Compact & Premium Footer -->
+    <footer id="contact" class="text-slate-300 pt-10 pb-28 lg:pb-8 border-t-2 border-[#dca22c]/60 mt-10 text-sm" style="background: linear-gradient(180deg, #021f59 0%, #01143d 100%);">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+                <!-- Brand Column -->
+                <div class="lg:col-span-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <img class="h-11 w-11 shrink-0 object-contain rounded-full bg-white p-0.5 border border-[#dca22c]/60 shadow-md" 
                              src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" 
                              alt="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                         <div class="min-w-0">
-                            <h3 class="text-white font-black uppercase tracking-tight brand-adaptive-title leading-tight" style="{{ $brandSizing['sidebar_style'] ?? '' }}">{!! $brandSizing['formatted_html'] ?? e($brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy') !!}</h3>
-                            <span class="text-[10px] text-[#c30102] font-black tracking-widest uppercase block truncate mt-0.5">{{ \App\Models\Setting::getVal('site_tagline', \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) }}</span>
+                            <h3 class="text-white font-black uppercase tracking-tight brand-adaptive-title leading-tight text-sm sm:text-base" style="{{ $brandSizing['sidebar_style'] ?? '' }}">{!! $brandSizing['formatted_html'] ?? e($brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy') !!}</h3>
+                            <span class="text-[10px] font-extrabold tracking-widest uppercase block truncate mt-0.5" style="color: #ffe27a;">{{ \App\Models\Setting::getVal('site_tagline', \App\Models\Setting::getVal('landing_hero_tagline', 'Learn, Grow, Lead.')) }}</span>
                         </div>
                     </div>
-                    <p class="leading-relaxed mb-6 text-xs sm:text-sm text-slate-300">
-                        {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} is a specialized professional training institute operating 4 independent Learning Departments in Commercial Management, Supply Chain Management, Career Development, and Professional Skills &amp; Leadership Development.
+                    <p class="leading-relaxed mb-4 text-xs text-slate-300/90 max-w-sm">
+                        Executive certifications &amp; practical masterclasses in Commercial Banking, Supply Chain, and Leadership.
                     </p>
-                    <div class="flex items-center gap-3">
-                        <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Follow {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} on Facebook" title="Official Facebook Page — {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" class="w-9 h-9 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:bg-[#166fe5] shadow-md transition-all hover:scale-105">
+                    <div class="flex items-center gap-2.5">
+                        <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Follow {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} on Facebook" class="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:opacity-90 shadow transition-transform hover:scale-105 text-xs">
                             <i class="fab fa-facebook-f"></i>
                         </a>
                         @if(!empty($officialLinkedinUrl))
-                        <a href="{{ $officialLinkedinUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Follow {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} on LinkedIn" title="Official LinkedIn — {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#0A66C2] transition-colors">
+                        <a href="{{ $officialLinkedinUrl }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#0A66C2] transition-colors text-xs">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
                         @endif
                         @if(!empty($officialYoutubeUrl))
-                        <a href="{{ $officialYoutubeUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Subscribe to {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} on YouTube" title="Official YouTube — {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#FF0000] transition-colors">
+                        <a href="{{ $officialYoutubeUrl }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-[#FF0000] transition-colors text-xs">
                             <i class="fab fa-youtube"></i>
                         </a>
                         @endif
                     </div>
                 </div>
 
-                <!-- Col 2: Useful Links -->
-                <div>
-                    <h4 class="text-white font-bold text-base mb-4 tracking-wide uppercase text-xs">Useful Links</h4>
-                    <ul class="space-y-2 text-xs sm:text-sm">
-                        <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a></li>
-                        <li><a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Course Catalog</a></li>
-                        @if(\App\Models\Setting::isPageEnabled('instructors'))
-                        <li><a href="{{ route('instructors.index') }}" class="hover:text-white transition-colors">Instructors</a></li>
-                        @endif
-                        @if(\App\Models\Setting::isPageEnabled('blog'))
-                        <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Blog & Insights</a></li>
-                        @endif
-                        @if(\App\Models\Setting::isPageEnabled('feed'))
-                        <li><a href="{{ route('feed.index') }}" class="hover:text-white transition-colors">Community Feed</a></li>
-                        @endif
-                        @if(\App\Models\Setting::isPageEnabled('verify_certificate'))
-                        <li><a href="{{ route('certificate.verify') }}" class="hover:text-white transition-colors text-emerald-400 font-semibold flex items-center gap-1.5"><i class="fas fa-shield-alt text-[11px]"></i><span>Verify Certificate</span></a></li>
-                        @endif
-                        @if(\App\Models\Setting::isPageEnabled('about'))
-                        <li><a href="{{ route('about.index') }}" class="hover:text-white transition-colors">About Us</a></li>
-                        @endif
-                        @if(\App\Models\Setting::isPageEnabled('contact'))
-                        <li><a href="{{ route('contact.index') }}" class="hover:text-white transition-colors">Contact & Admissions</a></li>
-                        @endif
-                        @if(\App\Models\Setting::isPageEnabled('jobs'))
-                        <li><a href="{{ route('jobs.index') }}" class="hover:text-white transition-colors">Careers & Jobs</a></li>
-                        @endif
-                        @foreach($footerCustomPages as $customFooterPage)
-                            <li><a href="{{ route('pages.show', $customFooterPage['slug']) }}" class="hover:text-white transition-colors">{{ $customFooterPage['title'] }}</a></li>
-                        @endforeach
-                        <li><a href="{{ route('legal.privacy') }}" class="hover:text-white transition-colors text-slate-400">Privacy Policy</a></li>
-                    </ul>
-                </div>
-
-                <!-- Col 3: Contact & Operational Office -->
-                <div>
-                    <h4 class="text-white font-bold text-base mb-4 tracking-wide uppercase text-xs">Contact</h4>
-                    <div class="space-y-2.5 text-xs sm:text-sm">
-                        <p class="leading-relaxed">
-                            <strong class="text-white">Operational Office Address:</strong><br>
-                            {{ \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216') }}
-                        </p>
-                        <p>
-                            <a href="mailto:{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}" class="hover:text-white transition-colors">
-                                {{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}
-                            </a>
-                        </p>
-                        <p>
-                            @php
-                                $ftHotline = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
-                                $ftHotlineTel = preg_replace('/[^0-9+]/', '', $ftHotline) ?: '01917054664';
-                            @endphp
-                            <a href="tel:{{ $ftHotlineTel }}" class="hover:text-white transition-colors">
-                                {{ $ftHotline }}
-                            </a>
-                        </p>
-                        <p class="pt-1">
-                            <a href="{{ $officialFacebookUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#60a5fa] hover:text-white font-semibold transition-colors">
-                                <i class="fab fa-facebook text-[#1877F2] bg-white rounded-full leading-none"></i>
-                                <span>facebook.com/academyofcommercialandsupplychain</span>
-                            </a>
-                        </p>
+                <!-- Compact Multi-Column Links & Contact -->
+                <div class="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-6">
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="font-extrabold mb-3 tracking-wider uppercase text-[11px]" style="color: #ffe27a;">Explore</h4>
+                        <ul class="space-y-1.5 text-xs">
+                            <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a></li>
+                            <li><a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Course Catalog</a></li>
+                            @if(\App\Models\Setting::isPageEnabled('instructors'))
+                            <li><a href="{{ route('instructors.index') }}" class="hover:text-white transition-colors">Instructors</a></li>
+                            @endif
+                            @if(\App\Models\Setting::isPageEnabled('jobs'))
+                            <li><a href="{{ route('jobs.index') }}" class="hover:text-white transition-colors">Careers &amp; Jobs</a></li>
+                            @endif
+                            @if(\App\Models\Setting::isPageEnabled('blog'))
+                            <li><a href="{{ route('blog.index') }}" class="hover:text-white transition-colors">Blog &amp; Insights</a></li>
+                            @endif
+                            @if(\App\Models\Setting::isPageEnabled('verify_certificate'))
+                            <li><a href="{{ route('certificate.verify') }}" class="text-emerald-400 hover:text-emerald-300 font-semibold inline-flex items-center gap-1.5"><i class="fas fa-shield-alt text-[10px]"></i><span>Verify Certificate</span></a></li>
+                            @endif
+                        </ul>
                     </div>
-                </div>
 
-                <!-- Col 4: Legal & Compliance -->
-                <div>
-                    <h4 class="text-white font-bold text-base mb-4 tracking-wide uppercase text-xs">Legal & Compliance</h4>
-                    <ul class="space-y-2 text-xs sm:text-sm">
-                        <li><a href="{{ route('legal.privacy') }}" class="hover:text-white transition-colors">Privacy Policy</a></li>
-                        <li><a href="{{ route('legal.refund') }}" class="hover:text-white transition-colors">Refund and Returns Policy</a></li>
-                        <li><a href="{{ route('legal.terms') }}" class="hover:text-white transition-colors">Terms of Service</a></li>
-                    </ul>
+                    <!-- Policies & Pages -->
+                    <div>
+                        <h4 class="font-extrabold mb-3 tracking-wider uppercase text-[11px]" style="color: #ffe27a;">Institute</h4>
+                        <ul class="space-y-1.5 text-xs">
+                            @if(\App\Models\Setting::isPageEnabled('about'))
+                            <li><a href="{{ route('about.index') }}" class="hover:text-white transition-colors">About Us</a></li>
+                            @endif
+                            @if(\App\Models\Setting::isPageEnabled('contact'))
+                            <li><a href="{{ route('contact.index') }}" class="hover:text-white transition-colors">Admissions</a></li>
+                            @endif
+                            @foreach($footerCustomPages as $customFooterPage)
+                                <li><a href="{{ route('pages.show', $customFooterPage['slug']) }}" class="hover:text-white transition-colors">{{ $customFooterPage['title'] }}</a></li>
+                            @endforeach
+                            <li><a href="{{ route('legal.privacy') }}" class="hover:text-white transition-colors text-slate-400">Privacy Policy</a></li>
+                            <li><a href="{{ route('legal.refund') }}" class="hover:text-white transition-colors text-slate-400">Refund Policy</a></li>
+                            <li><a href="{{ route('legal.terms') }}" class="hover:text-white transition-colors text-slate-400">Terms of Service</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <h4 class="font-extrabold mb-3 tracking-wider uppercase text-[11px]" style="color: #ffe27a;">Contact</h4>
+                        <div class="space-y-2 text-xs text-slate-300/90">
+                            <p class="leading-relaxed">
+                                {{ \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216') }}
+                            </p>
+                            <p>
+                                <a href="mailto:{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}" class="hover:text-white transition-colors break-all">
+                                    {{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}
+                                </a>
+                            </p>
+                            <p>
+                                @php
+                                    $ftHotline = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+                                    $ftHotlineTel = preg_replace('/[^0-9+]/', '', $ftHotline) ?: '01917054664';
+                                @endphp
+                                <a href="tel:{{ $ftHotlineTel }}" class="hover:text-white font-semibold transition-colors">
+                                    {{ $ftHotline }}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Subfooter (With NeuraSoft Attribution) -->
-            <div class="border-t border-white/10 pt-6 pb-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-3">
+            <!-- Subfooter -->
+            <div class="border-t border-white/10 pt-4 pb-2 flex flex-col sm:flex-row justify-between items-center text-[11px] text-slate-400 gap-2">
                 <p>© {{ date('Y') }} {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}. All Rights Reserved.</p>
-                <p class="sm:mr-20">
-                    Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[#c30102] font-bold underline underline-offset-4 transition-colors">NeuraSoft</a>
+                <p class="sm:mr-16">
+                    Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[#ffe27a] font-bold underline underline-offset-4 transition-colors">NeuraSoft</a>
                 </p>
             </div>
         </div>
@@ -915,7 +1008,7 @@
         href="https://wa.me/{{ $globalWaDigits }}" 
         target="_blank" 
         rel="noopener noreferrer" 
-        class="fixed bottom-20 lg:bottom-5 right-4 sm:right-5 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300"
+        class="fixed bottom-24 lg:bottom-5 right-4 sm:right-5 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300"
         aria-label="Chat on WhatsApp"
         title="Chat on WhatsApp"
     >
@@ -925,50 +1018,53 @@
     <!-- Floating Scroll-To-Top Button (Matches Reference Screenshot) -->
     <button 
         onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
-        class="fixed bottom-20 lg:bottom-5 left-4 sm:left-5 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900/80 hover:bg-[#c30102] text-white flex items-center justify-center shadow-lg transition-all duration-300"
+        class="fixed bottom-24 lg:bottom-5 left-4 sm:left-5 z-40 w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900/80 hover:bg-[#c4040a] text-white flex items-center justify-center shadow-lg transition-all duration-300"
         aria-label="Scroll to Top"
         title="Scroll to Top"
     >
         <i class="fas fa-chevron-up text-xs sm:text-sm"></i>
     </button>
 
-    <!-- Native Mobile App Bottom Tab Navigation Bar (PWA Ready) -->
+    <!-- Native Mobile App Floating Pure Liquid Glass Dock (Red / Blue / 24K Gold) -->
     @if(!request()->routeIs('courses.show'))
-    <nav class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200/80 shadow-[0_-8px_25px_-5px_rgba(5,28,69,0.08)] pb-safe">
-        <div class="grid grid-cols-5 h-16">
-            <a href="{{ url('/') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->is('/') ? 'text-[#c30102] font-bold' : 'text-slate-500 hover:text-[#051c45]' }}">
-                <i class="fas fa-home text-base"></i>
+    <nav class="lg:hidden fixed bottom-3 left-3 right-3 z-40 rounded-2xl overflow-visible pb-safe"
+         style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.82) 0%, rgba(248, 250, 252, 0.70) 100%); backdrop-filter: blur(24px) saturate(210%); -webkit-backdrop-filter: blur(24px) saturate(210%); border: 1px solid rgba(220, 162, 44, 0.48); box-shadow: 0 14px 36px -6px rgba(2, 31, 89, 0.25), 0 4px 14px rgba(196, 4, 10, 0.12), inset 0 1.5px 0 rgba(255, 255, 255, 0.96);">
+        <div class="h-[2px] w-[92%] mx-auto rounded-full opacity-85" style="background: linear-gradient(90deg, #0066e6 0%, #dca22c 50%, #c4040a 100%);"></div>
+        <div class="grid grid-cols-5 h-[62px]">
+            <a href="{{ url('/') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('/') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('/') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-home text-[15px]"></i>
                 <span class="text-[10px] tracking-tight">Home</span>
             </a>
-            <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->is('catalog*') || request()->is('courses*') ? 'text-[#c30102] font-bold' : 'text-slate-500 hover:text-[#051c45]' }}">
-                <i class="fas fa-layer-group text-base"></i>
+            <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('catalog*') || request()->is('courses*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('catalog*') || request()->is('courses*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-layer-group text-[15px]"></i>
                 <span class="text-[10px] tracking-tight">Courses</span>
             </a>
-            <button type="button" @click="searchModalOpen = true" class="flex flex-col items-center justify-center gap-1 text-slate-500 hover:text-[#051c45] transition-colors">
-                <div class="w-9 h-9 rounded-full bg-[#051c45] text-white flex items-center justify-center shadow-md -mt-3 border-2 border-white">
+            <button type="button" @click="searchModalOpen = true" class="flex flex-col items-center justify-center gap-0.5 transition-transform active:scale-95">
+                <div class="w-11 h-11 rounded-full text-white flex items-center justify-center -mt-5 transition-transform hover:scale-105"
+                     style="background: linear-gradient(135deg, #0066e6 0%, #063b96 52%, #c4040a 100%); border: 2px solid #ffe27a; box-shadow: 0 8px 20px rgba(6, 59, 150, 0.42), 0 0 0 3px rgba(255, 255, 255, 0.78);">
                     <i class="fas fa-search text-xs"></i>
                 </div>
-                <span class="text-[10px] tracking-tight font-semibold text-[#051c45]">Search</span>
+                <span class="text-[10px] tracking-tight font-bold" style="color: #021f59;">Search</span>
             </button>
             @if(\App\Models\Setting::isPageEnabled('jobs'))
-            <a href="{{ route('jobs.index') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->is('jobs*') ? 'text-[#c30102] font-bold' : 'text-slate-500 hover:text-[#051c45]' }}">
-                <i class="fas fa-briefcase text-base"></i>
+            <a href="{{ route('jobs.index') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('jobs*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('jobs*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-briefcase text-[15px]"></i>
                 <span class="text-[10px] tracking-tight">Careers</span>
             </a>
             @else
-            <a href="{{ route('certificate.verify') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->is('verify-certificate*') ? 'text-[#c30102] font-bold' : 'text-slate-500 hover:text-[#051c45]' }}">
-                <i class="fas fa-shield-alt text-base"></i>
+            <a href="{{ route('certificate.verify') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('verify-certificate*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('verify-certificate*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-shield-alt text-[15px]"></i>
                 <span class="text-[10px] tracking-tight">Verify</span>
             </a>
             @endif
             @auth
-            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->is('dashboard*') || request()->is('student*') || request()->is('admin*') ? 'text-[#c30102] font-bold' : 'text-slate-500 hover:text-[#051c45]' }}">
-                <i class="fas fa-user-circle text-base"></i>
+            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('dashboard*') || request()->is('student*') || request()->is('admin*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('dashboard*') || request()->is('student*') || request()->is('admin*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-user-circle text-[15px]"></i>
                 <span class="text-[10px] tracking-tight">Portal</span>
             </a>
             @else
-            <a href="{{ route('login') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->is('login*') ? 'text-[#c30102] font-bold' : 'text-slate-500 hover:text-[#051c45]' }}">
-                <i class="fas fa-sign-in-alt text-base"></i>
+            <a href="{{ route('login') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('login*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('login*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-sign-in-alt text-[15px]"></i>
                 <span class="text-[10px] tracking-tight">Sign In</span>
             </a>
             @endauth
@@ -977,18 +1073,39 @@
     @endif
 
     <!-- Quick Search Sheet Modal -->
-    <div x-show="searchModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-[#051c45]/60 backdrop-blur-sm flex items-start justify-center p-4 pt-20" style="display: none;">
+    <div x-show="searchModalOpen" x-transition.opacity class="fixed inset-0 z-50 bg-[#063b96]/60 backdrop-blur-sm flex items-start justify-center p-4 pt-20" style="display: none;">
         <div @click.away="searchModalOpen = false" class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 p-4">
             <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-black uppercase tracking-wider text-[#051c45]">Search Programs & Masterclasses</span>
+                <span class="text-xs font-black uppercase tracking-wider text-[#063b96]">Search Programs & Masterclasses</span>
                 <button type="button" @click="searchModalOpen = false" class="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center">
                     <i class="fas fa-times text-xs"></i>
                 </button>
             </div>
             <form action="{{ route('catalog.index') }}" method="GET" class="flex gap-2">
-                <input type="text" name="search" placeholder="Type LC, Export, Supply Chain, VAT..." class="flex-1 rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-[#051c45] focus:ring-2 focus:ring-[#051c45]/20 outline-none" required>
+                <input type="text" name="search" placeholder="Type LC, Export, Supply Chain, VAT..." class="flex-1 rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-[#063b96] focus:ring-2 focus:ring-[#063b96]/20 outline-none" required>
                 <button type="submit" class="btn-ipdp-primary px-4 py-2.5 rounded-xl text-xs font-bold">Search</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Smart PWA Install Prompt Banner (Dismissible, Zero Clutter) -->
+    <div id="acs-pwa-install-banner"
+         class="hidden fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-sm rounded-2xl px-3.5 py-2.5 flex items-center justify-between gap-2.5 shadow-2xl"
+         style="background: linear-gradient(135deg, rgba(1, 20, 61, 0.94) 0%, rgba(6, 59, 150, 0.94) 100%); backdrop-filter: blur(18px); border: 1px solid rgba(220, 162, 44, 0.55);">
+        <div class="flex items-center gap-2.5 min-w-0">
+            <img src="{{ asset('images/icons/icon-192x192.png') }}" alt="ACS App" class="w-8 h-8 rounded-lg object-contain bg-white/10 p-0.5 shrink-0">
+            <div class="min-w-0">
+                <p class="text-xs font-extrabold text-white truncate">Install ACS Academy App</p>
+                <p id="acs-pwa-install-sub" class="text-[10px] text-slate-200 truncate">Fast access &amp; offline support</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+            <button id="acs-pwa-install-btn" type="button" class="px-3 py-1.5 rounded-xl text-[11px] font-extrabold text-[#01143d] cursor-pointer" style="background: linear-gradient(135deg, #ffe27a 0%, #dca22c 100%);">
+                Install
+            </button>
+            <button id="acs-pwa-install-close" type="button" class="w-7 h-7 rounded-lg text-slate-300 hover:text-white flex items-center justify-center cursor-pointer" aria-label="Dismiss">
+                <i class="fas fa-times text-xs"></i>
+            </button>
         </div>
     </div>
 
@@ -999,6 +1116,51 @@
                 navigator.serviceWorker.register('/sw.js').catch(function() {});
             });
         }
+
+        (function() {
+            const DISMISS_KEY = 'acs_pwa_dismissed_until';
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (isStandalone) return;
+
+            const dismissedUntil = parseInt(localStorage.getItem(DISMISS_KEY) || '0', 10);
+            if (Date.now() < dismissedUntil) return;
+
+            const banner = document.getElementById('acs-pwa-install-banner');
+            const installBtn = document.getElementById('acs-pwa-install-btn');
+            const closeBtn = document.getElementById('acs-pwa-install-close');
+            const subText = document.getElementById('acs-pwa-install-sub');
+            if (!banner || !installBtn || !closeBtn) return;
+
+            let deferredPrompt = null;
+
+            window.addEventListener('beforeinstallprompt', function(e) {
+                e.preventDefault();
+                deferredPrompt = e;
+                banner.classList.remove('hidden');
+            });
+
+            installBtn.addEventListener('click', async function() {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                banner.classList.add('hidden');
+            });
+
+            closeBtn.addEventListener('click', function() {
+                localStorage.setItem(DISMISS_KEY, String(Date.now() + 7 * 86400 * 1000));
+                banner.classList.add('hidden');
+            });
+
+            // iOS Safari fallback tip
+            const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            if (isIos && isSafari) {
+                subText.textContent = 'Tap Share → Add to Home Screen';
+                installBtn.classList.add('hidden');
+                banner.classList.remove('hidden');
+            }
+        })();
 
         // Automatically clear skeleton shimmer for cached or completed images across all views
         document.addEventListener('DOMContentLoaded', function() {
@@ -1049,16 +1211,16 @@
                     const icon = btn.querySelector('i');
                     const text = btn.querySelector('span');
                     if (data.status === 'added') {
-                        btn.classList.add('text-[#c30102]');
+                        btn.classList.add('text-[#c4040a]');
                         if (icon) {
                             icon.classList.remove('far');
-                            icon.classList.add('fas', 'text-[#c30102]');
+                            icon.classList.add('fas', 'text-[#c4040a]');
                         }
                         if (text) text.innerText = 'Saved in Wishlist';
                     } else {
-                        btn.classList.remove('text-[#c30102]');
+                        btn.classList.remove('text-[#c4040a]');
                         if (icon) {
-                            icon.classList.remove('fas', 'text-[#c30102]');
+                            icon.classList.remove('fas', 'text-[#c4040a]');
                             icon.classList.add('far');
                         }
                         if (text) text.innerText = 'Save to Wishlist';

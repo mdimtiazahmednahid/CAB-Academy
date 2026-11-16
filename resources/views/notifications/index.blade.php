@@ -5,11 +5,11 @@
 @section('content')
 <div class="max-w-3xl mx-auto">
     <div class="flex justify-between items-center mb-4">
-        <h2 class="text-base sm:text-lg font-extrabold text-[#051c45]">Notifications</h2>
+        <h2 class="text-base sm:text-lg font-extrabold text-[#063b96]">Notifications</h2>
         @if(auth()->user()->unreadNotifications->count() > 0)
             <form action="{{ route('notifications.markAllAsRead') }}" method="POST">
                 @csrf
-                <button type="submit" class="text-xs font-bold text-[#c30102] hover:underline cursor-pointer">Mark all read</button>
+                <button type="submit" class="text-xs font-bold text-[#c4040a] hover:underline cursor-pointer">Mark all read</button>
             </form>
         @endif
     </div>
@@ -26,7 +26,7 @@
         <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs divide-y divide-slate-100 overflow-hidden">
             @foreach($notifications as $notification)
                 <div class="p-3.5 {{ $notification->read_at ? 'bg-white' : 'bg-amber-50/40' }} flex items-start gap-3 transition-colors">
-                    <div class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center {{ $notification->read_at ? 'bg-slate-100 text-slate-500' : 'bg-[#051c45] text-white' }}">
+                    <div class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center {{ $notification->read_at ? 'bg-slate-100 text-slate-500' : 'bg-[#063b96] text-white' }}">
                         @if(($notification->data['icon'] ?? '') == 'academic-cap')
                             <i class="fas fa-graduation-cap text-xs"></i>
                         @elseif(($notification->data['icon'] ?? '') == 'briefcase')
@@ -45,7 +45,7 @@
                         
                         <div class="flex items-center gap-3 mt-2">
                             @if(!empty($notification->data['url']))
-                                <a href="{{ $notification->data['url'] }}" class="text-[11px] font-bold text-[#c30102] hover:underline">View &rarr;</a>
+                                <a href="{{ $notification->data['url'] }}" class="text-[11px] font-bold text-[#c4040a] hover:underline">View &rarr;</a>
                             @endif
                             
                             @if(is_null($notification->read_at))

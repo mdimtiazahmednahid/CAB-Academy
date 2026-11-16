@@ -9,7 +9,7 @@
     <title>@yield('header_title', 'Command Center') — {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} Admin</title>
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="manifest" href="{{ route('pwa.manifest') }}">
-    <meta name="theme-color" content="#051c45">
+    <meta name="theme-color" content="#063b96">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -58,7 +58,7 @@
         {!! \App\Models\Setting::getTypographyCss() !!}
     </style>
 </head>
-<body class="font-sans antialiased bg-[#f8fafc] text-slate-900 md:pl-64 pb-16 md:pb-0 min-h-screen flex flex-col selection:bg-[#051c45] selection:text-white">
+<body class="font-sans antialiased bg-[#f8fafc] text-slate-900 md:pl-64 pb-16 md:pb-0 min-h-screen flex flex-col selection:bg-[#063b96] selection:text-white">
     @php
         $pendingPayCount = \App\Models\Payment::where('status', 'pending')->count();
         $pendingInqCount = \App\Models\ContactInquiry::where('status', 'pending')->count();
@@ -118,7 +118,7 @@
                             <span>Inquiries</span>
                         </div>
                         @if($pendingInqCount > 0)
-                            <span class="inline-flex px-2 py-0.5 text-[10px] font-black bg-[#c30102] text-white rounded-full">{{ $pendingInqCount }}</span>
+                            <span class="inline-flex px-2 py-0.5 text-[10px] font-black bg-[#c4040a] text-white rounded-full">{{ $pendingInqCount }}</span>
                         @endif
                     </a>
 
@@ -244,7 +244,7 @@
                     @if(auth()->user()->hasCustomProfilePicture())
                         <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-lg object-cover border border-white/20 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=051c45&color=fff';">
                     @else
-                        <div class="w-8 h-8 rounded-lg bg-[#051c45] border border-white/15 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                        <div class="w-8 h-8 rounded-lg bg-[#063b96] border border-white/15 text-white flex items-center justify-center font-bold text-xs shrink-0">
                             {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
                         </div>
                     @endif
@@ -371,7 +371,7 @@
     <header class="hidden md:flex items-center justify-between px-5 lg:px-6 h-14 bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-20">
         <div class="flex items-center gap-2.5">
             <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
-            <span class="text-xs font-bold text-[#051c45]">@yield('header_title', 'Executive Overview')</span>
+            <span class="text-xs font-bold text-[#063b96]">@yield('header_title', 'Executive Overview')</span>
         </div>
 
         <div class="flex items-center gap-2.5">
@@ -389,17 +389,17 @@
                 </a>
             @endif
 
-            <a href="{{ route('admin.courses') }}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#051c45] text-xs font-bold transition-colors">
+            <a href="{{ route('admin.courses') }}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#063b96] text-xs font-bold transition-colors">
                 <i class="fas fa-graduation-cap text-[11px]"></i>
                 <span>Courses</span>
             </a>
 
-            <a href="{{ url('/') }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold transition-colors shadow-2xs">
+            <a href="{{ url('/') }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#063b96] hover:bg-[#0a2540] text-white text-xs font-bold transition-colors shadow-2xs">
                 <span>Live Site</span>
                 <i class="fas fa-arrow-up-right-from-square text-[9px] text-emerald-400"></i>
             </a>
 
-            <a href="{{ route('profile.edit') }}" title="Profile & Account Settings" class="w-8 h-8 rounded-xl bg-[#051c45] text-white font-black text-xs flex items-center justify-center shadow-2xs hover:bg-[#082860] transition-colors overflow-hidden border border-slate-200/80 shrink-0">
+            <a href="{{ route('profile.edit') }}" title="Profile & Account Settings" class="w-8 h-8 rounded-xl bg-[#063b96] text-white font-black text-xs flex items-center justify-center shadow-2xs hover:bg-[#082860] transition-colors overflow-hidden border border-slate-200/80 shrink-0">
                 @if(auth()->user()->hasCustomProfilePicture())
                     <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=051c45&color=fff';">
                 @else
@@ -429,38 +429,38 @@
     </main>
 
     <footer class="mt-auto py-5 px-8 border-t border-slate-200/70 bg-white/60 text-center text-xs text-slate-500">
-        {{ $siteName }} Executive Console &bull; Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-[#051c45] hover:underline font-bold transition-colors">NeuraSoft</a>
+        {{ $siteName }} Executive Console &bull; Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-[#063b96] hover:underline font-bold transition-colors">NeuraSoft</a>
     </footer>
 
     <!-- Native Mobile Admin Bottom Tab Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-slate-200/80 shadow-[0_-8px_25px_-5px_rgba(5,28,69,0.08)] pb-safe">
         <div class="grid grid-cols-5 h-16">
-            <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.dashboard') ? 'text-[#051c45] font-black' : 'text-slate-500' }}">
+            <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.dashboard') ? 'text-[#063b96] font-black' : 'text-slate-500' }}">
                 <i class="fas fa-chart-pie text-base"></i>
                 <span class="text-[10px]">Overview</span>
             </a>
-            <a href="{{ route('admin.courses') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.courses*') ? 'text-[#051c45] font-black' : 'text-slate-500' }}">
+            <a href="{{ route('admin.courses') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.courses*') ? 'text-[#063b96] font-black' : 'text-slate-500' }}">
                 <i class="fas fa-graduation-cap text-base"></i>
                 <span class="text-[10px]">Courses</span>
             </a>
             @if(auth()->user()->isAdmin())
-            <a href="{{ route('admin.payments.index') }}" class="flex flex-col items-center justify-center gap-1 relative transition-colors {{ request()->routeIs('admin.payments*') ? 'text-[#051c45] font-black' : 'text-slate-500' }}">
+            <a href="{{ route('admin.payments.index') }}" class="flex flex-col items-center justify-center gap-1 relative transition-colors {{ request()->routeIs('admin.payments*') ? 'text-[#063b96] font-black' : 'text-slate-500' }}">
                 <i class="fas fa-check-double text-base"></i>
                 @if($pendingPayCount > 0)
                     <span class="absolute top-1.5 right-4 w-4 h-4 rounded-full bg-amber-500 text-slate-950 text-[9px] font-black flex items-center justify-center">{{ $pendingPayCount }}</span>
                 @endif
                 <span class="text-[10px]">Payments</span>
             </a>
-            <a href="{{ route('admin.frontend.index') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.frontend.*') ? 'text-[#051c45] font-black' : 'text-slate-500' }}">
+            <a href="{{ route('admin.frontend.index') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.frontend.*') ? 'text-[#063b96] font-black' : 'text-slate-500' }}">
                 <i class="fas fa-wand-magic-sparkles text-base"></i>
                 <span class="text-[10px]">CMS</span>
             </a>
             @else
-            <a href="{{ route('admin.blogs.index') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.blogs*') ? 'text-[#051c45] font-black' : 'text-slate-500' }}">
+            <a href="{{ route('admin.blogs.index') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.blogs*') ? 'text-[#063b96] font-black' : 'text-slate-500' }}">
                 <i class="fas fa-newspaper text-base"></i>
                 <span class="text-[10px]">Blogs</span>
             </a>
-            <a href="{{ route('admin.feeds.index') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.feeds*') ? 'text-[#051c45] font-black' : 'text-slate-500' }}">
+            <a href="{{ route('admin.feeds.index') }}" class="flex flex-col items-center justify-center gap-1 transition-colors {{ request()->routeIs('admin.feeds*') ? 'text-[#063b96] font-black' : 'text-slate-500' }}">
                 <i class="fas fa-comments text-base"></i>
                 <span class="text-[10px]">Feed</span>
             </a>

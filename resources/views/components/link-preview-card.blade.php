@@ -28,7 +28,7 @@
        aria-label="{{ $title }}"
        data-domain="{{ $domain }}"
        x-data="{ imgError: {{ empty($image) ? 'true' : 'false' }} }"
-       class="fb-link-preview-card group block w-full rounded-2xl overflow-hidden border border-[#dadde1] bg-white hover:bg-[#f7f8fa] transition-all duration-200 shadow-2xs hover:shadow-md text-left no-underline focus:outline-none focus:ring-2 focus:ring-[#051c45]/30">
+       class="fb-link-preview-card group block w-full rounded-2xl overflow-hidden border border-[#dadde1] bg-white hover:bg-[#f7f8fa] transition-all duration-200 shadow-2xs hover:shadow-md text-left no-underline focus:outline-none focus:ring-2 focus:ring-[#063b96]/30">
 
         @if($showPostHeader && !empty($postHeader))
             <!-- Facebook-Style Bold Serif Post Caption Header -->
@@ -52,12 +52,12 @@
         <div x-show="imgError || {{ $compact ? 'true' : 'false' }}"
              style="{{ (!empty($image) && !$compact) ? 'display: none;' : '' }}"
              class="flex items-center gap-3.5 px-4 pt-3.5 pb-1 bg-[#f8f9fa]">
-            <div class="w-11 h-11 rounded-xl bg-white border border-slate-200/90 flex items-center justify-center text-[#051c45] shadow-2xs shrink-0 group-hover:border-[#c30102]/40 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-white border border-slate-200/90 flex items-center justify-center text-[#063b96] shadow-2xs shrink-0 group-hover:border-[#c4040a]/40 transition-colors">
                 @if(!empty($image))
                     <img src="{{ $image }}" alt="{{ $domain }}" class="w-7 h-7 object-contain rounded" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
-                    <i class="fas fa-globe text-base text-[#051c45]" style="display:none;"></i>
+                    <i class="fas fa-globe text-base text-[#063b96]" style="display:none;"></i>
                 @else
-                    <i class="fas fa-globe text-base text-[#051c45]"></i>
+                    <i class="fas fa-globe text-base text-[#063b96]"></i>
                 @endif
             </div>
             <div class="min-w-0 flex-1">
@@ -76,7 +76,7 @@
                     {{ $displayDomain }}
                 </div>
 
-                <h4 class="text-[15px] sm:text-base font-serif font-bold text-[#050505] group-hover:text-[#c30102] underline decoration-[#050505]/40 group-hover:decoration-[#c30102] transition-colors line-clamp-2 leading-snug mt-0.5 tracking-tight">
+                <h4 class="text-[15px] sm:text-base font-serif font-bold text-[#050505] group-hover:text-[#c4040a] underline decoration-[#050505]/40 group-hover:decoration-[#c4040a] transition-colors line-clamp-2 leading-snug mt-0.5 tracking-tight">
                     {{ $stylishTitle }}
                     <span class="sr-only">{{ $title }}</span>
                 </h4>
@@ -88,7 +88,7 @@
                 @endif
             </div>
 
-            <span class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-[13px] shrink-0 transition-all shadow-[0_0_18px_rgba(195,1,2,0.55)] group-hover:shadow-[0_0_24px_rgba(225,29,72,0.8)] group-hover:scale-105 inline-flex items-center gap-1.5 select-none">
+            <span class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#c4040a] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-xs sm:text-[13px] shrink-0 transition-all shadow-[0_0_18px_rgba(195,1,2,0.55)] group-hover:shadow-[0_0_24px_rgba(225,29,72,0.8)] group-hover:scale-105 inline-flex items-center gap-1.5 select-none">
                 <i class="fas fa-bolt text-amber-300 text-[11px] animate-pulse"></i>
                 <span>Enroll Now</span>
             </span>

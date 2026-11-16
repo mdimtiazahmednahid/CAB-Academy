@@ -27,7 +27,7 @@
     <meta property="og:site_name" content="{{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}">
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="manifest" href="{{ route('pwa.manifest') }}">
-    <meta name="theme-color" content="#051c45">
+    <meta name="theme-color" content="#063b96">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -50,6 +50,7 @@
         {!! \App\Models\Setting::getTypographyCss() !!}
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, #e8f0fe 0%, #f2f6ff 45%, #e6eefc 100%);
             -webkit-font-smoothing: antialiased;
         }
         h1, h2, h3, h4, .font-display {
@@ -72,13 +73,13 @@
         }
         .btn-ipdp-secondary {
             background: #ffffff;
-            color: #051c45;
+            color: #063b96;
             border: 1px solid #cbd5e1;
             transition: all 0.25s ease;
         }
         .btn-ipdp-secondary:hover {
             background: #f8fafc;
-            border-color: #051c45;
+            border-color: #063b96;
         }
 
         /* Liquid Glass Card & Skeleton System */
@@ -157,7 +158,7 @@
             transform: translateX(-50%);
             width: 28px;
             height: 3px;
-            background-color: #c30102;
+            background-color: #c4040a;
             border-radius: 0 0 4px 4px;
         }
 
@@ -191,8 +192,8 @@
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 min-w-0 group" title="Student Portal">
                 <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}" class="h-8 w-8 shrink-0 rounded-lg object-contain bg-white border border-slate-200/80 p-0.5 shadow-2xs" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div class="hidden lg:flex flex-col min-w-0">
-                    <span class="font-black tracking-tight text-[#051c45] uppercase brand-adaptive-title leading-tight truncate text-xs" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}">{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}</span>
-                    <span class="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest text-[#c30102]">
+                    <span class="font-black tracking-tight text-[#063b96] uppercase brand-adaptive-title leading-tight truncate text-xs" title="{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}">{{ $brandSizing['site_name'] ?? $brandSizing['name'] ?? 'ACS Academy' }}</span>
+                    <span class="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest text-[#c4040a]">
                         <span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>
                         <span>Student Portal</span>
                     </span>
@@ -202,59 +203,59 @@
         
         <!-- Direct Navigation Links (Zero Redundancy) -->
         <nav class="flex-1 p-2 lg:p-3 space-y-1 overflow-y-auto">
-            <a href="{{ route('dashboard') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('dashboard') ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#051c45]' }}" title="Dashboard">
+            <a href="{{ route('dashboard') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('dashboard') ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#063b96]' }}" title="Dashboard">
                 <i class="fas fa-th-large w-4 text-center text-xs shrink-0 {{ request()->routeIs('dashboard') ? 'text-amber-300' : 'text-slate-400' }}"></i>
                 <span class="hidden lg:block">Dashboard</span>
             </a>
 
-            <a href="{{ route('catalog.index') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('catalog.*') || request()->routeIs('courses.*') || request()->routeIs('lessons.*') ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#051c45]' }}" title="Courses">
+            <a href="{{ route('catalog.index') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('catalog.*') || request()->routeIs('courses.*') || request()->routeIs('lessons.*') ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#063b96]' }}" title="Courses">
                 <i class="fas fa-graduation-cap w-4 text-center text-xs shrink-0 {{ request()->routeIs('catalog.*') || request()->routeIs('courses.*') || request()->routeIs('lessons.*') ? 'text-amber-300' : 'text-slate-400' }}"></i>
                 <span class="hidden lg:block">Courses</span>
             </a>
 
-            <a href="{{ route('wishlist.index') }}" class="flex items-center justify-center lg:justify-between px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('wishlist.*') ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#051c45]' }}" title="Wishlist">
+            <a href="{{ route('wishlist.index') }}" class="flex items-center justify-center lg:justify-between px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('wishlist.*') ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#063b96]' }}" title="Wishlist">
                 <div class="flex items-center gap-2.5">
                     <i class="fas fa-heart w-4 text-center text-xs shrink-0 {{ request()->routeIs('wishlist.*') ? 'text-[#ff6b6b]' : 'text-slate-400' }}"></i>
                     <span class="hidden lg:block">Wishlist</span>
                 </div>
-                <span id="wishlist-count-badge" class="hidden lg:inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-extrabold rounded-full {{ request()->routeIs('wishlist.*') ? 'bg-white/20 text-white' : 'bg-[#c30102]/10 text-[#c30102]' }} {{ $studentWishlistCount > 0 ? '' : 'hidden' }}">
+                <span id="wishlist-count-badge" class="hidden lg:inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-extrabold rounded-full {{ request()->routeIs('wishlist.*') ? 'bg-white/20 text-white' : 'bg-[#c4040a]/10 text-[#c4040a]' }} {{ $studentWishlistCount > 0 ? '' : 'hidden' }}">
                     {{ $studentWishlistCount }}
                 </span>
             </a>
 
-            <a href="{{ route('performance.index') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('performance.*') ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#051c45]' }}" title="Performance">
+            <a href="{{ route('performance.index') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('performance.*') ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#063b96]' }}" title="Performance">
                 <i class="fas fa-chart-line w-4 text-center text-xs shrink-0 {{ request()->routeIs('performance.*') ? 'text-emerald-300' : 'text-slate-400' }}"></i>
                 <span class="hidden lg:block">Performance</span>
             </a>
 
-            <a href="{{ route('jobs.index') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('jobs.*') || request()->routeIs('careers.*') ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#051c45]' }}" title="Careers">
+            <a href="{{ route('jobs.index') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('jobs.*') || request()->routeIs('careers.*') ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#063b96]' }}" title="Careers">
                 <i class="fas fa-briefcase w-4 text-center text-xs shrink-0 {{ request()->routeIs('jobs.*') || request()->routeIs('careers.*') ? 'text-amber-300' : 'text-slate-400' }}"></i>
                 <span class="hidden lg:block">Careers</span>
             </a>
 
-            <a href="{{ route('feed.index') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('feed.*') ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#051c45]' }}" title="Community">
+            <a href="{{ route('feed.index') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('feed.*') ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#063b96]' }}" title="Community">
                 <i class="fas fa-newspaper w-4 text-center text-xs shrink-0 {{ request()->routeIs('feed.*') ? 'text-sky-300' : 'text-slate-400' }}"></i>
                 <span class="hidden lg:block">Community</span>
             </a>
 
-            <a href="{{ route('notifications.index') }}" class="flex items-center justify-center lg:justify-between px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('notifications.*') ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#051c45]' }}" title="Notifications">
+            <a href="{{ route('notifications.index') }}" class="flex items-center justify-center lg:justify-between px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('notifications.*') ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#063b96]' }}" title="Notifications">
                 <div class="flex items-center gap-2.5">
                     <div class="relative">
                         <i class="fas fa-bell w-4 text-center text-xs shrink-0 {{ request()->routeIs('notifications.*') ? 'text-amber-300' : 'text-slate-400' }}"></i>
                         @if($unreadCount > 0)
-                            <span class="lg:hidden absolute -top-1 -right-1 w-2 h-2 bg-[#c30102] rounded-full border border-white"></span>
+                            <span class="lg:hidden absolute -top-1 -right-1 w-2 h-2 bg-[#c4040a] rounded-full border border-white"></span>
                         @endif
                     </div>
                     <span class="hidden lg:block">Notifications</span>
                 </div>
                 @if($unreadCount > 0)
-                    <span class="hidden lg:inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-extrabold rounded-full {{ request()->routeIs('notifications.*') ? 'bg-white text-[#051c45]' : 'bg-[#c30102] text-white' }}">
+                    <span class="hidden lg:inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-extrabold rounded-full {{ request()->routeIs('notifications.*') ? 'bg-white text-[#063b96]' : 'bg-[#c4040a] text-white' }}">
                         {{ $unreadCount }}
                     </span>
                 @endif
             </a>
 
-            <a href="{{ route('profile.edit') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('profile.edit') ? 'bg-[#051c45] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#051c45]' }}" title="Profile">
+            <a href="{{ route('profile.edit') }}" class="flex items-center justify-center lg:justify-start gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('profile.edit') ? 'bg-[#063b96] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100 hover:text-[#063b96]' }}" title="Profile">
                 <i class="fas fa-user-shield w-4 text-center text-xs shrink-0 {{ request()->routeIs('profile.edit') ? 'text-emerald-300' : 'text-slate-400' }}"></i>
                 <span class="hidden lg:block">Profile</span>
             </a>
@@ -263,11 +264,11 @@
         <!-- Sidebar Footer: Student Card & Sign Out -->
         <div class="p-2.5 border-t border-slate-100 bg-slate-50/60 space-y-1.5">
             @if($portalUser)
-                <a href="{{ route('profile.edit') }}" class="hidden lg:flex items-center gap-2 p-1.5 rounded-xl bg-white border border-slate-200/80 hover:border-[#051c45]/30 transition-all">
+                <a href="{{ route('profile.edit') }}" class="hidden lg:flex items-center gap-2 p-1.5 rounded-xl bg-white border border-slate-200/80 hover:border-[#063b96]/30 transition-all">
                     @if($portalUser->hasCustomProfilePicture())
                         <img src="{{ $portalUser->profile_picture_url }}" alt="{{ $portalUser->name }}" class="w-7 h-7 rounded-lg object-cover border border-slate-200 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($portalUser->name) }}&background=051c45&color=fff';">
                     @else
-                        <div class="w-7 h-7 rounded-lg bg-[#051c45] text-white font-black text-[11px] flex items-center justify-center shrink-0">
+                        <div class="w-7 h-7 rounded-lg bg-[#063b96] text-white font-black text-[11px] flex items-center justify-center shrink-0">
                             {{ strtoupper(substr($portalUser->name, 0, 1)) }}
                         </div>
                     @endif
@@ -294,7 +295,7 @@
             <a href="{{ route('dashboard') }}" class="md:hidden flex items-center shrink-0">
                 <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="Logo" class="h-7 w-7 rounded-lg object-contain bg-white border border-slate-200 p-0.5" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
             </a>
-            <h1 class="font-extrabold text-xs sm:text-base tracking-tight text-[#051c45] leading-tight">
+            <h1 class="font-extrabold text-xs sm:text-base tracking-tight text-[#063b96] leading-tight">
                 @yield('header_title', 'Student Portal')
             </h1>
             <span class="sr-only">Active Student</span>
@@ -303,8 +304,8 @@
         <!-- Right: Level/XP Pill + Notifications + Profile -->
         <div class="flex items-center gap-2 shrink-0">
             @auth
-                <a href="{{ route('performance.index') }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#051c45] text-white text-[11px] font-bold hover:opacity-95 transition-opacity" title="Performance & XP">
-                    <span class="px-1.5 py-0.2 rounded bg-[#c30102] text-white text-[10px] font-black">Lv.{{ $userLevel }}</span>
+                <a href="{{ route('performance.index') }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#063b96] text-white text-[11px] font-bold hover:opacity-95 transition-opacity" title="Performance & XP">
+                    <span class="px-1.5 py-0.2 rounded bg-[#c4040a] text-white text-[10px] font-black">Lv.{{ $userLevel }}</span>
                     <span class="hidden sm:inline text-slate-200">{{ $userXp }} XP</span>
                     <span class="text-amber-300">🔥 {{ $userStreak }}d</span>
                 </a>
@@ -313,14 +314,14 @@
             <a href="{{ route('notifications.index') }}" class="relative w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-600 flex items-center justify-center transition-colors" title="Notifications">
                 <i class="far fa-bell text-xs"></i>
                 @if($unreadCount > 0)
-                    <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[15px] h-3.5 px-1 bg-[#c30102] text-white text-[9px] font-black rounded-full border border-white">
+                    <span class="absolute -top-1 -right-1 flex items-center justify-center min-w-[15px] h-3.5 px-1 bg-[#c4040a] text-white text-[9px] font-black rounded-full border border-white">
                         {{ $unreadCount }}
                     </span>
                 @endif
             </a>
 
             @if($portalUser)
-                <a href="{{ route('profile.edit') }}" class="w-8 h-8 rounded-lg bg-[#051c45] text-white font-black text-xs flex items-center justify-center hover:bg-[#082860] transition-colors overflow-hidden border border-slate-200/80" title="Profile">
+                <a href="{{ route('profile.edit') }}" class="w-8 h-8 rounded-lg bg-[#063b96] text-white font-black text-xs flex items-center justify-center hover:bg-[#082860] transition-colors overflow-hidden border border-slate-200/80" title="Profile">
                     @if($portalUser->hasCustomProfilePicture())
                         <img src="{{ $portalUser->profile_picture_url }}" alt="{{ $portalUser->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($portalUser->name) }}&background=051c45&color=fff';">
                     @else
@@ -329,7 +330,7 @@
                 </a>
                 <form method="POST" action="{{ route('logout') }}" class="md:hidden m-0">
                     @csrf
-                    <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-[#c30102] flex items-center justify-center border border-red-200/70 transition-colors cursor-pointer" title="Sign Out">
+                    <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-[#c4040a] flex items-center justify-center border border-red-200/70 transition-colors cursor-pointer" title="Sign Out">
                         <i class="fas fa-sign-out-alt text-xs"></i>
                     </button>
                 </form>
@@ -343,33 +344,33 @@
         
         <footer class="mt-10 pt-4 border-t border-slate-200/70 flex items-center justify-between text-[11px] text-slate-400 pb-16 md:pb-4">
             <span>&copy; {{ date('Y') }} {{ \App\Models\Setting::getVal('site_name', 'Academy of Commercial & Supply Chain (ACS)') }}</span>
-            <span>Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-[#051c45] hover:underline font-semibold">NeuraSoft</a></span>
+            <span>Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-[#063b96] hover:underline font-semibold">NeuraSoft</a></span>
         </footer>
     </main>
 
     <!-- 4. Mobile App Bottom Navigation (5 Essential Student Portal Tabs) -->
     <nav class="md:hidden fixed bottom-0 w-full glass-panel flex justify-around items-center px-1 py-1.5 pb-safe z-40 shadow-[0_-4px_24px_rgba(5,28,69,0.06)]">
-        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('dashboard') ? 'tab-active font-extrabold text-[#051c45]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
+        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('dashboard') ? 'tab-active font-extrabold text-[#063b96]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
             <i class="fas fa-th-large text-base mb-1"></i>
             <span class="text-[10px] font-bold tracking-tight">Dashboard</span>
         </a>
         
-        <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('catalog.*') || request()->routeIs('courses.*') || request()->routeIs('lessons.*') ? 'tab-active font-extrabold text-[#051c45]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
+        <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('catalog.*') || request()->routeIs('courses.*') || request()->routeIs('lessons.*') ? 'tab-active font-extrabold text-[#063b96]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
             <i class="fas fa-graduation-cap text-base mb-1"></i>
             <span class="text-[10px] font-bold tracking-tight">Courses</span>
         </a>
         
-        <a href="{{ route('jobs.index') }}" class="flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('jobs.*') || request()->routeIs('careers.*') ? 'tab-active font-extrabold text-[#051c45]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
+        <a href="{{ route('jobs.index') }}" class="flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('jobs.*') || request()->routeIs('careers.*') ? 'tab-active font-extrabold text-[#063b96]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
             <i class="fas fa-briefcase text-base mb-1"></i>
             <span class="text-[10px] font-bold tracking-tight">Careers</span>
         </a>
 
-        <a href="{{ route('wishlist.index') }}" class="relative flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('wishlist.*') ? 'tab-active font-extrabold text-[#051c45]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
+        <a href="{{ route('wishlist.index') }}" class="relative flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('wishlist.*') ? 'tab-active font-extrabold text-[#063b96]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
             <i class="fas fa-heart text-base mb-1"></i>
             <span class="text-[10px] font-bold tracking-tight">Wishlist</span>
         </a>
         
-        <a href="{{ route('profile.edit') }}" class="flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('profile.edit') ? 'tab-active font-extrabold text-[#051c45]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
+        <a href="{{ route('profile.edit') }}" class="flex flex-col items-center justify-center py-1.5 px-2 w-16 {{ request()->routeIs('profile.edit') ? 'tab-active font-extrabold text-[#063b96]' : 'text-slate-400 hover:text-slate-600' }} transition-colors">
             <i class="fas fa-user-circle text-base mb-1"></i>
             <span class="text-[10px] font-bold tracking-tight">Profile</span>
         </a>
@@ -430,16 +431,16 @@
                     const icon = btn.querySelector('i');
                     const text = btn.querySelector('span');
                     if (data.status === 'added') {
-                        btn.classList.add('text-[#c30102]');
+                        btn.classList.add('text-[#c4040a]');
                         if (icon) {
                             icon.classList.remove('far');
-                            icon.classList.add('fas', 'text-[#c30102]');
+                            icon.classList.add('fas', 'text-[#c4040a]');
                         }
                         if (text) text.innerText = 'Saved in Wishlist';
                     } else {
-                        btn.classList.remove('text-[#c30102]');
+                        btn.classList.remove('text-[#c4040a]');
                         if (icon) {
-                            icon.classList.remove('fas', 'text-[#c30102]');
+                            icon.classList.remove('fas', 'text-[#c4040a]');
                             icon.classList.add('far');
                         }
                         if (text) text.innerText = 'Save to Wishlist';

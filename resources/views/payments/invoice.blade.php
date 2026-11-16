@@ -45,7 +45,7 @@
             <i class="fas fa-arrow-left"></i> Return to Dashboard
         </a>
         <div class="flex items-center gap-3">
-            <button onclick="window.print()" class="px-5 py-2.5 bg-[#c30102] hover:bg-[#a50001] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer">
+            <button onclick="window.print()" class="px-5 py-2.5 bg-[#c4040a] hover:bg-[#a50001] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer">
                 <i class="fas fa-print"></i> Print Official Receipt
             </button>
         </div>
@@ -59,15 +59,15 @@
             <div class="flex items-center gap-4">
                 <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $institutionName }}" class="w-16 h-16 object-contain rounded-2xl bg-white border border-gray-100 p-1 shadow-sm" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-black text-[#051c45] uppercase tracking-tight leading-tight">{!! \App\Models\Setting::formatBrandNameHtml($institutionName) !!}</h1>
-                    <span class="text-xs font-bold text-[#c30102] uppercase tracking-widest block mt-0.5">{{ $ledgerSubtitle }}</span>
+                    <h1 class="text-xl sm:text-2xl font-black text-[#063b96] uppercase tracking-tight leading-tight">{!! \App\Models\Setting::formatBrandNameHtml($institutionName) !!}</h1>
+                    <span class="text-xs font-bold text-[#c4040a] uppercase tracking-widest block mt-0.5">{{ $ledgerSubtitle }}</span>
                     <p class="text-xs text-gray-500 mt-1">{{ $campusAddress }} | {{ $hotlinePhone }}</p>
                 </div>
             </div>
 
             <div class="text-left sm:text-right">
                 <span class="text-xs font-bold uppercase tracking-wider text-gray-400 block">Invoice Number</span>
-                <span class="text-lg font-mono font-black text-[#051c45]">{{ $displayInvoiceNumber }}</span>
+                <span class="text-lg font-mono font-black text-[#063b96]">{{ $displayInvoiceNumber }}</span>
                 <span class="text-xs text-gray-500 block mt-1">Date: {{ $payment->created_at->format('M d, Y') }}</span>
                 <div class="mt-2">
                     @if($payment->status === 'verified')
@@ -87,7 +87,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 my-8 pb-8 border-b border-gray-100">
             <div>
                 <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Billed To (Student)</h3>
-                <h4 class="text-base font-bold text-[#051c45]">{{ $payment->user?->name ?? 'Student' }}</h4>
+                <h4 class="text-base font-bold text-[#063b96]">{{ $payment->user?->name ?? 'Student' }}</h4>
                 <p class="text-xs text-gray-600 mt-1">{{ $payment->user?->email ?? '' }}</p>
                 @if($payment->sender_number || $payment->user?->phone)
                     <p class="text-xs text-gray-600 mt-0.5">Phone: {{ $payment->sender_number ?: $payment->user?->phone }}</p>
@@ -147,9 +147,9 @@
                     <span>VAT (Included):</span>
                     <span class="font-mono">৳0.00</span>
                 </div>
-                <div class="flex justify-between text-base font-black text-[#051c45] pt-2 border-t border-gray-200">
+                <div class="flex justify-between text-base font-black text-[#063b96] pt-2 border-t border-gray-200">
                     <span>Total {{ $payment->status === 'verified' ? 'Paid' : 'Amount' }}:</span>
-                    <span class="font-mono text-[#c30102]">৳{{ number_format($payment->amount, 2) }}</span>
+                    <span class="font-mono text-[#c4040a]">৳{{ number_format($payment->amount, 2) }}</span>
                 </div>
             </div>
         </div>
@@ -157,7 +157,7 @@
         <!-- Paid Seal & Signature Block -->
         <div class="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-6">
             <div class="text-xs text-gray-500 text-center sm:text-left">
-                <p class="font-bold text-[#051c45]">{{ $footerNote }}</p>
+                <p class="font-bold text-[#063b96]">{{ $footerNote }}</p>
                 <p class="mt-1">For questions regarding billing or invoices, email accounts: <strong>{{ $accountsEmail }}</strong></p>
                 <p class="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ $signatoryTitle }} &bull; {{ $institutionName }}</p>
             </div>

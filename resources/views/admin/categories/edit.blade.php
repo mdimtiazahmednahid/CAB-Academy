@@ -6,7 +6,7 @@
         <div class="flex items-center gap-2 mb-1">
             <a href="{{ route('admin.categories.index') }}" class="text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors">Categories</a>
             <span class="text-gray-400 text-xs">/</span>
-            <span class="text-xs font-bold text-[#051c45]">Edit Category</span>
+            <span class="text-xs font-bold text-[#063b96]">Edit Category</span>
         </div>
         <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Edit Category: {{ $category->name }}</h2>
     </div>
@@ -20,7 +20,7 @@
         <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Category Name *</label>
             <input type="text" name="name" value="{{ old('name', $category->name) }}" required 
-                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                   class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
             @error('name') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
         </div>
 
@@ -28,28 +28,28 @@
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">URL Slug</label>
                 <input type="text" name="slug" value="{{ old('slug', $category->slug) }}" 
-                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm font-mono focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm font-mono focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                 @error('slug') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
             </div>
 
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">FontAwesome Icon</label>
                 <input type="text" name="icon" value="{{ old('icon', $category->icon) }}" 
-                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm font-mono focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
-                <p class="text-[11px] text-gray-400 mt-1">Current: <i class="fas {{ $category->icon }} text-[#051c45]"></i> <code>{{ $category->icon }}</code></p>
+                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm font-mono focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
+                <p class="text-[11px] text-gray-400 mt-1">Current: <i class="fas {{ $category->icon }} text-[#063b96]"></i> <code>{{ $category->icon }}</code></p>
             </div>
         </div>
 
         <div>
             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Short Description</label>
             <textarea name="description" rows="2" 
-                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536] resize-none">{{ old('description', $category->description) }}</textarea>
+                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59] resize-none">{{ old('description', $category->description) }}</textarea>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Department Head (Instructor)</label>
-                <select name="head_instructor_id" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                <select name="head_instructor_id" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
                     <option value="">-- Select Department Head --</option>
                     @foreach(($instructors ?? []) as $inst)
                         <option value="{{ $inst->id }}" {{ old('head_instructor_id', $category->head_instructor_id ?? $category->resolved_head?->id) == $inst->id ? 'selected' : '' }}>
@@ -63,7 +63,7 @@
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Specialized Sub-Tracks (One per line)</label>
                 <textarea name="subcategories_text" rows="6" 
-                          class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">{{ old('subcategories_text', implode("\n", $category->effective_subcategories)) }}</textarea>
+                          class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">{{ old('subcategories_text', implode("\n", $category->effective_subcategories)) }}</textarea>
             </div>
         </div>
 
@@ -71,19 +71,19 @@
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Cover Image URL</label>
                 <input type="text" name="image" value="{{ old('image', $category->image) }}" 
-                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
             </div>
 
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">Display Order</label>
                 <input type="number" name="order" value="{{ old('order', $category->order) }}" 
-                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#041536] focus:ring-1 focus:ring-[#041536]">
+                       class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#021f59] focus:ring-1 focus:ring-[#021f59]">
             </div>
         </div>
 
         <div class="flex items-center gap-3 pt-2">
             <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $category->is_active ? '1' : '0') == '1' ? 'checked' : '' }} 
-                   class="w-4 h-4 rounded text-[#051c45] border-gray-300 focus:ring-[#051c45]">
+                   class="w-4 h-4 rounded text-[#063b96] border-gray-300 focus:ring-[#063b96]">
             <label for="is_active" class="text-xs font-bold uppercase tracking-wider text-gray-700">Active (Visible in Homepage Pills & Catalog)</label>
         </div>
 
@@ -95,7 +95,7 @@
                 <a href="{{ route('admin.categories.index') }}" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-xl transition-all">
                     Cancel
                 </a>
-                <button type="submit" class="px-6 py-2.5 bg-[#c30102] hover:bg-[#a50102] text-white text-sm font-bold rounded-xl shadow-lg shadow-red-900/20 active:scale-95 transition-all">
+                <button type="submit" class="px-6 py-2.5 bg-[#c4040a] hover:bg-[#a50102] text-white text-sm font-bold rounded-xl shadow-lg shadow-red-900/20 active:scale-95 transition-all">
                     Update Category
                 </button>
             </div>

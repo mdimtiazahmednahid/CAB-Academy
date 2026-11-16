@@ -71,7 +71,7 @@
             transition: all 0.2s ease;
         }
         .btn-primary {
-            background: #c30102;
+            background: #c4040a;
             color: #ffffff;
             box-shadow: 0 4px 14px rgba(195, 1, 2, 0.4);
         }

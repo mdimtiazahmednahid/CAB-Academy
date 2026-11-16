@@ -14,8 +14,8 @@
     @endif
 
     <!-- Minimalist Executive Masthead -->
-    <section class="bg-gradient-to-b from-[#020b1c] via-[#051c45] to-[#041536] text-white py-14 sm:py-20 border-b border-white/10 relative overflow-hidden">
-        <div class="absolute -top-32 -right-32 w-96 h-96 bg-[#c30102]/12 rounded-full blur-[120px] pointer-events-none"></div>
+    <section class="bg-gradient-to-b from-[#020b1c] via-[#063b96] to-[#021f59] text-white py-14 sm:py-20 border-b border-white/10 relative overflow-hidden">
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-[#c4040a]/12 rounded-full blur-[120px] pointer-events-none"></div>
         <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             @if(!empty($page['badge']))
                 <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-emerald-300 mb-4">

@@ -9,9 +9,9 @@
 <div>
 
     <!-- Hero Banner (Modern Imperial Navy Masthead) -->
-    <section class="bg-gradient-to-r from-[#031330] via-[#051c45] to-[#0a2540] text-white py-14 sm:py-18 border-b border-[#1e2d4a] relative overflow-hidden">
+    <section class="bg-gradient-to-r from-[#031330] via-[#063b96] to-[#0a2540] text-white py-14 sm:py-18 border-b border-[#1e2d4a] relative overflow-hidden">
         <!-- Ambient Glow -->
-        <div class="absolute -top-24 -right-24 w-96 h-96 bg-[#c30102]/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-[#c4040a]/15 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[#10b981]/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -38,14 +38,14 @@
                 <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-none">
                     <a 
                         href="{{ route('blog.index') }}" 
-                        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ !request('category') ? 'bg-[#c30102] text-white shadow-md shadow-[#c30102]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200' }}"
+                        class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ !request('category') ? 'bg-[#c4040a] text-white shadow-md shadow-[#c4040a]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200' }}"
                     >
                         All Insights
                     </a>
                     @foreach($categories as $cat)
                         <a 
                             href="{{ route('blog.index', ['category' => $cat]) }}" 
-                            class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ request('category') === $cat ? 'bg-[#c30102] text-white shadow-md shadow-[#c30102]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200' }}"
+                            class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ request('category') === $cat ? 'bg-[#c4040a] text-white shadow-md shadow-[#c4040a]/20' : 'bg-white text-[#35415b] hover:bg-slate-100 border border-slate-200' }}"
                         >
                             {{ $cat }}
                         </a>
@@ -62,9 +62,9 @@
                             name="search" 
                             value="{{ request('search') }}" 
                             placeholder="Search articles..." 
-                            class="w-full bg-white border border-slate-200 text-[#0f131f] text-xs rounded-xl py-2.5 pl-3.5 pr-10 focus:ring-2 focus:ring-[#c30102] focus:border-[#c30102] shadow-sm font-medium"
+                            class="w-full bg-white border border-slate-200 text-[#0f131f] text-xs rounded-xl py-2.5 pl-3.5 pr-10 focus:ring-2 focus:ring-[#c4040a] focus:border-[#c4040a] shadow-sm font-medium"
                         >
-                        <button type="submit" class="absolute right-3 top-3 text-slate-400 hover:text-[#c30102]">
+                        <button type="submit" class="absolute right-3 top-3 text-slate-400 hover:text-[#c4040a]">
                             <i class="fas fa-search text-xs"></i>
                         </button>
                     </div>
@@ -74,7 +74,7 @@
             <!-- Articles Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($posts as $post)
-                    <article class="liquid-glass-card bg-white/85 rounded-3xl border border-[#e3e7f0] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group hover:border-[#c30102]/30">
+                    <article class="liquid-glass-card bg-white/85 rounded-3xl border border-[#e3e7f0] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group hover:border-[#c4040a]/30">
                         <div>
                             <!-- Featured Image -->
                             <div class="relative aspect-video overflow-hidden bg-gray-100">
@@ -87,7 +87,7 @@
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80';"
                                 >
-                                <span class="absolute top-3 left-3 bg-[#c30102] text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                                <span class="absolute top-3 left-3 bg-[#c4040a] text-white text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
                                     {{ $post->category }}
                                 </span>
                             </div>
@@ -95,12 +95,12 @@
                             <!-- Post Body -->
                             <div class="p-6">
                                 <div class="flex items-center gap-3 text-xs text-slate-500 font-semibold mb-2.5">
-                                    <span><i class="far fa-calendar-alt text-[#c30102] mr-1"></i> {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Recent' }}</span>
+                                    <span><i class="far fa-calendar-alt text-[#c4040a] mr-1"></i> {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Recent' }}</span>
                                     <span>&bull;</span>
                                     <span><i class="far fa-clock text-[#10b981] mr-1"></i> {{ $post->read_time }}</span>
                                 </div>
 
-                                <h3 class="text-base sm:text-lg font-bold text-[#0f131f] group-hover:text-[#c30102] transition-colors leading-snug mb-3">
+                                <h3 class="text-base sm:text-lg font-bold text-[#0f131f] group-hover:text-[#c4040a] transition-colors leading-snug mb-3">
                                     <a href="{{ route('blog.show', $post) }}">
                                         {{ $post->title }}
                                     </a>
@@ -127,7 +127,7 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('blog.show', $post) }}" class="text-xs font-bold text-[#c30102] hover:text-[#051c45] transition-colors inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            <a href="{{ route('blog.show', $post) }}" class="text-xs font-bold text-[#c4040a] hover:text-[#063b96] transition-colors inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                                 <span>Read</span>
                                 <i class="fas fa-chevron-right text-[10px]"></i>
                             </a>

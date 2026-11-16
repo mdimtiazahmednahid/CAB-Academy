@@ -7,7 +7,7 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <div class="flex items-center gap-2 mb-1">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#051c45] text-white">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#063b96] text-white">
                     <i class="fas fa-book-open text-[#10b981] mr-1.5"></i> Knowledge Base
                 </span>
                 <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Executive Research</span>
@@ -20,7 +20,7 @@
                 <i class="fas fa-external-link-alt text-gray-400"></i>
                 <span>View Public Hub</span>
             </a>
-            <a href="{{ route('admin.blogs.create') }}" class="px-5 py-2.5 bg-[#051c45] hover:bg-[#072559] text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-950/20 inline-flex items-center gap-2">
+            <a href="{{ route('admin.blogs.create') }}" class="px-5 py-2.5 bg-[#063b96] hover:bg-[#072559] text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-950/20 inline-flex items-center gap-2">
                 <i class="fas fa-pen-nib text-[#10b981]"></i>
                 <span>Write New Article</span>
             </a>

@@ -10,10 +10,10 @@
         
         <!-- Compact Header -->
         <div class="flex items-center justify-between gap-3 mb-5 pb-3.5 border-b border-slate-200/80">
-            <h1 class="text-lg sm:text-xl font-extrabold text-[#051c45] tracking-tight">
+            <h1 class="text-lg sm:text-xl font-extrabold text-[#063b96] tracking-tight">
                 Saved Courses ({{ $courses->count() }})
             </h1>
-            <a href="{{ route('catalog.index') }}" class="px-3.5 py-2 rounded-xl bg-[#051c45] hover:bg-[#082860] text-white text-xs font-bold inline-flex items-center gap-1.5 transition-colors">
+            <a href="{{ route('catalog.index') }}" class="px-3.5 py-2 rounded-xl bg-[#063b96] hover:bg-[#082860] text-white text-xs font-bold inline-flex items-center gap-1.5 transition-colors">
                 <i class="fas fa-search text-[10px]"></i>
                 <span>Explore Courses</span>
             </a>
@@ -34,10 +34,10 @@
             </div>
         @else
             <div class="bg-white rounded-2xl p-8 text-center border border-slate-200/80 shadow-2xs max-w-md mx-auto my-6">
-                <div class="w-12 h-12 rounded-xl bg-[#c30102]/10 text-[#c30102] flex items-center justify-center mx-auto text-lg mb-3">
+                <div class="w-12 h-12 rounded-xl bg-[#c4040a]/10 text-[#c4040a] flex items-center justify-center mx-auto text-lg mb-3">
                     <i class="far fa-heart"></i>
                 </div>
-                <h3 class="text-base font-extrabold text-[#051c45]">Your Wishlist is Empty</h3>
+                <h3 class="text-base font-extrabold text-[#063b96]">Your Wishlist is Empty</h3>
                 <p class="text-xs text-slate-500 mt-1 mb-5">Save courses from the catalog to compare and enroll later.</p>
                 <a href="{{ route('catalog.index') }}" class="btn-ipdp-primary px-5 py-2.5 rounded-xl font-bold text-xs inline-block">
                     Explore Courses

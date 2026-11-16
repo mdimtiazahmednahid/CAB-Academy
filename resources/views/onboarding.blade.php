@@ -16,17 +16,17 @@
     <div x-data="onboarding()" class="min-h-screen flex flex-col pt-8 pb-28 px-6 max-w-lg mx-auto relative">
         <!-- Top Brand + Skip Option -->
         <div class="flex items-center justify-between mb-6">
-            <span class="text-xs font-extrabold uppercase tracking-widest text-[#051c45]">
+            <span class="text-xs font-extrabold uppercase tracking-widest text-[#063b96]">
                 {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }} &bull; Setup
             </span>
-            <button type="button" @click="skip()" class="text-xs font-bold text-slate-500 hover:text-[#c30102] transition-colors cursor-pointer">
+            <button type="button" @click="skip()" class="text-xs font-bold text-slate-500 hover:text-[#c4040a] transition-colors cursor-pointer">
                 Skip to Dashboard &rarr;
             </button>
         </div>
 
         <!-- Progress -->
         <div class="w-full bg-gray-100 rounded-full h-1.5 mb-8">
-            <div class="bg-[#051c45] h-1.5 rounded-full transition-all duration-300" :style="`width: ${(step / totalSteps) * 100}%`"></div>
+            <div class="bg-[#063b96] h-1.5 rounded-full transition-all duration-300" :style="`width: ${(step / totalSteps) * 100}%`"></div>
         </div>
 
         <div class="flex-1">

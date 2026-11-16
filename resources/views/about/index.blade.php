@@ -17,7 +17,7 @@
         <!-- Hero Section -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-20">
             <div class="lg:col-span-7">
-                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-[#c30102]/10 text-[#c30102] mb-4">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-[#c4040a]/10 text-[#c4040a] mb-4">
                     <i class="fas fa-award text-xs"></i> {{ \App\Models\Setting::getVal('about_hero_badge', 'Premier Trade & Executive Institute') }}
                 </span>
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0f131f] tracking-tight leading-tight">
@@ -38,13 +38,13 @@
 
             <div class="lg:col-span-5">
                 <div class="relative">
-                    <div class="absolute -inset-2 bg-gradient-to-r from-[#c30102] to-[#051c45] rounded-3xl blur-xl opacity-20 transform -rotate-1"></div>
+                    <div class="absolute -inset-2 bg-gradient-to-r from-[#c4040a] to-[#063b96] rounded-3xl blur-xl opacity-20 transform -rotate-1"></div>
                     <div class="relative liquid-glass-card rounded-3xl p-8 space-y-6">
                         <div class="flex items-center gap-4">
                             <img src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="{{ $siteName }} Crest" class="w-16 h-16 rounded-2xl p-1 bg-white border border-gray-100 shadow-sm object-contain shrink-0" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                             <div class="min-w-0">
                                 <h3 class="text-base sm:text-lg font-black text-[#0f131f] uppercase tracking-tight leading-tight">{!! \App\Models\Setting::formatBrandNameHtml($siteName) !!}</h3>
-                                <span class="text-xs font-black text-[#c30102] uppercase tracking-widest block mt-0.5">{{ \App\Models\Setting::getVal('site_tagline', 'Learn, Grow, Lead.') }}</span>
+                                <span class="text-xs font-black text-[#c4040a] uppercase tracking-widest block mt-0.5">{{ \App\Models\Setting::getVal('site_tagline', 'Learn, Grow, Lead.') }}</span>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100 text-center">
@@ -53,7 +53,7 @@
                                 <span class="text-xs text-gray-500 font-semibold uppercase">{{ \App\Models\Setting::getVal('about_stat_graduates_label', 'Graduates Trained') }}</span>
                             </div>
                             <div class="p-3 bg-slate-50 rounded-2xl">
-                                <span class="block text-2xl font-black text-[#c30102]">{{ \App\Models\Setting::getVal('about_stat_curriculum', '98%') }}</span>
+                                <span class="block text-2xl font-black text-[#c4040a]">{{ \App\Models\Setting::getVal('about_stat_curriculum', '98%') }}</span>
                                 <span class="text-xs text-gray-500 font-semibold uppercase">{{ \App\Models\Setting::getVal('about_stat_curriculum_label', 'Practical Curriculum') }}</span>
                             </div>
                             <div class="p-3 bg-slate-50 rounded-2xl">
@@ -61,7 +61,7 @@
                                 <span class="text-xs text-gray-500 font-semibold uppercase">{{ \App\Models\Setting::getVal('about_stat_faculty_label', 'Fellow Faculty') }}</span>
                             </div>
                             <div class="p-3 bg-slate-50 rounded-2xl">
-                                <span class="block text-2xl font-black text-[#051c45]">{{ \App\Models\Setting::getVal('about_stat_partners', '120+') }}</span>
+                                <span class="block text-2xl font-black text-[#063b96]">{{ \App\Models\Setting::getVal('about_stat_partners', '120+') }}</span>
                                 <span class="text-xs text-gray-500 font-semibold uppercase">{{ \App\Models\Setting::getVal('about_stat_partners_label', 'Corporate Partners') }}</span>
                             </div>
                         </div>
@@ -73,7 +73,7 @@
         <!-- Mission, Vision & Core Values -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             <div class="liquid-glass-card rounded-3xl p-8 hover:shadow-xl transition-all">
-                <div class="w-12 h-12 rounded-2xl bg-[#c30102]/10 text-[#c30102] flex items-center justify-center text-xl mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-[#c4040a]/10 text-[#c4040a] flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-bullseye"></i>
                 </div>
                 <h3 class="text-xl font-bold text-[#0f131f] mb-3">{{ \App\Models\Setting::getVal('about_mission_title', 'Our Mission') }}</h3>
@@ -93,7 +93,7 @@
             </div>
 
             <div class="liquid-glass-card rounded-3xl p-8 hover:shadow-xl transition-all">
-                <div class="w-12 h-12 rounded-2xl bg-blue-100 text-[#051c45] flex items-center justify-center text-xl mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-blue-100 text-[#063b96] flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-shield-alt"></i>
                 </div>
                 <h3 class="text-xl font-bold text-[#0f131f] mb-3">{{ \App\Models\Setting::getVal('about_philosophy_title', 'Core Philosophy') }}</h3>
@@ -106,14 +106,14 @@
         <!-- Why Choose Academy -->
         <div class="liquid-glass-card rounded-3xl p-8 sm:p-12 mb-20">
             <div class="text-center max-w-2xl mx-auto mb-12">
-                <span class="text-xs font-black tracking-widest text-[#c30102] uppercase block mb-1">Institutional Excellence</span>
+                <span class="text-xs font-black tracking-widest text-[#c4040a] uppercase block mb-1">Institutional Excellence</span>
                 <h2 class="text-2xl sm:text-3xl font-black text-[#0f131f]">The {{ $siteName }} Distinct Advantage</h2>
                 <p class="text-sm text-[#727f9f] mt-2">What sets our executive diploma and day-long masterclasses apart.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div class="flex items-start gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-[#c30102]/10 text-[#c30102] flex items-center justify-center shrink-0 font-bold">01</div>
+                    <div class="w-10 h-10 rounded-xl bg-[#c4040a]/10 text-[#c4040a] flex items-center justify-center shrink-0 font-bold">01</div>
                     <div>
                         <h4 class="font-bold text-[#0f131f] text-base mb-1">Authentic Industry Practitioners</h4>
                         <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">Learn directly from Directors, Former Customs Commissioners, and Supply Chain Heads with 20+ years of frontline expertise.</p>
@@ -164,7 +164,7 @@
 
         <!-- Campus & Executive Headquarters Banner -->
         <div class="liquid-glass-dark rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row justify-between items-center gap-8 shadow-2xl relative overflow-hidden border border-white/15">
-            <div class="absolute -right-16 -top-16 w-64 h-64 bg-[#c30102]/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-[#c4040a]/20 rounded-full blur-3xl pointer-events-none"></div>
             <div class="max-w-2xl relative z-10">
                 <span class="text-xs font-black uppercase tracking-widest text-[#10b981] block mb-2">Visit Our Campus</span>
                 <h3 class="text-2xl sm:text-3xl font-black">Experience Our Executive Campus</h3>

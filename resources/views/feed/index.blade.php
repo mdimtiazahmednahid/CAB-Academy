@@ -21,7 +21,7 @@
         <div class="flex items-center gap-3 shrink-0 flex-wrap">
             @auth
                 @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.feeds.index') }}" class="px-4 py-2 rounded-2xl bg-[#051c45] hover:bg-[#072559] text-xs font-bold text-white flex items-center gap-2 shadow-sm transition-all">
+                    <a href="{{ route('admin.feeds.index') }}" class="px-4 py-2 rounded-2xl bg-[#063b96] hover:bg-[#072559] text-xs font-bold text-white flex items-center gap-2 shadow-sm transition-all">
                         <i class="fas fa-shield-alt text-amber-400"></i>
                         <span>Admin Moderation Desk</span>
                     </a>
@@ -130,7 +130,7 @@
 
             <div class="flex items-start gap-3.5 mb-3">
                 <!-- User Avatar -->
-                <div class="w-11 h-11 rounded-full bg-[#f2f4f7] border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center font-bold text-sm text-[#051c45]">
+                <div class="w-11 h-11 rounded-full bg-[#f2f4f7] border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center font-bold text-sm text-[#063b96]">
                     @auth
                         @if(auth()->user()->hasCustomProfilePicture())
                             <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=051c45&color=fff';">
@@ -152,13 +152,13 @@
                         @input="expanded = true; checkUrlInContent()"
                         @paste="setTimeout(() => { expanded = true; checkUrlInContent(); }, 50)"
                         placeholder="What's on your mind? Paste any link (e.g. https://acsacademy.bd/c/18) or share an industry update..." 
-                        class="w-full bg-[#f8fafc] border border-slate-200 rounded-2xl p-3.5 text-sm text-[#0f131f] placeholder:text-[#727f9f] focus:outline-none focus:ring-2 focus:ring-[#c30102] focus:bg-white transition-all resize-none"
+                        class="w-full bg-[#f8fafc] border border-slate-200 rounded-2xl p-3.5 text-sm text-[#0f131f] placeholder:text-[#727f9f] focus:outline-none focus:ring-2 focus:ring-[#c4040a] focus:bg-white transition-all resize-none"
                         required
                     ></textarea>
 
                     <!-- Live Loading Indicator for Link Preview -->
                     <div x-show="loadingPreview" x-cloak class="p-3.5 rounded-2xl bg-[#f0f2f5] border border-[#dadde1] flex items-center gap-3 text-xs text-slate-600 font-semibold animate-pulse">
-                        <i class="fas fa-circle-notch fa-spin text-[#051c45]"></i>
+                        <i class="fas fa-circle-notch fa-spin text-[#063b96]"></i>
                         <span>Generating rich link preview...</span>
                     </div>
 
@@ -166,11 +166,11 @@
                     <template x-if="livePreview && !loadingPreview">
                         <div class="space-y-2">
                             <div class="flex flex-wrap items-center gap-2">
-                                <button type="button" @click="stylizeFirstLine()" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#051c45]/10 hover:bg-[#051c45] text-[#051c45] hover:text-white text-[11px] font-bold transition-colors">
+                                <button type="button" @click="stylizeFirstLine()" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#063b96]/10 hover:bg-[#063b96] text-[#063b96] hover:text-white text-[11px] font-bold transition-colors">
                                     <i class="fas fa-font text-[10px]"></i>
                                     <span>𝐏𝐆𝐃 Bold Serif Headline</span>
                                 </button>
-                                <button type="button" x-show="livePreview.social_caption || livePreview.post_header" @click="insertFullStylishCaption()" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#c30102]/10 hover:bg-[#c30102] text-[#c30102] hover:text-white text-[11px] font-bold transition-colors">
+                                <button type="button" x-show="livePreview.social_caption || livePreview.post_header" @click="insertFullStylishCaption()" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#c4040a]/10 hover:bg-[#c4040a] text-[#c4040a] hover:text-white text-[11px] font-bold transition-colors">
                                     <i class="fas fa-wand-magic-sparkles text-[10px]"></i>
                                     <span>Auto-Fill Full Stylish Caption</span>
                                 </button>
@@ -191,10 +191,10 @@
                                     <div class="px-4 py-3 bg-[#f2f3f5]/80 group-hover:bg-[#ebedf0]/90 transition-colors flex items-center justify-between gap-3">
                                         <div class="min-w-0 flex-1">
                                             <div class="text-xs font-normal text-[#65676b] uppercase tracking-tight truncate" x-text="livePreview.display_domain || livePreview.domain.toLowerCase()"></div>
-                                            <h4 class="text-[15px] font-serif font-bold text-[#050505] group-hover:text-[#c30102] underline decoration-[#050505]/40 group-hover:decoration-[#c30102] line-clamp-2 leading-snug mt-0.5" x-text="livePreview.stylish_title || livePreview.title"></h4>
+                                            <h4 class="text-[15px] font-serif font-bold text-[#050505] group-hover:text-[#c4040a] underline decoration-[#050505]/40 group-hover:decoration-[#c4040a] line-clamp-2 leading-snug mt-0.5" x-text="livePreview.stylish_title || livePreview.title"></h4>
                                             <p x-show="!livePreview.image && livePreview.description" class="text-xs text-[#65676b] line-clamp-2 mt-1 leading-relaxed" x-text="livePreview.description"></p>
                                         </div>
-                                        <span class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white font-extrabold text-xs sm:text-[13px] shrink-0 transition-all shadow-[0_0_18px_rgba(195,1,2,0.55)] group-hover:scale-105 inline-flex items-center gap-1.5 select-none">
+                                        <span class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#c4040a] to-[#e11d48] text-white font-extrabold text-xs sm:text-[13px] shrink-0 transition-all shadow-[0_0_18px_rgba(195,1,2,0.55)] group-hover:scale-105 inline-flex items-center gap-1.5 select-none">
                                             <i class="fas fa-bolt text-amber-300 text-[11px] animate-pulse"></i>
                                             <span>Enroll Now</span>
                                         </span>
@@ -218,7 +218,7 @@
                             type="text" 
                             name="author_name" 
                             placeholder="e.g. Tanvir Ahmed" 
-                            class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-[#c30102] focus:outline-none"
+                            class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-[#c4040a] focus:outline-none"
                             required
                         >
                     </div>
@@ -228,7 +228,7 @@
                             type="text" 
                             name="author_title" 
                             placeholder="e.g. Commercial Executive, Dhaka" 
-                            class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-[#c30102] focus:outline-none"
+                            class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-[#c4040a] focus:outline-none"
                         >
                     </div>
                 </div>
@@ -240,7 +240,7 @@
                     <!-- Category Select -->
                     <div class="flex items-center gap-2">
                         <label class="text-xs font-bold text-[#727f9f]">Topic:</label>
-                        <select name="category" class="bg-[#f8fafc] border border-gray-200 rounded-xl text-xs px-3 py-1.5 text-[#35415b] font-medium focus:outline-none focus:ring-1 focus:ring-[#c30102]">
+                        <select name="category" class="bg-[#f8fafc] border border-gray-200 rounded-xl text-xs px-3 py-1.5 text-[#35415b] font-medium focus:outline-none focus:ring-1 focus:ring-[#c4040a]">
                             @foreach($categories as $cat)
                                 <option value="{{ $cat }}">{{ $cat }}</option>
                             @endforeach
@@ -252,7 +252,7 @@
                         <button 
                             type="button" 
                             @click="stylizeFirstLine()" 
-                            class="text-xs font-bold text-[#051c45] hover:text-[#c30102] flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
+                            class="text-xs font-bold text-[#063b96] hover:text-[#c4040a] flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
                             title="Convert first line to Stylish Bold Serif (𝐏𝐆𝐃 𝐈𝐍...)"
                         >
                             <span class="font-serif">𝐀𝐁𝐂</span>
@@ -263,7 +263,7 @@
                         <button 
                             type="button" 
                             @click="showImageInput = !showImageInput" 
-                            class="text-xs font-semibold text-gray-600 hover:text-[#c30102] flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                            class="text-xs font-semibold text-gray-600 hover:text-[#c4040a] flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
                         >
                             <i class="far fa-image text-sm text-[#10b981]"></i>
                             <span>Add Photo / URL</span>
@@ -277,7 +277,7 @@
                         type="url" 
                         name="image_url" 
                         placeholder="Paste image URL (e.g. https://images.unsplash.com/...)" 
-                        class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-[#35415b] focus:ring-1 focus:ring-[#c30102] focus:outline-none"
+                        class="w-full bg-[#f8fafc] border border-gray-200 rounded-xl px-3 py-2 text-xs text-[#35415b] focus:ring-1 focus:ring-[#c4040a] focus:outline-none"
                     >
                 </div>
 
@@ -313,20 +313,20 @@
         <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 scrollbar-none">
             <a 
                 href="{{ route('feed.index', ['filter' => 'all']) }}" 
-                class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ $filter === 'all' ? 'bg-[#051c45] text-white shadow-md' : 'bg-white text-[#35415b] border border-slate-200 hover:bg-slate-50' }}"
+                class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ $filter === 'all' ? 'bg-[#063b96] text-white shadow-md' : 'bg-white text-[#35415b] border border-slate-200 hover:bg-slate-50' }}"
             >
                 All Posts
             </a>
             <a 
                 href="{{ route('feed.index', ['filter' => 'blogs']) }}" 
-                class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ $filter === 'blogs' ? 'bg-[#051c45] text-white shadow-md' : 'bg-white text-[#35415b] border border-slate-200 hover:bg-slate-50' }}"
+                class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ $filter === 'blogs' ? 'bg-[#063b96] text-white shadow-md' : 'bg-white text-[#35415b] border border-slate-200 hover:bg-slate-50' }}"
             >
-                <i class="fas fa-newspaper text-xs mr-1 text-[#c30102]"></i>
+                <i class="fas fa-newspaper text-xs mr-1 text-[#c4040a]"></i>
                 Official Insights & Blogs
             </a>
             <a 
                 href="{{ route('feed.index', ['filter' => 'discussions']) }}" 
-                class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ $filter === 'discussions' ? 'bg-[#051c45] text-white shadow-md' : 'bg-white text-[#35415b] border border-slate-200 hover:bg-slate-50' }}"
+                class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ $filter === 'discussions' ? 'bg-[#063b96] text-white shadow-md' : 'bg-white text-[#35415b] border border-slate-200 hover:bg-slate-50' }}"
             >
                 <i class="fas fa-comments text-xs mr-1 text-[#10b981]"></i>
                 Peer Discussions
@@ -334,7 +334,7 @@
             @auth
                 <a 
                     href="{{ route('feed.index', ['filter' => 'my']) }}" 
-                    class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ $filter === 'my' ? 'bg-[#051c45] text-white shadow-md' : 'bg-white text-[#35415b] border border-slate-200 hover:bg-slate-50' }}"
+                    class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all {{ $filter === 'my' ? 'bg-[#063b96] text-white shadow-md' : 'bg-white text-[#35415b] border border-slate-200 hover:bg-slate-50' }}"
                 >
                     My Posts
                 </a>
@@ -352,9 +352,9 @@
                     name="search" 
                     value="{{ request('search') }}" 
                     placeholder="Search posts or topics..." 
-                    class="w-full bg-white border border-[#e3e7f0] text-[#35415b] text-xs rounded-full py-2 pl-4 pr-9 focus:ring-1 focus:ring-[#c30102] focus:outline-none shadow-sm font-medium"
+                    class="w-full bg-white border border-[#e3e7f0] text-[#35415b] text-xs rounded-full py-2 pl-4 pr-9 focus:ring-1 focus:ring-[#c4040a] focus:outline-none shadow-sm font-medium"
                 >
-                <button type="submit" class="absolute right-3 top-2.5 text-gray-400 hover:text-[#c30102]">
+                <button type="submit" class="absolute right-3 top-2.5 text-gray-400 hover:text-[#c4040a]">
                     <i class="fas fa-search text-xs"></i>
                 </button>
             </div>
@@ -370,7 +370,7 @@
                 <div class="flex items-start justify-between gap-3 mb-4">
                     <div class="flex items-center gap-3">
                         <!-- Avatar -->
-                        <div class="w-12 h-12 rounded-full bg-[#051c45]/10 border-2 border-white shadow-sm overflow-hidden shrink-0 flex items-center justify-center font-bold text-base text-[#051c45]">
+                        <div class="w-12 h-12 rounded-full bg-[#063b96]/10 border-2 border-white shadow-sm overflow-hidden shrink-0 flex items-center justify-center font-bold text-base text-[#063b96]">
                             @if($post->author_avatar_url)
                                 <img src="{{ $post->author_avatar_url }}" alt="{{ $post->author_name }}" class="w-full h-full object-cover">
                             @else
@@ -381,12 +381,12 @@
                         <!-- Name & Meta -->
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
-                                <h3 class="text-sm font-bold text-[#0f131f] hover:text-[#c30102] transition-colors">
+                                <h3 class="text-sm font-bold text-[#0f131f] hover:text-[#c4040a] transition-colors">
                                     {{ $post->author_name }}
                                 </h3>
                                 
                                 @if($post->author_title)
-                                    <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ str_contains(strtolower($post->author_title), 'faculty') || str_contains(strtolower($post->author_title), 'director') ? 'bg-[#c30102]/10 text-[#c30102] border border-[#c30102]/20' : 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20' }}">
+                                    <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider {{ str_contains(strtolower($post->author_title), 'faculty') || str_contains(strtolower($post->author_title), 'director') ? 'bg-[#c4040a]/10 text-[#c4040a] border border-[#c4040a]/20' : 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20' }}">
                                         {{ $post->author_title }}
                                     </span>
                                 @endif
@@ -398,7 +398,7 @@
                                 <span class="font-medium text-[#35415b]">{{ $post->category }}</span>
                                 @if($post->is_pinned)
                                     <span>&bull;</span>
-                                    <span class="text-[#c30102] font-bold flex items-center gap-1">
+                                    <span class="text-[#c4040a] font-bold flex items-center gap-1">
                                         <i class="fas fa-thumbtack text-[10px]"></i>
                                         <span>Pinned</span>
                                     </span>
@@ -499,7 +499,7 @@
                         <button 
                             type="button" 
                             @click="showComments = !showComments"
-                            class="flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-[#c30102] transition-colors"
+                            class="flex items-center gap-2 text-xs font-bold text-gray-500 hover:text-[#c4040a] transition-colors"
                         >
                             <i class="far fa-comment-dots text-sm"></i>
                             <span>{{ $post->comments_count }}</span>
@@ -524,7 +524,7 @@
                     <div class="space-y-3">
                         @foreach($post->comments as $comment)
                             <div class="flex items-start gap-2.5">
-                                <div class="w-8 h-8 rounded-full bg-[#051c45]/10 border border-[#051c45]/20 overflow-hidden shrink-0 flex items-center justify-center font-bold text-xs text-[#051c45]">
+                                <div class="w-8 h-8 rounded-full bg-[#063b96]/10 border border-[#063b96]/20 overflow-hidden shrink-0 flex items-center justify-center font-bold text-xs text-[#063b96]">
                                     @if($comment->author_avatar_url)
                                         <img src="{{ $comment->author_avatar_url }}" alt="{{ $comment->author_name }}" class="w-full h-full object-cover">
                                     @else
@@ -551,7 +551,7 @@
                             type="text" 
                             name="content" 
                             placeholder="Write a reply..." 
-                            class="flex-1 bg-[#f8fafc] border border-gray-200 rounded-full px-4 py-2 text-xs text-[#35415b] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#c30102] focus:bg-white"
+                            class="flex-1 bg-[#f8fafc] border border-gray-200 rounded-full px-4 py-2 text-xs text-[#35415b] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#c4040a] focus:bg-white"
                             required
                         >
                         @guest
@@ -566,7 +566,7 @@
             </article>
         @empty
             <div class="bg-white rounded-3xl p-12 text-center border border-[#e3e7f0] shadow-sm">
-                <div class="w-16 h-16 rounded-full bg-[#c30102]/10 flex items-center justify-center mx-auto mb-4 text-[#c30102] text-2xl">
+                <div class="w-16 h-16 rounded-full bg-[#c4040a]/10 flex items-center justify-center mx-auto mb-4 text-[#c4040a] text-2xl">
                     <i class="far fa-newspaper"></i>
                 </div>
                 <h3 class="text-lg font-bold text-[#0f131f] mb-1">No community posts yet</h3>

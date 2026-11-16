@@ -49,7 +49,7 @@
                 <section>
                     <h2 class="text-lg font-bold text-[#0f131f] mb-2">3. Refund Processing Procedure</h2>
                     <p>
-                        To request a refund, please send an official email to <a href="mailto:{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}" class="text-[#c30102] font-medium underline">{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}</a> with the subject header <code>"Refund Request - [Course Name] - [Your Full Name]"</code> along with:
+                        To request a refund, please send an official email to <a href="mailto:{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}" class="text-[#c4040a] font-medium underline">{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}</a> with the subject header <code>"Refund Request - [Course Name] - [Your Full Name]"</code> along with:
                     </p>
                     <ul class="list-disc list-inside space-y-1 text-gray-600 mt-2">
                         <li>Your registration email and contact number.</li>

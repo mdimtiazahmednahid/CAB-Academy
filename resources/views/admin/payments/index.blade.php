@@ -13,7 +13,7 @@
     <!-- Header & Cross-Navigation -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h2 class="text-2xl sm:text-3xl font-black text-[#051c45] tracking-tight">Payments Verification</h2>
+            <h2 class="text-2xl sm:text-3xl font-black text-[#063b96] tracking-tight">Payments Verification</h2>
             <p class="text-xs sm:text-sm text-slate-500 mt-1">Verify bKash, Nagad, Rocket, and Bank tuition transfers to automatically enroll students.</p>
         </div>
         <div class="flex items-center gap-2.5">
@@ -21,7 +21,7 @@
                 <i class="fas fa-credit-card text-slate-400"></i>
                 <span>Gateways</span>
             </a>
-            <a href="{{ route('admin.accounting.index') }}" class="px-4 py-2 rounded-xl bg-[#051c45] hover:bg-[#0a2540] text-white text-xs font-bold shadow-xs inline-flex items-center gap-2 transition-colors">
+            <a href="{{ route('admin.accounting.index') }}" class="px-4 py-2 rounded-xl bg-[#063b96] hover:bg-[#0a2540] text-white text-xs font-bold shadow-xs inline-flex items-center gap-2 transition-colors">
                 <i class="fas fa-coins text-emerald-400"></i>
                 <span>Full Accounting Ledger →</span>
             </a>
@@ -39,7 +39,7 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white p-4 sm:p-5 rounded-2xl border {{ $pendingList->count() > 0 ? 'border-amber-300 bg-amber-50/20' : 'border-slate-200/80' }} shadow-xs">
             <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pending Review</div>
-            <div class="text-2xl font-black {{ $pendingList->count() > 0 ? 'text-amber-600' : 'text-[#051c45]' }} mt-1">{{ $pendingList->count() }}</div>
+            <div class="text-2xl font-black {{ $pendingList->count() > 0 ? 'text-amber-600' : 'text-[#063b96]' }} mt-1">{{ $pendingList->count() }}</div>
             <div class="text-[11px] text-slate-500 mt-0.5">৳{{ number_format((float) $pendingList->sum('amount'), 0) }} awaiting approval</div>
         </div>
         <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
@@ -49,7 +49,7 @@
         </div>
         <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
             <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Transactions</div>
-            <div class="text-2xl font-black text-[#051c45] mt-1">{{ $payments->count() }}</div>
+            <div class="text-2xl font-black text-[#063b96] mt-1">{{ $payments->count() }}</div>
             <div class="text-[11px] text-slate-500 mt-0.5">All recorded submissions</div>
         </div>
         <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
@@ -62,7 +62,7 @@
     <!-- Filter Tabs & Search Bar -->
     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div class="flex items-center gap-1.5 overflow-x-auto">
-            <button type="button" @click="statusTab = 'all'" :class="statusTab === 'all' ? 'bg-[#051c45] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap">
+            <button type="button" @click="statusTab = 'all'" :class="statusTab === 'all' ? 'bg-[#063b96] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap">
                 All ({{ $payments->count() }})
             </button>
             <button type="button" @click="statusTab = 'pending'" :class="statusTab === 'pending' ? 'bg-amber-500 text-slate-950' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors whitespace-nowrap">
@@ -77,7 +77,7 @@
         </div>
 
         <div class="relative w-full sm:w-72">
-            <input type="text" x-model="search" placeholder="Search TrxID, phone, student, or course..." class="w-full pl-9 pr-4 py-2 rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+            <input type="text" x-model="search" placeholder="Search TrxID, phone, student, or course..." class="w-full pl-9 pr-4 py-2 rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">
             <i class="fas fa-search text-slate-400 text-xs absolute left-3 top-2.5"></i>
         </div>
     </div>
@@ -116,14 +116,14 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="font-bold text-slate-900 line-clamp-1">{{ $payment->course?->title ?? 'Deleted Course' }}</div>
-                            <div class="text-sm font-black text-[#051c45] mt-0.5">৳{{ number_format($payment->amount, 2) }}</div>
+                            <div class="text-sm font-black text-[#063b96] mt-0.5">৳{{ number_format($payment->amount, 2) }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 text-[#051c45] text-xs font-bold">
+                            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 text-[#063b96] text-xs font-bold">
                                 {{ $payment->paymentMethod?->provider_name ?? 'Direct / Cash' }}
                             </div>
                             <div class="text-xs mt-1">Sender: <span class="font-mono text-slate-900 font-semibold">{{ $payment->sender_number }}</span></div>
-                            <div class="text-xs">TrxID: <span class="font-mono font-bold text-[#051c45]">{{ $payment->transaction_id }}</span></div>
+                            <div class="text-xs">TrxID: <span class="font-mono font-bold text-[#063b96]">{{ $payment->transaction_id }}</span></div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($payment->status === 'pending')
@@ -139,12 +139,12 @@
                         </td>
                         <td class="px-6 py-4 text-right whitespace-nowrap">
                             <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('payments.invoice', $payment) }}" target="_blank" title="View Receipt" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-[#051c45] transition-colors text-xs">
+                                <a href="{{ route('payments.invoice', $payment) }}" target="_blank" title="View Receipt" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-[#063b96] transition-colors text-xs">
                                     <i class="fas fa-file-invoice"></i>
                                 </a>
                                 <form action="{{ route('admin.payments.updateStatus', $payment) }}" method="POST" class="inline-flex items-center gap-1.5">
                                     @csrf
-                                    <select name="status" onchange="this.form.submit()" class="border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-xs focus:ring-[#051c45] focus:border-[#051c45] py-1.5 pl-2.5 pr-7">
+                                    <select name="status" onchange="this.form.submit()" class="border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-xs focus:ring-[#063b96] focus:border-[#063b96] py-1.5 pl-2.5 pr-7">
                                         <option value="pending" {{ $payment->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                         <option value="processing" {{ $payment->status === 'processing' ? 'selected' : '' }}>Processing</option>
                                         <option value="verified" {{ $payment->status === 'verified' ? 'selected' : '' }}>Verified</option>

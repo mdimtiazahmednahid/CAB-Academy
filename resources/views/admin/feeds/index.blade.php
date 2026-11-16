@@ -9,7 +9,7 @@
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
             <div class="flex items-center gap-2 mb-1">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#051c45] text-white">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#063b96] text-white">
                     <i class="fas fa-users-line text-[#10b981] mr-1.5"></i> Community Moderation
                 </span>
                 <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Live Student Exchange</span>
@@ -23,7 +23,7 @@
                 <i class="fas fa-external-link-alt text-gray-400"></i>
                 <span>View Public Feed</span>
             </a>
-            <button @click="broadcastModalOpen = true" class="px-5 py-2.5 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold shadow-md shadow-red-900/20 inline-flex items-center gap-2 transition-all">
+            <button @click="broadcastModalOpen = true" class="px-5 py-2.5 rounded-xl bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-bold shadow-md shadow-red-900/20 inline-flex items-center gap-2 transition-all">
                 <i class="fas fa-bullhorn"></i>
                 <span>Broadcast Official Notice</span>
             </button>
@@ -45,7 +45,7 @@
                 <div class="text-2xl font-black text-gray-900 mt-1">{{ number_format($stats['total_posts']) }}</div>
                 <div class="text-[11px] text-gray-500 mt-0.5">Active Community Threads</div>
             </div>
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#051c45] flex items-center justify-center text-xl">
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-[#063b96] flex items-center justify-center text-xl">
                 <i class="fas fa-comments"></i>
             </div>
         </div>
@@ -85,7 +85,7 @@
 
             <form method="GET" action="{{ route('admin.feeds.index') }}" class="flex flex-wrap items-center gap-2.5">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search author, topic, keywords..." 
-                       class="text-xs px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#051c45] w-full sm:w-60">
+                       class="text-xs px-3.5 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#063b96] w-full sm:w-60">
 
                 <select name="category" class="text-xs px-3 py-2 rounded-xl border border-gray-300 bg-white focus:outline-none">
                     <option value="">All Categories</option>
@@ -130,7 +130,7 @@
                                         <div class="font-bold text-gray-900 flex items-center gap-1.5">
                                             <span>{{ $post->author_name }}</span>
                                             @if($post->user_id && $post->user && $post->user->role === 'admin')
-                                                <span class="px-1.5 py-0.2 rounded bg-[#051c45] text-white text-[9px] font-extrabold uppercase">Admin</span>
+                                                <span class="px-1.5 py-0.2 rounded bg-[#063b96] text-white text-[9px] font-extrabold uppercase">Admin</span>
                                             @endif
                                         </div>
                                         <div class="text-[10px] text-gray-400">{{ $post->author_title ?? 'Member' }}</div>
@@ -227,13 +227,13 @@
                 @csrf
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Announcement Title *</label>
-                    <input type="text" name="title" required placeholder="e.g. Bangladesh Customs Gazette SRO 2026: Executive Masterclass Schedule" class="w-full text-xs rounded-xl border-gray-300 p-3 focus:ring-[#051c45]">
+                    <input type="text" name="title" required placeholder="e.g. Bangladesh Customs Gazette SRO 2026: Executive Masterclass Schedule" class="w-full text-xs rounded-xl border-gray-300 p-3 focus:ring-[#063b96]">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Notice Category *</label>
-                        <select name="category" required class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]">
+                        <select name="category" required class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]">
                             <option value="customs_sro">Customs & SRO Updates</option>
                             <option value="export_import">Export-Import Advisory</option>
                             <option value="vat_tax">VAT & Corporate Tax</option>
@@ -243,13 +243,13 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Official Sub-Title</label>
-                        <input type="text" name="author_title" value="Academic Directorate" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#051c45]">
+                        <input type="text" name="author_title" value="Academic Directorate" class="w-full text-xs rounded-xl border-gray-300 p-2.5 focus:ring-[#063b96]">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-1">Broadcast Content *</label>
-                    <textarea name="content" rows="4" required placeholder="Full message to be displayed to students and industry participants..." class="w-full text-xs rounded-xl border-gray-300 p-3 focus:ring-[#051c45]"></textarea>
+                    <textarea name="content" rows="4" required placeholder="Full message to be displayed to students and industry participants..." class="w-full text-xs rounded-xl border-gray-300 p-3 focus:ring-[#063b96]"></textarea>
                 </div>
 
                 <div>
@@ -259,7 +259,7 @@
 
                 <div class="pt-2">
                     <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-gray-700">
-                        <input type="checkbox" name="is_pinned" value="1" checked class="rounded border-gray-300 text-[#051c45] focus:ring-[#051c45]">
+                        <input type="checkbox" name="is_pinned" value="1" checked class="rounded border-gray-300 text-[#063b96] focus:ring-[#063b96]">
                         <span>Pin to the very top of Student Feed</span>
                     </label>
                 </div>
@@ -268,7 +268,7 @@
                     <button type="button" @click="broadcastModalOpen = false" class="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold">
                         Cancel
                     </button>
-                    <button type="submit" class="px-5 py-2.5 bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold rounded-xl shadow-md">
+                    <button type="submit" class="px-5 py-2.5 bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-bold rounded-xl shadow-md">
                         Publish & Pin Broadcast
                     </button>
                 </div>

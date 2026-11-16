@@ -64,7 +64,7 @@
                     <div class="mt-3 p-4 bg-gray-50 rounded-xl border border-gray-200 text-xs sm:text-sm">
                         <p class="font-bold text-[#0f131f]">{{ $siteName }} Compliance Desk</p>
                         <p class="text-gray-600">Operational Campus: {{ \App\Models\Setting::getVal('contact_address', 'Mirpur-Pallabi, Dhaka, Bangladesh, 1216') }}</p>
-                        <p class="text-gray-600">Email: <a href="mailto:{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}" class="text-[#c30102] font-medium underline">{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}</a></p>
+                        <p class="text-gray-600">Email: <a href="mailto:{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}" class="text-[#c4040a] font-medium underline">{{ \App\Models\Setting::getVal('contact_email', 'commercialacademy868@gmail.com') }}</a></p>
                         <p class="text-gray-600">Phone: {{ \App\Models\Setting::getVal('contact_hotline', '01917-054664') }}</p>
                     </div>
                 </section>

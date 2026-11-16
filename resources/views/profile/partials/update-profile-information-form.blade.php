@@ -32,7 +32,7 @@
                     <p class="text-sm mt-2 text-gray-800">
                         {{ __('Your email address is unverified.') }}
 
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#051c45]">
+                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#063b96]">
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
                     </p>
@@ -56,14 +56,14 @@
             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
                 <x-input-label for="profile_picture_input" :value="__('Profile Picture')" />
                 <div class="mt-2 flex flex-col sm:flex-row sm:items-center gap-4">
-                    <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white shadow-md bg-[#051c45] text-white flex items-center justify-center font-black text-2xl shrink-0">
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white shadow-md bg-[#063b96] text-white flex items-center justify-center font-black text-2xl shrink-0">
                         <img id="form_profile_picture_preview" src="{{ $user->profile_picture_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover {{ $user->hasCustomProfilePicture() ? '' : 'hidden' }}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=051c45&color=fff';">
                         @if(!$user->hasCustomProfilePicture())
                             <span id="form_profile_picture_initial">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                         @endif
                     </div>
                     <div class="flex-1 space-y-2">
-                        <input type="file" name="profile_picture" id="profile_picture_input" accept="image/*" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#051c45] file:text-white hover:file:bg-[#0a2540] file:cursor-pointer cursor-pointer bg-white rounded-xl border border-slate-200 p-1" />
+                        <input type="file" name="profile_picture" id="profile_picture_input" accept="image/*" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#063b96] file:text-white hover:file:bg-[#0a2540] file:cursor-pointer cursor-pointer bg-white rounded-xl border border-slate-200 p-1" />
                         <input type="hidden" name="profile_picture_base64" id="profile_picture_base64">
                         <p class="text-[11px] text-slate-500">Select a photo and click <strong>Save</strong> below — your avatar updates across the top bar, sidebar, and community feed immediately.</p>
                     </div>
@@ -76,7 +76,7 @@
                 <div id="form_cover_photo_wrapper" class="mt-2 mb-2 w-full max-w-2xl {{ $user->cover_photo ? '' : 'hidden' }}">
                     <img id="form_cover_photo_preview" src="{{ $user->cover_photo_url }}" alt="Cover" class="w-full h-32 md:h-44 rounded-xl object-cover shadow-sm border border-gray-200" onerror="this.style.display='none';">
                 </div>
-                <input type="file" name="cover_photo" id="cover_photo_input" accept="image/*" class="mt-1 block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-200 file:text-[#051c45] hover:file:bg-slate-300 file:cursor-pointer cursor-pointer bg-white rounded-xl border border-slate-200 p-1" />
+                <input type="file" name="cover_photo" id="cover_photo_input" accept="image/*" class="mt-1 block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-200 file:text-[#063b96] hover:file:bg-slate-300 file:cursor-pointer cursor-pointer bg-white rounded-xl border border-slate-200 p-1" />
                 <input type="hidden" name="cover_photo_base64" id="cover_photo_base64">
                 <x-input-error class="mt-2" :messages="$errors->get('cover_photo')" />
             </div>

@@ -76,8 +76,9 @@ Route::get('/', function () {
     }
 });
 
-// PWA Web App Manifest & Custom CMS Pages
+// PWA Web App Manifest, Offline Fallback & Custom CMS Pages
 Route::get('/manifest.json', [App\Http\Controllers\PageController::class, 'manifest'])->name('pwa.manifest');
+Route::view('/offline', 'errors.offline')->name('offline');
 Route::get('/page/{slug}', [App\Http\Controllers\PageController::class, 'show'])->name('pages.show');
 
 // Community Feed & Blogs (Minimal Community Like Facebook)

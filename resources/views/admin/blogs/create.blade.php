@@ -13,7 +13,7 @@
 
     <div class="bg-white rounded-3xl p-6 sm:p-10 border border-gray-200/80 shadow-sm">
         <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
-            <div class="w-10 h-10 rounded-2xl bg-[#051c45] text-[#10b981] flex items-center justify-center text-lg">
+            <div class="w-10 h-10 rounded-2xl bg-[#063b96] text-[#10b981] flex items-center justify-center text-lg">
                 <i class="fas fa-feather-pointed"></i>
             </div>
             <div>
@@ -36,12 +36,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Article Title *</label>
-                    <input type="text" name="title" value="{{ old('title') }}" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#051c45] p-3" placeholder="e.g. Navigating Bangladesh Customs SRO 2026: Key Changes for Importers">
+                    <input type="text" name="title" value="{{ old('title') }}" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#063b96] p-3" placeholder="e.g. Navigating Bangladesh Customs SRO 2026: Key Changes for Importers">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Program Category *</label>
-                    <input list="categoryList" name="category" value="{{ old('category', 'Customs & SRO') }}" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#051c45] p-3" placeholder="Choose or type category">
+                    <input list="categoryList" name="category" value="{{ old('category', 'Customs & SRO') }}" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#063b96] p-3" placeholder="Choose or type category">
                     <datalist id="categoryList">
                         @foreach($categories as $cat)
                             <option value="{{ $cat->name }}">
@@ -57,33 +57,33 @@
 
             <div>
                 <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Brief Summary / Excerpt *</label>
-                <textarea name="excerpt" rows="2" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#051c45] p-3 leading-relaxed" placeholder="A concise 2-sentence summary that appears on blog cards and Google search previews...">{{ old('excerpt') }}</textarea>
+                <textarea name="excerpt" rows="2" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#063b96] p-3 leading-relaxed" placeholder="A concise 2-sentence summary that appears on blog cards and Google search previews...">{{ old('excerpt') }}</textarea>
             </div>
 
             <div>
                 <label class="block text-xs font-bold uppercase text-gray-700 mb-2">SEO Meta Description (Optional)</label>
-                <input type="text" name="meta_description" value="{{ old('meta_description') }}" class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#051c45] p-3" placeholder="Search engine snippet preview...">
+                <input type="text" name="meta_description" value="{{ old('meta_description') }}" class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#063b96] p-3" placeholder="Search engine snippet preview...">
             </div>
 
             <div>
                 <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Article Content (Markdown / HTML Supported) *</label>
-                <textarea name="content" rows="14" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#051c45] p-3 font-mono leading-relaxed" placeholder="Write full article body here...">{{ old('content') }}</textarea>
+                <textarea name="content" rows="14" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#063b96] p-3 font-mono leading-relaxed" placeholder="Write full article body here...">{{ old('content') }}</textarea>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Author Name *</label>
-                    <input type="text" name="author_name" value="{{ old('author_name', auth()->user()->name) }}" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#051c45] p-3">
+                    <input type="text" name="author_name" value="{{ old('author_name', auth()->user()->name) }}" required class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#063b96] p-3">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Author Title</label>
-                    <input type="text" name="author_title" value="{{ old('author_title', 'Senior Trade Consultant') }}" class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#051c45] p-3">
+                    <input type="text" name="author_title" value="{{ old('author_title', 'Senior Trade Consultant') }}" class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#063b96] p-3">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Read Time</label>
-                    <input type="text" name="read_time" value="{{ old('read_time', '5 min read') }}" class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#051c45] p-3">
+                    <input type="text" name="read_time" value="{{ old('read_time', '5 min read') }}" class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#063b96] p-3">
                 </div>
             </div>
 
@@ -109,14 +109,14 @@
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-700 mb-2">Or Direct Image URL</label>
-                    <input type="text" name="featured_image" value="{{ old('featured_image') }}" class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#051c45] p-2.5" placeholder="https://... or images/faculty/...">
+                    <input type="text" name="featured_image" value="{{ old('featured_image') }}" class="w-full text-xs rounded-xl border-gray-300 focus:ring-[#063b96] p-2.5" placeholder="https://... or images/faculty/...">
                 </div>
             </div>
 
             <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-6">
                     <label class="inline-flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="is_published" value="1" {{ old('is_published', true) ? 'checked' : '' }} class="rounded border-gray-300 text-[#051c45] focus:ring-[#051c45]">
+                        <input type="checkbox" name="is_published" value="1" {{ old('is_published', true) ? 'checked' : '' }} class="rounded border-gray-300 text-[#063b96] focus:ring-[#063b96]">
                         <span class="text-xs font-bold text-gray-700">Publish immediately to Knowledge Hub</span>
                     </label>
 
@@ -126,7 +126,7 @@
                     </label>
                 </div>
 
-                <button type="submit" class="px-6 py-3 bg-[#051c45] hover:bg-[#072559] text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-950/20">
+                <button type="submit" class="px-6 py-3 bg-[#063b96] hover:bg-[#072559] text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-950/20">
                     Publish Article
                 </button>
             </div>

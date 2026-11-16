@@ -79,9 +79,9 @@
         
         <!-- Breadcrumbs -->
         <nav class="flex items-center gap-2 text-xs text-slate-500 font-semibold mb-6">
-            <a href="{{ url('/') }}" class="hover:text-[#c30102] transition-colors">Home</a>
+            <a href="{{ url('/') }}" class="hover:text-[#c4040a] transition-colors">Home</a>
             <span>/</span>
-            <a href="{{ route('blog.index') }}" class="hover:text-[#c30102] transition-colors">Blog & Insights</a>
+            <a href="{{ route('blog.index') }}" class="hover:text-[#c4040a] transition-colors">Blog & Insights</a>
             <span>/</span>
             <span class="text-[#0f131f] truncate max-w-md font-bold">{{ $post->title }}</span>
         </nav>
@@ -92,11 +92,11 @@
             <!-- Category & Metadata Header -->
             <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex flex-wrap items-center gap-3">
-                    <span class="bg-[#c30102]/10 text-[#c30102] text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full">
+                    <span class="bg-[#c4040a]/10 text-[#c4040a] text-xs font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full">
                         {{ $post->category }}
                     </span>
                     <span class="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
-                        <i class="far fa-calendar-alt text-[#c30102]"></i>
+                        <i class="far fa-calendar-alt text-[#c4040a]"></i>
                         {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Recent' }}
                     </span>
                     <span class="text-xs text-slate-500 font-semibold flex items-center gap-1.5">
@@ -111,7 +111,7 @@
                 </div>
 
                 @if(auth()->check() && auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.blogs.edit', $post) }}" class="px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#c30102] transition-colors inline-flex items-center gap-1.5 shadow-sm">
+                    <a href="{{ route('admin.blogs.edit', $post) }}" class="px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#c4040a] transition-colors inline-flex items-center gap-1.5 shadow-sm">
                         <i class="fas fa-pen text-[10px]"></i> Edit Article
                     </a>
                 @endif
@@ -145,7 +145,7 @@
 
             <!-- Excerpt Callout -->
             @if($post->excerpt)
-                <div class="p-5 rounded-2xl bg-emerald-50/60 border-l-4 border-emerald-500 mb-8 text-[#051c45] font-medium text-sm sm:text-base leading-relaxed">
+                <div class="p-5 rounded-2xl bg-emerald-50/60 border-l-4 border-emerald-500 mb-8 text-[#063b96] font-medium text-sm sm:text-base leading-relaxed">
                     {{ $post->excerpt }}
                 </div>
             @endif
@@ -159,10 +159,10 @@
             <div class="mt-12 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Share:</span>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#c30102] hover:text-white transition-colors" title="Share on Facebook">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#c4040a] hover:text-white transition-colors" title="Share on Facebook">
                         <i class="fab fa-facebook-f text-xs"></i>
                     </a>
-                    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#051c45] hover:text-white transition-colors" title="Share on LinkedIn">
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#063b96] hover:text-white transition-colors" title="Share on LinkedIn">
                         <i class="fab fa-linkedin-in text-xs"></i>
                     </a>
                     <a href="https://api.whatsapp.com/send?text={{ urlencode($post->title . ' ' . request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#25D366] hover:text-white transition-colors" title="Share on WhatsApp">
@@ -185,14 +185,14 @@
                     @foreach($relatedPosts as $rel)
                         <div class="bg-white p-5 rounded-3xl border border-[#e3e7f0] shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group">
                             <div>
-                                <span class="text-[11px] font-black text-[#c30102] uppercase tracking-wider block mb-2">{{ $rel->category }}</span>
-                                <h4 class="text-sm font-bold text-[#0f131f] leading-snug mb-2 group-hover:text-[#c30102] transition-colors">
+                                <span class="text-[11px] font-black text-[#c4040a] uppercase tracking-wider block mb-2">{{ $rel->category }}</span>
+                                <h4 class="text-sm font-bold text-[#0f131f] leading-snug mb-2 group-hover:text-[#c4040a] transition-colors">
                                     <a href="{{ route('blog.show', $rel) }}">{{ $rel->title }}</a>
                                 </h4>
                             </div>
                             <span class="text-xs text-slate-500 font-medium pt-3 border-t border-slate-100 flex items-center justify-between">
                                 <span>{{ $rel->read_time }}</span>
-                                <a href="{{ route('blog.show', $rel) }}" class="text-[#c30102] font-bold text-xs hover:underline">Read &rarr;</a>
+                                <a href="{{ route('blog.show', $rel) }}" class="text-[#c4040a] font-bold text-xs hover:underline">Read &rarr;</a>
                             </span>
                         </div>
                     @endforeach

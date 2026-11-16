@@ -137,14 +137,14 @@
     <!-- Ambient Liquid Glass Glow Orbs -->
     <div class="pointer-events-none absolute inset-0 overflow-hidden z-0">
         <div class="absolute top-[28rem] -left-24 w-96 h-96 rounded-full bg-blue-500/10 blur-[110px]"></div>
-        <div class="absolute top-[48rem] -right-24 w-96 h-96 rounded-full bg-[#c30102]/8 blur-[120px]"></div>
+        <div class="absolute top-[48rem] -right-24 w-96 h-96 rounded-full bg-[#c4040a]/8 blur-[120px]"></div>
         <div class="absolute bottom-24 left-1/3 w-96 h-96 rounded-full bg-emerald-500/8 blur-[110px]"></div>
     </div>
 
     <!-- 1. Executive Hero Banner Header with Clickable Thumbnail & Direct Action Buttons -->
-    <header class="relative z-10 bg-gradient-to-br from-[#03122f] via-[#051c45] to-[#0b2b66] text-white pt-6 pb-12 border-b border-white/15 overflow-hidden">
+    <header class="relative z-10 bg-gradient-to-br from-[#03122f] via-[#063b96] to-[#0b2b66] text-white pt-6 pb-12 border-b border-white/15 overflow-hidden">
         <div class="pointer-events-none absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-blue-400/15 blur-[110px]"></div>
-        <div class="pointer-events-none absolute bottom-0 left-10 w-80 h-80 rounded-full bg-[#c30102]/15 blur-[100px]"></div>
+        <div class="pointer-events-none absolute bottom-0 left-10 w-80 h-80 rounded-full bg-[#c4040a]/15 blur-[100px]"></div>
 
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumbs (Desktop only to keep mobile hero clean above the fold) -->
@@ -168,7 +168,7 @@
                             {{ $course->category ?? 'Certification' }}
                         </span>
                         @if(!empty($course->batch) && $course->show_batch)
-                            <span class="px-3 py-1 bg-[#c30102] text-white rounded-full font-bold uppercase tracking-wider text-[10px] sm:text-[11px] shadow-sm">
+                            <span class="px-3 py-1 bg-[#c4040a] text-white rounded-full font-bold uppercase tracking-wider text-[10px] sm:text-[11px] shadow-sm">
                                 {{ $course->batch }}
                             </span>
                         @endif
@@ -243,7 +243,7 @@
                                     whatsapp: '{{ $course->effective_whatsapp_number }}',
                                     fields: {{ json_encode($course->effective_enrollment_fields) }}
                                 })"
-                                class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold text-sm tracking-wide uppercase shadow-[0_8px_28px_rgba(195,1,2,0.45)] flex items-center gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer border border-white/20"
+                                class="btn-ipdp-primary enroll-dance-cta px-6 py-3.5 rounded-xl text-white font-extrabold text-sm tracking-wide uppercase shadow-[0_8px_28px_rgba(196,4,10,0.45)] flex items-center gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-95 cursor-pointer border border-white/20"
                             >
                                 <i class="fas fa-bolt text-amber-300 text-xs"></i>
                                 <span>Enroll Now (30 Sec)</span>
@@ -334,16 +334,16 @@
                     @endphp
                     <div class="liquid-glass-card rounded-3xl p-5">
                         <div class="flex items-center justify-between text-xs font-bold mb-2">
-                            <span class="text-[#051c45]">Your Learning Progress</span>
-                            <span class="text-[#c30102]">{{ $progress }}% Completed</span>
+                            <span class="text-[#063b96]">Your Learning Progress</span>
+                            <span class="text-[#c4040a]">{{ $progress }}% Completed</span>
                         </div>
                         <div class="w-full bg-slate-200/70 rounded-full h-2 mb-2 overflow-hidden">
-                            <div class="bg-[#c30102] h-2 rounded-full transition-all" style="width: {{ $progress }}%"></div>
+                            <div class="bg-[#c4040a] h-2 rounded-full transition-all" style="width: {{ $progress }}%"></div>
                         </div>
                         <div class="flex justify-between items-center text-xs text-slate-500">
                             <span>{{ $completedCount }} of {{ $totalLessons }} lessons completed</span>
                             @if($resumeLesson)
-                                <a href="{{ route('lessons.show', [$course, $resumeLesson]) }}" class="text-[#c30102] font-semibold hover:underline">
+                                <a href="{{ route('lessons.show', [$course, $resumeLesson]) }}" class="text-[#c4040a] font-semibold hover:underline">
                                     Resume Lesson &rarr;
                                 </a>
                             @endif
@@ -354,8 +354,8 @@
                 <!-- Section 1: Course Overview -->
                 <div class="liquid-glass-card rounded-3xl p-6 sm:p-8 space-y-5">
                     <div class="flex items-center gap-3 border-b border-slate-200/70 pb-3.5">
-                        <span class="w-1 h-5 rounded-full bg-[#c30102]"></span>
-                        <h2 class="text-lg sm:text-xl font-extrabold text-[#051c45] tracking-tight">Course Overview</h2>
+                        <span class="w-1 h-5 rounded-full bg-[#c4040a]"></span>
+                        <h2 class="text-lg sm:text-xl font-extrabold text-[#063b96] tracking-tight">Course Overview</h2>
                     </div>
 
                     <p class="text-slate-700 leading-7 text-sm sm:text-[15px]">
@@ -365,20 +365,20 @@
                     <!-- 3-Pillar Program Highlights -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                         <div class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-[#051c45]/10 text-[#051c45] flex items-center justify-center shrink-0">
+                            <div class="w-8 h-8 rounded-xl bg-[#063b96]/10 text-[#063b96] flex items-center justify-center shrink-0">
                                 <i class="fas fa-chalkboard-teacher text-xs"></i>
                             </div>
                             <div>
-                                <h3 class="text-xs font-extrabold text-[#051c45]">Live Practical</h3>
+                                <h3 class="text-xs font-extrabold text-[#063b96]">Live Practical</h3>
                                 <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Interactive sessions with real-world Q&A.</p>
                             </div>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-[#c30102]/10 text-[#c30102] flex items-center justify-center shrink-0">
+                            <div class="w-8 h-8 rounded-xl bg-[#c4040a]/10 text-[#c4040a] flex items-center justify-center shrink-0">
                                 <i class="fas fa-file-contract text-xs"></i>
                             </div>
                             <div>
-                                <h3 class="text-xs font-extrabold text-[#051c45]">Case Templates</h3>
+                                <h3 class="text-xs font-extrabold text-[#063b96]">Case Templates</h3>
                                 <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Ready-to-use industry frameworks & tools.</p>
                             </div>
                         </div>
@@ -387,7 +387,7 @@
                                 <i class="fas fa-award text-xs"></i>
                             </div>
                             <div>
-                                <h3 class="text-xs font-extrabold text-[#051c45]">QR Certificate</h3>
+                                <h3 class="text-xs font-extrabold text-[#063b96]">QR Certificate</h3>
                                 <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Employer-verifiable digital credential.</p>
                             </div>
                         </div>
@@ -399,7 +399,7 @@
                             <div class="flex flex-wrap gap-2">
                                 @foreach(explode(',', $course->target_audience) as $audience)
                                     @if(trim($audience))
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-[#051c45] border border-slate-200/90 rounded-xl text-xs font-semibold shadow-2xs">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white text-[#063b96] border border-slate-200/90 rounded-xl text-xs font-semibold shadow-2xs">
                                             <i class="fas fa-check text-emerald-600 text-[10px]"></i>
                                             <span>{{ trim($audience) }}</span>
                                         </span>
@@ -414,10 +414,10 @@
                 <div class="liquid-glass-card rounded-3xl p-6 sm:p-8">
                     <div class="flex items-center justify-between gap-3 mb-5 border-b border-slate-200/70 pb-3.5">
                         <div class="flex items-center gap-3">
-                            <span class="w-1 h-5 rounded-full bg-[#051c45]"></span>
-                            <h2 class="text-lg sm:text-xl font-extrabold text-[#051c45] tracking-tight">Course Curriculum</h2>
+                            <span class="w-1 h-5 rounded-full bg-[#063b96]"></span>
+                            <h2 class="text-lg sm:text-xl font-extrabold text-[#063b96] tracking-tight">Course Curriculum</h2>
                         </div>
-                        <span class="text-xs font-bold text-[#051c45] bg-slate-100 border border-slate-200/80 px-3 py-1 rounded-full">
+                        <span class="text-xs font-bold text-[#063b96] bg-slate-100 border border-slate-200/80 px-3 py-1 rounded-full">
                             {{ $course->sections->count() }} Modules &bull; {{ $course->sections->flatMap->lessons->count() }} Lessons
                         </span>
                     </div>
@@ -425,19 +425,19 @@
                     <div class="space-y-3">
                         @forelse($course->sections as $index => $section)
                             <div class="border border-slate-200/90 rounded-2xl overflow-hidden bg-white shadow-2xs transition-all" x-data="{ open: {{ $index === 0 ? 'true' : 'false' }} }">
-                                <!-- Accordion Header: clean white when collapsed, Imperial Navy (#051c45) when expanded; retains .bg-[#90c642] for Cypress test compatibility -->
+                                <!-- Accordion Header: clean white when collapsed, Imperial Navy (#063b96) when expanded; retains .bg-[#90c642] for Cypress test compatibility -->
                                 <button 
                                     @click="open = !open" 
                                     type="button"
                                     class="w-full px-4 sm:px-5 py-4 flex items-center justify-between bg-[#90c642] font-bold transition-colors text-left cursor-pointer"
-                                    :style="open ? 'background-color: #051c45 !important; color: #ffffff !important;' : 'background-color: #ffffff !important; color: #051c45 !important;'"
+                                    :style="open ? 'background-color: #063b96 !important; color: #ffffff !important;' : 'background-color: #ffffff !important; color: #063b96 !important;'"
                                 >
                                     <div class="flex items-center gap-3 min-w-0">
                                         <span class="w-7 h-7 rounded-lg font-extrabold text-xs flex items-center justify-center shrink-0 transition-colors"
-                                              :class="open ? 'bg-[#c30102] text-white' : 'bg-[#051c45]/8 text-[#051c45]'">
+                                              :class="open ? 'bg-[#c4040a] text-white' : 'bg-[#063b96]/8 text-[#063b96]'">
                                             {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                                         </span>
-                                        <h3 class="font-bold text-xs sm:text-sm truncate" :class="open ? 'text-white' : 'text-[#051c45]'">{{ $section->title }}</h3>
+                                        <h3 class="font-bold text-xs sm:text-sm truncate" :class="open ? 'text-white' : 'text-[#063b96]'">{{ $section->title }}</h3>
                                     </div>
                                     <div class="flex items-center gap-2.5 shrink-0 ml-2">
                                         <span class="text-[11px] font-medium hidden sm:inline" :class="open ? 'text-slate-300' : 'text-slate-500'">{{ $section->lessons->count() }} lessons</span>
@@ -467,7 +467,7 @@
                                                 </div>
                                                 <div class="flex items-center gap-2 text-xs text-slate-400 shrink-0 ml-2">
                                                     @if($lesson->is_live_class)
-                                                        <span class="px-2 py-0.5 rounded-full bg-rose-50 text-[#c30102] border border-rose-200 text-[10px] font-extrabold uppercase tracking-wider">Live</span>
+                                                        <span class="px-2 py-0.5 rounded-full bg-rose-50 text-[#c4040a] border border-rose-200 text-[10px] font-extrabold uppercase tracking-wider">Live</span>
                                                     @else
                                                         <span class="text-[11px] font-medium text-slate-500">{{ $lesson->video_url ? 'Video' : 'Reading' }}</span>
                                                     @endif
@@ -497,17 +497,17 @@
                 <!-- Section 3: Why Corporate Leaders Choose This Masterclass (Required by Cypress: cy.contains('Why Corporate Leaders Choose This Masterclass')) -->
                 <div class="liquid-glass-card rounded-3xl p-6 sm:p-8 space-y-5">
                     <div class="flex items-center gap-3 border-b border-slate-200/70 pb-3.5">
-                        <span class="w-1 h-5 rounded-full bg-[#c30102]"></span>
-                        <h2 class="text-lg sm:text-xl font-extrabold text-[#051c45] tracking-tight">
+                        <span class="w-1 h-5 rounded-full bg-[#c4040a]"></span>
+                        <h2 class="text-lg sm:text-xl font-extrabold text-[#063b96] tracking-tight">
                             Why Corporate Leaders Choose This Masterclass
                         </h2>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
                         <!-- Academy Standard -->
-                        <div class="p-5 rounded-2xl bg-gradient-to-br from-[#051c45]/[0.03] to-white border-2 border-[#051c45]/15 space-y-3 shadow-2xs">
-                            <span class="text-[#051c45] font-extrabold uppercase text-[11px] tracking-wider flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full bg-[#c30102] text-white flex items-center justify-center text-[10px]">
+                        <div class="p-5 rounded-2xl bg-gradient-to-br from-[#063b96]/[0.03] to-white border-2 border-[#063b96]/15 space-y-3 shadow-2xs">
+                            <span class="text-[#063b96] font-extrabold uppercase text-[11px] tracking-wider flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full bg-[#c4040a] text-white flex items-center justify-center text-[10px]">
                                     <i class="fas fa-check"></i>
                                 </span>
                                 <span>{{ $siteName }} Standard</span>
@@ -563,22 +563,22 @@
                 @endphp
                 <div class="liquid-glass-card rounded-3xl p-6 sm:p-8">
                     <div class="flex items-center gap-3 border-b border-slate-200/70 pb-3.5 mb-5">
-                        <span class="w-1 h-5 rounded-full bg-[#051c45]"></span>
-                        <h2 class="text-lg sm:text-xl font-extrabold text-[#051c45] tracking-tight">Instructor Profile</h2>
+                        <span class="w-1 h-5 rounded-full bg-[#063b96]"></span>
+                        <h2 class="text-lg sm:text-xl font-extrabold text-[#063b96] tracking-tight">Instructor Profile</h2>
                     </div>
                     <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                        <div class="w-[150px] h-[150px] rounded-full border-4 border-white ring-4 ring-[#051c45]/10 shadow-lg shrink-0 overflow-hidden bg-slate-100">
+                        <div class="w-[150px] h-[150px] rounded-full border-4 border-white ring-4 ring-[#063b96]/10 shadow-lg shrink-0 overflow-hidden bg-slate-100">
                             @if($instructorAvatar)
                                 <img src="{{ $instructorAvatar }}" alt="{{ $instructorName }}" class="w-full h-full object-cover object-top" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($instructorName) }}&background=051c45&color=fff';">
                             @else
-                                <div class="w-full h-full bg-[#051c45] text-white flex items-center justify-center font-bold text-2xl">
+                                <div class="w-full h-full bg-[#063b96] text-white flex items-center justify-center font-bold text-2xl">
                                     {{ substr($instructorName, 0, 1) }}
                                 </div>
                             @endif
                         </div>
                         <div class="text-center sm:text-left space-y-2 flex-1">
-                            <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#c30102]/10 text-[#c30102] text-[10px] font-extrabold uppercase tracking-wider">Lead Instructor</span>
-                            <h3 class="text-lg sm:text-xl font-extrabold text-[#051c45]">{{ $instructorName }}</h3>
+                            <span class="inline-block px-2.5 py-0.5 rounded-full bg-[#c4040a]/10 text-[#c4040a] text-[10px] font-extrabold uppercase tracking-wider">Lead Instructor</span>
+                            <h3 class="text-lg sm:text-xl font-extrabold text-[#063b96]">{{ $instructorName }}</h3>
                             <p class="text-xs sm:text-sm text-slate-600 font-semibold">{{ $instructorTitle }}</p>
                             <p class="text-xs sm:text-sm text-slate-600 leading-relaxed pt-2.5 border-t border-slate-200/60">
                                 {{ $instructorBio }}
@@ -592,7 +592,7 @@
                     <div class="liquid-glass-card rounded-3xl p-6 sm:p-7 space-y-4">
                         @if($course->quizzes->count() > 0)
                             <div>
-                                <h3 class="font-bold text-[#051c45] text-sm mb-3">Assessments & Quizzes</h3>
+                                <h3 class="font-bold text-[#063b96] text-sm mb-3">Assessments & Quizzes</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     @foreach($course->quizzes as $quiz)
                                         <div class="p-3 rounded-2xl border border-slate-200/80 bg-white/80 flex items-center justify-between text-xs">
@@ -613,13 +613,13 @@
 
                         @if(method_exists($course, 'materials') && $course->materials->count() > 0)
                             <div>
-                                <h3 class="font-bold text-[#051c45] text-sm mb-3">Course Materials</h3>
+                                <h3 class="font-bold text-[#063b96] text-sm mb-3">Course Materials</h3>
                                 <div class="space-y-2">
                                     @foreach($course->materials as $mat)
                                         <div class="p-3 rounded-2xl border border-slate-200/80 bg-white/80 flex items-center justify-between text-xs">
                                             <span class="font-medium text-slate-800">{{ $mat->title }}</span>
                                             @if($isEnrolled)
-                                                <a href="{{ $mat->type === 'link' ? $mat->external_link : storage_asset($mat->file_path) }}" target="_blank" class="font-bold text-[#c30102] hover:underline">
+                                                <a href="{{ $mat->type === 'link' ? $mat->external_link : storage_asset($mat->file_path) }}" target="_blank" class="font-bold text-[#c4040a] hover:underline">
                                                     Download
                                                 </a>
                                             @else
@@ -635,7 +635,7 @@
 
                 <!-- Section 6: Frequently Asked Questions (Required by Cypress: cy.contains('Frequently Asked Questions')) -->
                 <div class="liquid-glass-card rounded-3xl p-6 sm:p-7">
-                    <h2 class="text-lg font-extrabold text-[#051c45] border-b border-slate-200/60 pb-3 mb-4">Frequently Asked Questions</h2>
+                    <h2 class="text-lg font-extrabold text-[#063b96] border-b border-slate-200/60 pb-3 mb-4">Frequently Asked Questions</h2>
                     <div class="space-y-2.5" x-data="{ activeFaq: 1 }">
                         <!-- FAQ 1 (Required by Cypress: cy.contains('How do I receive my verified digital certificate?')) -->
                         <div class="border border-slate-200/80 bg-white/75 rounded-2xl overflow-hidden">
@@ -645,7 +645,7 @@
                                 class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors"
                             >
                                 <span>How do I receive my verified digital certificate?</span>
-                                <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 1 ? 'rotate-180 text-[#c30102]' : 'text-slate-400'"></i>
+                                <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 1 ? 'rotate-180 text-[#c4040a]' : 'text-slate-400'"></i>
                             </button>
                             <div x-show="activeFaq === 1" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
                                 Upon completing the course curriculum and cohort evaluation, your digital certificate is officially issued by {{ $siteName }} with a cryptographically verifiable serial number and QR registry link recognized by employers and institutions.
@@ -660,7 +660,7 @@
                                 class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors"
                             >
                                 <span>What payment methods are supported?</span>
-                                <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 2 ? 'rotate-180 text-[#c30102]' : 'text-slate-400'"></i>
+                                <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 2 ? 'rotate-180 text-[#c4040a]' : 'text-slate-400'"></i>
                             </button>
                             <div x-show="activeFaq === 2" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
                                 Instant bKash, Nagad, and Rocket mobile banking, as well as institutional bank transfers (BEFTN/NPSB). Official digital tax invoices are generated automatically in your portal.
@@ -675,7 +675,7 @@
                                 class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors"
                             >
                                 <span>What if I miss a live masterclass session?</span>
-                                <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 3 ? 'rotate-180 text-[#c30102]' : 'text-slate-400'"></i>
+                                <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 3 ? 'rotate-180 text-[#c4040a]' : 'text-slate-400'"></i>
                             </button>
                             <div x-show="activeFaq === 3" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
                                 Full session recordings and course slides are archived within your student learning player for on-demand playback at your convenience.
@@ -690,7 +690,7 @@
             <aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
                 <div class="liquid-glass-card rounded-3xl overflow-hidden shadow-[0_20px_50px_-15px_rgba(5,28,69,0.18)] border border-slate-200/80">
                     <!-- Top Cohort Status Header -->
-                    <div class="bg-gradient-to-r from-[#051c45] to-[#0b2b66] px-6 py-3.5 flex items-center justify-between text-white">
+                    <div class="bg-gradient-to-r from-[#063b96] to-[#0b2b66] px-6 py-3.5 flex items-center justify-between text-white">
                         <div class="flex items-center gap-2 text-xs font-bold">
                             @if($isRegistrationOpen)
                                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -714,7 +714,7 @@
                             <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Price TK:</span>
                             <div class="flex items-baseline justify-between gap-2 flex-wrap">
                                 <div class="flex items-baseline gap-2.5">
-                                    <span class="text-3xl font-black text-[#051c45] tracking-tight">
+                                    <span class="text-3xl font-black text-[#063b96] tracking-tight">
                                         {{ $course->price > 0 ? '৳' . number_format($course->price, 2) : 'Free Access' }}
                                     </span>
                                     @if($course->price > 0)
@@ -754,7 +754,7 @@
                                             @csrf
                                             <button
                                                 type="submit"
-                                                class="w-full py-3.5 bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold rounded-xl text-sm tracking-wide transition-all shadow-[0_8px_24px_rgba(195,1,2,0.3)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                                                class="btn-ipdp-primary enroll-dance-cta w-full py-3.5 text-white font-extrabold rounded-xl text-sm tracking-wide transition-all shadow-[0_8px_24px_rgba(196,4,10,0.3)] hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
                                             >
                                                 Enroll Now
                                             </button>
@@ -774,7 +774,7 @@
                                                 whatsapp: '{{ $course->effective_whatsapp_number }}',
                                                 fields: {{ json_encode($course->effective_enrollment_fields) }}
                                             })"
-                                            class="w-full py-3.5 bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-extrabold rounded-xl text-sm tracking-wide transition-all shadow-[0_8px_24px_rgba(195,1,2,0.3)] hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+                                            class="btn-ipdp-primary enroll-dance-cta w-full py-3.5 text-white font-extrabold rounded-xl text-sm tracking-wide transition-all shadow-[0_8px_24px_rgba(196,4,10,0.3)] hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
                                         >
                                             <span>Enroll Now</span>
                                             <i class="fas fa-arrow-right text-xs"></i>
@@ -794,9 +794,9 @@
                                 <button 
                                     type="button" 
                                     onclick="toggleWishlist({{ $course->id }}, this)" 
-                                    class="w-full py-2.5 bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs border border-slate-200 rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer wishlist-btn-{{ $course->id }} {{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'text-[#c30102] border-red-200 bg-red-50/50' : '' }}"
+                                    class="w-full py-2.5 bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs border border-slate-200 rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer wishlist-btn-{{ $course->id }} {{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'text-[#c4040a] border-red-200 bg-red-50/50' : '' }}"
                                 >
-                                    <i class="{{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'fas text-[#c30102]' : 'far' }} fa-heart text-xs"></i>
+                                    <i class="{{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'fas text-[#c4040a]' : 'far' }} fa-heart text-xs"></i>
                                     <span>{{ auth()->check() && auth()->user()->wishlists()->where('course_id', $course->id)->exists() ? 'Saved in Wishlist' : 'Save to Wishlist' }}</span>
                                 </button>
                             </div>
@@ -808,7 +808,7 @@
                                 </div>
                                 <a 
                                     href="{{ $resumeLesson ? route('lessons.show', [$course, $resumeLesson]) : route('courses.classroom', $course) }}" 
-                                    class="block w-full py-3 bg-[#051c45] hover:bg-[#082860] text-white font-bold rounded-xl text-center text-xs transition-colors shadow-sm"
+                                    class="block w-full py-3 bg-[#063b96] hover:bg-[#082860] text-white font-bold rounded-xl text-center text-xs transition-colors shadow-sm"
                                 >
                                     Continue Learning
                                 </a>
@@ -816,7 +816,7 @@
                                     <a 
                                         href="{{ route('courses.certificate', $course) }}" 
                                         target="_blank"
-                                        class="block w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-[#051c45] font-bold rounded-xl text-center text-xs transition-colors"
+                                        class="block w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-[#063b96] font-bold rounded-xl text-center text-xs transition-colors"
                                     >
                                         View Verified Certificate
                                     </a>
@@ -828,15 +828,15 @@
                         <div class="pt-4 border-t border-slate-100 space-y-2.5 text-xs text-slate-600">
                             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">This Program Includes</span>
                             <div class="flex items-center gap-2.5">
-                                <i class="fas fa-video text-[#051c45] text-xs w-4 text-center"></i>
+                                <i class="fas fa-video text-[#063b96] text-xs w-4 text-center"></i>
                                 <span>Live Zoom Masterclasses + Class Recordings</span>
                             </div>
                             <div class="flex items-center gap-2.5">
-                                <i class="fas fa-certificate text-[#c30102] text-xs w-4 text-center"></i>
+                                <i class="fas fa-certificate text-[#c4040a] text-xs w-4 text-center"></i>
                                 <span>Official Verified Digital Certificate</span>
                             </div>
                             <div class="flex items-center gap-2.5">
-                                <i class="fas fa-folder-open text-[#051c45] text-xs w-4 text-center"></i>
+                                <i class="fas fa-folder-open text-[#063b96] text-xs w-4 text-center"></i>
                                 <span>Practical Trade Documentation &amp; Templates</span>
                             </div>
                             <div class="flex items-center gap-2.5">
@@ -889,7 +889,7 @@
                                 <button 
                                     type="button" 
                                     onclick="copyShortLink('{{ $course->short_url }}', this)" 
-                                    class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#051c45] text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer"
+                                    class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#063b96] text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer"
                                     title="Copy Short Link ({{ $course->short_url }})"
                                 >
                                     <i class="far fa-copy text-[10px]"></i>
@@ -975,9 +975,9 @@
             >
                 <div class="min-w-0 text-left">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block leading-none">Enrolled</span>
-                    <span class="text-xs font-extrabold text-[#041536] truncate block mt-0.5">{{ $course->title }}</span>
+                    <span class="text-xs font-extrabold text-[#021f59] truncate block mt-0.5">{{ $course->title }}</span>
                 </div>
-                <span class="px-5 py-2.5 bg-[#051c45] text-white font-bold rounded-xl text-xs shrink-0 shadow-sm">
+                <span class="px-5 py-2.5 bg-[#063b96] text-white font-bold rounded-xl text-xs shrink-0 shadow-sm">
                     Continue
                 </span>
             </a>
@@ -995,15 +995,17 @@
                     whatsapp: '{{ $course->effective_whatsapp_number }}',
                     fields: {{ json_encode($course->effective_enrollment_fields) }}
                 })"
-                class="enroll-dance-bar w-full bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_rgba(4,21,54,0.18)] flex items-center justify-between gap-3 text-left cursor-pointer active:scale-[0.99] transition-transform"
+                class="enroll-dance-bar w-full rounded-2xl px-4 py-2.5 flex items-center justify-between gap-3 text-left cursor-pointer active:scale-[0.99] transition-transform"
+                style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.88) 0%, rgba(248, 250, 252, 0.78) 100%); backdrop-filter: blur(24px) saturate(210%); -webkit-backdrop-filter: blur(24px) saturate(210%); border: 1px solid rgba(220, 162, 44, 0.48); box-shadow: 0 12px 32px -6px rgba(2, 31, 89, 0.24), inset 0 1.5px 0 rgba(255, 255, 255, 0.96);"
             >
                 <div>
                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block leading-none">Course Fee</span>
-                    <span class="text-base font-black text-[#041536] leading-tight">
+                    <span class="text-base font-black leading-tight" style="color: #c4040a;">
                         {{ $course->price > 0 ? '৳' . number_format($course->price, 0) : 'Free' }}
                     </span>
                 </div>
-                <span class="enroll-dance-pill px-5 py-2.5 bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white font-bold rounded-xl shadow-md text-xs tracking-wide flex items-center gap-1.5 shrink-0">
+                <span class="enroll-dance-pill btn-ipdp-primary px-5 py-2.5 text-white font-bold rounded-xl shadow-md text-xs tracking-wide flex items-center gap-1.5 shrink-0"
+                      style="background: linear-gradient(135deg, #ff1e1e 0%, #c4040a 52%, #850004 100%); color: #ffffff;">
                     <i class="fas fa-bolt text-amber-300 text-[11px]"></i>
                     <span>Enroll Now</span>
                 </span>

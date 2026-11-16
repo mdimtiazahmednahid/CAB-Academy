@@ -4,7 +4,7 @@
 <div class="space-y-4">
     <div class="flex items-center justify-between gap-3">
         <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Faculty ({{ $instructors->total() }})</h1>
-        <a href="{{ route('admin.instructors.create') }}" class="px-3.5 py-2 bg-[#041536] hover:bg-[#c30102] text-white text-xs font-bold rounded-xl transition-all shadow-2xs inline-flex items-center gap-1.5">
+        <a href="{{ route('admin.instructors.create') }}" class="px-3.5 py-2 bg-[#021f59] hover:bg-[#c4040a] text-white text-xs font-bold rounded-xl transition-all shadow-2xs inline-flex items-center gap-1.5">
             <i class="fas fa-plus text-[10px]"></i>
             <span>Add Faculty</span>
         </a>
@@ -51,7 +51,7 @@
                                 @if(!empty($instructor->department_roles_map))
                                     <div class="mb-1 flex items-center gap-1.5 flex-wrap">
                                         @foreach($instructor->department_roles_map as $deptName => $deptRole)
-                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $deptRole === 'head' ? 'bg-[#c30102] text-white' : 'bg-slate-100 text-slate-700' }}">
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $deptRole === 'head' ? 'bg-[#c4040a] text-white' : 'bg-slate-100 text-slate-700' }}">
                                                 {{ $deptRole === 'head' ? 'Head: ' : 'Team: ' }}{{ $deptName }}
                                             </span>
                                         @endforeach

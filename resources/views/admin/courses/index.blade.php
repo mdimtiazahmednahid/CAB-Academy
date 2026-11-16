@@ -6,8 +6,8 @@
 <div class="space-y-4" x-data="{ search: '', statusFilter: 'all', quickEditId: null }">
     <!-- Compact Header & Primary Action -->
     <div class="flex items-center justify-between gap-3">
-        <h1 class="text-xl sm:text-2xl font-black text-[#051c45] tracking-tight">Courses ({{ $courses->count() }})</h1>
-        <button onclick="document.getElementById('createModal').classList.remove('hidden')" class="px-3.5 py-2 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold shadow-2xs inline-flex items-center gap-1.5 transition-all">
+        <h1 class="text-xl sm:text-2xl font-black text-[#063b96] tracking-tight">Courses ({{ $courses->count() }})</h1>
+        <button onclick="document.getElementById('createModal').classList.remove('hidden')" class="px-3.5 py-2 bg-[#063b96] hover:bg-[#0a2540] text-white rounded-xl text-xs font-bold shadow-2xs inline-flex items-center gap-1.5 transition-all">
             <i class="fas fa-plus text-emerald-400"></i>
             <span>New Course</span>
         </button>
@@ -24,7 +24,7 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
             <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Courses</div>
-            <div class="text-xl font-black text-[#051c45] mt-0.5">{{ $courses->count() }}</div>
+            <div class="text-xl font-black text-[#063b96] mt-0.5">{{ $courses->count() }}</div>
             <div class="text-[10px] text-slate-500 mt-0.5">{{ $courses->pluck('category')->filter()->unique()->count() }} Depts</div>
         </div>
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
@@ -34,12 +34,12 @@
         </div>
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
             <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Students</div>
-            <div class="text-xl font-black text-[#051c45] mt-0.5">{{ number_format($courses->sum('students_count')) }}</div>
+            <div class="text-xl font-black text-[#063b96] mt-0.5">{{ number_format($courses->sum('students_count')) }}</div>
             <div class="text-[10px] text-slate-500 mt-0.5">{{ number_format($courses->sum('certificates_count')) }} Certs</div>
         </div>
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
             <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Views</div>
-            <div class="text-xl font-black text-[#051c45] mt-0.5">{{ number_format($courses->sum('views')) }}</div>
+            <div class="text-xl font-black text-[#063b96] mt-0.5">{{ number_format($courses->sum('views')) }}</div>
             <div class="text-[10px] text-slate-500 mt-0.5">{{ number_format($courses->sum('lessons_count')) }} Lessons</div>
         </div>
     </div>
@@ -47,7 +47,7 @@
     <!-- Filter & Search Bar -->
     <div class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
         <div class="flex items-center gap-1.5 overflow-x-auto">
-            <button type="button" @click="statusFilter = 'all'" :class="statusFilter === 'all' ? 'bg-[#051c45] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors">
+            <button type="button" @click="statusFilter = 'all'" :class="statusFilter === 'all' ? 'bg-[#063b96] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors">
                 All ({{ $courses->count() }})
             </button>
             <button type="button" @click="statusFilter = 'published'" :class="statusFilter === 'published' ? 'bg-[#10b981] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors">
@@ -59,7 +59,7 @@
         </div>
 
         <div class="relative w-full sm:w-72">
-            <input type="text" x-model="search" placeholder="Filter by title, category, or batch..." class="w-full pl-9 pr-4 py-2 rounded-xl border-slate-200 focus:border-[#051c45] focus:ring-[#051c45] text-xs">
+            <input type="text" x-model="search" placeholder="Filter by title, category, or batch..." class="w-full pl-9 pr-4 py-2 rounded-xl border-slate-200 focus:border-[#063b96] focus:ring-[#063b96] text-xs">
             <i class="fas fa-search text-slate-400 text-xs absolute left-3 top-2.5"></i>
         </div>
     </div>
@@ -101,10 +101,10 @@
 
                                 <div class="min-w-0 flex-1">
                                     <div class="flex items-center gap-1.5">
-                                        <a href="{{ route('admin.courses.show', $c) }}" class="font-bold text-[#051c45] hover:text-[#c30102] transition-colors line-clamp-1">
+                                        <a href="{{ route('admin.courses.show', $c) }}" class="font-bold text-[#063b96] hover:text-[#c4040a] transition-colors line-clamp-1">
                                             {{ $c->title }}
                                         </a>
-                                        <button type="button" @click="quickEditId = (quickEditId === {{ $c->id }} ? null : {{ $c->id }})" title="Quick-edit title, price, or batch inline" class="text-slate-400 hover:text-[#051c45] text-[11px] px-1.5 py-0.5 rounded hover:bg-slate-100 transition-colors shrink-0">
+                                        <button type="button" @click="quickEditId = (quickEditId === {{ $c->id }} ? null : {{ $c->id }})" title="Quick-edit title, price, or batch inline" class="text-slate-400 hover:text-[#063b96] text-[11px] px-1.5 py-0.5 rounded hover:bg-slate-100 transition-colors shrink-0">
                                             <i class="fas fa-pen"></i>
                                         </button>
                                     </div>
@@ -124,7 +124,7 @@
                                         <input type="hidden" name="_section_label" value="Quick Course Info">
                                         <div>
                                             <label class="block text-[10px] font-bold text-slate-500 uppercase">Title</label>
-                                            <input type="text" name="title" value="{{ $c->title }}" required class="w-full rounded-lg border-slate-300 text-xs font-bold text-[#051c45] py-1 px-2">
+                                            <input type="text" name="title" value="{{ $c->title }}" required class="w-full rounded-lg border-slate-300 text-xs font-bold text-[#063b96] py-1 px-2">
                                         </div>
                                         <div class="grid grid-cols-3 gap-2">
                                             <div>
@@ -153,12 +153,12 @@
                             </td>
                         @endif
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="font-black text-[#051c45] text-sm cursor-pointer hover:text-indigo-600" @click="quickEditId = (quickEditId === {{ $c->id }} ? null : {{ $c->id }})" title="Click to quick-edit price">
+                            <div class="font-black text-[#063b96] text-sm cursor-pointer hover:text-indigo-600" @click="quickEditId = (quickEditId === {{ $c->id }} ? null : {{ $c->id }})" title="Click to quick-edit price">
                                 {{ $c->price > 0 ? '৳' . number_format($c->price, 0) : 'Free' }}
                             </div>
                             <div class="text-[11px] text-slate-500 mt-0.5">
                                 @if($c->batch)
-                                    <span class="text-[#c30102] font-bold">{{ $c->batch }}</span>
+                                    <span class="text-[#c4040a] font-bold">{{ $c->batch }}</span>
                                 @elseif($c->start_date)
                                     Starts {{ $c->start_date->format('d M, Y') }}
                                 @else
@@ -219,13 +219,13 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-right whitespace-nowrap space-x-1.5">
-                            <button type="button" @click="quickEditId = (quickEditId === {{ $c->id }} ? null : {{ $c->id }})" title="Quick Inline Edit" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold text-slate-600 hover:text-[#051c45] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                            <button type="button" @click="quickEditId = (quickEditId === {{ $c->id }} ? null : {{ $c->id }})" title="Quick Inline Edit" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold text-slate-600 hover:text-[#063b96] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
                                 <i class="fas fa-pen text-[10px]"></i>
                             </button>
-                            <a href="{{ route('courses.show', $c) }}" target="_blank" title="Preview Live Page" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold text-slate-600 hover:text-[#051c45] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
+                            <a href="{{ route('courses.show', $c) }}" target="_blank" title="Preview Live Page" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold text-slate-600 hover:text-[#063b96] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
                                 <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
                             </a>
-                            <a href="{{ route('admin.courses.show', $c) }}" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-[#051c45] hover:bg-[#0a2540] rounded-lg transition-colors shadow-xs">
+                            <a href="{{ route('admin.courses.show', $c) }}" class="inline-flex items-center px-3 py-1.5 text-xs font-bold text-white bg-[#063b96] hover:bg-[#0a2540] rounded-lg transition-colors shadow-xs">
                                 Manage →
                             </a>
                             <form action="{{ route('admin.courses.destroy', $c) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this course? It will be moved to the Trash.');">
@@ -254,7 +254,7 @@
         <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
             <div>
                 <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600">10-Second Launchpad</span>
-                <h3 class="text-lg font-black text-[#051c45]">Create New Course</h3>
+                <h3 class="text-lg font-black text-[#063b96]">Create New Course</h3>
             </div>
             <button onclick="document.getElementById('createModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
         </div>
@@ -264,7 +264,7 @@
                 <!-- Essential 1: Title -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Course Title <span class="text-rose-500">*</span></label>
-                    <input type="text" name="title" required placeholder="e.g. Communication Skills for Career Success" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm font-bold text-[#051c45]">
+                    <input type="text" name="title" required placeholder="e.g. Communication Skills for Career Success" class="w-full rounded-xl border-slate-300 focus:border-[#063b96] focus:ring-[#063b96] text-sm font-bold text-[#063b96]">
                 </div>
 
                 <!-- Essential 2: Tuition Fee & Category -->
@@ -274,11 +274,11 @@
                             <label class="block text-xs font-bold text-slate-700">Price (৳ BDT)</label>
                             <button type="button" @click="createPrice = '0.00'" class="text-[10px] font-bold text-emerald-600 hover:underline">Set Free (৳0)</button>
                         </div>
-                        <input type="number" step="0.01" min="0" name="price" x-model="createPrice" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm font-bold">
+                        <input type="number" step="0.01" min="0" name="price" x-model="createPrice" class="w-full rounded-xl border-slate-300 focus:border-[#063b96] focus:ring-[#063b96] text-sm font-bold">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Category</label>
-                        <input list="category-options-create" type="text" name="category" placeholder="Choose or type..." class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
+                        <input list="category-options-create" type="text" name="category" placeholder="Choose or type..." class="w-full rounded-xl border-slate-300 focus:border-[#063b96] focus:ring-[#063b96] text-sm">
                         <datalist id="category-options-create">
                             @foreach(\App\Models\Category::active()->ordered()->get() as $cat)
                                 <option value="{{ $cat->name }}">Department: {{ $cat->name }}</option>
@@ -293,7 +293,7 @@
                 <!-- Essential 3: Format -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Attendance Format / Venue</label>
-                    <input type="text" id="create-course-venue" name="venue" value="Online Live (Zoom)" class="w-full rounded-xl border-slate-300 focus:border-[#051c45] focus:ring-[#051c45] text-sm">
+                    <input type="text" id="create-course-venue" name="venue" value="Online Live (Zoom)" class="w-full rounded-xl border-slate-300 focus:border-[#063b96] focus:ring-[#063b96] text-sm">
                     <div class="flex flex-wrap gap-1.5 mt-1.5">
                         <button type="button" onclick="document.getElementById('create-course-venue').value='Online Live (Zoom)'" class="px-2.5 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold transition-colors">Online Only (Zoom)</button>
                         <button type="button" onclick="document.getElementById('create-course-venue').value='Executive Campus'" class="px-2.5 py-1 rounded-md bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[10px] font-bold transition-colors">Campus Only</button>
@@ -309,7 +309,7 @@
                             <img id="create_course_cover_preview" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80" alt="Preview" class="w-full h-full object-contain">
                         </div>
                         <div class="flex-1">
-                            <input type="file" id="create_course_cover_input" name="cover_image" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#051c45] file:text-white hover:file:opacity-90 file:cursor-pointer cursor-pointer border border-slate-300 rounded-lg p-1 bg-white">
+                            <input type="file" id="create_course_cover_input" name="cover_image" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#063b96] file:text-white hover:file:opacity-90 file:cursor-pointer cursor-pointer border border-slate-300 rounded-lg p-1 bg-white">
                             <input type="hidden" name="cover_image_base64" id="create_course_cover_base64">
                         </div>
                     </div>
@@ -362,7 +362,7 @@
                             </div>
                             <div class="flex items-end">
                                 <label class="flex items-center gap-2 cursor-pointer p-2 rounded-xl border border-slate-200 bg-slate-50 w-full">
-                                    <input type="checkbox" name="show_batch" value="1" class="rounded text-[#051c45]">
+                                    <input type="checkbox" name="show_batch" value="1" class="rounded text-[#063b96]">
                                     <span class="text-xs font-semibold text-slate-700">Show Batch</span>
                                 </label>
                             </div>
@@ -395,7 +395,7 @@
 
                 <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="is_published" value="1" checked class="rounded text-[#051c45] focus:ring-[#051c45]">
+                        <input type="checkbox" name="is_published" value="1" checked class="rounded text-[#063b96] focus:ring-[#063b96]">
                         <span class="text-xs font-bold text-slate-700">Publish immediately</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
@@ -405,10 +405,10 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                    <button type="submit" class="w-full px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#051c45] rounded-xl font-bold text-xs transition-colors">
+                    <button type="submit" class="w-full px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#063b96] rounded-xl font-bold text-xs transition-colors">
                         Create & Stay on List
                     </button>
-                    <button type="submit" name="open_workspace" value="1" class="w-full px-4 py-2.5 bg-[#051c45] hover:bg-[#0a2540] text-white rounded-xl font-extrabold text-xs transition-colors shadow-xs">
+                    <button type="submit" name="open_workspace" value="1" class="w-full px-4 py-2.5 bg-[#063b96] hover:bg-[#0a2540] text-white rounded-xl font-extrabold text-xs transition-colors shadow-xs">
                         Create & Open Workspace &rarr;
                     </button>
                 </div>

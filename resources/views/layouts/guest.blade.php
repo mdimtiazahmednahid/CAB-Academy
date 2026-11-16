@@ -56,7 +56,7 @@
                 </div>
                 
                 <!-- Abstract Radial Glows -->
-                <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-[#c30102]/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-[#c4040a]/20 rounded-full blur-3xl pointer-events-none"></div>
                 <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-[#10b981]/15 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div class="relative z-10 w-full max-w-lg px-12">
@@ -65,7 +65,7 @@
                             <img class="h-14 w-14 rounded-full bg-white p-1 object-contain shadow-lg group-hover:scale-105 transition-transform shrink-0" src="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}" alt="ACS Academy" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
                             <div class="flex flex-col">
                                 <span class="text-lg xl:text-xl font-black text-white tracking-tight uppercase leading-tight">{!! \App\Models\Setting::formatBrandNameHtml() !!}</span>
-                                <span class="text-[10px] text-[#c30102] font-black uppercase tracking-widest mt-1">Learn, Grow, Lead.</span>
+                                <span class="text-[10px] text-[#c4040a] font-black uppercase tracking-widest mt-1">Learn, Grow, Lead.</span>
                             </div>
                         </a>
                     </div>
@@ -82,7 +82,7 @@
                         <i class="fas fa-quote-left text-white/30 text-2xl mb-3 block"></i>
                         <p class="font-normal text-sm leading-relaxed mb-4 text-slate-200">"The hands-on L/C documentation drills and Customs Act 2023 modules gave me immediate operational mastery. I was promoted to Senior Commercial Manager within months of graduating."</p>
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-[#c30102] text-white flex items-center justify-center font-black text-sm shadow">TA</div>
+                            <div class="w-10 h-10 rounded-full bg-[#c4040a] text-white flex items-center justify-center font-black text-sm shadow">TA</div>
                             <div>
                                 <h4 class="font-bold text-sm text-white">Tanvir Ahmed</h4>
                                 <span class="text-xs text-slate-300">Head of Supply Chain & Commercial Operations</span>

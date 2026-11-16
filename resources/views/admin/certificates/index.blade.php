@@ -62,12 +62,12 @@
                     </label>
 
                     <!-- Template 1: Classic Royal Navy & Gold -->
-                    <label class="relative flex flex-col p-3.5 rounded-2xl border-2 cursor-pointer transition-all {{ $settings['template'] === 'classic_navy' ? 'border-[#051c45] bg-[#051c45]/5 shadow-sm' : 'border-gray-200 hover:border-gray-300' }}">
+                    <label class="relative flex flex-col p-3.5 rounded-2xl border-2 cursor-pointer transition-all {{ $settings['template'] === 'classic_navy' ? 'border-[#063b96] bg-[#063b96]/5 shadow-sm' : 'border-gray-200 hover:border-gray-300' }}">
                         <div class="flex items-center justify-between mb-2">
                             <span class="font-bold text-xs text-gray-900">Royal Navy & Gold</span>
-                            <input type="radio" name="certificate_template" value="classic_navy" {{ $settings['template'] === 'classic_navy' ? 'checked' : '' }} class="text-[#051c45] focus:ring-[#051c45]">
+                            <input type="radio" name="certificate_template" value="classic_navy" {{ $settings['template'] === 'classic_navy' ? 'checked' : '' }} class="text-[#063b96] focus:ring-[#063b96]">
                         </div>
-                        <div class="h-10 rounded-lg border-2 border-[#b89758] bg-[#051c45] flex items-center justify-center text-[10px] font-serif text-[#f4e2be] font-bold tracking-widest uppercase">
+                        <div class="h-10 rounded-lg border-2 border-[#b89758] bg-[#063b96] flex items-center justify-center text-[10px] font-serif text-[#f4e2be] font-bold tracking-widest uppercase">
                             Classic Prestige
                         </div>
                         <p class="text-[10px] text-gray-500 mt-2">Imperial Navy outer border with ornate gold guilloche and classic crest.</p>
@@ -91,7 +91,7 @@
                             <span class="font-bold text-xs text-gray-900">Crimson Prestige</span>
                             <input type="radio" name="certificate_template" value="crimson_prestige" {{ $settings['template'] === 'crimson_prestige' ? 'checked' : '' }} class="text-[#880102] focus:ring-[#880102]">
                         </div>
-                        <div class="h-10 rounded-lg border-2 border-[#051c45] bg-[#880102] flex items-center justify-center text-[10px] font-serif text-[#ffe4e6] font-bold tracking-widest uppercase">
+                        <div class="h-10 rounded-lg border-2 border-[#063b96] bg-[#880102] flex items-center justify-center text-[10px] font-serif text-[#ffe4e6] font-bold tracking-widest uppercase">
                             Regal Crimson
                         </div>
                         <p class="text-[10px] text-gray-500 mt-2">ACS conversion crimson border with obsidian navy and gilded gold stamp.</p>
@@ -126,7 +126,7 @@
                         value="{{ old('certificate_institution_name', $settings['institution_name']) }}" 
                         placeholder="ACS Academy"
                         required 
-                        class="w-full text-xs sm:text-sm font-bold rounded-xl border-amber-300 bg-white focus:border-[#051c45] focus:ring-[#051c45] py-2.5 px-3 shadow-xs"
+                        class="w-full text-xs sm:text-sm font-bold rounded-xl border-amber-300 bg-white focus:border-[#063b96] focus:ring-[#063b96] py-2.5 px-3 shadow-xs"
                     >
                     <p class="text-[11px] text-amber-800/80 mt-1">
                         You can keep it as <strong>ACS Academy</strong> or customize it to <strong>ACS Academy</strong> or any corporate entity name whenever you prefer.
@@ -142,7 +142,7 @@
                             id="form_tagline"
                             value="{{ old('certificate_tagline', $settings['tagline']) }}" 
                             placeholder="ACS Academy • Learn, Grow, Lead."
-                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3"
+                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3"
                         >
                     </div>
                     <div>
@@ -153,7 +153,7 @@
                             id="form_campus"
                             value="{{ old('certificate_campus_address', $settings['campus_address']) }}" 
                             placeholder="Mirpur-Pallabi Campus • Dhaka, Bangladesh"
-                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3"
+                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3"
                         >
                     </div>
                 </div>
@@ -171,7 +171,7 @@
                             value="{{ old('certificate_title', $settings['title']) }}" 
                             placeholder="Executive Certification of Mastery"
                             required 
-                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3"
+                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3"
                         >
                     </div>
                     <div>
@@ -183,7 +183,7 @@
                             value="{{ old('certificate_conferment_text', $settings['conferment_text']) }}" 
                             placeholder="This is proudly presented and conferred upon"
                             required 
-                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3"
+                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3"
                         >
                     </div>
                 </div>
@@ -195,7 +195,7 @@
                         id="form_completion_text"
                         rows="2" 
                         required 
-                        class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] p-3 leading-relaxed"
+                        class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] p-3 leading-relaxed"
                     >{{ old('certificate_completion_text', $settings['completion_text']) }}</textarea>
                 </div>
 
@@ -207,7 +207,7 @@
                         id="form_faculty"
                         value="{{ old('certificate_faculty_endorsement', $settings['faculty_endorsement']) }}" 
                         placeholder="Delivered under the auspices of the ACS Academy Executive Faculty Board."
-                        class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3"
+                        class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3"
                     >
                 </div>
             </div>
@@ -223,7 +223,7 @@
                             id="form_sig1_name"
                             value="{{ old('certificate_primary_signatory_name', $settings['primary_signatory_name']) }}" 
                             required 
-                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 bg-white"
                         >
                     </div>
                     <div>
@@ -234,7 +234,7 @@
                             id="form_sig1_title"
                             value="{{ old('certificate_primary_signatory_title', $settings['primary_signatory_title']) }}" 
                             required 
-                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 bg-white"
                         >
                     </div>
                     <div>
@@ -244,7 +244,7 @@
                             name="certificate_primary_signatory_board" 
                             id="form_sig1_board"
                             value="{{ old('certificate_primary_signatory_board', $settings['primary_signatory_board']) }}" 
-                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 bg-white"
                         >
                     </div>
                 </div>
@@ -273,7 +273,7 @@
                                 name="certificate_secondary_signatory_name" 
                                 value="{{ old('certificate_secondary_signatory_name', $settings['secondary_signatory_name']) }}" 
                                 placeholder="Lead Executive Trainer"
-                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 bg-white"
                             >
                         </div>
                         <div>
@@ -283,7 +283,7 @@
                                 name="certificate_secondary_signatory_title" 
                                 value="{{ old('certificate_secondary_signatory_title', $settings['secondary_signatory_title']) }}" 
                                 placeholder="Course Director & Faculty Chair"
-                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 bg-white"
                             >
                         </div>
                     </div>
@@ -340,35 +340,35 @@
                         <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
                             <input type="checkbox" name="certificate_show_seal" id="form_show_seal" value="1"
                                 {{ ($settings['show_seal'] ?? '1') == '1' ? 'checked' : '' }}
-                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                                class="rounded text-[#063b96] focus:ring-[#063b96] cursor-pointer">
                             <span>Show Official Gold Seal</span>
                         </label>
 
                         <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
                             <input type="checkbox" name="certificate_show_seal_logo" id="form_show_seal_logo" value="1"
                                 {{ ($settings['show_seal_logo'] ?? '1') == '1' ? 'checked' : '' }}
-                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                                class="rounded text-[#063b96] focus:ring-[#063b96] cursor-pointer">
                             <span>Show Logo Inside Seal</span>
                         </label>
 
                         <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
                             <input type="checkbox" name="certificate_show_seal_text" id="form_show_seal_text" value="1"
                                 {{ ($settings['show_seal_text'] ?? '1') == '1' ? 'checked' : '' }}
-                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                                class="rounded text-[#063b96] focus:ring-[#063b96] cursor-pointer">
                             <span>Show Curved Seal Text</span>
                         </label>
 
                         <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
                             <input type="checkbox" name="certificate_show_qr_code" id="form_show_qr_code" value="1"
                                 {{ ($settings['show_qr_code'] ?? '1') == '1' ? 'checked' : '' }}
-                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                                class="rounded text-[#063b96] focus:ring-[#063b96] cursor-pointer">
                             <span>Show Verification QR Code</span>
                         </label>
 
                         <label class="flex items-center gap-2 text-xs font-bold text-gray-800 cursor-pointer">
                             <input type="checkbox" name="certificate_show_watermark" id="form_show_watermark" value="1"
                                 {{ ($settings['show_watermark'] ?? '1') == '1' ? 'checked' : '' }}
-                                class="rounded text-[#051c45] focus:ring-[#051c45] cursor-pointer">
+                                class="rounded text-[#063b96] focus:ring-[#063b96] cursor-pointer">
                             <span>Show Center Logo Watermark</span>
                         </label>
                     </div>
@@ -382,7 +382,7 @@
                             id="form_seal_text"
                             value="{{ old('certificate_seal_text', $settings['seal_text']) }}" 
                             placeholder="OFFICIAL SEAL • VERIFIED"
-                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                            class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 bg-white"
                         >
                         <p class="text-[11px] text-gray-500 mt-1">
                             Tip: Use <strong>•</strong> to split Top &amp; Bottom curved seal text (e.g. <code>OFFICIAL SEAL • VERIFIED</code> or <code>ACS ACADEMY • CERTIFIED</code>) around the center ACS logo inside the seal.
@@ -399,7 +399,7 @@
                                 id="form_id_label"
                                 value="{{ old('certificate_id_label', $settings['id_label'] ?? 'CERTIFICATE ID:') }}" 
                                 placeholder="CERTIFICATE ID:"
-                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 bg-white"
                             >
                         </div>
                         <div>
@@ -410,7 +410,7 @@
                                 id="form_date_label"
                                 value="{{ old('certificate_date_label', $settings['date_label'] ?? 'DATE:') }}" 
                                 placeholder="DATE:"
-                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 bg-white"
                             >
                         </div>
                         <div>
@@ -421,7 +421,7 @@
                                 id="form_batch_label"
                                 value="{{ old('certificate_batch_label', $settings['batch_label'] ?? 'BATCH:') }}" 
                                 placeholder="BATCH:"
-                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 bg-white"
+                                class="w-full text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 bg-white"
                             >
                         </div>
                     </div>
@@ -446,7 +446,7 @@
                                 id="form_logo_url"
                                 value="{{ old('certificate_logo_url', $settings['logo_url'] ?? '/images/certificate-logo-gold.png') }}" 
                                 placeholder="/images/certificate-logo-gold.png"
-                                class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2"
+                                class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2"
                             >
                         </div>
 
@@ -468,7 +468,7 @@
                                 id="form_seal_logo_url"
                                 value="{{ old('certificate_seal_logo_url', $settings['seal_logo_url'] ?? '/images/certificate-logo-gold.png') }}" 
                                 placeholder="/images/certificate-logo-gold.png"
-                                class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2"
+                                class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2"
                             >
                         </div>
 
@@ -490,7 +490,7 @@
                                 id="form_seal_bg_url"
                                 value="{{ old('certificate_seal_bg_url', $settings['seal_bg_url'] ?? '/images/certificate-gold-seal.png') }}" 
                                 placeholder="/images/certificate-gold-seal.png"
-                                class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2"
+                                class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2"
                             >
                         </div>
                     </div>
@@ -498,8 +498,8 @@
                     <!-- Typography & Font Sizes (px) -->
                     <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs font-extrabold uppercase tracking-wider text-[#051c45]">Typography &amp; Font Sizes (px)</span>
-                            <button type="button" id="reset_font_sizes_btn" class="text-[11px] font-bold text-[#051c45] hover:underline cursor-pointer">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-[#063b96]">Typography &amp; Font Sizes (px)</span>
+                            <button type="button" id="reset_font_sizes_btn" class="text-[11px] font-bold text-[#063b96] hover:underline cursor-pointer">
                                 Reset Default Sizes
                             </button>
                         </div>
@@ -508,31 +508,31 @@
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Institution (px)</label>
                                 <input type="number" step="0.5" min="14" max="60" name="certificate_institution_font_size" id="form_inst_font_size"
                                        value="{{ old('certificate_institution_font_size', $settings['institution_font_size'] ?? '31') }}"
-                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Cert Title (px)</label>
                                 <input type="number" step="0.5" min="16" max="64" name="certificate_title_font_size" id="form_title_font_size"
                                        value="{{ old('certificate_title_font_size', $settings['title_font_size'] ?? '35') }}"
-                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Recipient (px)</label>
                                 <input type="number" step="0.5" min="16" max="64" name="certificate_recipient_font_size" id="form_recipient_font_size"
                                        value="{{ old('certificate_recipient_font_size', $settings['recipient_font_size'] ?? '32') }}"
-                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Course Title (px)</label>
                                 <input type="number" step="0.5" min="14" max="56" name="certificate_course_font_size" id="form_course_font_size"
                                        value="{{ old('certificate_course_font_size', $settings['course_font_size'] ?? '30') }}"
-                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Body Text (px)</label>
                                 <input type="number" step="0.5" min="10" max="32" name="certificate_body_font_size" id="form_body_font_size"
                                        value="{{ old('certificate_body_font_size', $settings['body_font_size'] ?? '16.5') }}"
-                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-1.5 px-2.5 bg-white">
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                         </div>
                     </div>
@@ -540,7 +540,7 @@
             </div>
 
             <div class="pt-3">
-                <button type="submit" class="w-full py-3 bg-[#051c45] hover:bg-[#082860] text-white rounded-xl font-black text-xs sm:text-sm tracking-wide uppercase shadow-md hover:shadow-xl transition-all cursor-pointer">
+                <button type="submit" class="w-full py-3 bg-[#063b96] hover:bg-[#082860] text-white rounded-xl font-black text-xs sm:text-sm tracking-wide uppercase shadow-md hover:shadow-xl transition-all cursor-pointer">
                     💾 Save Certificate Customizations & Template
                 </button>
             </div>
@@ -560,7 +560,7 @@
             <!-- Simulated Certificate Card -->
             <div id="previewCard" class="w-full bg-[#fcf8f6] rounded-2xl p-4 sm:p-6 border-4 shadow-inner relative overflow-hidden transition-all duration-300
                 {{ $settings['template'] === 'acs_signature' ? 'border-[#b91c1c]' : '' }}
-                {{ $settings['template'] === 'classic_navy' ? 'border-[#051c45]' : '' }}
+                {{ $settings['template'] === 'classic_navy' ? 'border-[#063b96]' : '' }}
                 {{ $settings['template'] === 'modern_emerald' ? 'border-[#064e3b]' : '' }}
                 {{ $settings['template'] === 'crimson_prestige' ? 'border-[#880102]' : '' }}
                 {{ $settings['template'] === 'minimalist_corporate' ? 'border-slate-800' : '' }}
@@ -570,7 +570,7 @@
                     {{ $settings['template'] === 'acs_signature' ? 'border-transparent bg-[#fcf8f6]' : '' }}
                     {{ $settings['template'] === 'classic_navy' ? 'border-[#b89758] bg-gradient-to-b from-[#fffefc] to-[#faf6ef]' : '' }}
                     {{ $settings['template'] === 'modern_emerald' ? 'border-[#10b981] bg-gradient-to-b from-white to-[#f0fdf4]' : '' }}
-                    {{ $settings['template'] === 'crimson_prestige' ? 'border-[#051c45] bg-gradient-to-b from-white to-[#fff1f2]' : '' }}
+                    {{ $settings['template'] === 'crimson_prestige' ? 'border-[#063b96] bg-gradient-to-b from-white to-[#fff1f2]' : '' }}
                     {{ $settings['template'] === 'minimalist_corporate' ? 'border-slate-300 bg-white' : '' }}
                 ">
                     @php
@@ -706,7 +706,7 @@
                 name="search" 
                 value="{{ request('search') }}" 
                 placeholder="Search serial, student, course..." 
-                class="text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#051c45] focus:ring-[#051c45] py-2 px-3 w-64"
+                class="text-xs sm:text-sm rounded-xl border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-2 px-3 w-64"
             >
             <button type="submit" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors">
                 Search
@@ -985,12 +985,12 @@
         },
         'classic_navy': {
             name: 'Classic Navy & Gold',
-            cardBorder: 'border-[#051c45]',
+            cardBorder: 'border-[#063b96]',
             innerBorder: 'border-[#b89758] bg-gradient-to-b from-[#fffefc] to-[#faf6ef]',
-            instColor: 'text-[#051c45]',
-            tagColor: 'text-[#c30102]',
+            instColor: 'text-[#063b96]',
+            tagColor: 'text-[#c4040a]',
             titleColor: 'text-[#b89758]',
-            courseColor: 'text-[#c30102]'
+            courseColor: 'text-[#c4040a]'
         },
         'modern_emerald': {
             name: 'Modern Luxury Emerald',
@@ -1004,9 +1004,9 @@
         'crimson_prestige': {
             name: 'Crimson Prestige',
             cardBorder: 'border-[#880102]',
-            innerBorder: 'border-[#051c45] bg-gradient-to-b from-white to-[#fff1f2]',
+            innerBorder: 'border-[#063b96] bg-gradient-to-b from-white to-[#fff1f2]',
             instColor: 'text-[#880102]',
-            tagColor: 'text-[#051c45]',
+            tagColor: 'text-[#063b96]',
             titleColor: 'text-[#880102]',
             courseColor: 'text-[#880102]'
         },

@@ -13,8 +13,7 @@ class PageController extends Controller
     public function manifest()
     {
         $brand = Setting::getBrandSizing();
-        $logoUrl = Setting::getVal('site_logo') ?: asset('images/logo.png');
-        $themeColor = Setting::getVal('primary_color', '#051c45');
+        $themeColor = Setting::getVal('primary_color', '#021f59');
 
         return response()->json([
             'name' => $brand['name'],
@@ -23,21 +22,47 @@ class PageController extends Controller
             'start_url' => '/?source=pwa',
             'scope' => '/',
             'display' => 'standalone',
-            'background_color' => '#051c45',
+            'background_color' => '#01143d',
             'theme_color' => $themeColor,
             'orientation' => 'portrait-primary',
             'icons' => [
                 [
-                    'src' => $logoUrl,
+                    'src' => asset('images/icons/icon-192x192.png'),
                     'sizes' => '192x192',
                     'type' => 'image/png',
-                    'purpose' => 'any maskable',
+                    'purpose' => 'any',
                 ],
                 [
-                    'src' => $logoUrl,
+                    'src' => asset('images/icons/icon-512x512.png'),
                     'sizes' => '512x512',
                     'type' => 'image/png',
-                    'purpose' => 'any maskable',
+                    'purpose' => 'any',
+                ],
+                [
+                    'src' => asset('images/icons/icon-maskable-512x512.png'),
+                    'sizes' => '512x512',
+                    'type' => 'image/png',
+                    'purpose' => 'maskable',
+                ],
+            ],
+            'shortcuts' => [
+                [
+                    'name' => 'Browse Courses',
+                    'short_name' => 'Courses',
+                    'url' => '/catalog',
+                    'icons' => [['src' => asset('images/icons/icon-192x192.png'), 'sizes' => '192x192']],
+                ],
+                [
+                    'name' => 'Student Portal',
+                    'short_name' => 'Portal',
+                    'url' => '/dashboard',
+                    'icons' => [['src' => asset('images/icons/icon-192x192.png'), 'sizes' => '192x192']],
+                ],
+                [
+                    'name' => 'Verify Certificate',
+                    'short_name' => 'Verify',
+                    'url' => '/verify-certificate',
+                    'icons' => [['src' => asset('images/icons/icon-192x192.png'), 'sizes' => '192x192']],
                 ],
             ],
         ])->header('Content-Type', 'application/manifest+json');

@@ -58,10 +58,10 @@
 
     <!-- 1. Live Class Alert Banner (10MS-Style Instant Join Bar when an Enrolled Course has a Live Session) -->
     @if($activeLiveLessonItem)
-        <div class="mb-4 bg-gradient-to-r from-[#c30102] to-[#9b0000] rounded-2xl p-3.5 sm:px-5 text-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="mb-4 bg-gradient-to-r from-[#c4040a] to-[#9b0000] rounded-2xl p-3.5 sm:px-5 text-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-[#c30102] text-[10px] font-black uppercase tracking-wider shrink-0">
-                    <span class="w-2 h-2 rounded-full bg-[#c30102] animate-ping"></span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-[#c4040a] text-[10px] font-black uppercase tracking-wider shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-[#c4040a] animate-ping"></span>
                     <span>LIVE CLASS</span>
                 </span>
                 <div class="min-w-0">
@@ -70,15 +70,15 @@
                 </div>
             </div>
             <a href="{{ route('lessons.show', [$activeLiveLessonItem['course'], $activeLiveLessonItem['lesson']]) }}"
-               class="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-[#051c45] font-extrabold text-xs inline-flex items-center justify-center gap-1.5 shrink-0 shadow-xs transition-all">
-                <i class="fas fa-video text-[#c30102]"></i>
+               class="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-[#063b96] font-extrabold text-xs inline-flex items-center justify-center gap-1.5 shrink-0 shadow-xs transition-all">
+                <i class="fas fa-video text-[#c4040a]"></i>
                 <span>Join Live Classroom</span>
             </a>
         </div>
     @endif
 
     <!-- 2. Compact Welcome & Active Classroom Spotlight -->
-    <div class="bg-gradient-to-br from-[#031029] via-[#051c45] to-[#0a2a66] rounded-2xl p-4 sm:p-5 text-white shadow-sm mb-5 border border-white/10">
+    <div class="bg-gradient-to-br from-[#031029] via-[#063b96] to-[#0a2a66] rounded-2xl p-4 sm:p-5 text-white shadow-sm mb-5 border border-white/10">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
             <!-- Left: Concise Welcome -->
             <div class="{{ $primaryClassroom ? 'lg:col-span-6' : 'lg:col-span-12' }} flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -91,7 +91,7 @@
                     </p>
                 </div>
                 @if(!$primaryClassroom)
-                    <a href="{{ route('catalog.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-extrabold transition-all shrink-0 self-start sm:self-auto">
+                    <a href="{{ route('catalog.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-extrabold transition-all shrink-0 self-start sm:self-auto">
                         <span>Explore Courses</span>
                         <i class="fas fa-arrow-right text-[10px]"></i>
                     </a>
@@ -130,7 +130,7 @@
                             </p>
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0">
-                            <a href="{{ $spotUrl }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c30102] hover:bg-[#a80102] text-white text-xs font-extrabold transition-all">
+                            <a href="{{ $spotUrl }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c4040a] hover:bg-[#a80102] text-white text-xs font-extrabold transition-all">
                                 <i class="fas fa-play text-[9px]"></i>
                                 <span>Resume</span>
                             </a>
@@ -163,7 +163,7 @@
         <div class="flex items-center gap-1">
             <button type="button"
                     @click="dashTab = 'courses'"
-                    :class="dashTab === 'courses' ? 'bg-[#051c45] text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
+                    :class="dashTab === 'courses' ? 'bg-[#063b96] text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
                     class="px-3 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-extrabold transition-all whitespace-nowrap inline-flex items-center gap-1.5 sm:gap-2 cursor-pointer">
                 <i class="fas fa-graduation-cap text-[11px]"></i>
                 <span>My Courses ({{ $enrolledCourses->count() }})</span>
@@ -171,7 +171,7 @@
 
             <button type="button"
                     @click="dashTab = 'certificates'"
-                    :class="dashTab === 'certificates' ? 'bg-[#051c45] text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
+                    :class="dashTab === 'certificates' ? 'bg-[#063b96] text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
                     class="px-3 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-extrabold transition-all whitespace-nowrap inline-flex items-center gap-1.5 sm:gap-2 cursor-pointer">
                 <i class="fas fa-award text-[11px]"></i>
                 <span>Certificates ({{ $certificatesCount }})</span>
@@ -179,7 +179,7 @@
 
             <button type="button"
                     @click="dashTab = 'payments'"
-                    :class="dashTab === 'payments' ? 'bg-[#051c45] text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
+                    :class="dashTab === 'payments' ? 'bg-[#063b96] text-white shadow-2xs' : 'text-slate-600 hover:bg-slate-100'"
                     class="px-3 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-extrabold transition-all whitespace-nowrap inline-flex items-center gap-1.5 sm:gap-2 cursor-pointer">
                 <i class="fas fa-file-invoice text-[11px]"></i>
                 <span class="sm:hidden">Invoices ({{ isset($payments) ? $payments->count() : 0 }})</span>
@@ -187,8 +187,8 @@
             </button>
         </div>
 
-        <a href="{{ route('performance.index') }}" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 text-[11px] font-bold text-[#051c45] shrink-0">
-            <i class="fas fa-bolt text-[#c30102]"></i>
+        <a href="{{ route('performance.index') }}" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 text-[11px] font-bold text-[#063b96] shrink-0">
+            <i class="fas fa-bolt text-[#c4040a]"></i>
             <span>Lv. {{ $user->level }} &bull; {{ $user->xp }} XP</span>
         </a>
     </div>
@@ -214,7 +214,7 @@
                                 ৳{{ number_format((float) $pendingPayment->amount) }} &bull;
                                 <span class="uppercase font-semibold">{{ $pendingPayment->gateway }}</span>
                                 @if($pendingPayment->transaction_id)
-                                    &bull; <span class="font-mono font-bold text-[#051c45]">{{ $pendingPayment->transaction_id }}</span>
+                                    &bull; <span class="font-mono font-bold text-[#063b96]">{{ $pendingPayment->transaction_id }}</span>
                                 @endif
                             </div>
                         </div>
@@ -228,17 +228,17 @@
     @if($unreadNotices->count() > 0)
         <div class="mb-5 bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-2xs">
             <div class="flex items-center justify-between mb-2">
-                <h2 class="text-xs font-extrabold uppercase tracking-wider text-[#051c45] flex items-center gap-1.5">
-                    <i class="fas fa-bullhorn text-[#c30102]"></i>
+                <h2 class="text-xs font-extrabold uppercase tracking-wider text-[#063b96] flex items-center gap-1.5">
+                    <i class="fas fa-bullhorn text-[#c4040a]"></i>
                     <span>Unread Notices ({{ $unreadNotices->count() }})</span>
                 </h2>
-                <a href="{{ route('notifications.index') }}" class="text-[11px] font-bold text-[#c30102] hover:underline">View All &rarr;</a>
+                <a href="{{ route('notifications.index') }}" class="text-[11px] font-bold text-[#c4040a] hover:underline">View All &rarr;</a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
                 @foreach($unreadNotices as $notice)
                     <a href="{{ $notice->data['url'] ?? route('notifications.index') }}" class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 transition-all block">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs font-extrabold text-[#051c45] line-clamp-1">{{ $notice->data['title'] ?? 'Notice' }}</span>
+                            <span class="text-xs font-extrabold text-[#063b96] line-clamp-1">{{ $notice->data['title'] ?? 'Notice' }}</span>
                             <span class="text-[10px] text-slate-400 shrink-0">{{ $notice->created_at->diffForHumans() }}</span>
                         </div>
                         <p class="text-[11px] text-slate-600 line-clamp-1 mt-0.5">{{ $notice->data['message'] ?? '' }}</p>
@@ -252,8 +252,8 @@
     <div x-show="dashTab === 'courses'" class="space-y-6">
         <div>
             <div class="flex items-center justify-between mb-3">
-                <h2 class="text-base sm:text-lg font-extrabold text-[#051c45] tracking-tight">My Courses</h2>
-                <a href="{{ route('catalog.index') }}" class="text-xs font-extrabold text-[#c30102] hover:underline">Browse Catalog &rarr;</a>
+                <h2 class="text-base sm:text-lg font-extrabold text-[#063b96] tracking-tight">My Courses</h2>
+                <a href="{{ route('catalog.index') }}" class="text-xs font-extrabold text-[#c4040a] hover:underline">Browse Catalog &rarr;</a>
             </div>
 
             @if(count($courseCardsData) > 0)
@@ -271,24 +271,24 @@
                             <div>
                                 <a href="{{ $resumeUrl }}" class="block h-36 w-full bg-slate-100 relative overflow-hidden group">
                                     <img src="{{ $course->cover_image_url }}" alt="{{ $course->title }}" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null;this.src='{{ asset('images/course-placeholder.svg') }}';">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-[#051c45]/80 via-transparent to-transparent"></div>
-                                    <span class="absolute top-2.5 left-2.5 bg-white/95 text-[#051c45] text-[10px] font-extrabold px-2 py-0.5 rounded-md">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-[#063b96]/80 via-transparent to-transparent"></div>
+                                    <span class="absolute top-2.5 left-2.5 bg-white/95 text-[#063b96] text-[10px] font-extrabold px-2 py-0.5 rounded-md">
                                         {{ $course->category ?? 'Program' }}
                                     </span>
                                     @if($liveLesson)
-                                        <span class="absolute top-2.5 right-2.5 bg-[#c30102] text-white text-[10px] font-black px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                                        <span class="absolute top-2.5 right-2.5 bg-[#c4040a] text-white text-[10px] font-black px-2 py-0.5 rounded-md inline-flex items-center gap-1">
                                             <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
                                             <span>LIVE</span>
                                         </span>
                                     @endif
-                                    <span class="absolute bottom-2.5 right-2.5 bg-[#051c45]/90 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md">
+                                    <span class="absolute bottom-2.5 right-2.5 bg-[#063b96]/90 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md">
                                         {{ $item['done'] }}/{{ $item['total'] }} Lessons &bull; {{ $progress }}%
                                     </span>
                                 </a>
 
                                 <div class="p-4">
                                     <a href="{{ $resumeUrl }}" class="block">
-                                        <h3 class="font-extrabold text-sm text-slate-900 line-clamp-1 hover:text-[#c30102] transition-colors">{{ $course->title }}</h3>
+                                        <h3 class="font-extrabold text-sm text-slate-900 line-clamp-1 hover:text-[#c4040a] transition-colors">{{ $course->title }}</h3>
                                     </a>
                                     <div class="text-[11px] font-semibold text-slate-500 mt-1 truncate">
                                         {{ $course->instructor_name }}
@@ -299,7 +299,7 @@
 
                                     <!-- Slim Progress Bar -->
                                     <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mt-3">
-                                        <div class="bg-gradient-to-r from-[#051c45] to-[#10b981] h-1.5 rounded-full transition-all duration-500" style="width: {{ max(4, $progress) }}%"></div>
+                                        <div class="bg-gradient-to-r from-[#063b96] to-[#10b981] h-1.5 rounded-full transition-all duration-500" style="width: {{ max(4, $progress) }}%"></div>
                                     </div>
                                 </div>
                             </div>
@@ -307,12 +307,12 @@
                             <!-- 10MS Single Action Row -->
                             <div class="px-4 pb-4 pt-1 flex items-center gap-1.5">
                                 @if($liveLesson)
-                                    <a href="{{ route('lessons.show', [$course, $liveLesson]) }}" class="flex-1 py-2 px-3 rounded-xl font-extrabold text-white bg-[#c30102] hover:bg-[#a50102] transition-all flex items-center justify-center gap-1.5 text-xs">
+                                    <a href="{{ route('lessons.show', [$course, $liveLesson]) }}" class="flex-1 py-2 px-3 rounded-xl font-extrabold text-white bg-[#c4040a] hover:bg-[#a50102] transition-all flex items-center justify-center gap-1.5 text-xs">
                                         <i class="fas fa-video text-[10px]"></i>
                                         <span>Join Live Class</span>
                                     </a>
                                 @else
-                                    <a href="{{ $resumeUrl }}" class="flex-1 py-2 px-3 rounded-xl font-extrabold text-white bg-[#051c45] hover:bg-[#082b66] transition-all flex items-center justify-center gap-1.5 text-xs">
+                                    <a href="{{ $resumeUrl }}" class="flex-1 py-2 px-3 rounded-xl font-extrabold text-white bg-[#063b96] hover:bg-[#082b66] transition-all flex items-center justify-center gap-1.5 text-xs">
                                         <i class="fas fa-play text-[9px] text-amber-300"></i>
                                         <span>{{ $progress > 0 ? 'Continue Class' : 'Enter Classroom' }}</span>
                                     </a>
@@ -335,10 +335,10 @@
             @else
                 <div class="bg-white rounded-2xl p-6 text-center border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div class="text-left">
-                        <h3 class="text-sm font-extrabold text-[#051c45]">No Enrolled Courses Yet</h3>
+                        <h3 class="text-sm font-extrabold text-[#063b96]">No Enrolled Courses Yet</h3>
                         <p class="text-xs text-slate-500 mt-0.5">Choose a course from our catalog to begin learning.</p>
                     </div>
-                    <a href="{{ route('catalog.index') }}" class="px-4 py-2 rounded-xl font-extrabold text-white bg-[#c30102] hover:bg-[#a50102] transition-all text-xs shrink-0">
+                    <a href="{{ route('catalog.index') }}" class="px-4 py-2 rounded-xl font-extrabold text-white bg-[#c4040a] hover:bg-[#a50102] transition-all text-xs shrink-0">
                         Explore Courses &rarr;
                     </a>
                 </div>
@@ -349,8 +349,8 @@
         @if(isset($recommendedCourses) && $recommendedCourses->count() > 0)
             <div>
                 <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-base font-extrabold text-[#051c45] tracking-tight">Recommended Courses</h2>
-                    <a href="{{ route('catalog.index') }}" class="text-xs font-extrabold text-[#c30102] hover:underline">View Catalog &rarr;</a>
+                    <h2 class="text-base font-extrabold text-[#063b96] tracking-tight">Recommended Courses</h2>
+                    <a href="{{ route('catalog.index') }}" class="text-xs font-extrabold text-[#c4040a] hover:underline">View Catalog &rarr;</a>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -365,7 +365,7 @@
     <!-- TAB 2: CERTIFICATES & ACHIEVEMENTS -->
     <div x-show="dashTab === 'certificates'" x-cloak class="space-y-4">
         <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs">
-            <h3 class="text-sm font-extrabold text-[#051c45] mb-3">Digital Certificates &amp; Course Progress</h3>
+            <h3 class="text-sm font-extrabold text-[#063b96] mb-3">Digital Certificates &amp; Course Progress</h3>
             @if(count($courseCardsData) > 0)
                 <div class="divide-y divide-slate-100">
                     @foreach($courseCardsData as $item)
@@ -399,7 +399,7 @@
         <!-- Tuition Payments & Official Invoices -->
         <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
             <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="font-extrabold text-sm text-[#051c45]">Tuition Payments &amp; Official Invoices</h3>
+                <h3 class="font-extrabold text-sm text-[#063b96]">Tuition Payments &amp; Official Invoices</h3>
                 <span class="text-[11px] font-bold text-slate-400">{{ isset($payments) ? $payments->count() : 0 }} Records</span>
             </div>
 
@@ -437,7 +437,7 @@
                                     </td>
                                     <td class="py-2.5 px-4 text-right whitespace-nowrap">
                                         @if($payment->status === 'verified')
-                                            <a href="{{ route('payments.invoice', $payment) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#051c45] text-white text-[10px] font-bold hover:bg-[#c30102] transition-colors">
+                                            <a href="{{ route('payments.invoice', $payment) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#063b96] text-white text-[10px] font-bold hover:bg-[#c4040a] transition-colors">
                                                 <i class="fas fa-file-invoice"></i>
                                                 <span>Invoice</span>
                                             </a>
@@ -462,8 +462,8 @@
         <!-- Job Applications -->
         <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
             <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="font-extrabold text-sm text-[#051c45]">Job Applications</h3>
-                <a href="{{ route('jobs.index') }}" class="text-[11px] font-bold text-[#c30102] hover:underline">Job Board &rarr;</a>
+                <h3 class="font-extrabold text-sm text-[#063b96]">Job Applications</h3>
+                <a href="{{ route('jobs.index') }}" class="text-[11px] font-bold text-[#c4040a] hover:underline">Job Board &rarr;</a>
             </div>
 
             @if(isset($jobApplications) && $jobApplications->count() > 0)

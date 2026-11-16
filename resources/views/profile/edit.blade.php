@@ -10,7 +10,7 @@
     @endphp
 
     <!-- Compact Profile Bar -->
-    <div class="bg-[#051c45] rounded-2xl p-4 sm:p-5 text-white shadow-xs mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="bg-[#063b96] rounded-2xl p-4 sm:p-5 text-white shadow-xs mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3.5">
             @if($profileUser && $profileUser->hasCustomProfilePicture())
                 <img id="hero_profile_avatar_img" src="{{ $profileUser->profile_picture_url }}" alt="{{ $profileUser->name }}" class="w-12 h-12 rounded-xl object-cover border border-white/25 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($profileUser->name) }}&background=051c45&color=fff';">
@@ -35,14 +35,14 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
-            <a href="{{ $profileUser->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white text-[#051c45] text-xs font-extrabold hover:bg-slate-100 transition-all">
-                <i class="fas fa-arrow-left text-[10px] text-[#c30102]"></i>
+            <a href="{{ $profileUser->isAdmin() ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white text-[#063b96] text-xs font-extrabold hover:bg-slate-100 transition-all">
+                <i class="fas fa-arrow-left text-[10px] text-[#c4040a]"></i>
                 <span>Back to Dashboard</span>
             </a>
 
             <form method="POST" action="{{ route('logout') }}" class="m-0">
                 @csrf
-                <button type="submit" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-extrabold shadow-xs transition-all cursor-pointer">
+                <button type="submit" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-extrabold shadow-xs transition-all cursor-pointer">
                     <i class="fas fa-sign-out-alt text-[11px]"></i>
                     <span>Sign Out</span>
                 </button>

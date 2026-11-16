@@ -13,11 +13,11 @@
         
         <!-- Header Breadcrumb & Title -->
         <div class="text-center max-w-3xl mx-auto mb-12">
-            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-[#c30102]/10 text-[#c30102] mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-[#c4040a]/10 text-[#c4040a] mb-4">
                 <i class="fas fa-headset text-xs"></i> Executive Helpdesk & Corporate Advisory
             </span>
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0f131f] tracking-tight">
-                Connect With <span class="text-[#c30102]">{{ $siteName }}</span>
+                Connect With <span class="text-[#c4040a]">{{ $siteName }}</span>
             </h1>
             <p class="mt-4 text-base sm:text-lg text-[#35415b] leading-relaxed">
                 Have questions about our professional certification programs, enterprise corporate training, or admission enrollment? Our advisory team is ready to assist you.
@@ -57,7 +57,7 @@
                 <!-- Quick Contact Card -->
                 <div class="liquid-glass-card rounded-3xl p-6 sm:p-8">
                     <h3 class="text-xl font-bold text-[#0f131f] mb-6 flex items-center gap-2.5">
-                        <span class="w-8 h-8 rounded-lg bg-[#051c45] text-white flex items-center justify-center text-sm">
+                        <span class="w-8 h-8 rounded-lg bg-[#063b96] text-white flex items-center justify-center text-sm">
                             <i class="fas fa-map-marker-alt"></i>
                         </span>
                         Campus & Headquarters
@@ -66,7 +66,7 @@
                     <div class="space-y-6 text-sm text-[#35415b]">
                         <!-- Address -->
                         <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-[#c30102]/10 text-[#c30102] flex items-center justify-center shrink-0">
+                            <div class="w-10 h-10 rounded-xl bg-[#c4040a]/10 text-[#c4040a] flex items-center justify-center shrink-0">
                                 <i class="fas fa-building text-base"></i>
                             </div>
                             <div>
@@ -92,7 +92,7 @@
                             <div>
                                 <h4 class="font-bold text-[#0f131f] text-sm">Executive Hotline</h4>
                                 <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                                    <a href="tel:{{ $contactHotlineTel }}" class="font-semibold text-[#0f131f] hover:text-[#c30102] transition-colors">
+                                    <a href="tel:{{ $contactHotlineTel }}" class="font-semibold text-[#0f131f] hover:text-[#c4040a] transition-colors">
                                         {{ $contactHotline }}
                                     </a>
                                     <span class="text-xs text-gray-500 block">({{ $contactHours }})</span>
@@ -108,7 +108,7 @@
                             <div>
                                 <h4 class="font-bold text-[#0f131f] text-sm">Official Inquiries & Admissions</h4>
                                 <p class="text-xs sm:text-sm text-gray-600 mt-1">
-                                    <a href="mailto:{{ $contactEmail }}" class="font-semibold text-[#0f131f] hover:text-[#c30102] transition-colors">
+                                    <a href="mailto:{{ $contactEmail }}" class="font-semibold text-[#0f131f] hover:text-[#c4040a] transition-colors">
                                         {{ $contactEmail }}
                                     </a>
                                 </p>
@@ -149,7 +149,7 @@
 
                 <!-- Executive Corporate Brief -->
                 <div class="liquid-glass-dark rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-white/15">
-                    <span class="px-2.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-[#c30102] text-white">B2B Customized Programs</span>
+                    <span class="px-2.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-[#c4040a] text-white">B2B Customized Programs</span>
                     <h3 class="text-xl font-bold mt-3 mb-2">Corporate Workforce Upskilling</h3>
                     <p class="text-xs sm:text-sm text-slate-200 leading-relaxed mb-4">
                         We deliver customized on-site and virtual bootcamps in Export-Import documentation, Supply Chain, and Customs VAT/Taxation for multinational corporations, RMG manufacturers, and financial institutions.
@@ -177,7 +177,7 @@
                         <button 
                             type="button"
                             @click="inquiryType = 'course_admission'"
-                            :class="inquiryType === 'course_admission' ? 'bg-white text-[#c30102] shadow-sm' : 'text-[#35415b] hover:text-[#0f131f]'"
+                            :class="inquiryType === 'course_admission' ? 'bg-white text-[#c4040a] shadow-sm' : 'text-[#35415b] hover:text-[#0f131f]'"
                             class="py-2.5 px-2 rounded-xl text-center transition-all cursor-pointer"
                         >
                             Course Admission
@@ -185,7 +185,7 @@
                         <button 
                             type="button"
                             @click="inquiryType = 'corporate'"
-                            :class="inquiryType === 'corporate' ? 'bg-white text-[#c30102] shadow-sm' : 'text-[#35415b] hover:text-[#0f131f]'"
+                            :class="inquiryType === 'corporate' ? 'bg-white text-[#c4040a] shadow-sm' : 'text-[#35415b] hover:text-[#0f131f]'"
                             class="py-2.5 px-2 rounded-xl text-center transition-all cursor-pointer"
                         >
                             Corporate Training
@@ -193,7 +193,7 @@
                         <button 
                             type="button"
                             @click="inquiryType = 'consulting'"
-                            :class="inquiryType === 'consulting' ? 'bg-white text-[#c30102] shadow-sm' : 'text-[#35415b] hover:text-[#0f131f]'"
+                            :class="inquiryType === 'consulting' ? 'bg-white text-[#c4040a] shadow-sm' : 'text-[#35415b] hover:text-[#0f131f]'"
                             class="py-2.5 px-2 rounded-xl text-center transition-all cursor-pointer"
                         >
                             Trade Advisory
@@ -201,7 +201,7 @@
                         <button 
                             type="button"
                             @click="inquiryType = 'general'"
-                            :class="inquiryType === 'general' ? 'bg-white text-[#c30102] shadow-sm' : 'text-[#35415b] hover:text-[#0f131f]'"
+                            :class="inquiryType === 'general' ? 'bg-white text-[#c4040a] shadow-sm' : 'text-[#35415b] hover:text-[#0f131f]'"
                             class="py-2.5 px-2 rounded-xl text-center transition-all cursor-pointer"
                         >
                             General Inquiry
@@ -224,7 +224,7 @@
                                     value="{{ old('name', auth()->user()?->name ?? '') }}" 
                                     required
                                     placeholder="e.g. Md. Imtiaz Ahmed"
-                                    class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c30102] focus:bg-white transition-all font-medium"
+                                    class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c4040a] focus:bg-white transition-all font-medium"
                                 >
                             </div>
 
@@ -239,7 +239,7 @@
                                     value="{{ old('email', auth()->user()?->email ?? '') }}" 
                                     required
                                     placeholder="e.g. name@company.com"
-                                    class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c30102] focus:bg-white transition-all font-medium"
+                                    class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c4040a] focus:bg-white transition-all font-medium"
                                 >
                             </div>
                         </div>
@@ -256,7 +256,7 @@
                                     value="{{ old('phone') }}" 
                                     required
                                     placeholder="e.g. 01917-054664"
-                                    class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c30102] focus:bg-white transition-all font-medium"
+                                    class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c4040a] focus:bg-white transition-all font-medium"
                                 >
                             </div>
 
@@ -270,7 +270,7 @@
                                     name="organization" 
                                     value="{{ old('organization') }}" 
                                     placeholder="e.g. Global Logistics Ltd. / University"
-                                    class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c30102] focus:bg-white transition-all font-medium"
+                                    class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c4040a] focus:bg-white transition-all font-medium"
                                 >
                             </div>
                         </div>
@@ -286,7 +286,7 @@
                                 value="{{ old('subject') }}" 
                                 required
                                 placeholder="e.g. Inquiry regarding L/C & Export-Import Batch Schedule"
-                                class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c30102] focus:bg-white transition-all font-medium"
+                                class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c4040a] focus:bg-white transition-all font-medium"
                             >
                         </div>
 
@@ -300,14 +300,14 @@
                                 rows="4" 
                                 required
                                 placeholder="Please let us know your queries, preferred batch timing, or corporate participant volume..."
-                                class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c30102] focus:bg-white transition-all font-medium"
+                                class="w-full px-4 py-3 rounded-xl border border-[#e3e7f0] bg-[#f8fafc] text-sm text-[#0f131f] focus:outline-none focus:ring-2 focus:ring-[#c4040a] focus:bg-white transition-all font-medium"
                             >{{ old('message') }}</textarea>
                         </div>
 
                         <div class="pt-2">
                             <button 
                                 type="submit" 
-                                class="w-full py-4 px-6 bg-[#c30102] hover:bg-[#a50102] text-white font-bold rounded-xl transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 cursor-pointer shadow-[#c30102]/25"
+                                class="w-full py-4 px-6 bg-[#c4040a] hover:bg-[#a50102] text-white font-bold rounded-xl transition-all duration-300 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 cursor-pointer shadow-[#c4040a]/25"
                             >
                                 <i class="fas fa-paper-plane text-sm"></i>
                                 Submit Message to Advisory Desk

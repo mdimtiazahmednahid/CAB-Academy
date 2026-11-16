@@ -86,11 +86,11 @@
         }
     </style>
 </head>
-<body class="bg-[#020b18] text-white min-h-screen flex flex-col justify-between antialiased selection:bg-[#c30102] selection:text-white relative overflow-x-hidden">
+<body class="bg-[#01143d] text-white min-h-screen flex flex-col justify-between antialiased selection:bg-[#c4040a] selection:text-white relative overflow-x-hidden">
     <!-- Ambient Liquid Glass Glow Orbs -->
     <div class="pointer-events-none fixed inset-0 overflow-hidden z-0">
         <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blue-600/20 blur-[120px]"></div>
-        <div class="absolute top-1/3 -right-32 w-96 h-96 rounded-full bg-[#c30102]/15 blur-[130px]"></div>
+        <div class="absolute top-1/3 -right-32 w-96 h-96 rounded-full bg-[#c4040a]/15 blur-[130px]"></div>
         <div class="absolute -bottom-32 left-1/3 w-96 h-96 rounded-full bg-emerald-500/10 blur-[120px]"></div>
     </div>
 
@@ -138,7 +138,7 @@
             <div class="px-4 sm:px-6 py-3 bg-white/[0.04] border-b border-white/10 flex items-center justify-between gap-2 flex-wrap">
                 <div class="flex items-center gap-2 flex-wrap">
                     <span class="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[11px] font-black uppercase tracking-wider shadow-xs">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#c30102] inline-block mr-1.5"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#c4040a] inline-block mr-1.5"></span>
                         {{ $course->category ?? 'Professional Training' }}
                     </span>
                     <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[11px] font-black uppercase tracking-wider backdrop-blur-md flex items-center gap-1.5">
@@ -146,7 +146,7 @@
                         <span>{{ $attendanceLabel }}</span>
                     </span>
                     @if(!empty($course->batch) && $course->show_batch)
-                        <span class="px-3 py-1 rounded-full bg-gradient-to-r from-[#c30102] to-[#e11d48] text-white text-[11px] font-black uppercase tracking-wider shadow-sm border border-white/20">
+                        <span class="px-3 py-1 rounded-full bg-gradient-to-r from-[#c4040a] to-[#e11d48] text-white text-[11px] font-black uppercase tracking-wider shadow-sm border border-white/20">
                             {{ $course->batch }}
                         </span>
                     @endif
@@ -160,7 +160,7 @@
             </div>
 
             <!-- Clickable Course Thumbnail Banner (True Uncropped Display for 1:1 & 16:9 Flyers) -->
-            <div class="relative w-full aspect-[16/9] bg-[#041536] overflow-hidden group/thumb">
+            <div class="relative w-full aspect-[16/9] bg-[#021f59] overflow-hidden group/thumb">
                 <a href="{{ $enrollUrl }}" title="Click to Enroll in {{ $course->title }}" class="block w-full h-full relative cursor-pointer">
                     <!-- Ambient Blurred Backdrop for Square/Vertical Flyers -->
                     <img 
@@ -178,7 +178,7 @@
 
                     <!-- Center Hover Action Pill Overlay -->
                     <div class="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
-                        <span class="px-5 py-2.5 rounded-full bg-[#c30102] text-white font-extrabold text-xs sm:text-sm shadow-2xl flex items-center gap-2 transform group-hover/thumb:scale-105 transition-transform duration-200 border border-white/20">
+                        <span class="px-5 py-2.5 rounded-full bg-[#c4040a] text-white font-extrabold text-xs sm:text-sm shadow-2xl flex items-center gap-2 transform group-hover/thumb:scale-105 transition-transform duration-200 border border-white/20">
                             <i class="fas fa-bolt text-amber-300"></i>
                             <span>Click Thumbnail to Express Enroll (30 Sec)</span>
                             <i class="fas fa-arrow-right text-xs"></i>
@@ -188,7 +188,7 @@
             </div>
 
             <!-- Clickable Hint Ribbon -->
-            <div class="bg-[#c30102]/20 border-y border-white/10 px-4 sm:px-6 py-2 flex items-center justify-between text-xs text-white/90">
+            <div class="bg-[#c4040a]/20 border-y border-white/10 px-4 sm:px-6 py-2 flex items-center justify-between text-xs text-white/90">
                 <a href="{{ $enrollUrl }}" class="flex items-center gap-2 font-semibold hover:text-white transition-colors">
                     <i class="fas fa-hand-pointer text-amber-300 animate-bounce"></i>
                     <span>Click the thumbnail banner above to enroll instantly or explore full syllabus below</span>
@@ -221,13 +221,13 @@
                         @if($instAvatar)
                             <img src="{{ $instAvatar }}" alt="{{ $instName }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($instName) }}&background=051c45&color=fff';">
                         @else
-                            <div class="w-full h-full bg-[#051c45] text-white flex items-center justify-center font-bold text-sm">
+                            <div class="w-full h-full bg-[#063b96] text-white flex items-center justify-center font-bold text-sm">
                                 {{ substr($instName, 0, 1) }}
                             </div>
                         @endif
                     </div>
                     <div class="flex-1 min-w-0">
-                        <span class="text-[10px] uppercase font-extrabold text-[#c30102] tracking-wider block">Lead Faculty</span>
+                        <span class="text-[10px] uppercase font-extrabold text-[#c4040a] tracking-wider block">Lead Faculty</span>
                         <h4 class="text-xs sm:text-sm font-bold text-white truncate">{{ $instName }}</h4>
                         <p class="text-[11px] text-slate-400 truncate">{{ $instTitle }}</p>
                     </div>
@@ -240,7 +240,7 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                     <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1">
                         <span class="text-[10px] text-slate-400 uppercase font-semibold block flex items-center gap-1">
-                            <i class="far fa-calendar-alt text-[#c30102]"></i> Starts
+                            <i class="far fa-calendar-alt text-[#c4040a]"></i> Starts
                         </span>
                         <span class="font-bold text-white block truncate">
                             {{ $course->start_date ? $course->start_date->format('d M, Y') : ($course->duration ?? 'Upcoming') }}
@@ -281,7 +281,7 @@
                         <!-- 1. Primary Action: Express Enroll in 30 Seconds -->
                         <a 
                             href="{{ $enrollUrl }}" 
-                            class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-[#c30102] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-black text-sm tracking-wide uppercase shadow-[0_6px_25px_rgba(195,1,2,0.4)] flex items-center justify-center gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center group cursor-pointer"
+                            class="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-[#c4040a] to-[#e11d48] hover:from-[#a50102] hover:to-[#be123c] text-white font-black text-sm tracking-wide uppercase shadow-[0_6px_25px_rgba(195,1,2,0.4)] flex items-center justify-center gap-2.5 transition-all duration-200 hover:scale-[1.02] active:scale-95 text-center group cursor-pointer"
                         >
                             <i class="fas fa-bolt text-amber-300 text-sm group-hover:scale-125 transition-transform"></i>
                             <span>Enroll Now (30 Sec)</span>
@@ -353,7 +353,7 @@
                         <button type="button" id="pauseBtn" onclick="toggleAutoRedirect()" class="text-xs text-amber-300 hover:underline cursor-pointer ml-1">[Pause Timer]</button>
                     </div>
                     <div class="flex items-center gap-3">
-                        <a href="{{ $targetUrl }}" class="text-white hover:text-[#c30102] font-bold transition-colors flex items-center gap-1">
+                        <a href="{{ $targetUrl }}" class="text-white hover:text-[#c4040a] font-bold transition-colors flex items-center gap-1">
                             <span>View Full Course Syllabus Immediately</span>
                             <i class="fas fa-arrow-right text-[10px]"></i>
                         </a>

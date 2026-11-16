@@ -30,7 +30,7 @@
             <!-- Verified Card -->
             <div class="bg-white rounded-3xl p-8 sm:p-10 border-2 border-emerald-500 shadow-xl relative overflow-hidden">
                 <!-- Top Emerald Banner -->
-                <div class="bg-gradient-to-r from-[#051c45] via-[#0a2540] to-[#10b981] text-white text-center py-3 px-4 -mx-8 sm:-mx-10 -mt-8 sm:-mt-10 mb-8 flex items-center justify-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider shadow-sm">
+                <div class="bg-gradient-to-r from-[#063b96] via-[#0a2540] to-[#10b981] text-white text-center py-3 px-4 -mx-8 sm:-mx-10 -mt-8 sm:-mt-10 mb-8 flex items-center justify-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider shadow-sm">
                     <i class="fas fa-check-circle text-[#10b981] text-base"></i> Authentic Credential Confirmed & Validated
                 </div>
 
@@ -42,7 +42,7 @@
                         </div>
                         <div class="sm:text-right">
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Credential ID</span>
-                            <span class="font-mono text-base font-bold text-[#c30102]">{{ $certificate->certificate_number }}</span>
+                            <span class="font-mono text-base font-bold text-[#c4040a]">{{ $certificate->certificate_number }}</span>
                         </div>
                     </div>
 
@@ -51,7 +51,7 @@
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Executive Program</span>
                             <h3 class="text-base font-bold text-[#0f131f] mt-1">{{ $certificate->course?->title ?? 'Executive Certification Program' }}</h3>
                             @if($certificate->course && !$certificate->course->trashed() && $certificate->course->is_published)
-                                <a href="{{ route('courses.show', $certificate->course) }}" class="text-xs font-semibold text-[#c30102] hover:underline mt-1 inline-block">
+                                <a href="{{ route('courses.show', $certificate->course) }}" class="text-xs font-semibold text-[#c4040a] hover:underline mt-1 inline-block">
                                     View Course Curriculum &rarr;
                                 </a>
                             @endif
@@ -100,7 +100,7 @@
                             id="searchCert" 
                             placeholder="Enter Serial (e.g. ACS-2026-XXXXXXXX)" 
                             required
-                            class="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#c30102]"
+                            class="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#c4040a]"
                         >
                         <button type="submit" class="btn-ipdp-primary px-5 py-2.5 rounded-xl text-xs font-bold shadow-sm">
                             Validate
@@ -111,8 +111,8 @@
         @else
             <!-- Initial Search Card -->
             <div class="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-xl text-center">
-                <div class="w-16 h-16 rounded-2xl bg-[#051c45]/10 text-[#051c45] flex items-center justify-center mx-auto text-2xl mb-4">
-                    <i class="fas fa-award text-[#051c45]"></i>
+                <div class="w-16 h-16 rounded-2xl bg-[#063b96]/10 text-[#063b96] flex items-center justify-center mx-auto text-2xl mb-4">
+                    <i class="fas fa-award text-[#063b96]"></i>
                 </div>
                 <h2 class="text-2xl font-black text-[#0f131f]">Authenticate Official Credential</h2>
                 <p class="text-sm text-gray-600 mt-2 max-w-md mx-auto leading-relaxed">
@@ -127,7 +127,7 @@
                             id="searchCertInit" 
                             placeholder="Enter Serial Number (e.g. ACS-2026-XXXXXXXX)" 
                             required
-                            class="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#c30102]"
+                            class="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#c4040a]"
                         >
                         <button type="submit" class="btn-ipdp-primary px-6 py-3 rounded-xl text-xs font-bold shadow-sm whitespace-nowrap">
                             Verify Credential
@@ -142,7 +142,7 @@
             <h4 class="font-bold text-sm text-[#0f131f] mb-1">Employers & HR Verification Desk</h4>
             <p class="text-xs text-gray-500 mb-4">
                 To request formal verification letters or bulk credential audits, please contact our registry desk directly at 
-                <a href="mailto:{{ $certEmail }}" class="text-[#c30102] font-bold">{{ $certEmail }}</a> or call <strong>{{ $certHotline }}</strong>.
+                <a href="mailto:{{ $certEmail }}" class="text-[#c4040a] font-bold">{{ $certEmail }}</a> or call <strong>{{ $certHotline }}</strong>.
             </p>
         </div>
 

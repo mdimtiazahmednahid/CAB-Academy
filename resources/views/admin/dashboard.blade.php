@@ -4,8 +4,9 @@
 
 @section('content')
 <div class="space-y-4 sm:space-y-5">
-    <!-- 1. Compact Executive Command Masthead Banner -->
-    <div class="bg-gradient-to-br from-[#020c21] via-[#051c45] to-[#0b2d6b] rounded-2xl p-4 sm:p-5 text-white shadow-md border border-white/10 relative overflow-hidden">
+    <!-- 1. Compact Executive Command Masthead Banner (ACS Royal Cobalt + 24K Gold Border) -->
+    <div class="rounded-2xl p-4 sm:p-5 text-white shadow-md border border-[#dca22c]/40 relative overflow-hidden"
+         style="background: linear-gradient(135deg, #01143d 0%, #021f59 45%, #063b96 85%, #0066e6 100%);">
         <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
             <div>
                 <div class="flex flex-wrap items-center gap-2 mb-1">
@@ -26,7 +27,7 @@
 
             <!-- Compact Quick Launch Action Pills -->
             <div class="flex flex-wrap items-center gap-1.5">
-                <a href="{{ route('admin.courses') }}" class="px-3 py-1.5 rounded-xl bg-[#c30102] hover:bg-[#a50102] text-white text-xs font-bold shadow-xs inline-flex items-center gap-1.5 transition-all">
+                <a href="{{ route('admin.courses') }}" class="px-3 py-1.5 rounded-xl bg-[#c4040a] hover:bg-[#a50102] text-white text-xs font-bold shadow-xs inline-flex items-center gap-1.5 transition-all">
                     <i class="fas fa-plus text-[10px]"></i>
                     <span>Courses</span>
                 </a>
@@ -47,6 +48,14 @@
                         <i class="fas fa-wand-magic-sparkles text-pink-300 text-[10px]"></i>
                         <span>CMS</span>
                     </a>
+                    <a href="{{ route('admin.certificates.index') }}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-[#dca22c]/35 text-xs font-bold inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-certificate text-[#ffe27a] text-[10px]"></i>
+                        <span>Certificates</span>
+                    </a>
+                    <a href="{{ route('admin.settings') }}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold inline-flex items-center gap-1.5 transition-all">
+                        <i class="fas fa-cloud-upload-alt text-emerald-300 text-[10px]"></i>
+                        <span>Backup &amp; Settings</span>
+                    </a>
                 @endif
             </div>
         </div>
@@ -62,12 +71,12 @@
     <!-- 2. Compact 2-Col Mobile / 5-Col Desktop KPI Strip -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
         <!-- Realized Revenue -->
-        <a href="{{ auth()->user()->isAdmin() ? route('admin.accounting.index') : '#' }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#051c45]/30 transition-all group">
+        <a href="{{ auth()->user()->isAdmin() ? route('admin.accounting.index') : '#' }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#063b96]/30 transition-all group">
             <div class="flex items-center justify-between mb-1.5">
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Revenue</span>
                 <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-xs">৳</span>
             </div>
-            <p class="text-lg sm:text-xl font-black text-[#051c45] tracking-tight">৳{{ number_format($totalRealizedRevenue ?? 0, 0) }}</p>
+            <p class="text-lg sm:text-xl font-black text-[#063b96] tracking-tight">৳{{ number_format($totalRealizedRevenue ?? 0, 0) }}</p>
             <p class="text-[10px] font-semibold text-emerald-600 mt-1 truncate">
                 +৳{{ number_format($monthlyRevenue ?? 0, 0) }} this mo
             </p>
@@ -81,7 +90,7 @@
                     <i class="fas fa-clock"></i>
                 </span>
             </div>
-            <p class="text-lg sm:text-xl font-black {{ ($pendingPaymentsCount ?? 0) > 0 ? 'text-amber-600' : 'text-[#051c45]' }} tracking-tight">
+            <p class="text-lg sm:text-xl font-black {{ ($pendingPaymentsCount ?? 0) > 0 ? 'text-amber-600' : 'text-[#063b96]' }} tracking-tight">
                 {{ number_format($pendingPaymentsCount ?? 0) }}
             </p>
             <p class="text-[10px] font-semibold text-slate-500 mt-1 truncate">
@@ -90,35 +99,35 @@
         </a>
 
         <!-- Total Students & Enrollments -->
-        <a href="{{ auth()->user()->isAdmin() ? route('admin.users') : '#' }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#051c45]/30 transition-all">
+        <a href="{{ auth()->user()->isAdmin() ? route('admin.users') : '#' }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#063b96]/30 transition-all">
             <div class="flex items-center justify-between mb-1.5">
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Students</span>
-                <span class="w-7 h-7 rounded-lg bg-[#051c45]/[0.08] text-[#051c45] flex items-center justify-center text-xs">
+                <span class="w-7 h-7 rounded-lg bg-[#063b96]/[0.08] text-[#063b96] flex items-center justify-center text-xs">
                     <i class="fas fa-user-graduate"></i>
                 </span>
             </div>
-            <p class="text-lg sm:text-xl font-black text-[#051c45] tracking-tight">{{ number_format($totalStudents) }}</p>
+            <p class="text-lg sm:text-xl font-black text-[#063b96] tracking-tight">{{ number_format($totalStudents) }}</p>
             <p class="text-[10px] font-semibold text-slate-500 mt-1 truncate">
                 {{ number_format($totalEnrollments ?? 0) }} Enrollments
             </p>
         </a>
 
         <!-- Published Courses & Certificates -->
-        <a href="{{ route('admin.courses') }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#051c45]/30 transition-all">
+        <a href="{{ route('admin.courses') }}" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#063b96]/30 transition-all">
             <div class="flex items-center justify-between mb-1.5">
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Courses</span>
                 <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
                     <i class="fas fa-book-open"></i>
                 </span>
             </div>
-            <p class="text-lg sm:text-xl font-black text-[#051c45] tracking-tight">{{ number_format($publishedCourses) }}</p>
+            <p class="text-lg sm:text-xl font-black text-[#063b96] tracking-tight">{{ number_format($publishedCourses) }}</p>
             <p class="text-[10px] font-semibold text-slate-500 mt-1 truncate">
                 {{ $draftCourses ?? 0 }} Drafts &bull; {{ number_format($totalCertificates ?? 0) }} Certs
             </p>
         </a>
 
         <!-- Quizzes & Career Placement -->
-        <a href="{{ auth()->user()->isAdmin() ? route('admin.jobs') : '#' }}" class="col-span-2 sm:col-span-1 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#051c45]/30 transition-all">
+        <a href="{{ auth()->user()->isAdmin() ? route('admin.jobs') : '#' }}" class="col-span-2 sm:col-span-1 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-[#063b96]/30 transition-all">
             <div class="flex items-center justify-between mb-1.5">
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Careers &amp; Quiz</span>
                 <span class="w-7 h-7 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-xs">
@@ -126,7 +135,7 @@
                 </span>
             </div>
             <div class="flex items-baseline justify-between">
-                <p class="text-lg sm:text-xl font-black text-[#051c45] tracking-tight">{{ number_format($totalAssessments) }}</p>
+                <p class="text-lg sm:text-xl font-black text-[#063b96] tracking-tight">{{ number_format($totalAssessments) }}</p>
                 <span class="px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">{{ $averageScore }}%</span>
             </div>
             <p class="text-[10px] font-semibold text-slate-500 mt-1 truncate">
@@ -140,13 +149,13 @@
         <!-- 6-Month Revenue & Enrollment Velocity Chart -->
         <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 flex flex-col justify-between shadow-2xs">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
-                <h2 class="font-extrabold text-xs sm:text-sm text-[#051c45] uppercase tracking-wider flex items-center gap-2">
-                    <i class="fas fa-chart-column text-[#c30102]"></i>
+                <h2 class="font-extrabold text-xs sm:text-sm text-[#063b96] uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-chart-column text-[#c4040a]"></i>
                     <span>6-Month Revenue &amp; Enrollment Velocity</span>
                 </h2>
                 <div class="flex items-center gap-3 text-[10px] font-bold">
-                    <span class="inline-flex items-center gap-1 text-[#051c45]">
-                        <span class="w-2 h-2 rounded-xs bg-[#051c45]"></span> Tuition
+                    <span class="inline-flex items-center gap-1 text-[#063b96]">
+                        <span class="w-2 h-2 rounded-xs bg-[#063b96]"></span> Tuition
                     </span>
                     <span class="inline-flex items-center gap-1 text-rose-600">
                         <span class="w-2 h-2 rounded-xs bg-rose-500"></span> Expenses
@@ -161,12 +170,12 @@
                         $expPct = max(4, min(100, round((($m['expenses'] ?? 0) / max(1, $maxMonthlyRevenue ?? 1)) * 100)));
                     @endphp
                     <div class="flex flex-col items-center h-full justify-end group">
-                        <div class="text-[10px] font-bold text-[#051c45] mb-1 opacity-85 group-hover:opacity-100">
+                        <div class="text-[10px] font-bold text-[#063b96] mb-1 opacity-85 group-hover:opacity-100">
                             ৳{{ $m['revenue'] >= 1000 ? number_format($m['revenue'] / 1000, 1) . 'k' : number_format($m['revenue'], 0) }}
                         </div>
                         <div class="w-full max-w-[48px] flex items-end justify-center gap-1 h-24 bg-slate-50/80 rounded-xl p-1 border border-slate-100">
-                            <div class="w-1/2 bg-gradient-to-t from-[#051c45] to-[#1e40af] rounded-md transition-all duration-500" style="height: {{ $m['revenue'] > 0 ? $revPct : 6 }}%" title="Revenue: ৳{{ number_format($m['revenue'], 0) }}"></div>
-                            <div class="w-1/2 bg-gradient-to-t from-[#c30102] to-rose-400 rounded-md transition-all duration-500" style="height: {{ $m['expenses'] > 0 ? $expPct : 4 }}%" title="Expenses: ৳{{ number_format($m['expenses'], 0) }}"></div>
+                            <div class="w-1/2 bg-gradient-to-t from-[#063b96] to-[#1e40af] rounded-md transition-all duration-500" style="height: {{ $m['revenue'] > 0 ? $revPct : 6 }}%" title="Revenue: ৳{{ number_format($m['revenue'], 0) }}"></div>
+                            <div class="w-1/2 bg-gradient-to-t from-[#c4040a] to-rose-400 rounded-md transition-all duration-500" style="height: {{ $m['expenses'] > 0 ? $expPct : 4 }}%" title="Expenses: ৳{{ number_format($m['expenses'], 0) }}"></div>
                         </div>
                         <span class="text-[10px] font-extrabold text-slate-700 mt-1.5">{{ $m['short_label'] }}</span>
                         <span class="text-[9px] text-slate-400 font-semibold">{{ $m['enrollments'] }} {{ \Illuminate\Support\Str::plural('seat', $m['enrollments']) }}</span>
@@ -179,12 +188,12 @@
         <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 flex flex-col justify-between space-y-3 shadow-2xs">
             <div>
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <h2 class="font-extrabold text-sm text-[#051c45] uppercase tracking-wider flex items-center gap-2">
+                    <h2 class="font-extrabold text-sm text-[#063b96] uppercase tracking-wider flex items-center gap-2">
                         <i class="fas fa-vault text-emerald-600"></i>
                         <span>Treasury Summary</span>
                     </h2>
                     @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.accounting.statement') }}" target="_blank" class="text-[11px] font-bold text-[#051c45] hover:text-[#c30102] inline-flex items-center gap-1">
+                        <a href="{{ route('admin.accounting.statement') }}" target="_blank" class="text-[11px] font-bold text-[#063b96] hover:text-[#c4040a] inline-flex items-center gap-1">
                             <i class="fas fa-print text-[10px]"></i> Statement
                         </a>
                     @endif
@@ -199,9 +208,9 @@
                         <span class="font-semibold text-rose-900">Total Operating Expenses</span>
                         <span class="font-black text-rose-700 text-sm">৳{{ number_format($totalExpenses ?? 0, 2) }}</span>
                     </div>
-                    <div class="flex items-center justify-between p-3 rounded-xl bg-[#051c45]/[0.05] border border-[#051c45]/15">
-                        <span class="font-extrabold text-[#051c45]">Net Operating Surplus</span>
-                        <span class="font-black {{ ($netOperatingSurplus ?? 0) >= 0 ? 'text-[#051c45]' : 'text-rose-600' }} text-sm">
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-[#063b96]/[0.05] border border-[#063b96]/15">
+                        <span class="font-extrabold text-[#063b96]">Net Operating Surplus</span>
+                        <span class="font-black {{ ($netOperatingSurplus ?? 0) >= 0 ? 'text-[#063b96]' : 'text-rose-600' }} text-sm">
                             ৳{{ number_format($netOperatingSurplus ?? 0, 2) }}
                         </span>
                     </div>
@@ -213,10 +222,10 @@
             </div>
 
             <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                <a href="{{ route('admin.certificates.index') }}" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-[#051c45] text-[#051c45] hover:text-white text-center text-xs font-bold transition-colors">
+                <a href="{{ route('admin.certificates.index') }}" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-[#063b96] text-[#063b96] hover:text-white text-center text-xs font-bold transition-colors">
                     <i class="fas fa-award mr-1"></i> Certificates
                 </a>
-                <a href="{{ route('admin.categories.index') }}" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-[#051c45] text-[#051c45] hover:text-white text-center text-xs font-bold transition-colors">
+                <a href="{{ route('admin.categories.index') }}" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-[#063b96] text-[#063b96] hover:text-white text-center text-xs font-bold transition-colors">
                     <i class="fas fa-layer-group mr-1"></i> Categories
                 </a>
             </div>
@@ -230,10 +239,10 @@
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <span class="w-2.5 h-2.5 rounded-full {{ ($pendingPaymentsCount ?? 0) > 0 ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500' }}"></span>
-                    <h2 class="font-extrabold text-sm text-[#051c45] uppercase tracking-wider">Pending Payment Approvals</h2>
+                    <h2 class="font-extrabold text-sm text-[#063b96] uppercase tracking-wider">Pending Payment Approvals</h2>
                 </div>
                 @if(auth()->user()->isAdmin())
-                    <a href="{{ route('admin.payments.index') }}" class="text-xs font-bold text-[#051c45] hover:text-[#c30102] transition-colors">
+                    <a href="{{ route('admin.payments.index') }}" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a] transition-colors">
                         View All ({{ $pendingPaymentsCount ?? 0 }}) →
                     </a>
                 @endif
@@ -248,7 +257,7 @@
                         <div class="min-w-0">
                             <div class="flex items-center flex-wrap gap-1.5">
                                 <span class="text-xs font-extrabold text-slate-900 truncate">{{ $payment->user?->name ?? 'Student' }}</span>
-                                <span class="px-2 py-0.5 rounded bg-slate-100 text-[#051c45] font-mono text-[10px] font-bold">
+                                <span class="px-2 py-0.5 rounded bg-slate-100 text-[#063b96] font-mono text-[10px] font-bold">
                                     {{ $payment->paymentMethod?->provider_name ?? 'bKash/Direct' }}: {{ $payment->transaction_id }}
                                 </span>
                                 <span class="px-2 py-0.5 rounded-full text-[9px] font-bold {{ $pMode === 'in_person' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-sky-50 text-sky-700 border border-sky-200' }}">
@@ -260,7 +269,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
-                            <span class="text-xs font-black text-[#051c45] mr-1">৳{{ number_format($payment->amount, 0) }}</span>
+                            <span class="text-xs font-black text-[#063b96] mr-1">৳{{ number_format($payment->amount, 0) }}</span>
                             <a href="{{ route('payments.invoice', $payment) }}" target="_blank" title="View Receipt" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs transition-colors">
                                 <i class="fas fa-file-invoice"></i>
                             </a>
@@ -298,10 +307,10 @@
         <div class="lg:col-span-6 liquid-glass-card bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-trophy text-[#051c45] text-xs"></i>
-                    <h2 class="font-extrabold text-sm text-[#051c45] uppercase tracking-wider">Course Performance</h2>
+                    <i class="fas fa-trophy text-[#063b96] text-xs"></i>
+                    <h2 class="font-extrabold text-sm text-[#063b96] uppercase tracking-wider">Course Performance</h2>
                 </div>
-                <a href="{{ route('admin.courses') }}" class="text-xs font-bold text-[#051c45] hover:text-[#c30102] transition-colors">
+                <a href="{{ route('admin.courses') }}" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a] transition-colors">
                     All Courses →
                 </a>
             </div>
@@ -312,11 +321,11 @@
                         <div class="flex items-center gap-3 min-w-0">
                             <img src="{{ $course->cover_image_url }}" alt="{{ $course->title }}" class="w-12 h-9 rounded-lg object-cover border border-slate-200 shrink-0" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=300&q=80';">
                             <div class="min-w-0">
-                                <a href="{{ route('admin.courses.show', $course) }}" class="text-xs font-bold text-slate-900 hover:text-[#051c45] truncate block">
+                                <a href="{{ route('admin.courses.show', $course) }}" class="text-xs font-bold text-slate-900 hover:text-[#063b96] truncate block">
                                     {{ $course->title }}
                                 </a>
                                 <div class="text-[11px] text-slate-500 flex items-center flex-wrap gap-1.5 mt-0.5">
-                                    <span class="font-semibold text-[#051c45]">{{ $course->students_count }} {{ \Illuminate\Support\Str::plural('Student', $course->students_count) }}</span>
+                                    <span class="font-semibold text-[#063b96]">{{ $course->students_count }} {{ \Illuminate\Support\Str::plural('Student', $course->students_count) }}</span>
                                     <span>&bull;</span>
                                     <span>{{ $course->lessons_count }} Lessons</span>
                                     <span>&bull;</span>
@@ -331,7 +340,7 @@
                                 <div class="text-xs font-black text-emerald-700">৳{{ number_format((float) ($course->realized_revenue ?? 0), 0) }}</div>
                                 <div class="text-[10px] text-slate-400">Fee: {{ $course->formatted_price }}</div>
                             </div>
-                            <a href="{{ route('admin.courses.show', $course) }}" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-[#051c45] text-[#051c45] hover:text-white text-[11px] font-bold transition-colors">
+                            <a href="{{ route('admin.courses.show', $course) }}" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-[#063b96] text-[#063b96] hover:text-white text-[11px] font-bold transition-colors">
                                 Manage
                             </a>
                         </div>
@@ -351,11 +360,11 @@
         <div class="lg:col-span-6 liquid-glass-card bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-users text-[#051c45] text-xs"></i>
-                    <h3 class="font-extrabold text-sm text-[#051c45] uppercase tracking-wider">Recent Student Accounts</h3>
+                    <i class="fas fa-users text-[#063b96] text-xs"></i>
+                    <h3 class="font-extrabold text-sm text-[#063b96] uppercase tracking-wider">Recent Student Accounts</h3>
                 </div>
                 @if(auth()->user()->isAdmin())
-                    <a href="{{ route('admin.users') }}" class="text-xs font-bold text-[#051c45] hover:text-[#c30102] transition-colors">
+                    <a href="{{ route('admin.users') }}" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a] transition-colors">
                         Directory ({{ $totalStudents }}) →
                     </a>
                 @endif
@@ -367,7 +376,7 @@
                             @if($stu->hasCustomProfilePicture())
                                 <img src="{{ $stu->profile_picture_url }}" alt="{{ $stu->name }}" class="w-8 h-8 rounded-lg object-cover border border-slate-200 shrink-0" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($stu->name) }}&background=051c45&color=fff';">
                             @else
-                                <div class="w-8 h-8 rounded-lg bg-[#051c45] text-white font-black text-xs flex items-center justify-center shrink-0">
+                                <div class="w-8 h-8 rounded-lg bg-[#063b96] text-white font-black text-xs flex items-center justify-center shrink-0">
                                     {{ strtoupper(substr($stu->name ?? 'S', 0, 1)) }}
                                 </div>
                             @endif
@@ -395,11 +404,11 @@
         <div class="lg:col-span-6 liquid-glass-card bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-briefcase text-[#c30102] text-xs"></i>
-                    <h3 class="font-extrabold text-sm text-[#051c45] uppercase tracking-wider">Recent Career Applications</h3>
+                    <i class="fas fa-briefcase text-[#c4040a] text-xs"></i>
+                    <h3 class="font-extrabold text-sm text-[#063b96] uppercase tracking-wider">Recent Career Applications</h3>
                 </div>
                 @if(auth()->user()->isAdmin())
-                    <a href="{{ route('admin.jobs') }}" class="text-xs font-bold text-[#051c45] hover:text-[#c30102] transition-colors">
+                    <a href="{{ route('admin.jobs') }}" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a] transition-colors">
                         Manage Jobs ({{ $activeJobsCount ?? 0 }}) →
                     </a>
                 @endif
@@ -411,7 +420,7 @@
                             <div class="text-xs font-bold text-slate-900 truncate">
                                 {{ $app->user?->name ?? 'Candidate' }}
                                 <span class="text-slate-400 font-normal">&rarr;</span>
-                                <span class="text-[#051c45]">{{ $app->jobPost?->title ?? 'Position' }}</span>
+                                <span class="text-[#063b96]">{{ $app->jobPost?->title ?? 'Position' }}</span>
                             </div>
                             <div class="text-[11px] text-slate-500 truncate mt-0.5">
                                 {{ $app->jobPost?->company ?? 'Employer' }} &bull; Applied {{ $app->created_at?->diffForHumans() }}
@@ -435,7 +444,7 @@
         <!-- Recent Quiz Activity (7 cols) -->
         <div class="lg:col-span-7 liquid-glass-card bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="font-extrabold text-sm text-[#051c45] uppercase tracking-wider">Recent Quiz Activity</h3>
+                <h3 class="font-extrabold text-sm text-[#063b96] uppercase tracking-wider">Recent Quiz Activity</h3>
                 <span class="text-xs text-slate-400 font-medium">Latest Assessments</span>
             </div>
             <div class="overflow-x-auto">
@@ -489,8 +498,8 @@
         <!-- Recent Student & Corporate Inquiries (5 cols) -->
         <div class="lg:col-span-5 liquid-glass-card bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="font-extrabold text-sm text-[#051c45] uppercase tracking-wider">Recent Inquiries</h3>
-                <a href="{{ route('admin.inquiries.index') }}" class="text-xs font-bold text-[#051c45] hover:text-[#c30102] transition-colors">
+                <h3 class="font-extrabold text-sm text-[#063b96] uppercase tracking-wider">Recent Inquiries</h3>
+                <a href="{{ route('admin.inquiries.index') }}" class="text-xs font-bold text-[#063b96] hover:text-[#c4040a] transition-colors">
                     Inbox ({{ $pendingInquiriesCount ?? 0 }} Pending) →
                 </a>
             </div>

@@ -68,11 +68,11 @@
                                     <div class="w-10 h-10 rounded-xl bg-white border border-gray-200 p-1 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
                                         <img src="{{ storage_asset($job->company_logo) }}" alt="{{ $job->company }}" class="w-full h-full object-contain object-center" onerror="this.parentElement.style.display='none'; this.parentElement.nextElementSibling.style.display='flex';">
                                     </div>
-                                    <div style="display:none;" class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#051c45] to-[#1e3a8a] text-white items-center justify-center shrink-0 shadow-xs">
+                                    <div style="display:none;" class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#063b96] to-[#1e3a8a] text-white items-center justify-center shrink-0 shadow-xs">
                                         <span class="text-xs font-black tracking-wider">{{ $aInit }}</span>
                                     </div>
                                 @else
-                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#051c45] to-[#1e3a8a] text-white flex items-center justify-center shrink-0 shadow-xs">
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#063b96] to-[#1e3a8a] text-white flex items-center justify-center shrink-0 shadow-xs">
                                         <span class="text-xs font-black tracking-wider">{{ $aInit }}</span>
                                     </div>
                                 @endif
@@ -183,7 +183,7 @@
                         <div id="create_logo_img_wrap" class="w-full h-full rounded-2xl bg-white border border-slate-200 p-1.5 items-center justify-center hidden">
                             <img id="create_logo_preview_img" src="" alt="Preview" class="w-full h-full object-contain object-center">
                         </div>
-                        <div id="create_logo_emblem_wrap" class="w-full h-full rounded-2xl bg-gradient-to-br from-[#051c45] to-[#1e3a8a] text-white flex items-center justify-center shadow-sm">
+                        <div id="create_logo_emblem_wrap" class="w-full h-full rounded-2xl bg-gradient-to-br from-[#063b96] to-[#1e3a8a] text-white flex items-center justify-center shadow-sm">
                             <span id="create_logo_initials" class="text-sm font-black tracking-wider">SG</span>
                         </div>
                     </div>
@@ -267,7 +267,7 @@
                         <div id="edit_logo_img_wrap" class="w-full h-full rounded-2xl bg-white border border-slate-200 p-1.5 items-center justify-center hidden">
                             <img id="edit_logo_preview_img" src="" alt="Preview" class="w-full h-full object-contain object-center">
                         </div>
-                        <div id="edit_logo_emblem_wrap" class="w-full h-full rounded-2xl bg-gradient-to-br from-[#051c45] to-[#1e3a8a] text-white flex items-center justify-center shadow-sm">
+                        <div id="edit_logo_emblem_wrap" class="w-full h-full rounded-2xl bg-gradient-to-br from-[#063b96] to-[#1e3a8a] text-white flex items-center justify-center shadow-sm">
                             <span id="edit_logo_initials" class="text-sm font-black tracking-wider">CA</span>
                         </div>
                     </div>
