@@ -542,43 +542,43 @@
                         <div class="grid grid-cols-2 sm:grid-cols-6 gap-2.5">
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Institution (px)</label>
-                                <input type="number" step="0.5" min="14" max="60" name="certificate_institution_font_size" id="form_inst_font_size"
+                                <input type="number" step="any" min="14" max="60" name="certificate_institution_font_size" id="form_inst_font_size"
                                        value="{{ old('certificate_institution_font_size', $settings['institution_font_size'] ?? '31') }}"
                                        class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Cert Title (px)</label>
-                                <input type="number" step="0.5" min="16" max="64" name="certificate_title_font_size" id="form_title_font_size"
+                                <input type="number" step="any" min="16" max="64" name="certificate_title_font_size" id="form_title_font_size"
                                        value="{{ old('certificate_title_font_size', $settings['title_font_size'] ?? '35') }}"
                                        class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Recipient (px)</label>
-                                <input type="number" step="0.5" min="16" max="64" name="certificate_recipient_font_size" id="form_recipient_font_size"
+                                <input type="number" step="any" min="16" max="64" name="certificate_recipient_font_size" id="form_recipient_font_size"
                                        value="{{ old('certificate_recipient_font_size', $settings['recipient_font_size'] ?? '32') }}"
                                        class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Course Title (px)</label>
-                                <input type="number" step="0.5" min="14" max="56" name="certificate_course_font_size" id="form_course_font_size"
+                                <input type="number" step="any" min="14" max="56" name="certificate_course_font_size" id="form_course_font_size"
                                        value="{{ old('certificate_course_font_size', $settings['course_font_size'] ?? '30') }}"
                                        class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Body Text (px)</label>
-                                <input type="number" step="0.5" min="10" max="32" name="certificate_body_font_size" id="form_body_font_size"
+                                <input type="number" step="any" min="10" max="32" name="certificate_body_font_size" id="form_body_font_size"
                                        value="{{ old('certificate_body_font_size', $settings['body_font_size'] ?? '16.5') }}"
                                        class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">ID &amp; Date (px)</label>
-                                <input type="number" step="0.5" min="8" max="24" name="certificate_meta_font_size" id="form_meta_font_size"
+                                <input type="number" step="any" min="8" max="24" name="certificate_meta_font_size" id="form_meta_font_size"
                                        value="{{ old('certificate_meta_font_size', $settings['meta_font_size'] ?? '11') }}"
                                        class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Seal Text (px)</label>
-                                <input type="number" step="0.5" min="8" max="26" name="certificate_seal_font_size" id="form_seal_font_size"
+                                <input type="number" step="any" min="8" max="26" name="certificate_seal_font_size" id="form_seal_font_size"
                                        value="{{ old('certificate_seal_font_size', $settings['seal_font_size'] ?? '15') }}"
                                        class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
                             </div>
@@ -656,79 +656,79 @@
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">Logo Top (%)</label>
-                                    <input type="number" step="0.5" min="0" max="25" name="certificate_logo_top" id="form_logo_top"
+                                    <input type="number" step="any" min="0" max="25" name="certificate_logo_top" id="form_logo_top"
                                            value="{{ old('certificate_logo_top', $settings['logo_top'] ?? '1.5') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">Logo Width (%)</label>
-                                    <input type="number" step="0.5" min="10" max="70" name="certificate_logo_width" id="form_logo_width"
+                                    <input type="number" step="any" min="10" max="70" name="certificate_logo_width" id="form_logo_width"
                                            value="{{ old('certificate_logo_width', $settings['logo_width'] ?? '34.5') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">Title Top (%)</label>
-                                    <input type="number" step="0.2" min="5" max="40" name="certificate_title_top" id="form_title_top"
+                                    <input type="number" step="any" min="5" max="40" name="certificate_title_top" id="form_title_top"
                                            value="{{ old('certificate_title_top', $settings['title_top'] ?? '18.6') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">Conferment Top (%)</label>
-                                    <input type="number" step="0.2" min="15" max="50" name="certificate_conferment_top" id="form_conferment_top"
+                                    <input type="number" step="any" min="15" max="50" name="certificate_conferment_top" id="form_conferment_top"
                                            value="{{ old('certificate_conferment_top', $settings['conferment_top'] ?? '29.8') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">Name Top (%)</label>
-                                    <input type="number" step="0.2" min="20" max="60" name="certificate_recipient_top" id="form_recipient_top"
+                                    <input type="number" step="any" min="20" max="60" name="certificate_recipient_top" id="form_recipient_top"
                                            value="{{ old('certificate_recipient_top', $settings['recipient_top'] ?? '34.8') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">Body Top (%)</label>
-                                    <input type="number" step="0.2" min="25" max="70" name="certificate_body_top" id="form_body_top"
+                                    <input type="number" step="any" min="25" max="70" name="certificate_body_top" id="form_body_top"
                                            value="{{ old('certificate_body_top', $settings['body_top'] ?? '45.4') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">Course Top (%)</label>
-                                    <input type="number" step="0.2" min="35" max="80" name="certificate_course_top" id="form_course_top"
+                                    <input type="number" step="any" min="35" max="80" name="certificate_course_top" id="form_course_top"
                                            value="{{ old('certificate_course_top', $settings['course_top'] ?? '54.0') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">ID/Date Top (%)</label>
-                                    <input type="number" step="0.2" min="45" max="85" name="certificate_meta_top" id="form_meta_top"
+                                    <input type="number" step="any" min="45" max="85" name="certificate_meta_top" id="form_meta_top"
                                            value="{{ old('certificate_meta_top', $settings['meta_top'] ?? '67.2') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">ID/Date Left (%)</label>
-                                    <input type="number" step="0.2" min="0" max="45" name="certificate_meta_left" id="form_meta_left"
+                                    <input type="number" step="any" min="0" max="45" name="certificate_meta_left" id="form_meta_left"
                                            value="{{ old('certificate_meta_left', $settings['meta_left'] ?? '5.2') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">QR Top (%)</label>
-                                    <input type="number" step="0.5" min="40" max="85" name="certificate_qr_top" id="form_qr_top"
+                                    <input type="number" step="any" min="40" max="85" name="certificate_qr_top" id="form_qr_top"
                                            value="{{ old('certificate_qr_top', $settings['qr_top'] ?? '62.0') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">QR Size (%)</label>
-                                    <input type="number" step="0.5" min="8" max="32" name="certificate_qr_width" id="form_qr_width"
+                                    <input type="number" step="any" min="8" max="32" name="certificate_qr_width" id="form_qr_width"
                                            value="{{ old('certificate_qr_width', $settings['qr_width'] ?? '19.8') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">Footer Bottom (%)</label>
-                                    <input type="number" step="0.2" min="1" max="20" name="certificate_footer_bottom" id="form_footer_bottom"
+                                    <input type="number" step="any" min="1" max="20" name="certificate_footer_bottom" id="form_footer_bottom"
                                            value="{{ old('certificate_footer_bottom', $settings['footer_bottom'] ?? '6.2') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-semibold text-gray-700 mb-1">Seal Size (cqw)</label>
-                                    <input type="number" step="0.5" min="6" max="24" name="certificate_seal_size" id="form_seal_size"
+                                    <input type="number" step="any" min="6" max="24" name="certificate_seal_size" id="form_seal_size"
                                            value="{{ old('certificate_seal_size', $settings['seal_size'] ?? '14.8') }}"
                                            class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
                                 </div>
