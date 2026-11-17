@@ -41,6 +41,14 @@
     $recipientFontSize = (float) \App\Models\Setting::getVal('certificate_recipient_font_size', '32') ?: 32;
     $courseFontSize = (float) \App\Models\Setting::getVal('certificate_course_font_size', '30') ?: 30;
     $bodyFontSize = (float) \App\Models\Setting::getVal('certificate_body_font_size', '16.5') ?: 16.5;
+    $titleFont = \App\Models\Setting::getVal('certificate_title_font', 'Cinzel') ?: 'Cinzel';
+    $recipientFont = \App\Models\Setting::getVal('certificate_recipient_font', 'Alex Brush') ?: 'Alex Brush';
+    $courseFont = \App\Models\Setting::getVal('certificate_course_font', 'Anton') ?: 'Anton';
+    $bodyFont = \App\Models\Setting::getVal('certificate_body_font', 'Aleo') ?: 'Aleo';
+    $titleFontCss = "'{$titleFont}', 'Cinzel', serif";
+    $recipientFontCss = "'{$recipientFont}', 'Alex Brush', cursive";
+    $courseFontCss = "'{$courseFont}', 'Anton', sans-serif";
+    $bodyFontCss = "'{$bodyFont}', 'Aleo', serif";
     $courseTitleLen = mb_strlen((string) $course->title);
     $courseFontSizeAdjusted = $courseTitleLen > 52 ? round($courseFontSize * 0.8, 1) : $courseFontSize;
     $verifyUrl = route('certificate.verify', $certificate->certificate_number);
@@ -187,7 +195,7 @@
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;700&family=Alex+Brush&family=Anton&family=Archivo+Black&family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@700;800&family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;700&family=Alex+Brush&family=Allura&family=Anton&family=Archivo+Black&family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&family=Libre+Baskerville:wght@700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700;800;900&family=Oswald:wght@600;700&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@700;800&family=Roboto:wght@700&family=Sacramento&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {!! acs_inline_compiled_css() !!}
@@ -483,8 +491,8 @@
 
                     <!-- 2. CERTIFICATE / OF PARTICIPATION -->
                     <div class="absolute left-0 right-0 text-center" style="top: 18.6%;">
-                        <h1 class="font-aleo font-bold uppercase m-0"
-                            style="color: #1c2a4c; font-size: 7.81cqw; line-height: 1.02; letter-spacing: 0.02em;">
+                        <h1 class="font-bold uppercase m-0"
+                            style="font-family: {!! $titleFontCss !!}; color: #1c2a4c; font-size: 7.5cqw; line-height: 1.02; letter-spacing: 0.02em;">
                             CERTIFICATE
                         </h1>
                         <p class="font-canva-sans font-bold uppercase m-0"
@@ -495,16 +503,27 @@
 
                     <!-- 3. Conferment Text -->
                     <div class="absolute left-0 right-0 text-center" style="top: 29.8%;">
-                        <p class="font-aleo font-bold m-0"
-                           style="color: #1c2a4c; font-size: 3.19cqw; line-height: 1.2;">
+                        <p class="font-bold m-0"
+                           style="font-family: {!! $bodyFontCss !!}; color: #1c2a4c; font-size: 3.19cqw; line-height: 1.2;">
                             This certificate is presented to
                         </p>
                     </div>
 
-                    <!-- 4. Recipient Name (Amoresa-Matched Script in Gold #ac8444) + Gold Rule -->
-                    <div class="absolute left-0 right-0 flex flex-col items-center text-center" style="top: 34.8%;">
-                        <div class="font-amoresa px-2 whitespace-nowrap"
-                             style="color: #ac8444; font-size: {{ mb_strlen((string) $user->name) > 22 ? '6.1cqw' : '7.4cqw' }}; line-height: 1.12;">
+                    <!-- 4. Recipient Name (Admin-Configurable Font in Gold #ac8444) + Gold Rule -->
+                    @php
+                        $recipientNameStr = trim((string) $user->name);
+                        $recipientLen = mb_strlen($recipientNameStr);
+                        $recipientCqw = match (true) {
+                            $recipientLen > 30 => '3.7cqw',
+                            $recipientLen > 24 => '4.5cqw',
+                            $recipientLen > 18 => '5.4cqw',
+                            default => '6.8cqw',
+                        };
+                    @endphp
+                    <div class="absolute left-0 right-0 flex flex-col items-center text-center px-[6%]" style="top: 34.8%;">
+                        <div class="acs-cert-recipient-name whitespace-nowrap inline-block max-w-full"
+                             data-base-cqw="{{ $recipientCqw }}"
+                             style="font-family: {!! $recipientFontCss !!}; color: #ac8444; font-size: {{ $recipientCqw }}; line-height: 1.12;">
                             {{ $user->name }}
                         </div>
                         <div style="width: 86%; height: 0.22cqw; background-color: #e7bb4b; margin-top: 0.9%;"></div>
@@ -512,16 +531,16 @@
 
                     <!-- 5. Participation Body Text -->
                     <div class="absolute left-0 right-0 flex justify-center text-center" style="top: 45.4%;">
-                        <p class="font-aleo font-normal m-0"
-                           style="color: #1c2a4c; font-size: 2.32cqw; line-height: 1.42; max-width: 86%;">
+                        <p class="font-normal m-0"
+                           style="font-family: {!! $bodyFontCss !!}; color: #1c2a4c; font-size: 2.32cqw; line-height: 1.42; max-width: 86%;">
                             Successfully participated in the training program, demonstrating active engagement and commitment to professional development.
                         </p>
                     </div>
 
-                    <!-- 6. Course Title (Anton Uppercase in #003878) -->
+                    <!-- 6. Course Title (Admin-Configurable Font in #003878) -->
                     <div class="absolute left-0 right-0 text-center" style="top: 54.0%; padding: 0 3.5%;">
-                        <h2 class="font-anton font-normal uppercase m-0"
-                            style="color: #003878; font-size: {{ $courseTitleLen > 48 ? '3.35cqw' : '4.35cqw' }}; line-height: 1.16; letter-spacing: 0.015em;">
+                        <h2 class="font-normal uppercase m-0"
+                            style="font-family: {!! $courseFontCss !!}; color: #003878; font-size: {{ $courseTitleLen > 48 ? '3.35cqw' : '4.35cqw' }}; line-height: 1.16; letter-spacing: 0.015em;">
                             &ldquo;{{ mb_strtoupper($course->title) }}&rdquo;
                         </h2>
                     </div>
@@ -632,24 +651,27 @@
 
                 <!-- Title of Honor & Recipient -->
                 <div class="text-center my-2 sm:my-4 print-honor-block">
-                    <span class="text-[11px] sm:text-xs font-cinzel {{ $theme['title_color'] }} uppercase tracking-[0.3em] block mb-0.5 font-bold">
+                    <span class="text-[11px] sm:text-xs {{ $theme['title_color'] }} uppercase tracking-[0.3em] block mb-0.5 font-bold"
+                          style="font-family: {!! $titleFontCss !!};">
                         {{ $certTitle }}
                     </span>
-                    <p class="text-[11px] sm:text-xs text-gray-600 italic">{{ $confermentText }}</p>
+                    <p class="text-[11px] sm:text-xs text-gray-600 italic" style="font-family: {!! $bodyFontCss !!};">{{ $confermentText }}</p>
                     
                     <!-- Recipient Name -->
-                    <div class="my-2 sm:my-3 py-1 sm:py-1.5 border-b-2 border-dotted {{ $theme['recipient_border'] }} inline-block min-w-[280px] sm:min-w-[440px]">
-                        <h2 class="font-playfair text-2xl sm:text-4xl lg:text-5xl font-black {{ $theme['recipient_color'] }} tracking-tight">
+                    <div class="my-2 sm:my-3 py-1 sm:py-1.5 border-b-2 border-dotted {{ $theme['recipient_border'] }} inline-block w-full max-w-[92%] sm:max-w-[82%] px-2">
+                        <h2 class="acs-cert-recipient-name text-2xl sm:text-4xl lg:text-5xl font-black {{ $theme['recipient_color'] }} tracking-tight whitespace-nowrap inline-block"
+                            style="font-family: {!! $recipientFontCss !!};">
                             {{ $user->name }}
                         </h2>
                     </div>
 
-                    <p class="text-[11px] sm:text-xs text-gray-700 max-w-2xl mx-auto leading-relaxed mt-1">
+                    <p class="text-[11px] sm:text-xs text-gray-700 max-w-2xl mx-auto leading-relaxed mt-1" style="font-family: {!! $bodyFontCss !!};">
                         {{ $completionText }}
                     </p>
 
                     <!-- Course Title -->
-                    <h3 class="font-cinzel text-lg sm:text-2xl font-bold {{ $theme['course_color'] }} mt-2 uppercase tracking-wide">
+                    <h3 class="text-lg sm:text-2xl font-bold {{ $theme['course_color'] }} mt-2 uppercase tracking-wide"
+                        style="font-family: {!! $courseFontCss !!};">
                         {{ $course->title }}
                     </h3>
 
@@ -807,5 +829,53 @@
         </div>
     @endif
 
+    <script>
+        (function () {
+            function fitCertRecipientNames() {
+                document.querySelectorAll('.acs-cert-recipient-name').forEach(function (el) {
+                    var parent = el.parentElement;
+                    if (!parent) return;
+
+                    var baseCqw = el.getAttribute('data-base-cqw');
+                    if (baseCqw) {
+                        el.style.fontSize = baseCqw;
+                    } else {
+                        el.style.fontSize = '';
+                    }
+
+                    var style = window.getComputedStyle(parent);
+                    var padLeft = parseFloat(style.paddingLeft) || 0;
+                    var padRight = parseFloat(style.paddingRight) || 0;
+                    var maxWidth = (parent.clientWidth - padLeft - padRight) * 0.94;
+                    if (maxWidth <= 0) return;
+
+                    var currentPx = parseFloat(window.getComputedStyle(el).fontSize) || 24;
+                    var guard = 0;
+                    while (el.scrollWidth > maxWidth && currentPx > 12 && guard < 40) {
+                        var ratio = maxWidth / el.scrollWidth;
+                        var nextPx = Math.max(12, Math.floor(currentPx * ratio * 10) / 10);
+                        if (nextPx >= currentPx) {
+                            nextPx = currentPx - 1;
+                        }
+                        el.style.fontSize = nextPx + 'px';
+                        currentPx = nextPx;
+                        guard++;
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', fitCertRecipientNames);
+            } else {
+                fitCertRecipientNames();
+            }
+            window.addEventListener('load', fitCertRecipientNames);
+            window.addEventListener('resize', fitCertRecipientNames);
+            window.addEventListener('beforeprint', fitCertRecipientNames);
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(fitCertRecipientNames);
+            }
+        })();
+    </script>
 </body>
 </html>

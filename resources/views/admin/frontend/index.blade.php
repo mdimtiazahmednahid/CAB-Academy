@@ -178,6 +178,16 @@
                 <span class="w-2 h-2 rounded-full" :class="coursesEnabled ? 'bg-emerald-400' : 'bg-gray-300'"></span>
             </button>
 
+            <button type="button" @click="activeTab = 'course_detail'" 
+                    :class="activeTab === 'course_detail' ? 'bg-[#063b96] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
+                    class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
+                <span class="flex items-center gap-2.5">
+                    <i class="fas fa-sliders-h text-xs"></i>
+                    <span>Course Page (FAQ &amp; Compare)</span>
+                </span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold">Dynamic</span>
+            </button>
+
             <button type="button" @click="activeTab = 'jobs'" 
                     :class="activeTab === 'jobs' ? 'bg-[#021f59] text-white shadow-md' : 'text-gray-700 hover:bg-gray-100'"
                     class="w-full text-left px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
@@ -1699,6 +1709,121 @@
                                 </div>
                             @endforeach
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- COURSE DETAIL PAGE CMS (HIGHLIGHTS, COMPARISON & FAQS) -->
+            <!-- ========================================== -->
+            @php
+                $defaultCourseFaqs = [
+                    ['question' => 'How do I receive my verified digital certificate?', 'answer' => 'Upon completing the course curriculum and cohort evaluation, your digital certificate is officially issued with a cryptographically verifiable serial number and QR registry link recognized by employers and institutions.'],
+                    ['question' => 'What payment methods are supported?', 'answer' => 'Instant bKash, Nagad, and Rocket mobile banking, as well as institutional bank transfers (BEFTN/NPSB). Official digital tax invoices are generated automatically in your portal.'],
+                    ['question' => 'What if I miss a live masterclass session?', 'answer' => 'Full session recordings and course slides are archived within your student learning player for on-demand playback at your convenience.'],
+                ];
+                $savedCourseFaqs = !empty($settings['course_faqs']) ? json_decode($settings['course_faqs'], true) : null;
+                if (!is_array($savedCourseFaqs) || empty($savedCourseFaqs)) {
+                    $savedCourseFaqs = $defaultCourseFaqs;
+                }
+                $defaultAcademyPoints = "Real-world practical case simulations and live industry documentation.\nDirect mentoring from seasoned industry practitioners.\nCryptographically verifiable certificate recognized across leading organizations.";
+                $defaultConventionalPoints = "Rote textbook theory without practical industry execution exposure.\nStatic slides with outdated frameworks and generic examples.\nUnverified paper certificates without digital validation links.";
+            @endphp
+            <div x-show="activeTab === 'course_detail'" class="space-y-6"
+                 x-data="{
+                     courseFaqs: @js($savedCourseFaqs),
+                     addCourseFaq() {
+                         this.courseFaqs.push({ question: '', answer: '' });
+                     },
+                     removeCourseFaq(idx) {
+                         this.courseFaqs.splice(idx, 1);
+                     }
+                 }">
+                <input type="hidden" name="course_faqs_json" :value="JSON.stringify(courseFaqs)">
+
+                <!-- 1. Program Highlights -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-4">
+                    <div>
+                        <h3 class="text-lg font-black text-gray-900">Course Page Highlights (3 Pillars)</h3>
+                        <p class="text-xs text-gray-500">Customize the 3 highlight cards shown inside Course Overview on all course detail pages.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                            <span class="text-[11px] font-extrabold uppercase text-[#063b96]">Highlight 1</span>
+                            <input type="text" name="course_highlight_1_title" value="{{ $settings['course_highlight_1_title'] ?? 'Live Practical' }}" placeholder="Live Practical" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold">
+                            <textarea name="course_highlight_1_desc" rows="2" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs">{{ $settings['course_highlight_1_desc'] ?? 'Interactive sessions with real-world Q&A.' }}</textarea>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                            <span class="text-[11px] font-extrabold uppercase text-[#063b96]">Highlight 2</span>
+                            <input type="text" name="course_highlight_2_title" value="{{ $settings['course_highlight_2_title'] ?? 'Case Templates' }}" placeholder="Case Templates" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold">
+                            <textarea name="course_highlight_2_desc" rows="2" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs">{{ $settings['course_highlight_2_desc'] ?? 'Ready-to-use industry frameworks & tools.' }}</textarea>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                            <span class="text-[11px] font-extrabold uppercase text-[#063b96]">Highlight 3</span>
+                            <input type="text" name="course_highlight_3_title" value="{{ $settings['course_highlight_3_title'] ?? 'QR Certificate' }}" placeholder="QR Certificate" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold">
+                            <textarea name="course_highlight_3_desc" rows="2" class="w-full px-3 py-1.5 rounded-lg border border-gray-300 text-xs">{{ $settings['course_highlight_3_desc'] ?? 'Employer-verifiable digital credential.' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Course Comparison Block -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between gap-4 border-b border-gray-100 pb-3">
+                        <div>
+                            <h3 class="text-lg font-black text-gray-900">Course Comparison Section</h3>
+                            <p class="text-xs text-gray-500">Show or customize the Academy Standard vs Conventional Training comparison on course pages.</p>
+                        </div>
+                        <label class="inline-flex items-center gap-2 cursor-pointer">
+                            <input type="hidden" name="course_comparison_enabled" value="0">
+                            <input type="checkbox" name="course_comparison_enabled" value="1" {{ ($settings['course_comparison_enabled'] ?? '1') == '1' ? 'checked' : '' }} class="rounded text-[#063b96] focus:ring-[#063b96]">
+                            <span class="text-xs font-bold text-gray-700">Show Comparison</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Section Title</label>
+                        <input type="text" name="course_comparison_title" value="{{ $settings['course_comparison_title'] ?? 'Why Corporate Leaders Choose This Masterclass' }}" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs font-semibold">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">Academy Standard Points (1 per line)</label>
+                            <textarea name="course_comparison_academy_points" rows="4" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs">{{ $settings['course_comparison_academy_points'] ?? $defaultAcademyPoints }}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Conventional Training Points (1 per line)</label>
+                            <textarea name="course_comparison_conventional_points" rows="4" class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs">{{ $settings['course_comparison_conventional_points'] ?? $defaultConventionalPoints }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Dynamic FAQs -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-sm space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-3">
+                        <div>
+                            <h3 class="text-lg font-black text-gray-900">Frequently Asked Questions (Dynamic)</h3>
+                            <p class="text-xs text-gray-500">Add, edit, or remove FAQs displayed on course detail pages.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <label class="inline-flex items-center gap-2 cursor-pointer">
+                                <input type="hidden" name="course_faqs_enabled" value="0">
+                                <input type="checkbox" name="course_faqs_enabled" value="1" {{ ($settings['course_faqs_enabled'] ?? '1') == '1' ? 'checked' : '' }} class="rounded text-[#063b96] focus:ring-[#063b96]">
+                                <span class="text-xs font-bold text-gray-700">Show FAQs</span>
+                            </label>
+                            <button type="button" @click="addCourseFaq()" class="px-3 py-1.5 rounded-xl bg-[#063b96] hover:bg-[#052d75] text-white text-xs font-bold cursor-pointer">
+                                + Add FAQ
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <template x-for="(faq, idx) in courseFaqs" :key="idx">
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-[11px] font-extrabold text-[#063b96]" x-text="'FAQ #' + (idx + 1)"></span>
+                                    <button type="button" @click="removeCourseFaq(idx)" class="text-xs font-bold text-red-600 hover:underline cursor-pointer">Remove</button>
+                                </div>
+                                <input type="text" x-model="faq.question" placeholder="Question..." class="w-full px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-xs font-bold">
+                                <textarea x-model="faq.answer" rows="2" placeholder="Answer..." class="w-full px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-xs"></textarea>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>

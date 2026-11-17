@@ -140,7 +140,9 @@
                              @mouseleave="paused = false; start()"
                              @focusin="paused = true; stop()"
                              @focusout="paused = false; start()"
-                             @touchstart.passive="paused = true; stop()">
+                             @touchstart.passive="paused = true; stop()"
+                             @touchend.passive="paused = false; start()"
+                             @touchcancel.passive="paused = false; start()">
                             <!-- Top 24K Gold -> Cobalt -> Crimson Metallic Accent Line -->
                             <div class="h-[3px] w-full" style="background: linear-gradient(90deg, #0066e6 0%, #ffe27a 50%, #d62839 100%);"></div>
 
@@ -156,6 +158,7 @@
                                                  alt="{{ $sCourse->title }}"
                                                  @if($sIdx === 0) fetchpriority="high" @else loading="lazy" @endif
                                                  decoding="async"
+                                                 onerror="this.onerror=null;this.src='{{ asset('uploads/covers/cover_1794680723_6af8a79363ac1.jpeg') }}';"
                                                  class="w-full h-full object-cover object-center transition-transform duration-[6000ms] ease-out"
                                                  :class="active === {{ $sIdx }} ? 'scale-105' : 'scale-100'">
                                         </a>
@@ -199,7 +202,7 @@
                                                 class="relative w-14 h-8 rounded-lg overflow-hidden transition-all cursor-pointer shrink-0"
                                                 :class="active === {{ $sIdx }} ? 'ring-2 ring-[#ffe27a] scale-105 opacity-100' : 'opacity-50 hover:opacity-85 ring-1 ring-white/20'"
                                                 aria-label="Promo {{ $sIdx + 1 }}">
-                                            <img src="{{ $sCourse->cover_image_url }}" alt="" loading="lazy" decoding="async" class="w-full h-full object-cover object-center">
+                                            <img src="{{ $sCourse->cover_image_url }}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('uploads/covers/cover_1794680723_6af8a79363ac1.jpeg') }}';" class="w-full h-full object-cover object-center">
                                         </button>
                                     @endforeach
                                 </div>
@@ -752,7 +755,7 @@
                      this.stop();
                      this.timer = setInterval(() => {
                          this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
-                     }, 3500);
+                     }, 2800);
                  },
                  stop() {
                      if (this.timer) {
@@ -775,14 +778,16 @@
                          inView = e.isIntersecting;
                          e.isIntersecting ? start() : stop();
                      });
-                 }, { threshold: 0.35 });
+                 }, { threshold: 0.1 });
                  io.observe($el);
              "
              @mouseenter="stop()"
              @mouseleave="start()"
              @focusin="stop()"
              @focusout="start()"
-             @touchstart.passive="stop()">
+             @touchstart.passive="stop()"
+             @touchend.passive="start()"
+             @touchcancel.passive="start()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between mb-5 sm:mb-6 pb-3 border-b border-slate-200/80 gap-3">
                 <h2 class="text-xl sm:text-2xl font-extrabold text-[#021f59] tracking-tight">

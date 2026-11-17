@@ -163,7 +163,7 @@
     <link rel="dns-prefetch" href="//ui-avatars.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
@@ -478,10 +478,27 @@
         </div>
     </div>
 
-    <!-- Floating Pure Liquid Glass Header (Matched to Floating Footer: Blue / Gold / Red) -->
-    <header class="sticky top-0 pt-2 pb-1 z-50 px-2.5 sm:px-4 lg:px-6 transition-all w-full pointer-events-none">
-        <div class="pointer-events-auto max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full rounded-2xl"
-             style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.88) 0%, rgba(248, 250, 252, 0.78) 100%); backdrop-filter: blur(24px) saturate(210%); -webkit-backdrop-filter: blur(24px) saturate(210%); border: 1px solid rgba(220, 162, 44, 0.48); box-shadow: 0 12px 32px -6px rgba(2, 31, 89, 0.20), 0 4px 12px rgba(196, 4, 10, 0.10), inset 0 1.5px 0 rgba(255, 255, 255, 0.96);">
+    <!-- Floating Pure Liquid Glass Header (Matched to Floating Footer: Pill-Rounded + Subtle Edge Glow) -->
+    <style>
+        @keyframes acsGlassEdgeGlow {
+            0%, 100% {
+                border-color: rgba(255, 255, 255, 0.72);
+                box-shadow: 0 10px 28px -6px rgba(2, 31, 89, 0.18), 0 0 16px rgba(0, 102, 230, 0.14), inset 0 1.5px 0 rgba(255, 255, 255, 0.98);
+            }
+            50% {
+                border-color: rgba(220, 162, 44, 0.42);
+                box-shadow: 0 12px 32px -6px rgba(2, 31, 89, 0.22), 0 0 20px rgba(220, 162, 44, 0.18), inset 0 1.5px 0 rgba(255, 255, 255, 1);
+            }
+        }
+        .acs-glass-pill-bar {
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            animation: acsGlassEdgeGlow 5s ease-in-out infinite;
+        }
+    </style>
+    <header class="sticky top-0 pt-2.5 pb-1 z-50 px-3 sm:px-4 lg:px-6 transition-all w-full pointer-events-none">
+        <div class="pointer-events-auto max-w-7xl mx-auto px-5 sm:px-7 lg:px-8 w-full acs-glass-pill-bar"
+             style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.82) 100%); backdrop-filter: blur(26px) saturate(210%); -webkit-backdrop-filter: blur(26px) saturate(210%);">
             <div class="flex justify-between items-center h-16 sm:h-[4.25rem] gap-2 sm:gap-4 lg:gap-6 w-full min-w-0">
 
                 <!-- Clean 2-Line Institution Brand Lockup (Logo Left, Text Centered on Mobile / Left on Desktop) -->
@@ -833,7 +850,6 @@
                     </div>
                 </div>
             </div>
-        <div class="h-[2px] w-[96%] mx-auto rounded-full opacity-85" style="background: linear-gradient(90deg, #0066e6 0%, #dca22c 50%, #c4040a 100%);"></div>
         </div>
     </header>
 
@@ -1027,45 +1043,43 @@
 
     <!-- Native Mobile App Floating Pure Liquid Glass Dock (Red / Blue / 24K Gold) -->
     @if(!request()->routeIs('courses.show'))
-    <nav class="lg:hidden fixed bottom-3 left-3 right-3 z-40 rounded-2xl overflow-visible pb-safe"
-         style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.82) 0%, rgba(248, 250, 252, 0.70) 100%); backdrop-filter: blur(24px) saturate(210%); -webkit-backdrop-filter: blur(24px) saturate(210%); border: 1px solid rgba(220, 162, 44, 0.48); box-shadow: 0 14px 36px -6px rgba(2, 31, 89, 0.25), 0 4px 14px rgba(196, 4, 10, 0.12), inset 0 1.5px 0 rgba(255, 255, 255, 0.96);">
-        <div class="h-[2px] w-[92%] mx-auto rounded-full opacity-85" style="background: linear-gradient(90deg, #0066e6 0%, #dca22c 50%, #c4040a 100%);"></div>
-        <div class="grid grid-cols-5 h-[62px]">
-            <a href="{{ url('/') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('/') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('/') ? 'color: #c4040a;' : '' }}">
-                <i class="fas fa-home text-[15px]"></i>
-                <span class="text-[10px] tracking-tight">Home</span>
+    <nav class="lg:hidden fixed bottom-2.5 left-3 right-3 z-40 overflow-visible px-4 acs-glass-pill-bar"
+         style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.84) 100%); backdrop-filter: blur(26px) saturate(210%); -webkit-backdrop-filter: blur(26px) saturate(210%);">
+        <div class="grid grid-cols-5 items-center h-16 relative z-10">
+            <a href="{{ url('/') }}" class="flex flex-col items-center justify-center h-full gap-1 transition-all {{ request()->is('/') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('/') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-home text-[15px] leading-none"></i>
+                <span class="text-[10px] leading-none tracking-tight">Home</span>
             </a>
-            <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('catalog*') || request()->is('courses*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('catalog*') || request()->is('courses*') ? 'color: #c4040a;' : '' }}">
-                <i class="fas fa-layer-group text-[15px]"></i>
-                <span class="text-[10px] tracking-tight">Courses</span>
+            <a href="{{ route('catalog.index') }}" class="flex flex-col items-center justify-center h-full gap-1 transition-all {{ request()->is('catalog*') || request()->is('courses*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('catalog*') || request()->is('courses*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-layer-group text-[15px] leading-none"></i>
+                <span class="text-[10px] leading-none tracking-tight">Courses</span>
             </a>
-            <button type="button" @click="searchModalOpen = true" class="flex flex-col items-center justify-center gap-0.5 transition-transform active:scale-95">
-                <div class="w-11 h-11 rounded-full text-white flex items-center justify-center -mt-5 transition-transform hover:scale-105"
-                     style="background: linear-gradient(135deg, #0066e6 0%, #063b96 52%, #c4040a 100%); border: 2px solid #ffe27a; box-shadow: 0 8px 20px rgba(6, 59, 150, 0.42), 0 0 0 3px rgba(255, 255, 255, 0.78);">
+            <button type="button" @click="searchModalOpen = true" class="relative z-10 flex flex-col items-center justify-center h-full gap-0.5 transition-transform active:scale-95 cursor-pointer">
+                <div class="relative z-10 w-10 h-10 rounded-full text-white flex items-center justify-center transition-transform hover:scale-105"
+                     style="background: linear-gradient(135deg, #0066e6 0%, #063b96 52%, #c4040a 100%); border: 2px solid #ffffff; box-shadow: 0 6px 16px rgba(6, 59, 150, 0.35);">
                     <i class="fas fa-search text-xs"></i>
                 </div>
-                <span class="text-[10px] tracking-tight font-bold" style="color: #021f59;">Search</span>
             </button>
             @if(\App\Models\Setting::isPageEnabled('jobs'))
-            <a href="{{ route('jobs.index') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('jobs*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('jobs*') ? 'color: #c4040a;' : '' }}">
-                <i class="fas fa-briefcase text-[15px]"></i>
-                <span class="text-[10px] tracking-tight">Careers</span>
+            <a href="{{ route('jobs.index') }}" class="flex flex-col items-center justify-center h-full gap-1 transition-all {{ request()->is('jobs*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('jobs*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-briefcase text-[15px] leading-none"></i>
+                <span class="text-[10px] leading-none tracking-tight">Careers</span>
             </a>
             @else
-            <a href="{{ route('certificate.verify') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('verify-certificate*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('verify-certificate*') ? 'color: #c4040a;' : '' }}">
-                <i class="fas fa-shield-alt text-[15px]"></i>
-                <span class="text-[10px] tracking-tight">Verify</span>
+            <a href="{{ route('certificate.verify') }}" class="flex flex-col items-center justify-center h-full gap-1 transition-all {{ request()->is('verify-certificate*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('verify-certificate*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-shield-alt text-[15px] leading-none"></i>
+                <span class="text-[10px] leading-none tracking-tight">Verify</span>
             </a>
             @endif
             @auth
-            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('dashboard*') || request()->is('student*') || request()->is('admin*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('dashboard*') || request()->is('student*') || request()->is('admin*') ? 'color: #c4040a;' : '' }}">
-                <i class="fas fa-user-circle text-[15px]"></i>
-                <span class="text-[10px] tracking-tight">Portal</span>
+            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center h-full gap-1 transition-all {{ request()->is('dashboard*') || request()->is('student*') || request()->is('admin*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('dashboard*') || request()->is('student*') || request()->is('admin*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-user-circle text-[15px] leading-none"></i>
+                <span class="text-[10px] leading-none tracking-tight">Portal</span>
             </a>
             @else
-            <a href="{{ route('login') }}" class="flex flex-col items-center justify-center gap-0.5 transition-all {{ request()->is('login*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('login*') ? 'color: #c4040a;' : '' }}">
-                <i class="fas fa-sign-in-alt text-[15px]"></i>
-                <span class="text-[10px] tracking-tight">Sign In</span>
+            <a href="{{ route('login') }}" class="flex flex-col items-center justify-center h-full gap-1 transition-all {{ request()->is('login*') ? 'font-bold' : 'text-slate-600 hover:text-[#063b96]' }}" style="{{ request()->is('login*') ? 'color: #c4040a;' : '' }}">
+                <i class="fas fa-sign-in-alt text-[15px] leading-none"></i>
+                <span class="text-[10px] leading-none tracking-tight">Sign In</span>
             </a>
             @endauth
         </div>
@@ -1089,8 +1103,12 @@
     </div>
 
     <!-- Smart PWA Install Prompt Banner (Dismissible, Zero Clutter) -->
+    <style>
+        #acs-pwa-install-banner { bottom: 114px; }
+        @media (min-width: 1024px) { #acs-pwa-install-banner { bottom: 24px; } }
+    </style>
     <div id="acs-pwa-install-banner"
-         class="hidden fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-sm rounded-2xl px-3.5 py-2.5 flex items-center justify-between gap-2.5 shadow-2xl"
+         class="hidden fixed left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-sm rounded-2xl px-3.5 py-2.5 flex items-center justify-between gap-2.5 shadow-2xl"
          style="background: linear-gradient(135deg, rgba(1, 20, 61, 0.94) 0%, rgba(6, 59, 150, 0.94) 100%); backdrop-filter: blur(18px); border: 1px solid rgba(220, 162, 44, 0.55);">
         <div class="flex items-center gap-2.5 min-w-0">
             <img src="{{ asset('images/icons/icon-192x192.png') }}" alt="ACS App" class="w-8 h-8 rounded-lg object-contain bg-white/10 p-0.5 shrink-0">

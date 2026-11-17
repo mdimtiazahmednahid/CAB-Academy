@@ -68,6 +68,10 @@ class CertificateController extends Controller
             'recipient_font_size' => Setting::getVal('certificate_recipient_font_size', '32'),
             'course_font_size' => Setting::getVal('certificate_course_font_size', '30'),
             'body_font_size' => Setting::getVal('certificate_body_font_size', '16.5'),
+            'title_font' => Setting::getVal('certificate_title_font', 'Cinzel'),
+            'recipient_font' => Setting::getVal('certificate_recipient_font', 'Alex Brush'),
+            'course_font' => Setting::getVal('certificate_course_font', 'Anton'),
+            'body_font' => Setting::getVal('certificate_body_font', 'Aleo'),
             'template' => Setting::getVal('certificate_template', 'acs_signature'),
         ];
 
@@ -129,6 +133,10 @@ class CertificateController extends Controller
             'certificate_recipient_font_size' => 'nullable|numeric|min:16|max:64',
             'certificate_course_font_size' => 'nullable|numeric|min:14|max:56',
             'certificate_body_font_size' => 'nullable|numeric|min:10|max:32',
+            'certificate_title_font' => 'nullable|string|in:Cinzel,Playfair Display,Cormorant Garamond,Libre Baskerville,Montserrat,Plus Jakarta Sans',
+            'certificate_recipient_font' => 'nullable|string|in:Alex Brush,Great Vibes,Sacramento,Allura,Pinyon Script,Playfair Display,Cinzel,Cormorant Garamond',
+            'certificate_course_font' => 'nullable|string|in:Anton,Cinzel,Playfair Display,Montserrat,Oswald',
+            'certificate_body_font' => 'nullable|string|in:Aleo,Montserrat,Plus Jakarta Sans,Lora,Merriweather,Roboto',
             'certificate_logo_file' => 'nullable|image|max:4096',
             'certificate_seal_logo_file' => 'nullable|image|max:4096',
             'certificate_seal_bg_file' => 'nullable|image|max:4096',
@@ -172,6 +180,10 @@ class CertificateController extends Controller
             'certificate_recipient_font_size' => '32',
             'certificate_course_font_size' => '30',
             'certificate_body_font_size' => '16.5',
+            'certificate_title_font' => 'Cinzel',
+            'certificate_recipient_font' => 'Alex Brush',
+            'certificate_course_font' => 'Anton',
+            'certificate_body_font' => 'Aleo',
         ];
         foreach ($fontDefaults as $fontKey => $fontDefault) {
             if (empty($validated[$fontKey])) {

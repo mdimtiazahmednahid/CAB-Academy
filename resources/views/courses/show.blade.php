@@ -142,13 +142,13 @@
     </div>
 
     <!-- 1. Executive Hero Banner Header with Clickable Thumbnail & Direct Action Buttons -->
-    <header class="relative z-10 bg-gradient-to-br from-[#03122f] via-[#063b96] to-[#0b2b66] text-white pt-6 pb-12 border-b border-white/15 overflow-hidden">
+    <header class="relative z-10 bg-gradient-to-br from-[#03122f] via-[#063b96] to-[#0b2b66] text-white pt-4 pb-6 sm:pt-5 sm:pb-8 border-b border-white/15 overflow-hidden">
         <div class="pointer-events-none absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-blue-400/15 blur-[110px]"></div>
         <div class="pointer-events-none absolute bottom-0 left-10 w-80 h-80 rounded-full bg-[#c4040a]/15 blur-[100px]"></div>
 
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumbs (Desktop only to keep mobile hero clean above the fold) -->
-            <nav class="hidden sm:flex flex-wrap items-center gap-2 text-xs text-slate-300 mb-5">
+            <nav class="hidden sm:flex flex-wrap items-center gap-2 text-xs text-slate-300 mb-3">
                 <a href="{{ route('catalog.index') }}" class="hover:text-white transition-colors">Courses</a>
                 @if($course->category)
                     <span class="text-slate-500">/</span>
@@ -289,13 +289,14 @@
                                     src="{{ $course->cover_image_url }}" 
                                     alt="" 
                                     aria-hidden="true"
+                                    onerror="this.onerror=null; this.src='{{ asset('uploads/covers/cover_1794680723_6af8a79363ac1.jpeg') }}';"
                                     class="absolute inset-0 w-full h-full object-cover object-center blur-xl opacity-45 scale-110 pointer-events-none"
                                 >
                                 <img 
                                     src="{{ $course->cover_image_url }}" 
                                     alt="{{ $course->title }}" 
                                     class="relative z-10 w-full h-full object-contain object-center group-hover/herobanner:scale-[1.02] transition-transform duration-700 ease-out"
-                                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&h=630&q=85';"
+                                    onerror="this.onerror=null; this.src='{{ asset('uploads/covers/cover_1794680723_6af8a79363ac1.jpeg') }}';"
                                 >
 
                                 @if($isEnrolled)
@@ -319,11 +320,19 @@
     </header>
 
     <!-- 2. Liquid Glass Two-Column Body -->
-    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-24 lg:pb-12">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-24 lg:pb-12">
+        <!-- Quick Section Jump Bar (Compact Mobile & Desktop Navigation) -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-4 mb-2">
+            <a href="#overview" class="shrink-0 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#063b96] text-xs font-bold text-[#063b96] shadow-2xs transition-all">Overview</a>
+            <a href="#curriculum" class="shrink-0 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#063b96] text-xs font-bold text-slate-700 hover:text-[#063b96] shadow-2xs transition-all">Curriculum</a>
+            <a href="#instructor" class="shrink-0 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#063b96] text-xs font-bold text-slate-700 hover:text-[#063b96] shadow-2xs transition-all">Instructor</a>
+            <a href="#faq" class="shrink-0 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 hover:border-[#063b96] text-xs font-bold text-slate-700 hover:text-[#063b96] shadow-2xs transition-all">FAQ</a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
             <!-- LEFT COLUMN: Liquid Glass Content Modules (8 Columns on Desktop) -->
-            <div class="lg:col-span-8 space-y-6">
+            <div class="lg:col-span-8 space-y-4">
 
                 <!-- Enrolled Progress Bar (If Enrolled) -->
                 @if($isEnrolled)
@@ -352,7 +361,7 @@
                 @endif
 
                 <!-- Section 1: Course Overview -->
-                <div class="liquid-glass-card rounded-3xl p-6 sm:p-8 space-y-5">
+                <div id="overview" class="scroll-mt-24 liquid-glass-card rounded-2xl p-4 sm:p-6 space-y-4">
                     <div class="flex items-center gap-3 border-b border-slate-200/70 pb-3.5">
                         <span class="w-1 h-5 rounded-full bg-[#c4040a]"></span>
                         <h2 class="text-lg sm:text-xl font-extrabold text-[#063b96] tracking-tight">Course Overview</h2>
@@ -362,15 +371,23 @@
                         {{ $course->description ?? 'This program offers deep practical insight, live interactive case studies, and compliance methodologies essential for corporate mastery in international trade finance, letters of credit (L/C), customs regulations, and logistics management.' }}
                     </p>
 
-                    <!-- 3-Pillar Program Highlights -->
+                    <!-- 3-Pillar Program Highlights (Dynamic via Admin Frontend CMS) -->
+                    @php
+                        $hl1Title = \App\Models\Setting::getVal('course_highlight_1_title', 'Live Practical') ?: 'Live Practical';
+                        $hl1Desc = \App\Models\Setting::getVal('course_highlight_1_desc', 'Interactive sessions with real-world Q&A.') ?: 'Interactive sessions with real-world Q&A.';
+                        $hl2Title = \App\Models\Setting::getVal('course_highlight_2_title', 'Case Templates') ?: 'Case Templates';
+                        $hl2Desc = \App\Models\Setting::getVal('course_highlight_2_desc', 'Ready-to-use industry frameworks & tools.') ?: 'Ready-to-use industry frameworks & tools.';
+                        $hl3Title = \App\Models\Setting::getVal('course_highlight_3_title', 'QR Certificate') ?: 'QR Certificate';
+                        $hl3Desc = \App\Models\Setting::getVal('course_highlight_3_desc', 'Employer-verifiable digital credential.') ?: 'Employer-verifiable digital credential.';
+                    @endphp
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                         <div class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex items-start gap-3">
                             <div class="w-8 h-8 rounded-xl bg-[#063b96]/10 text-[#063b96] flex items-center justify-center shrink-0">
                                 <i class="fas fa-chalkboard-teacher text-xs"></i>
                             </div>
                             <div>
-                                <h3 class="text-xs font-extrabold text-[#063b96]">Live Practical</h3>
-                                <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Interactive sessions with real-world Q&A.</p>
+                                <h3 class="text-xs font-extrabold text-[#063b96]">{{ $hl1Title }}</h3>
+                                <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">{{ $hl1Desc }}</p>
                             </div>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex items-start gap-3">
@@ -378,8 +395,8 @@
                                 <i class="fas fa-file-contract text-xs"></i>
                             </div>
                             <div>
-                                <h3 class="text-xs font-extrabold text-[#063b96]">Case Templates</h3>
-                                <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Ready-to-use industry frameworks & tools.</p>
+                                <h3 class="text-xs font-extrabold text-[#063b96]">{{ $hl2Title }}</h3>
+                                <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">{{ $hl2Desc }}</p>
                             </div>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex items-start gap-3">
@@ -387,8 +404,8 @@
                                 <i class="fas fa-award text-xs"></i>
                             </div>
                             <div>
-                                <h3 class="text-xs font-extrabold text-[#063b96]">QR Certificate</h3>
-                                <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Employer-verifiable digital credential.</p>
+                                <h3 class="text-xs font-extrabold text-[#063b96]">{{ $hl3Title }}</h3>
+                                <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">{{ $hl3Desc }}</p>
                             </div>
                         </div>
                     </div>
@@ -411,7 +428,7 @@
                 </div>
 
                 <!-- Section 2: Course Curriculum (Required by Cypress: cy.get('button.bg-[#90c642]')) -->
-                <div class="liquid-glass-card rounded-3xl p-6 sm:p-8">
+                <div id="curriculum" class="scroll-mt-24 liquid-glass-card rounded-2xl p-4 sm:p-6">
                     <div class="flex items-center justify-between gap-3 mb-5 border-b border-slate-200/70 pb-3.5">
                         <div class="flex items-center gap-3">
                             <span class="w-1 h-5 rounded-full bg-[#063b96]"></span>
@@ -494,65 +511,71 @@
                     </div>
                 </div>
 
-                <!-- Section 3: Why Corporate Leaders Choose This Masterclass (Required by Cypress: cy.contains('Why Corporate Leaders Choose This Masterclass')) -->
-                <div class="liquid-glass-card rounded-3xl p-6 sm:p-8 space-y-5">
-                    <div class="flex items-center gap-3 border-b border-slate-200/70 pb-3.5">
+                <!-- Section 3: Why Corporate Leaders Choose This Masterclass (Dynamic via Admin Frontend CMS) -->
+                @php
+                    $comparisonEnabled = \App\Models\Setting::getVal('course_comparison_enabled', '1') == '1';
+                    $comparisonTitle = \App\Models\Setting::getVal('course_comparison_title', 'Why Corporate Leaders Choose This Masterclass') ?: 'Why Corporate Leaders Choose This Masterclass';
+                    $rawAcademyPts = trim((string) \App\Models\Setting::getVal('course_comparison_academy_points', ''));
+                    $academyPoints = $rawAcademyPts !== '' ? array_values(array_filter(array_map('trim', preg_split('/\r?\n/', $rawAcademyPts)))) : [
+                        'Real-world practical case simulations and live industry documentation.',
+                        'Direct mentoring from seasoned industry practitioners.',
+                        'Cryptographically verifiable certificate recognized across leading organizations.',
+                    ];
+                    $rawConvPts = trim((string) \App\Models\Setting::getVal('course_comparison_conventional_points', ''));
+                    $conventionalPoints = $rawConvPts !== '' ? array_values(array_filter(array_map('trim', preg_split('/\r?\n/', $rawConvPts)))) : [
+                        'Rote textbook theory without practical industry execution exposure.',
+                        'Static slides with outdated frameworks and generic examples.',
+                        'Unverified paper certificates without digital validation links.',
+                    ];
+                @endphp
+                @if($comparisonEnabled)
+                <div class="liquid-glass-card rounded-2xl p-4 sm:p-6 space-y-4">
+                    <div class="flex items-center gap-3 border-b border-slate-200/70 pb-3">
                         <span class="w-1 h-5 rounded-full bg-[#c4040a]"></span>
                         <h2 class="text-lg sm:text-xl font-extrabold text-[#063b96] tracking-tight">
-                            Why Corporate Leaders Choose This Masterclass
+                            {{ $comparisonTitle }}
                         </h2>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
                         <!-- Academy Standard -->
-                        <div class="p-5 rounded-2xl bg-gradient-to-br from-[#063b96]/[0.03] to-white border-2 border-[#063b96]/15 space-y-3 shadow-2xs">
+                        <div class="p-4 rounded-2xl bg-gradient-to-br from-[#063b96]/[0.03] to-white border-2 border-[#063b96]/15 space-y-3 shadow-2xs">
                             <span class="text-[#063b96] font-extrabold uppercase text-[11px] tracking-wider flex items-center gap-2">
                                 <span class="w-5 h-5 rounded-full bg-[#c4040a] text-white flex items-center justify-center text-[10px]">
                                     <i class="fas fa-check"></i>
                                 </span>
                                 <span>{{ $siteName }} Standard</span>
                             </span>
-                            <ul class="space-y-2.5 text-slate-700 text-xs sm:text-[13px]">
+                            <ul class="space-y-2 text-slate-700 text-xs sm:text-[13px]">
+                                @foreach($academyPoints as $pt)
                                 <li class="flex items-start gap-2">
                                     <i class="fas fa-check-circle text-emerald-600 mt-0.5 shrink-0"></i>
-                                    <span>Real-world practical case simulations and live industry documentation.</span>
+                                    <span>{{ $pt }}</span>
                                 </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check-circle text-emerald-600 mt-0.5 shrink-0"></i>
-                                    <span>Direct mentoring from seasoned industry practitioners.</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-check-circle text-emerald-600 mt-0.5 shrink-0"></i>
-                                    <span>Cryptographically verifiable certificate recognized across leading organizations.</span>
-                                </li>
+                                @endforeach
                             </ul>
                         </div>
 
                         <!-- Conventional Training -->
-                        <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-3 text-slate-500">
+                        <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-3 text-slate-500">
                             <span class="text-slate-500 font-bold uppercase text-[11px] tracking-wider flex items-center gap-2">
                                 <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center text-[10px]">
                                     <i class="fas fa-times"></i>
                                 </span>
                                 <span>Conventional Training</span>
                             </span>
-                            <ul class="space-y-2.5 text-xs sm:text-[13px]">
+                            <ul class="space-y-2 text-xs sm:text-[13px]">
+                                @foreach($conventionalPoints as $pt)
                                 <li class="flex items-start gap-2">
                                     <i class="fas fa-times-circle text-slate-400 mt-0.5 shrink-0"></i>
-                                    <span>Rote textbook theory without practical industry execution exposure.</span>
+                                    <span>{{ $pt }}</span>
                                 </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-times-circle text-slate-400 mt-0.5 shrink-0"></i>
-                                    <span>Static slides with outdated frameworks and generic examples.</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <i class="fas fa-times-circle text-slate-400 mt-0.5 shrink-0"></i>
-                                    <span>Unverified paper certificates without digital validation links.</span>
-                                </li>
+                                @endforeach
                             </ul>
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <!-- Section 4: Faculty Spotlight (Required by Cypress: cy.get('.w-[150px].h-[150px].rounded-full')) -->
                 @php
@@ -561,7 +584,7 @@
                     $instructorAvatar = $course->instructor_avatar_url;
                     $instructorBio = $course->instructor_bio;
                 @endphp
-                <div class="liquid-glass-card rounded-3xl p-6 sm:p-8">
+                <div id="instructor" class="scroll-mt-24 liquid-glass-card rounded-2xl p-4 sm:p-6">
                     <div class="flex items-center gap-3 border-b border-slate-200/70 pb-3.5 mb-5">
                         <span class="w-1 h-5 rounded-full bg-[#063b96]"></span>
                         <h2 class="text-lg sm:text-xl font-extrabold text-[#063b96] tracking-tight">Instructor Profile</h2>
@@ -633,64 +656,58 @@
                     </div>
                 @endif
 
-                <!-- Section 6: Frequently Asked Questions (Required by Cypress: cy.contains('Frequently Asked Questions')) -->
-                <div class="liquid-glass-card rounded-3xl p-6 sm:p-7">
+                <!-- Section 6: Frequently Asked Questions (Dynamic via Admin Frontend CMS) -->
+                @php
+                    $faqsEnabled = \App\Models\Setting::getVal('course_faqs_enabled', '1') == '1';
+                    $rawCourseFaqs = \App\Models\Setting::getVal('course_faqs', '');
+                    $courseFaqs = $rawCourseFaqs !== '' ? json_decode($rawCourseFaqs, true) : null;
+                    if (!is_array($courseFaqs) || empty($courseFaqs)) {
+                        $courseFaqs = [
+                            [
+                                'question' => 'How do I receive my verified digital certificate?',
+                                'answer' => 'Upon completing the course curriculum and cohort evaluation, your digital certificate is officially issued by ' . $siteName . ' with a cryptographically verifiable serial number and QR registry link recognized by employers and institutions.',
+                            ],
+                            [
+                                'question' => 'What payment methods are supported?',
+                                'answer' => 'Instant bKash, Nagad, and Rocket mobile banking, as well as institutional bank transfers (BEFTN/NPSB). Official digital tax invoices are generated automatically in your portal.',
+                            ],
+                            [
+                                'question' => 'What if I miss a live masterclass session?',
+                                'answer' => 'Full session recordings and course slides are archived within your student learning player for on-demand playback at your convenience.',
+                            ],
+                        ];
+                    }
+                @endphp
+                @if($faqsEnabled && !empty($courseFaqs))
+                <div id="faq" class="scroll-mt-24 liquid-glass-card rounded-2xl p-4 sm:p-6">
                     <h2 class="text-lg font-extrabold text-[#063b96] border-b border-slate-200/60 pb-3 mb-4">Frequently Asked Questions</h2>
-                    <div class="space-y-2.5" x-data="{ activeFaq: 1 }">
-                        <!-- FAQ 1 (Required by Cypress: cy.contains('How do I receive my verified digital certificate?')) -->
-                        <div class="border border-slate-200/80 bg-white/75 rounded-2xl overflow-hidden">
-                            <button 
-                                @click="activeFaq = (activeFaq === 1 ? null : 1)"
-                                type="button"
-                                class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors"
-                            >
-                                <span>How do I receive my verified digital certificate?</span>
-                                <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 1 ? 'rotate-180 text-[#c4040a]' : 'text-slate-400'"></i>
-                            </button>
-                            <div x-show="activeFaq === 1" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
-                                Upon completing the course curriculum and cohort evaluation, your digital certificate is officially issued by {{ $siteName }} with a cryptographically verifiable serial number and QR registry link recognized by employers and institutions.
+                    <div class="space-y-2.5" x-data="{ activeFaq: 0 }">
+                        @foreach($courseFaqs as $fIdx => $faqItem)
+                            <div class="border border-slate-200/80 bg-white/75 rounded-2xl overflow-hidden">
+                                <button 
+                                    @click="activeFaq = (activeFaq === {{ $fIdx }} ? null : {{ $fIdx }})"
+                                    type="button"
+                                    class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors cursor-pointer"
+                                >
+                                    <span>{{ $faqItem['question'] }}</span>
+                                    <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === {{ $fIdx }} ? 'rotate-180 text-[#c4040a]' : 'text-slate-400'"></i>
+                                </button>
+                                <div x-show="activeFaq === {{ $fIdx }}" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
+                                    {{ $faqItem['answer'] }}
+                                </div>
                             </div>
-                        </div>
-
-                        <!-- FAQ 2 -->
-                        <div class="border border-slate-200/80 bg-white/75 rounded-2xl overflow-hidden">
-                            <button 
-                                @click="activeFaq = (activeFaq === 2 ? null : 2)"
-                                type="button"
-                                class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors"
-                            >
-                                <span>What payment methods are supported?</span>
-                                <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 2 ? 'rotate-180 text-[#c4040a]' : 'text-slate-400'"></i>
-                            </button>
-                            <div x-show="activeFaq === 2" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
-                                Instant bKash, Nagad, and Rocket mobile banking, as well as institutional bank transfers (BEFTN/NPSB). Official digital tax invoices are generated automatically in your portal.
-                            </div>
-                        </div>
-
-                        <!-- FAQ 3 -->
-                        <div class="border border-slate-200/80 bg-white/75 rounded-2xl overflow-hidden">
-                            <button 
-                                @click="activeFaq = (activeFaq === 3 ? null : 3)"
-                                type="button"
-                                class="w-full px-4 py-3 text-left font-semibold text-xs sm:text-sm text-slate-900 flex items-center justify-between hover:bg-white/90 transition-colors"
-                            >
-                                <span>What if I miss a live masterclass session?</span>
-                                <i class="fas fa-chevron-down text-xs transition-transform" :class="activeFaq === 3 ? 'rotate-180 text-[#c4040a]' : 'text-slate-400'"></i>
-                            </button>
-                            <div x-show="activeFaq === 3" x-collapse class="px-4 pb-3 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-2.5 bg-white/60">
-                                Full session recordings and course slides are archived within your student learning player for on-demand playback at your convenience.
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
+                @endif
 
             </div>
 
             <!-- RIGHT COLUMN: Liquid Glass Purchase Card (4 Columns on Desktop, Sticky on Desktop) -->
-            <aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
-                <div class="liquid-glass-card rounded-3xl overflow-hidden shadow-[0_20px_50px_-15px_rgba(5,28,69,0.18)] border border-slate-200/80">
+            <aside class="lg:col-span-4 space-y-4 lg:sticky lg:top-24">
+                <div class="liquid-glass-card rounded-2xl overflow-hidden shadow-[0_16px_40px_-15px_rgba(5,28,69,0.16)] border border-slate-200/80">
                     <!-- Top Cohort Status Header -->
-                    <div class="bg-gradient-to-r from-[#063b96] to-[#0b2b66] px-6 py-3.5 flex items-center justify-between text-white">
+                    <div class="bg-gradient-to-r from-[#063b96] to-[#0b2b66] px-5 py-3 flex items-center justify-between text-white">
                         <div class="flex items-center gap-2 text-xs font-bold">
                             @if($isRegistrationOpen)
                                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>

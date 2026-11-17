@@ -1,13 +1,110 @@
 <!-- Express Course Enrollment Drawer (30-Second Rapid Conversion Engine - Liquid Glass Edition) -->
 @php
-    $drawerMerchantAccount = '01917-054664';
+    $drawerMerchantAccount = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+    $drawerPaymentMethods = [];
     try {
-        $activeMethodAccount = \App\Models\PaymentMethod::where('is_active', true)->orderBy('id')->value('account_number');
-        $drawerMerchantAccount = $activeMethodAccount ?: \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+        $rawMethods = \App\Models\PaymentMethod::where('is_active', true)->orderBy('id')->get();
+        if ($rawMethods->isNotEmpty()) {
+            $drawerMerchantAccount = $rawMethods->first()->account_number ?: $drawerMerchantAccount;
+        }
+
+        // Group MFS digits to detect shared bKash / Nagad / Rocket numbers
+        $mfsByDigits = [];
+        foreach ($rawMethods as $pm) {
+            $pname = strtolower((string) $pm->provider_name);
+            $digits = preg_replace('/[^0-9]/', '', (string) $pm->account_number);
+            if ($digits === '') continue;
+            $short = str_contains($pname, 'bkash') ? 'bKash'
+                : (str_contains($pname, 'nagad') ? 'Nagad'
+                : (str_contains($pname, 'rocket') ? 'Rocket' : null));
+            if ($short !== null) {
+                $mfsByDigits[$digits] = $mfsByDigits[$digits] ?? [];
+                if (!in_array($short, $mfsByDigits[$digits], true)) {
+                    $mfsByDigits[$digits][] = $short;
+                }
+            }
+        }
+
+        foreach ($rawMethods as $pm) {
+            $pname = strtolower((string) $pm->provider_name);
+            $digits = preg_replace('/[^0-9]/', '', (string) $pm->account_number);
+            $isBkash = str_contains($pname, 'bkash');
+            $isNagad = str_contains($pname, 'nagad');
+            $isRocket = str_contains($pname, 'rocket');
+            $isBank = str_contains($pname, 'bank');
+
+            $shortName = $isBkash ? 'bKash' : ($isNagad ? 'Nagad' : ($isRocket ? 'Rocket' : ($isBank ? 'Bank' : $pm->provider_name)));
+            $sharedGroup = ($digits !== '' && isset($mfsByDigits[$digits]) && ($isBkash || $isNagad || $isRocket))
+                ? implode(' / ', $mfsByDigits[$digits])
+                : $pm->provider_name;
+
+            $brandColor = $isBkash ? '#e2136e' : ($isNagad ? '#f58220' : ($isRocket ? '#8c3494' : '#063b96'));
+            $badgeText = $isBkash ? 'b' : ($isNagad ? 'N' : ($isRocket ? 'R' : 'B'));
+            $logoUrl = !empty($pm->logo) ? storage_asset($pm->logo) : null;
+
+            $rawAccountType = trim((string) ($pm->account_type ?? 'Personal'));
+            $acctLower = strtolower($rawAccountType);
+            $isPersonal = str_contains($acctLower, 'personal') || str_contains($acctLower, 'send');
+            $isMerchant = str_contains($acctLower, 'merchant') && !$isPersonal;
+            $modeLabel = $isBank ? 'Payment' : ($isMerchant ? 'Payment' : 'Send Money');
+
+            $banglaProvider = $isBkash ? 'বিকাশ' : ($isNagad ? 'নগদ' : ($isRocket ? 'রকেট' : $shortName));
+            $rawInstr = trim((string) ($pm->instructions ?? ''));
+            if ($rawInstr === '') {
+                $rawInstr = $isBank
+                    ? "১. প্রদত্ত ব্যাংক অ্যাকাউন্টে কোর্স ফি জমা দিন।\n২. নিচে আপনার মোবাইল নম্বর ও রেফারেন্স আইডি দিন।"
+                    : ($isMerchant
+                        ? "১. {$banglaProvider} অ্যাপ থেকে 'Make Payment' এ যান।\n২. {$pm->account_number} নম্বরে নির্ধারিত ফি পেমেন্ট করুন।\n৩. নিচে আপনার নম্বর ও TrxID দিয়ে সাবমিট করুন।"
+                        : "১. {$banglaProvider} অ্যাপ থেকে 'Send Money' এ যান।\n২. {$pm->account_number} নম্বরে নির্ধারিত ফি পাঠান।\n৩. নিচে আপনার নম্বর ও TrxID দিয়ে সাবমিট করুন।");
+            }
+
+            $drawerPaymentMethods[] = [
+                'id' => (int) $pm->id,
+                'provider_name' => $pm->provider_name,
+                'short_name' => $shortName,
+                'display_label' => $sharedGroup,
+                'account_number' => $pm->account_number ?: $drawerMerchantAccount,
+                'account_digits' => $digits ?: preg_replace('/[^0-9]/', '', (string) $drawerMerchantAccount),
+                'account_type' => $rawAccountType,
+                'is_merchant' => $isMerchant,
+                'mode_label' => $modeLabel,
+                'instructions' => $rawInstr,
+                'brand_color' => $brandColor,
+                'badge_text' => $badgeText,
+                'logo_url' => $logoUrl,
+                'is_mfs' => ($isBkash || $isNagad || $isRocket),
+                'sort_rank' => $isBkash ? 1 : ($isNagad ? 2 : ($isRocket ? 3 : 4)),
+            ];
+        }
+
+        usort($drawerPaymentMethods, fn ($a, $b) => ($a['sort_rank'] <=> $b['sort_rank']) ?: ($a['id'] <=> $b['id']));
     } catch (\Throwable $e) {
-        $drawerMerchantAccount = \App\Models\Setting::getVal('contact_hotline', '01917-054664');
+        $drawerPaymentMethods = [];
     }
-    $drawerMerchantDigits = preg_replace('/[^0-9]/', '', (string) $drawerMerchantAccount) ?: '01917054664';
+
+    if (empty($drawerPaymentMethods)) {
+        $fallbackDigits = preg_replace('/[^0-9]/', '', (string) $drawerMerchantAccount) ?: '01917054664';
+        $drawerPaymentMethods[] = [
+            'id' => 1,
+            'provider_name' => 'bKash',
+            'short_name' => 'bKash',
+            'display_label' => 'bKash',
+            'account_number' => $drawerMerchantAccount,
+            'account_digits' => $fallbackDigits,
+            'account_type' => 'Personal',
+            'is_merchant' => false,
+            'mode_label' => 'Send Money',
+            'instructions' => "১. বিকাশ অ্যাপ থেকে 'Send Money' এ যান।\n২. {$drawerMerchantAccount} নম্বরে নির্ধারিত ফি পাঠান।\n৩. নিচে আপনার নম্বর ও TrxID দিয়ে সাবমিট করুন।",
+            'brand_color' => '#e2136e',
+            'badge_text' => 'b',
+            'logo_url' => null,
+            'is_mfs' => true,
+            'sort_rank' => 1,
+        ];
+    }
+
+    $drawerMerchantDigits = $drawerPaymentMethods[0]['account_digits'] ?: '01917054664';
+    $defaultPaymentMethodId = $drawerPaymentMethods[0]['id'];
     $rawDrawerWa = \App\Models\Setting::getVal('contact_whatsapp', \App\Models\Setting::getVal('contact_hotline', '8801917054664'));
     $drawerWaDigits = preg_replace('/[^0-9]/', '', (string) $rawDrawerWa) ?: '8801917054664';
     if (strlen($drawerWaDigits) === 11 && str_starts_with($drawerWaDigits, '01')) {
@@ -57,7 +154,9 @@
             password: '',
             showPassword: false,
             trainingMode: 'online_zoom',
-            paymentMethodId: 2,
+            paymentMethods: @js($drawerPaymentMethods),
+            paymentMethodId: {{ (int) $defaultPaymentMethodId }},
+            showInstructions: false,
             senderNumber: @js($drawerSavedSender ?: $drawerSavedPhone),
             transactionId: '',
             fields: [],
@@ -182,11 +281,33 @@
             },
             close() {
                 this.isOpen = false;
+                this.showInstructions = false;
                 document.body.style.overflow = 'auto';
             },
+            selectedPaymentMethod() {
+                return this.paymentMethods.find(m => m.id === Number(this.paymentMethodId)) || this.paymentMethods[0] || null;
+            },
+            selectPaymentMethod(id) {
+                this.paymentMethodId = Number(id);
+                this.copied = false;
+            },
             copyBkash() {
-                navigator.clipboard.writeText('{{ $drawerMerchantDigits }}');
+                const pm = this.selectedPaymentMethod();
+                const textToCopy = pm ? (pm.account_digits || pm.account_number) : '{{ $drawerMerchantDigits }}';
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textToCopy).catch(() => {});
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = textToCopy;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    try { document.execCommand('copy'); } catch (e) {}
+                    document.body.removeChild(ta);
+                }
                 this.copied = true;
+                this.showInstructions = true;
                 setTimeout(() => this.copied = false, 2500);
             },
             async submitEnrollment() {
@@ -369,76 +490,92 @@
             </div>
 
             <!-- SUCCESS CONFIRMATION STATE -->
-            <div x-show="isSuccess" class="text-center py-6 space-y-4 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs" style="display: none;">
-                <div class="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
+            <div x-show="isSuccess" class="text-center py-5 space-y-4 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs" style="display: none;">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center text-2xl mx-auto shadow-inner">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <div>
-                    <h4 class="text-xl font-black text-[#0f131f]">Seat Reserved Successfully!</h4>
-                    <p class="text-xs text-[#727f9f] max-w-sm mx-auto leading-relaxed mt-1" x-text="successData.message"></p>
+                <div class="space-y-1.5">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider"
+                          :class="courseRawPrice > 0 ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'">
+                        <span class="w-1.5 h-1.5 rounded-full" :class="courseRawPrice > 0 ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'"></span>
+                        <span x-text="courseRawPrice > 0 ? 'Pending Verification' : 'Enrolled & Active'"></span>
+                    </span>
+                    <h4 class="text-lg sm:text-xl font-black text-[#0f131f]">Seat Reserved Successfully!</h4>
+                    <p class="text-xs text-[#727f9f] max-w-sm mx-auto leading-relaxed" x-text="successData.message"></p>
                 </div>
 
-                <div class="p-4 bg-[#f8fafc] rounded-2xl border border-slate-200/80 text-xs text-left space-y-2 max-w-sm mx-auto">
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Student Name:</span>
-                        <span class="font-bold text-[#0f131f]" x-text="name"></span>
+                <div class="p-3.5 bg-[#f8fafc] rounded-2xl border border-slate-200/80 text-xs text-left space-y-2 max-w-sm mx-auto">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-gray-500 shrink-0">Student</span>
+                        <span class="font-bold text-[#0f131f] text-right truncate" x-text="name"></span>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Mobile:</span>
-                        <span class="font-bold text-[#0f131f]" x-text="phone"></span>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-gray-500 shrink-0">Mobile</span>
+                        <span class="font-mono font-bold text-[#0f131f]" x-text="phone"></span>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Attendance Mode:</span>
-                        <span class="font-bold text-[#063b96]" x-text="trainingMode === 'in_person' ? 'Executive Campus (In-Person)' : 'Live Online (Zoom)'"></span>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-gray-500 shrink-0">Format</span>
+                        <span class="font-bold text-[#063b96] text-right" x-text="trainingMode === 'in_person' ? 'Executive Campus' : 'Live Online (Zoom)'"></span>
                     </div>
                     <template x-for="(val, key) in customFields" :key="key">
                         <template x-if="val && val.toString().trim()">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500 capitalize" x-text="key.replace('_', ' ') + ':'"></span>
-                                <span class="font-bold text-[#0f131f]" x-text="val"></span>
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-gray-500 capitalize shrink-0" x-text="key.replace('_', ' ')"></span>
+                                <span class="font-bold text-[#0f131f] text-right" x-text="val"></span>
                             </div>
                         </template>
                     </template>
                     <template x-if="successData.transaction_id">
-                        <div class="flex justify-between border-t border-gray-200 pt-2">
-                            <span class="text-gray-500">Reference TrxID:</span>
+                        <div class="flex items-center justify-between gap-3 border-t border-gray-200 pt-2">
+                            <span class="text-gray-500 shrink-0">TrxID</span>
                             <span class="font-mono font-bold text-[#c4040a]" x-text="successData.transaction_id"></span>
                         </div>
                     </template>
                 </div>
 
                 <!-- Student Portal Login Credentials Card -->
-                <div class="p-4 bg-[#063b96]/5 rounded-2xl border border-[#063b96]/15 text-xs text-left space-y-2 max-w-sm mx-auto">
-                    <div class="flex items-center gap-1.5 font-black text-[#063b96] uppercase tracking-wider text-[11px]">
+                <div class="p-3.5 bg-[#063b96]/[0.04] rounded-2xl border border-[#063b96]/15 text-xs text-left space-y-2 max-w-sm mx-auto">
+                    <div class="flex items-center gap-1.5 font-black text-[#063b96] uppercase tracking-wider text-[10px]">
                         <i class="fas fa-key text-[#c4040a]"></i>
-                        <span>Your Student Portal Login Credentials</span>
+                        <span>Portal Login</span>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Login ID (Mobile / Email):</span>
-                        <span class="font-mono font-bold text-[#063b96]" x-text="successData.login_id || phone"></span>
+                    <div class="flex items-start justify-between gap-3">
+                        <span class="text-gray-600 shrink-0">Login ID</span>
+                        <span class="font-mono font-bold text-[#063b96] text-right break-all" x-text="successData.login_id || phone"></span>
                     </div>
-                    <div class="flex justify-between" x-show="!isLoggedIn && password">
-                        <span class="text-gray-600">Password / PIN:</span>
+                    <div class="flex items-center justify-between gap-3" x-show="!isLoggedIn && password">
+                        <span class="text-gray-600 shrink-0">PIN / Pass</span>
                         <span class="font-mono font-bold text-[#10b981]" x-text="password"></span>
                     </div>
                     <p class="text-[10px] text-gray-500 leading-snug pt-1 border-t border-[#063b96]/10">
-                        Use your mobile number (or email) and this password/PIN at <span class="font-semibold text-[#063b96]">/login</span> anytime to access your classroom &amp; certificates.
+                        Sign in at <span class="font-semibold text-[#063b96]">/login</span> anytime to track verification, classes &amp; certificates.
                     </p>
                 </div>
 
-                <div class="pt-2 flex flex-col gap-2">
+                <div class="pt-1 flex flex-col gap-2 max-w-sm mx-auto">
                     <a 
                         :href="successData.redirect_url || '{{ route('dashboard') }}'" 
                         class="btn-ipdp-primary w-full py-3 rounded-xl font-bold text-sm text-center shadow-lg"
                     >
-                        Go to Classroom / Dashboard
+                        Go to Dashboard
                     </a>
-                    <button 
-                        @click="close()" 
-                        class="text-xs text-gray-500 hover:text-gray-800 py-1 cursor-pointer"
-                    >
-                        Close Window
-                    </button>
+                    <div class="flex items-center justify-center gap-4 pt-1">
+                        <a :href="'https://wa.me/' + courseWhatsapp + '?text=' + encodeURIComponent('Assalamu Alaikum, I just submitted enrollment for ' + courseTitle + (successData.transaction_id ? ' (TrxID: ' + successData.transaction_id + ')' : ''))"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800">
+                            <i class="fab fa-whatsapp text-sm text-[#25D366]"></i>
+                            <span>WhatsApp Support</span>
+                        </a>
+                        <span class="text-slate-300">&bull;</span>
+                        <button 
+                            type="button"
+                            @click="close()" 
+                            class="text-xs font-semibold text-gray-500 hover:text-gray-800 cursor-pointer"
+                        >
+                            Close
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -739,44 +876,104 @@
                     </div>
                 </div>
 
-                <!-- Step 2 Card: Payment (Only shown if course is paid) -->
+                <!-- Step 2 Card: Compact Payment (Only shown if course is paid) -->
                 <template x-if="courseRawPrice > 0">
-                    <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_2px_12px_rgba(5,28,69,0.04)] space-y-3.5">
-                        <div class="pb-2 border-b border-slate-100">
+                    <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/90 shadow-[0_2px_12px_rgba(5,28,69,0.04)] space-y-2.5">
+                        <div class="flex items-center justify-between gap-2 pb-1.5 border-b border-slate-100">
                             <label class="text-xs font-extrabold uppercase tracking-wider text-[#063b96] flex items-center gap-2">
                                 <span class="w-5 h-5 rounded-full bg-[#063b96] text-white text-[10px] font-black flex items-center justify-center">2</span>
-                                <span>Payment</span>
+                                <span x-text="selectedPaymentMethod() ? selectedPaymentMethod().mode_label : 'Send Money'">Send Money</span>
                             </label>
+                            <span class="text-xs font-black text-[#c4040a]" x-text="'৳' + coursePrice"></span>
                         </div>
 
-                        <div class="space-y-3">
-                            <!-- Clean bKash / Nagad Card with Number & Course Amount right below it -->
-                            <div class="p-3.5 rounded-2xl border border-pink-200/90 bg-gradient-to-br from-pink-50/70 via-white to-pink-50/40 space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-6 h-6 rounded-lg bg-[#e2136e] text-white flex items-center justify-center text-[11px] font-black">b</span>
-                                        <span class="font-black text-[#e2136e] text-sm tracking-tight">bKash / Nagad</span>
-                                    </div>
-                                    <button 
-                                        type="button" 
-                                        @click="copyBkash()"
-                                        class="px-2.5 py-1 rounded-lg bg-white hover:bg-pink-50 border border-pink-200 text-[11px] font-bold text-[#e2136e] transition-all flex items-center gap-1 whitespace-nowrap shrink-0 cursor-pointer"
+                        <div class="space-y-2.5">
+                            <!-- Compact Single-Row Payment Channel Selector (bKash / Nagad / Rocket / Bank) -->
+                            <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar">
+                                <template x-for="pm in paymentMethods" :key="pm.id">
+                                    <button
+                                        type="button"
+                                        @click="selectPaymentMethod(pm.id)"
+                                        class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-[11px] font-bold transition-all cursor-pointer"
+                                        :style="Number(paymentMethodId) === pm.id
+                                            ? `border-color: ${pm.brand_color}; background-color: ${pm.brand_color}12; color: ${pm.brand_color};`
+                                            : 'border-color: #e2e8f0; background-color: #f8fafc; color: #475569;'"
                                     >
-                                        <i class="far" :class="copied ? 'fa-check-circle text-emerald-600' : 'fa-copy'"></i>
-                                        <span x-text="copied ? 'Copied!' : 'Copy Number'"></span>
+                                        <template x-if="pm.logo_url">
+                                            <img :src="pm.logo_url" :alt="pm.short_name" class="w-4 h-4 rounded object-contain bg-white">
+                                        </template>
+                                        <template x-if="!pm.logo_url">
+                                            <span class="w-4 h-4 rounded-md text-white flex items-center justify-center text-[9px] font-black shrink-0"
+                                                  :style="`background-color: ${pm.brand_color};`"
+                                                  x-text="pm.badge_text"></span>
+                                        </template>
+                                        <span x-text="pm.short_name" class="whitespace-nowrap"></span>
                                     </button>
-                                </div>
-                                <div class="bg-white rounded-xl border border-pink-100 divide-y divide-pink-100/70">
-                                    <div class="px-3 py-2 flex items-center justify-between gap-2 text-xs">
-                                        <span class="text-slate-500 font-medium whitespace-nowrap">bKash / Nagad Number</span>
-                                        <strong class="font-mono font-extrabold text-[#063b96] text-sm whitespace-nowrap">{{ $drawerMerchantAccount }}</strong>
-                                    </div>
-                                    <div class="px-3 py-2 flex items-center justify-between gap-2 text-xs">
-                                        <span class="text-slate-500 font-medium whitespace-nowrap">Amount to Send</span>
-                                        <strong class="font-black text-[#c4040a] text-sm whitespace-nowrap" x-text="'৳' + coursePrice"></strong>
-                                    </div>
-                                </div>
+                                </template>
                             </div>
+
+                            <!-- Compact Selected Number + Copy Button (Shows shared bKash / Nagad / Rocket when identical) -->
+                            <template x-if="selectedPaymentMethod()">
+                                <div class="p-2.5 rounded-xl border bg-slate-50/70 space-y-2"
+                                     :style="`border-color: ${selectedPaymentMethod().brand_color}40;`">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            <template x-if="selectedPaymentMethod().logo_url">
+                                                <img :src="selectedPaymentMethod().logo_url" :alt="selectedPaymentMethod().short_name" class="w-6 h-6 rounded-lg object-contain bg-white border border-slate-200 p-0.5 shrink-0">
+                                            </template>
+                                            <template x-if="!selectedPaymentMethod().logo_url">
+                                                <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-[11px] font-black shrink-0"
+                                                      :style="`background-color: ${selectedPaymentMethod().brand_color};`"
+                                                      x-text="selectedPaymentMethod().badge_text"></span>
+                                            </template>
+                                            <div class="min-w-0 leading-tight">
+                                                <span class="block text-[10px] font-bold uppercase tracking-wide truncate"
+                                                      :style="`color: ${selectedPaymentMethod().brand_color};`"
+                                                      x-text="selectedPaymentMethod().display_label"></span>
+                                                <strong class="block font-mono font-black text-[#063b96] text-[13px] sm:text-sm tracking-tight whitespace-nowrap"
+                                                        x-text="selectedPaymentMethod().account_number"></strong>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 shrink-0">
+                                            <button
+                                                type="button"
+                                                @click="showInstructions = !showInstructions"
+                                                x-show="selectedPaymentMethod().instructions"
+                                                class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-[11px] font-bold text-[#063b96] transition-all inline-flex items-center gap-1 cursor-pointer"
+                                                style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;"
+                                                title="পেমেন্ট নির্দেশনা"
+                                            >
+                                                <i class="fas fa-list-ul text-[10px]"></i>
+                                                <span x-text="showInstructions ? 'লুকান' : 'নির্দেশনা'"></span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                @click="copyBkash()"
+                                                class="px-2.5 py-1 rounded-lg bg-white border text-[11px] font-bold transition-all flex items-center gap-1 whitespace-nowrap cursor-pointer shadow-xs"
+                                                :style="`border-color: ${selectedPaymentMethod().brand_color}55; color: ${selectedPaymentMethod().brand_color};`"
+                                            >
+                                                <i class="far" :class="copied ? 'fa-check-circle text-emerald-600' : 'fa-copy'"></i>
+                                                <span x-text="copied ? 'Copied!' : 'Copy'"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pop-out Instructions (Auto-opens on Copy Number, Clear Bangla Font) -->
+                                    <div x-show="showInstructions && selectedPaymentMethod().instructions"
+                                         x-transition
+                                         class="p-2.5 rounded-lg bg-white border border-slate-200/90 text-[12px] text-slate-700 space-y-1.5 shadow-sm"
+                                         style="display: none; font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">
+                                        <div class="flex items-center justify-between gap-2 pb-1 border-b border-slate-100">
+                                            <span class="font-extrabold text-[#063b96] flex items-center gap-1.5 text-[11px]">
+                                                <i class="fas fa-check-circle text-emerald-600" x-show="copied"></i>
+                                                <span x-text="copied ? ('নম্বর কপি হয়েছে! ' + selectedPaymentMethod().mode_label + ' নির্দেশনা:') : (selectedPaymentMethod().short_name + ' ' + selectedPaymentMethod().mode_label + ' নির্দেশনা:')"></span>
+                                            </span>
+                                            <button type="button" @click="showInstructions = false" class="text-slate-400 hover:text-slate-700 text-xs font-bold px-1 cursor-pointer">&times;</button>
+                                        </div>
+                                        <p class="whitespace-pre-line leading-relaxed text-[12px] font-medium text-slate-700 m-0" x-text="selectedPaymentMethod().instructions"></p>
+                                    </div>
+                                </div>
+                            </template>
 
                             <!-- TrxID and Sender Input (Required for all paid courses) -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -823,7 +1020,7 @@
                 <template x-if="!isSubmitting">
                     <i class="fas fa-arrow-right text-xs"></i>
                 </template>
-                <span x-text="isSubmitting ? 'Securing Your Seat...' : (courseRawPrice > 0 ? 'Complete Enrollment' : 'Enroll in Free Course')"></span>
+                <span x-text="isSubmitting ? 'Submitting...' : (courseRawPrice > 0 ? 'Submit' : 'Enroll')"></span>
             </button>
         </div>
 

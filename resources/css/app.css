@@ -166,7 +166,8 @@ html, body {
   }
 }
 .animate-dept-team-slide {
-  animation: deptTeamSlide 18s linear infinite;
+  animation: deptTeamSlide 14s linear infinite;
+  will-change: transform;
 }
 
 

@@ -32,6 +32,7 @@ class FrontendController extends Controller
             'landing_hero_media_image_file',
             'cms_custom_pages_json',
             'landing_custom_sections_json',
+            'course_faqs_json',
         ]);
 
         // Handle Hero Media Image File Upload if uploaded
@@ -102,6 +103,29 @@ class FrontendController extends Controller
             $data['landing_custom_sections'] = json_encode($cleanSections);
         }
 
+        // Handle Course Detail FAQs JSON/Array if provided
+        if ($request->filled('course_faqs_json') || $request->has('course_faqs')) {
+            $rawFaqs = $request->filled('course_faqs_json')
+                ? json_decode($request->input('course_faqs_json'), true)
+                : $request->input('course_faqs', []);
+
+            $cleanFaqs = [];
+            if (is_array($rawFaqs)) {
+                foreach ($rawFaqs as $faq) {
+                    $q = trim((string) ($faq['question'] ?? ''));
+                    $a = trim((string) ($faq['answer'] ?? ''));
+                    if ($q === '' || $a === '') {
+                        continue;
+                    }
+                    $cleanFaqs[] = [
+                        'question' => $q,
+                        'answer' => $a,
+                    ];
+                }
+            }
+            $data['course_faqs'] = json_encode($cleanFaqs);
+        }
+
         // When submitting the full CMS form, ensure unchecked checkboxes default to '0'
         if ($request->has('landing_cms_form_submitted')) {
             $toggleKeys = [
@@ -121,6 +145,8 @@ class FrontendController extends Controller
                 'page_about_enabled',
                 'page_contact_enabled',
                 'page_verify_certificate_enabled',
+                'course_comparison_enabled',
+                'course_faqs_enabled',
             ];
 
             foreach ($toggleKeys as $toggleKey) {

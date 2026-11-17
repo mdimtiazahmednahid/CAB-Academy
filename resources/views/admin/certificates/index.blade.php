@@ -495,14 +495,50 @@
                         </div>
                     </div>
 
-                    <!-- Typography & Font Sizes (px) -->
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 space-y-2.5">
+                    <!-- Typography, Font Families & Sizes (px) -->
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 space-y-3">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs font-extrabold uppercase tracking-wider text-[#063b96]">Typography &amp; Font Sizes (px)</span>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-[#063b96]">Typography, Font Families &amp; Sizes</span>
                             <button type="button" id="reset_font_sizes_btn" class="text-[11px] font-bold text-[#063b96] hover:underline cursor-pointer">
-                                Reset Default Sizes
+                                Reset Defaults
                             </button>
                         </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Title / Heading Font</label>
+                                <select name="certificate_title_font" id="form_title_font" class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
+                                    @foreach(['Cinzel' => 'Cinzel (Classic Engraved Serif)', 'Playfair Display' => 'Playfair Display (Luxury Serif)', 'Cormorant Garamond' => 'Cormorant Garamond (Heritage Serif)', 'Libre Baskerville' => 'Libre Baskerville (Academic Serif)', 'Montserrat' => 'Montserrat (Modern Executive Sans)', 'Plus Jakarta Sans' => 'Plus Jakarta Sans (Clean Sans)'] as $fontKey => $fontLabel)
+                                        <option value="{{ $fontKey }}" {{ old('certificate_title_font', $settings['title_font'] ?? 'Cinzel') === $fontKey ? 'selected' : '' }}>{{ $fontLabel }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Recipient Name Font</label>
+                                <select name="certificate_recipient_font" id="form_recipient_font" class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
+                                    @foreach(['Alex Brush' => 'Alex Brush (Signature Script)', 'Great Vibes' => 'Great Vibes (Formal Calligraphy)', 'Allura' => 'Allura (Flowing Script)', 'Pinyon Script' => 'Pinyon Script (Royal Crest Script)', 'Sacramento' => 'Sacramento (Minimalist Script)', 'Playfair Display' => 'Playfair Display (Executive Serif)', 'Cinzel' => 'Cinzel (Imperial Capitals)', 'Cormorant Garamond' => 'Cormorant Garamond (Refined Serif)'] as $fontKey => $fontLabel)
+                                        <option value="{{ $fontKey }}" {{ old('certificate_recipient_font', $settings['recipient_font'] ?? 'Alex Brush') === $fontKey ? 'selected' : '' }}>{{ $fontLabel }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Course Title Font</label>
+                                <select name="certificate_course_font" id="form_course_font" class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
+                                    @foreach(['Anton' => 'Anton (Bold Display)', 'Cinzel' => 'Cinzel (Executive Serif)', 'Playfair Display' => 'Playfair Display (Luxury Serif)', 'Montserrat' => 'Montserrat (Bold Geometric Sans)', 'Oswald' => 'Oswald (Condensed Display)'] as $fontKey => $fontLabel)
+                                        <option value="{{ $fontKey }}" {{ old('certificate_course_font', $settings['course_font'] ?? 'Anton') === $fontKey ? 'selected' : '' }}>{{ $fontLabel }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Body / Conferment Font</label>
+                                <select name="certificate_body_font" id="form_body_font" class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
+                                    @foreach(['Aleo' => 'Aleo (Balanced Slab Serif)', 'Lora' => 'Lora (Warm Editorial Serif)', 'Merriweather' => 'Merriweather (Academic Serif)', 'Montserrat' => 'Montserrat (Crisp Sans)', 'Plus Jakarta Sans' => 'Plus Jakarta Sans (Modern Sans)', 'Roboto' => 'Roboto (Clean Sans)'] as $fontKey => $fontLabel)
+                                        <option value="{{ $fontKey }}" {{ old('certificate_body_font', $settings['body_font'] ?? 'Aleo') === $fontKey ? 'selected' : '' }}>{{ $fontLabel }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Institution (px)</label>
@@ -1078,6 +1114,29 @@
         }
     });
 
+    const fontFamilyBindings = [
+        { selectId: 'form_title_font', targetEl: prevCertTitle, defaultVal: 'Cinzel', fallback: 'serif' },
+        { selectId: 'form_recipient_font', targetEl: prevRecipientName, defaultVal: 'Alex Brush', fallback: 'cursive' },
+        { selectId: 'form_course_font', targetEl: prevCourseTitle, defaultVal: 'Anton', fallback: 'sans-serif' },
+        { selectId: 'form_body_font', targetEl: prevConferText, defaultVal: 'Aleo', fallback: 'serif' },
+    ];
+
+    function syncPreviewFontFamilies() {
+        fontFamilyBindings.forEach(({ selectId, targetEl, defaultVal, fallback }) => {
+            const sel = document.getElementById(selectId);
+            if (!sel || !targetEl) return;
+            const chosen = sel.value || defaultVal;
+            targetEl.style.fontFamily = `'${chosen}', ${fallback}`;
+        });
+    }
+
+    fontFamilyBindings.forEach(({ selectId }) => {
+        const sel = document.getElementById(selectId);
+        if (sel) {
+            sel.addEventListener('change', syncPreviewFontFamilies);
+        }
+    });
+
     const resetFontBtn = document.getElementById('reset_font_sizes_btn');
     if (resetFontBtn) {
         resetFontBtn.addEventListener('click', function() {
@@ -1085,9 +1144,16 @@
                 const input = document.getElementById(inputId);
                 if (input) input.value = defaultVal;
             });
+            fontFamilyBindings.forEach(({ selectId, defaultVal }) => {
+                const sel = document.getElementById(selectId);
+                if (sel) sel.value = defaultVal;
+            });
             syncPreviewFontSizes();
+            syncPreviewFontFamilies();
         });
     }
     syncPreviewFontSizes();
+    syncPreviewFontFamilies();
 </script>
+<link href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;700&family=Alex+Brush&family=Allura&family=Anton&family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:wght@600;700&family=Great+Vibes&family=Libre+Baskerville:wght@700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@500;700;800&family=Oswald:wght@600;700&family=Pinyon+Script&family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Roboto:wght@500;700&family=Sacramento&display=swap" rel="stylesheet">
 @endsection

@@ -46,7 +46,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-6 border-b border-gray-100">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pb-6 border-b border-gray-100">
                         <div>
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Executive Program</span>
                             <h3 class="text-base font-bold text-[#0f131f] mt-1">{{ $certificate->course?->title ?? 'Executive Certification Program' }}</h3>
@@ -55,6 +55,10 @@
                                     View Course Curriculum &rarr;
                                 </a>
                             @endif
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-500 uppercase tracking-wider block">Course Duration</span>
+                            <p class="text-base font-bold text-[#0f131f] mt-1">{{ !empty($certificate->course?->duration) ? $certificate->course->duration : 'Executive Cohort' }}</p>
                         </div>
                         <div>
                             <span class="text-xs text-gray-500 uppercase tracking-wider block">Official Issue Date</span>
