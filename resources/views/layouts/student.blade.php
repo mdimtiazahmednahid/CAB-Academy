@@ -458,6 +458,118 @@
         };
     </script>
 
+    @auth
+    @php
+        $latestUnreadForPush = auth()->user()->unreadNotifications()->latest()->take(3)->get()->map(function ($n) {
+            return [
+                'id' => (string) $n->id,
+                'title' => (string) ($n->data['title'] ?? 'ACS Academy Update'),
+                'message' => (string) ($n->data['message'] ?? 'You have a new notification.'),
+                'url' => (string) ($n->data['action_url'] ?? route('notifications.index')),
+            ];
+        })->values()->all();
+    @endphp
+    <!-- Smart Notification Permission Prompt (Asks Students to Allow Push / In-App Alerts) -->
+    <div id="acs-notify-prompt"
+         class="hidden fixed bottom-20 lg:bottom-6 right-4 z-50 w-[calc(100%-2rem)] max-w-sm rounded-2xl p-3.5 shadow-2xl border border-[#dca22c]/45 text-white"
+         style="background: linear-gradient(135deg, rgba(1, 20, 61, 0.96) 0%, rgba(6, 59, 150, 0.96) 100%); backdrop-filter: blur(18px);">
+        <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-400/20 border border-amber-300/40 text-amber-300 flex items-center justify-center shrink-0">
+                <i class="fas fa-bell text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-xs font-extrabold text-white leading-snug">Allow Notifications?</p>
+                <p class="text-[11px] text-slate-200 mt-0.5 leading-snug">Get instant alerts for payment verification, class updates &amp; certificates.</p>
+                <div class="flex items-center gap-2 mt-2.5">
+                    <button id="acs-notify-allow-btn" type="button" class="px-3 py-1.5 rounded-xl text-[11px] font-extrabold text-[#01143d] cursor-pointer" style="background: linear-gradient(135deg, #ffe27a 0%, #dca22c 100%);">
+                        Allow
+                    </button>
+                    <button id="acs-notify-later-btn" type="button" class="px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white cursor-pointer">
+                        Later
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            if (!('Notification' in window)) return;
+
+            const DISMISS_KEY = 'acs_notify_prompt_dismissed_until';
+            const SEEN_KEY = 'acs_browser_notified_ids';
+            const promptEl = document.getElementById('acs-notify-prompt');
+            const allowBtn = document.getElementById('acs-notify-allow-btn');
+            const laterBtn = document.getElementById('acs-notify-later-btn');
+            const unreadItems = @json($latestUnreadForPush);
+
+            function dispatchNewBrowserAlerts() {
+                if (Notification.permission !== 'granted' || !Array.isArray(unreadItems) || unreadItems.length === 0) return;
+                let seen = [];
+                try { seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '[]'); } catch (e) { seen = []; }
+                let changed = false;
+
+                unreadItems.forEach(function (item) {
+                    if (!seen.includes(item.id)) {
+                        try {
+                            const n = new Notification(item.title, {
+                                body: item.message,
+                                icon: '{{ asset("images/icons/icon-192x192.png") }}'
+                            });
+                            n.onclick = function () {
+                                window.focus();
+                                if (item.url) window.location.href = item.url;
+                            };
+                        } catch (e) {}
+                        seen.push(item.id);
+                        changed = true;
+                    }
+                });
+
+                if (changed) {
+                    try { localStorage.setItem(SEEN_KEY, JSON.stringify(seen.slice(-50))); } catch (e) {}
+                }
+            }
+
+            if (Notification.permission === 'granted') {
+                dispatchNewBrowserAlerts();
+                return;
+            }
+
+            if (Notification.permission === 'default' && promptEl && allowBtn && laterBtn) {
+                const dismissedUntil = parseInt(localStorage.getItem(DISMISS_KEY) || '0', 10);
+                if (Date.now() >= dismissedUntil) {
+                    setTimeout(function () {
+                        promptEl.classList.remove('hidden');
+                    }, 1200);
+                }
+
+                allowBtn.addEventListener('click', function () {
+                    Notification.requestPermission().then(function (perm) {
+                        promptEl.classList.add('hidden');
+                        if (perm === 'granted') {
+                            try {
+                                new Notification('Notifications Enabled — ACS Academy', {
+                                    body: 'You will now receive instant updates on payments, courses & certificates.',
+                                    icon: '{{ asset("images/icons/icon-192x192.png") }}'
+                                });
+                            } catch (e) {}
+                            dispatchNewBrowserAlerts();
+                        } else {
+                            localStorage.setItem(DISMISS_KEY, String(Date.now() + 7 * 24 * 60 * 60 * 1000));
+                        }
+                    });
+                });
+
+                laterBtn.addEventListener('click', function () {
+                    promptEl.classList.add('hidden');
+                    localStorage.setItem(DISMISS_KEY, String(Date.now() + 7 * 24 * 60 * 60 * 1000));
+                });
+            }
+        })();
+    </script>
+    @endauth
+
     <!-- Global Express Course Enrollment Drawer -->
     <x-express-enroll-drawer />
 

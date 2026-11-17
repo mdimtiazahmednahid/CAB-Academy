@@ -483,8 +483,34 @@ class CourseController extends Controller
 
     public function issueCertificate(Course $course, User $student)
     {
-        Certificate::generateFor($student, $course);
-        return back()->with('success', "Official digital certificate issued for {$student->name}.");
+        $certificate = Certificate::generateFor($student, $course);
+        $delivery = \App\Notifications\CertificateIssuedNotification::sendSafely($student, $certificate, true);
+
+        $emailNote = $delivery['mail'] ? ' (In-app + Email sent)' : ' (In-app notification sent)';
+        return back()->with('success', "Official digital certificate issued for {$student->name}.{$emailNote}");
+    }
+
+    public function issueAllCertificates(Course $course)
+    {
+        $students = $course->students()->get();
+        if ($students->isEmpty()) {
+            return back()->with('error', 'No enrolled students found for this course.');
+        }
+
+        $course->update(['certificate_enabled' => true]);
+        $issuedCount = 0;
+        $emailedCount = 0;
+
+        foreach ($students as $student) {
+            $certificate = Certificate::generateFor($student, $course);
+            $delivery = \App\Notifications\CertificateIssuedNotification::sendSafely($student, $certificate, true);
+            $issuedCount++;
+            if ($delivery['mail']) {
+                $emailedCount++;
+            }
+        }
+
+        return back()->with('success', "Issued & notified {$issuedCount} student(s) for \"{$course->title}\" ({$emailedCount} email(s) dispatched).");
     }
 
     public function revokeCertificate(Course $course, User $student)

@@ -46,7 +46,9 @@ class CertificateController extends Controller
 
         $certificate = Certificate::generateFor($user, $course);
 
-        return view('certificates.show', compact('certificate', 'course', 'user'));
+        return response()
+            ->view('certificates.show', compact('certificate', 'course', 'user'))
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
     }
 
     /**

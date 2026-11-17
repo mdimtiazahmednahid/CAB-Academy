@@ -437,13 +437,17 @@ Route::prefix('admin')->middleware(['auth', \App\Http\Middleware\IsAdmin::class]
     Route::get('/certificates', [App\Http\Controllers\Admin\CertificateController::class, 'index'])->name('admin.certificates.index');
     Route::post('/certificates/settings', [App\Http\Controllers\Admin\CertificateController::class, 'updateSettings'])->name('admin.certificates.settings.update');
     Route::get('/certificates/preview', [App\Http\Controllers\Admin\CertificateController::class, 'preview'])->name('admin.certificates.preview');
+    Route::post('/certificates/{certificate}/notify', [App\Http\Controllers\Admin\CertificateController::class, 'notifyStudent'])->name('admin.certificates.notify');
     Route::delete('/certificates/{certificate}', [App\Http\Controllers\Admin\CertificateController::class, 'destroy'])->name('admin.certificates.destroy');
+
+    Route::post('/courses/{course}/certificates/issue-all', [App\Http\Controllers\Admin\CourseController::class, 'issueAllCertificates'])->name('admin.courses.certificates.issue_all');
 
     Route::middleware([\App\Http\Middleware\IsStrictAdmin::class])->group(function () {
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings');
         Route::post('/settings', [SettingsController::class, 'store'])->name('admin.settings.store');
         Route::post('/settings/seo-ping', [SettingsController::class, 'pingSeo'])->name('admin.settings.seo_ping');
         Route::post('/settings/backup-now', [SettingsController::class, 'runBackupNow'])->name('admin.settings.backup_now');
+        Route::post('/settings/test-email', [SettingsController::class, 'sendTestEmail'])->name('admin.settings.test_email');
         
         Route::get('/announcements', [\App\Http\Controllers\Admin\AnnouncementController::class, 'create'])->name('admin.announcements.create');
         Route::post('/announcements', [\App\Http\Controllers\Admin\AnnouncementController::class, 'store'])->name('admin.announcements.store');

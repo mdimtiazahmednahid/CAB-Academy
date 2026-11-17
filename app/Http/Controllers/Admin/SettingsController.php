@@ -162,4 +162,28 @@ class SettingsController extends Controller
 
         return redirect()->back()->with('success', $output !== '' ? $output : 'Database backup uploaded to Google Drive successfully.');
     }
+
+    public function sendTestEmail(Request $request)
+    {
+        $validated = $request->validate([
+            'test_email' => 'required|email|max:255',
+        ]);
+
+        \App\Support\MailConfigManager::applyRuntimeMailConfig();
+
+        try {
+            $siteName = Setting::getVal('site_name', 'ACS Academy');
+            \Illuminate\Support\Facades\Mail::raw(
+                "This is a test email from {$siteName}. Your SMTP / mail configuration is working properly.",
+                function ($message) use ($validated, $siteName) {
+                    $message->to($validated['test_email'])
+                        ->subject("SMTP Test Email — {$siteName}");
+                }
+            );
+
+            return redirect()->back()->with('success', "Test email dispatched to {$validated['test_email']} (Mailer: " . config('mail.default') . ").");
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Failed to send test email: ' . $e->getMessage());
+        }
+    }
 }

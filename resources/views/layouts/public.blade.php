@@ -1005,6 +1005,22 @@
             <!-- Subfooter -->
             <div class="border-t border-white/10 pt-4 pb-2 flex flex-col sm:flex-row justify-between items-center text-[11px] text-slate-400 gap-2">
                 <p>© {{ date('Y') }} {{ \App\Models\Setting::getVal('site_name', 'ACS Academy') }}. All Rights Reserved.</p>
+                @if(\App\Models\Setting::getVal('show_visitor_counter', '1') == '1')
+                    @php
+                        $footerTraffic = \App\Support\SiteTraffic::stats();
+                    @endphp
+                    <div class="inline-flex items-center gap-3 px-3 py-1 rounded-full bg-white/[0.06] border border-white/10 text-[10px] font-semibold text-slate-300">
+                        <span class="inline-flex items-center gap-1.5" title="Total Page Views">
+                            <i class="far fa-eye text-[#ffe27a]"></i>
+                            <span>{{ number_format($footerTraffic['total_views']) }} Views</span>
+                        </span>
+                        <span class="text-white/20">&bull;</span>
+                        <span class="inline-flex items-center gap-1.5" title="Unique Visitors">
+                            <i class="fas fa-users text-emerald-400"></i>
+                            <span>{{ number_format($footerTraffic['unique_visitors']) }} Visitors</span>
+                        </span>
+                    </div>
+                @endif
                 <p class="sm:mr-16">
                     Developed by <a href="https://neurasoft.top" target="_blank" rel="noopener noreferrer" class="text-white hover:text-[#ffe27a] font-bold underline underline-offset-4 transition-colors">NeuraSoft</a>
                 </p>

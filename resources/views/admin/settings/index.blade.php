@@ -604,6 +604,56 @@
         </div>
     </div>
 
+    <!-- Email & SMTP Notification Service -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mt-6 space-y-4">
+        <div>
+            <h2 class="text-lg font-bold text-gray-900">Email &amp; SMTP Notification Service</h2>
+            <p class="text-xs text-gray-500 mt-0.5">Configure SMTP for 1-click certificate emails, announcement broadcasts, and password resets.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Mail Driver</label>
+                <select name="mail_mailer" class="w-full rounded-xl border-gray-300 text-sm">
+                    @php
+                        $curMailer = $settings['mail_mailer']->value ?? config('mail.default', 'log');
+                    @endphp
+                    <option value="smtp" {{ $curMailer === 'smtp' ? 'selected' : '' }}>SMTP (Live Email)</option>
+                    <option value="log" {{ $curMailer === 'log' ? 'selected' : '' }}>Log Only (Local Testing)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">SMTP Host</label>
+                <input type="text" name="mail_host" value="{{ $settings['mail_host']->value ?? '' }}" placeholder="mail.acsacademy.bd" class="w-full rounded-xl border-gray-300 text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">SMTP Port &amp; Encryption</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" name="mail_port" value="{{ $settings['mail_port']->value ?? '465' }}" placeholder="465" class="w-full rounded-xl border-gray-300 text-sm">
+                    @php
+                        $curEnc = $settings['mail_encryption']->value ?? 'ssl';
+                    @endphp
+                    <select name="mail_encryption" class="w-full rounded-xl border-gray-300 text-sm">
+                        <option value="ssl" {{ $curEnc === 'ssl' ? 'selected' : '' }}>SSL</option>
+                        <option value="tls" {{ $curEnc === 'tls' ? 'selected' : '' }}>TLS</option>
+                        <option value="none" {{ $curEnc === 'none' ? 'selected' : '' }}>None</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">SMTP Username</label>
+                <input type="text" name="mail_username" value="{{ $settings['mail_username']->value ?? '' }}" placeholder="info@acsacademy.bd" class="w-full rounded-xl border-gray-300 text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">SMTP Password</label>
+                <input type="password" name="mail_password" value="{{ $settings['mail_password']->value ?? '' }}" placeholder="••••••••" class="w-full rounded-xl border-gray-300 text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">From Email Address</label>
+                <input type="email" name="mail_from_address" value="{{ $settings['mail_from_address']->value ?? 'info@acsacademy.bd' }}" placeholder="info@acsacademy.bd" class="w-full rounded-xl border-gray-300 text-sm">
+            </div>
+        </div>
+    </div>
+
     <!-- Submit Action -->
     <div class="fixed bottom-[72px] md:bottom-0 md:static left-0 w-full md:w-auto p-4 md:p-0 bg-white md:bg-transparent border-t border-gray-200 md:border-t-0 z-40 md:mt-6">
         <button type="submit" class="w-full md:w-auto px-6 py-3.5 bg-primary text-white font-semibold rounded-xl shadow-sm hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
@@ -612,6 +662,23 @@
         </button>
     </div>
 </form>
+
+<!-- 1-Click Send Test Email -->
+<div class="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h3 class="text-base font-bold text-gray-900">Test Email / SMTP Delivery</h3>
+            <p class="text-xs text-gray-500 mt-0.5">Save your SMTP settings above first, then send a 1-click test email to verify delivery.</p>
+        </div>
+        <form method="POST" action="{{ route('admin.settings.test_email') }}" class="flex items-center gap-2">
+            @csrf
+            <input type="email" name="test_email" value="{{ auth()->user()->email }}" required placeholder="you@example.com" class="rounded-xl border-gray-300 text-xs px-3 py-2 w-56">
+            <button type="submit" class="px-4 py-2 rounded-xl bg-[#063b96] hover:bg-[#052d75] text-white text-xs font-bold whitespace-nowrap cursor-pointer">
+                Send Test Email
+            </button>
+        </form>
+    </div>
+</div>
 
 <!-- Google Drive Database Backup -->
 <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">

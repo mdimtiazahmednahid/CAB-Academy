@@ -55,7 +55,7 @@ class CertificateController extends Controller
             'show_seal_text' => Setting::getVal('certificate_show_seal_text', '1'),
             'show_qr_code' => Setting::getVal('certificate_show_qr_code', '1'),
             'show_watermark' => Setting::getVal('certificate_show_watermark', '1'),
-            'logo_url' => Setting::getVal('certificate_logo_url', '/images/certificate-logo-gold.png'),
+            'logo_url' => Setting::getVal('certificate_logo_url', '/images/logo.png'),
             'seal_logo_url' => Setting::getVal('certificate_seal_logo_url', '/images/certificate-logo-gold.png'),
             'seal_bg_url' => Setting::getVal('certificate_seal_bg_url', '/images/certificate-gold-seal.png'),
             'trainer_signature_url' => Setting::getVal('certificate_trainer_signature_url', '/images/cert-official/sig-trainer.svg'),
@@ -68,10 +68,33 @@ class CertificateController extends Controller
             'recipient_font_size' => Setting::getVal('certificate_recipient_font_size', '32'),
             'course_font_size' => Setting::getVal('certificate_course_font_size', '30'),
             'body_font_size' => Setting::getVal('certificate_body_font_size', '16.5'),
+            'meta_font_size' => Setting::getVal('certificate_meta_font_size', '11'),
+            'seal_font_size' => Setting::getVal('certificate_seal_font_size', '15'),
+            'subtitle' => Setting::getVal('certificate_subtitle', 'OF PARTICIPATION'),
+            'sidebar_color' => Setting::getVal('certificate_sidebar_color', '#07398d'),
+            'accent_color' => Setting::getVal('certificate_accent_color', '#AF804F'),
+            'recipient_color' => Setting::getVal('certificate_recipient_color', '#410200'),
+            'title_color' => Setting::getVal('certificate_title_color', '#1c2a4c'),
+            'body_color' => Setting::getVal('certificate_body_color', '#1c2a4c'),
+            'course_color' => Setting::getVal('certificate_course_color', '#003878'),
+            'meta_color' => Setting::getVal('certificate_meta_color', '#23bf70'),
             'title_font' => Setting::getVal('certificate_title_font', 'Cinzel'),
             'recipient_font' => Setting::getVal('certificate_recipient_font', 'Alex Brush'),
             'course_font' => Setting::getVal('certificate_course_font', 'Anton'),
             'body_font' => Setting::getVal('certificate_body_font', 'Aleo'),
+            'logo_top' => Setting::getVal('certificate_logo_top', '1.5'),
+            'logo_width' => Setting::getVal('certificate_logo_width', '34.5'),
+            'title_top' => Setting::getVal('certificate_title_top', '18.6'),
+            'conferment_top' => Setting::getVal('certificate_conferment_top', '29.8'),
+            'recipient_top' => Setting::getVal('certificate_recipient_top', '34.8'),
+            'body_top' => Setting::getVal('certificate_body_top', '45.4'),
+            'course_top' => Setting::getVal('certificate_course_top', '54.0'),
+            'meta_top' => Setting::getVal('certificate_meta_top', '67.2'),
+            'meta_left' => Setting::getVal('certificate_meta_left', '5.2'),
+            'qr_top' => Setting::getVal('certificate_qr_top', '62.0'),
+            'qr_width' => Setting::getVal('certificate_qr_width', '19.8'),
+            'footer_bottom' => Setting::getVal('certificate_footer_bottom', '6.2'),
+            'seal_size' => Setting::getVal('certificate_seal_size', '14.8'),
             'template' => Setting::getVal('certificate_template', 'acs_signature'),
         ];
 
@@ -133,10 +156,33 @@ class CertificateController extends Controller
             'certificate_recipient_font_size' => 'nullable|numeric|min:16|max:64',
             'certificate_course_font_size' => 'nullable|numeric|min:14|max:56',
             'certificate_body_font_size' => 'nullable|numeric|min:10|max:32',
-            'certificate_title_font' => 'nullable|string|in:Cinzel,Playfair Display,Cormorant Garamond,Libre Baskerville,Montserrat,Plus Jakarta Sans',
-            'certificate_recipient_font' => 'nullable|string|in:Alex Brush,Great Vibes,Sacramento,Allura,Pinyon Script,Playfair Display,Cinzel,Cormorant Garamond',
-            'certificate_course_font' => 'nullable|string|in:Anton,Cinzel,Playfair Display,Montserrat,Oswald',
-            'certificate_body_font' => 'nullable|string|in:Aleo,Montserrat,Plus Jakarta Sans,Lora,Merriweather,Roboto',
+            'certificate_meta_font_size' => 'nullable|numeric|min:8|max:24',
+            'certificate_seal_font_size' => 'nullable|numeric|min:8|max:26',
+            'certificate_subtitle' => 'nullable|string|max:120',
+            'certificate_sidebar_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'certificate_accent_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'certificate_recipient_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'certificate_title_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'certificate_body_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'certificate_course_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'certificate_meta_color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'certificate_title_font' => 'nullable|string|in:Cinzel,Cinzel Decorative,Playfair Display,Cormorant Garamond,EB Garamond,Libre Baskerville,Merriweather,Montserrat,Plus Jakarta Sans,Poppins',
+            'certificate_recipient_font' => 'nullable|string|in:Alex Brush,Great Vibes,Allura,Pinyon Script,Sacramento,Parisienne,Tangerine,Dancing Script,Playfair Display,Cinzel,Cormorant Garamond,EB Garamond',
+            'certificate_course_font' => 'nullable|string|in:Anton,Bebas Neue,Oswald,Cinzel,Playfair Display,Montserrat,Poppins,Lora',
+            'certificate_body_font' => 'nullable|string|in:Aleo,Lora,Merriweather,EB Garamond,Libre Baskerville,Montserrat,Plus Jakarta Sans,Poppins,Roboto,Open Sans',
+            'certificate_logo_top' => 'nullable|numeric|min:0|max:25',
+            'certificate_logo_width' => 'nullable|numeric|min:10|max:70',
+            'certificate_title_top' => 'nullable|numeric|min:5|max:40',
+            'certificate_conferment_top' => 'nullable|numeric|min:15|max:50',
+            'certificate_recipient_top' => 'nullable|numeric|min:20|max:60',
+            'certificate_body_top' => 'nullable|numeric|min:25|max:70',
+            'certificate_course_top' => 'nullable|numeric|min:35|max:80',
+            'certificate_meta_top' => 'nullable|numeric|min:45|max:85',
+            'certificate_meta_left' => 'nullable|numeric|min:0|max:45',
+            'certificate_qr_top' => 'nullable|numeric|min:40|max:85',
+            'certificate_qr_width' => 'nullable|numeric|min:8|max:32',
+            'certificate_footer_bottom' => 'nullable|numeric|min:1|max:20',
+            'certificate_seal_size' => 'nullable|numeric|min:6|max:24',
             'certificate_logo_file' => 'nullable|image|max:4096',
             'certificate_seal_logo_file' => 'nullable|image|max:4096',
             'certificate_seal_bg_file' => 'nullable|image|max:4096',
@@ -155,9 +201,9 @@ class CertificateController extends Controller
             $validated['certificate_governing_signature_file']
         );
 
-        // Default to the latest gold ACS logo & scalloped seal if cleared
+        // Default to the clean transparent PNG ACS logo if cleared
         if (empty($validated['certificate_logo_url'])) {
-            $validated['certificate_logo_url'] = '/images/certificate-logo-gold.png';
+            $validated['certificate_logo_url'] = '/images/logo.png';
         }
         if (empty($validated['certificate_seal_logo_url'])) {
             $validated['certificate_seal_logo_url'] = '/images/certificate-logo-gold.png';
@@ -180,10 +226,33 @@ class CertificateController extends Controller
             'certificate_recipient_font_size' => '32',
             'certificate_course_font_size' => '30',
             'certificate_body_font_size' => '16.5',
+            'certificate_meta_font_size' => '11',
+            'certificate_seal_font_size' => '15',
+            'certificate_subtitle' => 'OF PARTICIPATION',
+            'certificate_sidebar_color' => '#07398d',
+            'certificate_accent_color' => '#AF804F',
+            'certificate_recipient_color' => '#410200',
+            'certificate_title_color' => '#1c2a4c',
+            'certificate_body_color' => '#1c2a4c',
+            'certificate_course_color' => '#003878',
+            'certificate_meta_color' => '#23bf70',
             'certificate_title_font' => 'Cinzel',
             'certificate_recipient_font' => 'Alex Brush',
             'certificate_course_font' => 'Anton',
             'certificate_body_font' => 'Aleo',
+            'certificate_logo_top' => '1.5',
+            'certificate_logo_width' => '34.5',
+            'certificate_title_top' => '18.6',
+            'certificate_conferment_top' => '29.8',
+            'certificate_recipient_top' => '34.8',
+            'certificate_body_top' => '45.4',
+            'certificate_course_top' => '54.0',
+            'certificate_meta_top' => '67.2',
+            'certificate_meta_left' => '5.2',
+            'certificate_qr_top' => '62.0',
+            'certificate_qr_width' => '19.8',
+            'certificate_footer_bottom' => '6.2',
+            'certificate_seal_size' => '14.8',
         ];
         foreach ($fontDefaults as $fontKey => $fontDefault) {
             if (empty($validated[$fontKey])) {
@@ -269,6 +338,24 @@ class CertificateController extends Controller
         }
 
         return back()->with('success', 'Certificate template, seal, QR code, and institution branding updated successfully!');
+    }
+
+    /**
+     * One-click notify & email student for an issued certificate.
+     */
+    public function notifyStudent(Certificate $certificate)
+    {
+        $certificate->loadMissing(['user', 'course']);
+        if (!$certificate->user) {
+            return back()->with('error', 'Student account not found for this certificate.');
+        }
+
+        $delivery = \App\Notifications\CertificateIssuedNotification::sendSafely($certificate->user, $certificate, true);
+        $msg = $delivery['mail']
+            ? "In-app notification & email sent to {$certificate->user->name} ({$certificate->user->email})."
+            : "In-app notification sent to {$certificate->user->name}.";
+
+        return back()->with('success', $msg);
     }
 
     /**

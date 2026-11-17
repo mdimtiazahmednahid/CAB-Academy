@@ -87,9 +87,15 @@
         <p class="text-xs text-gray-500 mt-1">If provided, clicking the notification will redirect the student here.</p>
     </div>
 
-    <div class="flex items-center gap-2.5 p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
-        <input type="checkbox" id="post_to_feed" name="post_to_feed" value="1" checked class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary">
-        <label for="post_to_feed" class="text-xs font-bold text-gray-800 cursor-pointer">Also Pin & Broadcast to Community Feed (/feed)</label>
+    <div class="space-y-2">
+        <div class="flex items-center gap-2.5 p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
+            <input type="checkbox" id="post_to_feed" name="post_to_feed" value="1" checked class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary">
+            <label for="post_to_feed" class="text-xs font-bold text-gray-800 cursor-pointer">Also Pin & Broadcast to Community Feed (/feed)</label>
+        </div>
+        <div class="flex items-center gap-2.5 p-3.5 bg-sky-50/70 border border-sky-200/80 rounded-xl">
+            <input type="checkbox" id="send_email" name="send_email" value="1" class="w-4 h-4 rounded border-gray-300 text-[#063b96] focus:ring-[#063b96]">
+            <label for="send_email" class="text-xs font-bold text-[#063b96] cursor-pointer">Also Send 1-Click Email to Selected Recipients (uses SMTP Settings)</label>
+        </div>
     </div>
 
     <button type="submit" class="w-full bg-[#063b96] hover:bg-[#072559] text-white font-bold py-3.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md">

@@ -61,12 +61,28 @@ class AnnouncementController extends Controller
         $users = $query->get();
 
         $notificationUrl = $request->url ?: ($targetCourse ? route('courses.show', $targetCourse) : null);
+        $sendEmail = $request->boolean('send_email');
+        if ($sendEmail) {
+            \App\Support\MailConfigManager::applyRuntimeMailConfig();
+        }
 
-        Notification::send($users, new AdminAnnouncementNotification(
-            $request->title,
-            $request->message,
-            $notificationUrl
-        ));
+        try {
+            Notification::send($users, new AdminAnnouncementNotification(
+                $request->title,
+                $request->message,
+                $notificationUrl,
+                $sendEmail
+            ));
+        } catch (\Throwable $e) {
+            if ($sendEmail) {
+                Notification::send($users, new AdminAnnouncementNotification(
+                    $request->title,
+                    $request->message,
+                    $notificationUrl,
+                    false
+                ));
+            }
+        }
 
         // If requested, also broadcast and pin to Community Feed (/feed)
         if ($request->has('post_to_feed')) {

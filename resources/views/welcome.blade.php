@@ -99,6 +99,26 @@
                             <i class="fas fa-chevron-right text-[10px] opacity-80"></i>
                         </a>
                     </div>
+
+                    @if(\App\Models\Setting::getVal('show_visitor_counter', '1') == '1')
+                        @php
+                            $heroTraffic = \App\Support\SiteTraffic::stats();
+                        @endphp
+                        <div class="pt-1 flex justify-center lg:justify-start">
+                            <div class="inline-flex items-center gap-2.5 px-3 py-1 rounded-full bg-white/[0.08] border border-white/15 text-[11px] font-semibold text-slate-200 backdrop-blur-md">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span class="inline-flex items-center gap-1">
+                                    <i class="far fa-eye text-[#ffe27a] text-[10px]"></i>
+                                    <span>{{ number_format($heroTraffic['total_views']) }} Views</span>
+                                </span>
+                                <span class="text-white/25">&bull;</span>
+                                <span class="inline-flex items-center gap-1">
+                                    <i class="fas fa-users text-emerald-300 text-[10px]"></i>
+                                    <span>{{ number_format($heroTraffic['unique_visitors']) }} Visitors</span>
+                                </span>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Right Column (1st on Top on Mobile!): Split 2-Row Promotional Display (Row 1: Latest Courses | Row 2: Sliding Circular Faculty) -->

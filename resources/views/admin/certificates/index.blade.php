@@ -444,7 +444,7 @@
                                 type="text" 
                                 name="certificate_logo_url" 
                                 id="form_logo_url"
-                                value="{{ old('certificate_logo_url', $settings['logo_url'] ?? '/images/certificate-logo-gold.png') }}" 
+                                value="{{ old('certificate_logo_url', $settings['logo_url'] ?? '/images/logo.png') }}" 
                                 placeholder="/images/certificate-logo-gold.png"
                                 class="w-full text-[10px] rounded-lg border-gray-200 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2"
                             >
@@ -508,7 +508,7 @@
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Title / Heading Font</label>
                                 <select name="certificate_title_font" id="form_title_font" class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
-                                    @foreach(['Cinzel' => 'Cinzel (Classic Engraved Serif)', 'Playfair Display' => 'Playfair Display (Luxury Serif)', 'Cormorant Garamond' => 'Cormorant Garamond (Heritage Serif)', 'Libre Baskerville' => 'Libre Baskerville (Academic Serif)', 'Montserrat' => 'Montserrat (Modern Executive Sans)', 'Plus Jakarta Sans' => 'Plus Jakarta Sans (Clean Sans)'] as $fontKey => $fontLabel)
+                                    @foreach(['Cinzel' => 'Cinzel (Classic Engraved Serif)', 'Cinzel Decorative' => 'Cinzel Decorative (Royal Crest)', 'Playfair Display' => 'Playfair Display (Luxury Serif)', 'Cormorant Garamond' => 'Cormorant Garamond (Heritage Serif)', 'EB Garamond' => 'EB Garamond (Classic Academic)', 'Libre Baskerville' => 'Libre Baskerville (Traditional Serif)', 'Merriweather' => 'Merriweather (Formal Serif)', 'Montserrat' => 'Montserrat (Modern Executive Sans)', 'Plus Jakarta Sans' => 'Plus Jakarta Sans (Clean Sans)', 'Poppins' => 'Poppins (Geometric Sans)'] as $fontKey => $fontLabel)
                                         <option value="{{ $fontKey }}" {{ old('certificate_title_font', $settings['title_font'] ?? 'Cinzel') === $fontKey ? 'selected' : '' }}>{{ $fontLabel }}</option>
                                     @endforeach
                                 </select>
@@ -516,7 +516,7 @@
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Recipient Name Font</label>
                                 <select name="certificate_recipient_font" id="form_recipient_font" class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
-                                    @foreach(['Alex Brush' => 'Alex Brush (Signature Script)', 'Great Vibes' => 'Great Vibes (Formal Calligraphy)', 'Allura' => 'Allura (Flowing Script)', 'Pinyon Script' => 'Pinyon Script (Royal Crest Script)', 'Sacramento' => 'Sacramento (Minimalist Script)', 'Playfair Display' => 'Playfair Display (Executive Serif)', 'Cinzel' => 'Cinzel (Imperial Capitals)', 'Cormorant Garamond' => 'Cormorant Garamond (Refined Serif)'] as $fontKey => $fontLabel)
+                                    @foreach(['Alex Brush' => 'Alex Brush (Signature Script)', 'Great Vibes' => 'Great Vibes (Formal Calligraphy)', 'Allura' => 'Allura (Flowing Script)', 'Pinyon Script' => 'Pinyon Script (Royal Crest Script)', 'Parisienne' => 'Parisienne (Classic Parisian Script)', 'Tangerine' => 'Tangerine (Tall Calligraphy)', 'Dancing Script' => 'Dancing Script (Expressive Script)', 'Sacramento' => 'Sacramento (Minimalist Script)', 'Playfair Display' => 'Playfair Display (Executive Serif)', 'Cinzel' => 'Cinzel (Imperial Capitals)', 'Cormorant Garamond' => 'Cormorant Garamond (Refined Serif)', 'EB Garamond' => 'EB Garamond (Academic Serif)'] as $fontKey => $fontLabel)
                                         <option value="{{ $fontKey }}" {{ old('certificate_recipient_font', $settings['recipient_font'] ?? 'Alex Brush') === $fontKey ? 'selected' : '' }}>{{ $fontLabel }}</option>
                                     @endforeach
                                 </select>
@@ -524,7 +524,7 @@
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Course Title Font</label>
                                 <select name="certificate_course_font" id="form_course_font" class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
-                                    @foreach(['Anton' => 'Anton (Bold Display)', 'Cinzel' => 'Cinzel (Executive Serif)', 'Playfair Display' => 'Playfair Display (Luxury Serif)', 'Montserrat' => 'Montserrat (Bold Geometric Sans)', 'Oswald' => 'Oswald (Condensed Display)'] as $fontKey => $fontLabel)
+                                    @foreach(['Anton' => 'Anton (Bold Display)', 'Bebas Neue' => 'Bebas Neue (Tall Impact Caps)', 'Oswald' => 'Oswald (Condensed Display)', 'Cinzel' => 'Cinzel (Executive Serif)', 'Playfair Display' => 'Playfair Display (Luxury Serif)', 'Montserrat' => 'Montserrat (Bold Geometric Sans)', 'Poppins' => 'Poppins (Modern Bold Sans)', 'Lora' => 'Lora (Classic Serif)'] as $fontKey => $fontLabel)
                                         <option value="{{ $fontKey }}" {{ old('certificate_course_font', $settings['course_font'] ?? 'Anton') === $fontKey ? 'selected' : '' }}>{{ $fontLabel }}</option>
                                     @endforeach
                                 </select>
@@ -532,14 +532,14 @@
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Body / Conferment Font</label>
                                 <select name="certificate_body_font" id="form_body_font" class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
-                                    @foreach(['Aleo' => 'Aleo (Balanced Slab Serif)', 'Lora' => 'Lora (Warm Editorial Serif)', 'Merriweather' => 'Merriweather (Academic Serif)', 'Montserrat' => 'Montserrat (Crisp Sans)', 'Plus Jakarta Sans' => 'Plus Jakarta Sans (Modern Sans)', 'Roboto' => 'Roboto (Clean Sans)'] as $fontKey => $fontLabel)
+                                    @foreach(['Aleo' => 'Aleo (Balanced Slab Serif)', 'Lora' => 'Lora (Warm Editorial Serif)', 'Merriweather' => 'Merriweather (Academic Serif)', 'EB Garamond' => 'EB Garamond (Classic Garamond)', 'Libre Baskerville' => 'Libre Baskerville (Book Serif)', 'Montserrat' => 'Montserrat (Crisp Sans)', 'Plus Jakarta Sans' => 'Plus Jakarta Sans (Modern Sans)', 'Poppins' => 'Poppins (Clean Geometric)', 'Roboto' => 'Roboto (Standard Sans)', 'Open Sans' => 'Open Sans (Clear Body Sans)'] as $fontKey => $fontLabel)
                                         <option value="{{ $fontKey }}" {{ old('certificate_body_font', $settings['body_font'] ?? 'Aleo') === $fontKey ? 'selected' : '' }}>{{ $fontLabel }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2.5">
                             <div>
                                 <label class="block text-[11px] font-semibold text-gray-700 mb-1">Institution (px)</label>
                                 <input type="number" step="0.5" min="14" max="60" name="certificate_institution_font_size" id="form_inst_font_size"
@@ -569,6 +569,169 @@
                                 <input type="number" step="0.5" min="10" max="32" name="certificate_body_font_size" id="form_body_font_size"
                                        value="{{ old('certificate_body_font_size', $settings['body_font_size'] ?? '16.5') }}"
                                        class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">ID &amp; Date (px)</label>
+                                <input type="number" step="0.5" min="8" max="24" name="certificate_meta_font_size" id="form_meta_font_size"
+                                       value="{{ old('certificate_meta_font_size', $settings['meta_font_size'] ?? '11') }}"
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Seal Text (px)</label>
+                                <input type="number" step="0.5" min="8" max="26" name="certificate_seal_font_size" id="form_seal_font_size"
+                                       value="{{ old('certificate_seal_font_size', $settings['seal_font_size'] ?? '15') }}"
+                                       class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2.5 bg-white">
+                            </div>
+                        </div>
+
+                        <!-- Design & Color Palette Controls -->
+                        <div class="pt-3 border-t border-slate-100 space-y-2.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-[#063b96]">Design Colors &amp; Subtitle</span>
+                                <button type="button" id="reset_design_colors_btn" class="text-[11px] font-bold text-[#063b96] hover:underline cursor-pointer">
+                                    Reset Colors
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
+                                <div class="sm:col-span-1">
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Subtitle</label>
+                                    <input type="text" name="certificate_subtitle" id="form_cert_subtitle"
+                                           value="{{ old('certificate_subtitle', $settings['subtitle'] ?? 'OF PARTICIPATION') }}"
+                                           placeholder="OF PARTICIPATION"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Sidebar / Heading</label>
+                                    <input type="color" name="certificate_sidebar_color" id="form_sidebar_color"
+                                           value="{{ old('certificate_sidebar_color', $settings['sidebar_color'] ?? '#07398d') }}"
+                                           class="w-full h-8 rounded-lg border border-gray-300 p-0.5 bg-white cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Border / Accent</label>
+                                    <input type="color" name="certificate_accent_color" id="form_accent_color"
+                                           value="{{ old('certificate_accent_color', $settings['accent_color'] ?? '#AF804F') }}"
+                                           class="w-full h-8 rounded-lg border border-gray-300 p-0.5 bg-white cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Name Font Color</label>
+                                    <input type="color" name="certificate_recipient_color" id="form_recipient_color"
+                                           value="{{ old('certificate_recipient_color', $settings['recipient_color'] ?? '#410200') }}"
+                                           class="w-full h-8 rounded-lg border border-gray-300 p-0.5 bg-white cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Course Title</label>
+                                    <input type="color" name="certificate_course_color" id="form_course_color"
+                                           value="{{ old('certificate_course_color', $settings['course_color'] ?? '#003878') }}"
+                                           class="w-full h-8 rounded-lg border border-gray-300 p-0.5 bg-white cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Title Color</label>
+                                    <input type="color" name="certificate_title_color" id="form_title_color"
+                                           value="{{ old('certificate_title_color', $settings['title_color'] ?? '#1c2a4c') }}"
+                                           class="w-full h-8 rounded-lg border border-gray-300 p-0.5 bg-white cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Body Text</label>
+                                    <input type="color" name="certificate_body_color" id="form_body_color"
+                                           value="{{ old('certificate_body_color', $settings['body_color'] ?? '#1c2a4c') }}"
+                                           class="w-full h-8 rounded-lg border border-gray-300 p-0.5 bg-white cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">ID &amp; Date</label>
+                                    <input type="color" name="certificate_meta_color" id="form_meta_color"
+                                           value="{{ old('certificate_meta_color', $settings['meta_color'] ?? '#23bf70') }}"
+                                           class="w-full h-8 rounded-lg border border-gray-300 p-0.5 bg-white cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Manual Element Layout & Position Studio -->
+                        <div class="pt-3 border-t border-slate-100 space-y-2.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-[#063b96]">Manual Element Layout &amp; Position (%)</span>
+                                <button type="button" id="reset_layout_btn" class="text-[11px] font-bold text-[#063b96] hover:underline cursor-pointer">
+                                    Reset Layout
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Logo Top (%)</label>
+                                    <input type="number" step="0.5" min="0" max="25" name="certificate_logo_top" id="form_logo_top"
+                                           value="{{ old('certificate_logo_top', $settings['logo_top'] ?? '1.5') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Logo Width (%)</label>
+                                    <input type="number" step="0.5" min="10" max="70" name="certificate_logo_width" id="form_logo_width"
+                                           value="{{ old('certificate_logo_width', $settings['logo_width'] ?? '34.5') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Title Top (%)</label>
+                                    <input type="number" step="0.2" min="5" max="40" name="certificate_title_top" id="form_title_top"
+                                           value="{{ old('certificate_title_top', $settings['title_top'] ?? '18.6') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Conferment Top (%)</label>
+                                    <input type="number" step="0.2" min="15" max="50" name="certificate_conferment_top" id="form_conferment_top"
+                                           value="{{ old('certificate_conferment_top', $settings['conferment_top'] ?? '29.8') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Name Top (%)</label>
+                                    <input type="number" step="0.2" min="20" max="60" name="certificate_recipient_top" id="form_recipient_top"
+                                           value="{{ old('certificate_recipient_top', $settings['recipient_top'] ?? '34.8') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Body Top (%)</label>
+                                    <input type="number" step="0.2" min="25" max="70" name="certificate_body_top" id="form_body_top"
+                                           value="{{ old('certificate_body_top', $settings['body_top'] ?? '45.4') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Course Top (%)</label>
+                                    <input type="number" step="0.2" min="35" max="80" name="certificate_course_top" id="form_course_top"
+                                           value="{{ old('certificate_course_top', $settings['course_top'] ?? '54.0') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">ID/Date Top (%)</label>
+                                    <input type="number" step="0.2" min="45" max="85" name="certificate_meta_top" id="form_meta_top"
+                                           value="{{ old('certificate_meta_top', $settings['meta_top'] ?? '67.2') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">ID/Date Left (%)</label>
+                                    <input type="number" step="0.2" min="0" max="45" name="certificate_meta_left" id="form_meta_left"
+                                           value="{{ old('certificate_meta_left', $settings['meta_left'] ?? '5.2') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">QR Top (%)</label>
+                                    <input type="number" step="0.5" min="40" max="85" name="certificate_qr_top" id="form_qr_top"
+                                           value="{{ old('certificate_qr_top', $settings['qr_top'] ?? '62.0') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">QR Size (%)</label>
+                                    <input type="number" step="0.5" min="8" max="32" name="certificate_qr_width" id="form_qr_width"
+                                           value="{{ old('certificate_qr_width', $settings['qr_width'] ?? '19.8') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Footer Bottom (%)</label>
+                                    <input type="number" step="0.2" min="1" max="20" name="certificate_footer_bottom" id="form_footer_bottom"
+                                           value="{{ old('certificate_footer_bottom', $settings['footer_bottom'] ?? '6.2') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Seal Size (cqw)</label>
+                                    <input type="number" step="0.5" min="6" max="24" name="certificate_seal_size" id="form_seal_size"
+                                           value="{{ old('certificate_seal_size', $settings['seal_size'] ?? '14.8') }}"
+                                           class="w-full text-xs rounded-lg border-gray-300 focus:border-[#063b96] focus:ring-[#063b96] py-1.5 px-2 bg-white">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -650,7 +813,7 @@
                         
                         <!-- Student Name -->
                         <div class="my-1 py-1 border-b border-dotted border-gray-400 inline-block min-w-[180px]">
-                            <h4 id="prev_recipient_name" class="font-sans text-xs sm:text-sm font-black text-[#c5832b] uppercase">
+                            <h4 id="prev_recipient_name" class="font-sans text-xs sm:text-sm font-black uppercase" style="color: {{ $settings['recipient_color'] ?? '#410200' }};">
                                 {{ $sampleUser->name }}
                             </h4>
                         </div>
@@ -805,6 +968,27 @@
                                     <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     <span>Verify</span>
                                 </a>
+
+                                <form method="POST" action="{{ route('admin.certificates.notify', $cert) }}" class="inline">
+                                    @csrf
+                                    <button type="submit" class="text-sky-700 hover:text-sky-900 font-bold text-xs bg-sky-50 hover:bg-sky-100 px-2.5 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1 cursor-pointer" title="Send In-App Notification & Email">
+                                        <i class="fas fa-paper-plane text-[10px]"></i>
+                                        <span>Notify &amp; Email</span>
+                                    </button>
+                                </form>
+
+                                @php
+                                    $certWaPhone = preg_replace('/[^0-9]/', '', (string) ($cert->user?->effective_phone ?? $cert->user?->phone ?? ''));
+                                    if (strlen($certWaPhone) === 11 && str_starts_with($certWaPhone, '01')) {
+                                        $certWaPhone = '88' . $certWaPhone;
+                                    }
+                                    $certWaText = rawurlencode("Congratulations {$cert->user?->name}! Your official certificate ({$cert->certificate_number}) for {$cert->course?->title} is ready: " . route('certificate.verify', $cert->certificate_number));
+                                @endphp
+                                @if($certWaPhone !== '')
+                                    <a href="https://wa.me/{{ $certWaPhone }}?text={{ $certWaText }}" target="_blank" rel="noopener noreferrer" class="text-emerald-700 hover:text-emerald-900 font-bold text-xs bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1" title="Send Certificate via WhatsApp">
+                                        <i class="fab fa-whatsapp text-xs"></i>
+                                    </a>
+                                @endif
 
                                 <form method="POST" action="{{ route('admin.certificates.destroy', $cert) }}" class="inline">
                                     @csrf
@@ -1071,10 +1255,50 @@
         if (prevCertTitle) prevCertTitle.className = `text-[9px] font-serif uppercase tracking-widest font-bold block ${s.titleColor}`;
         if (activeTemplateBadge) activeTemplateBadge.innerText = `Active: ${s.name}`;
 
-        // Update preview links
+        // Update preview links with active template + selected fonts
+        updatePreviewLinks(tmpl);
+    }
+
+    function updatePreviewLinks(tmplOverride) {
+        const checkedTmpl = document.querySelector('input[name="certificate_template"]:checked');
+        const tmpl = tmplOverride || (checkedTmpl ? checkedTmpl.value : '{{ $settings['template'] ?? 'acs_signature' }}');
+        const tf = document.getElementById('form_title_font')?.value || 'Cinzel';
+        const rf = document.getElementById('form_recipient_font')?.value || 'Alex Brush';
+        const cf = document.getElementById('form_course_font')?.value || 'Anton';
+        const bf = document.getElementById('form_body_font')?.value || 'Aleo';
+        const tfs = document.getElementById('form_title_font_size')?.value || '35';
+        const rfs = document.getElementById('form_recipient_font_size')?.value || '32';
+        const cfs = document.getElementById('form_course_font_size')?.value || '30';
+        const bfs = document.getElementById('form_body_font_size')?.value || '16.5';
+        const mfs = document.getElementById('form_meta_font_size')?.value || '11';
+        const sf = document.getElementById('form_seal_font_size')?.value || '15';
+        const sub = document.getElementById('form_cert_subtitle')?.value || 'OF PARTICIPATION';
+        const sc = document.getElementById('form_sidebar_color')?.value || '#07398d';
+        const ac = document.getElementById('form_accent_color')?.value || '#AF804F';
+        const rc = document.getElementById('form_recipient_color')?.value || '#410200';
+        const tc = document.getElementById('form_title_color')?.value || '#1c2a4c';
+        const bc = document.getElementById('form_body_color')?.value || '#1c2a4c';
+        const cc = document.getElementById('form_course_color')?.value || '#003878';
+        const mc = document.getElementById('form_meta_color')?.value || '#23bf70';
+        const layoutParams = [
+            ['logo_top', 'form_logo_top', '1.5'],
+            ['logo_width', 'form_logo_width', '34.5'],
+            ['title_top', 'form_title_top', '18.6'],
+            ['conferment_top', 'form_conferment_top', '29.8'],
+            ['recipient_top', 'form_recipient_top', '34.8'],
+            ['body_top', 'form_body_top', '45.4'],
+            ['course_top', 'form_course_top', '54.0'],
+            ['meta_top', 'form_meta_top', '67.2'],
+            ['meta_left', 'form_meta_left', '5.2'],
+            ['qr_top', 'form_qr_top', '62.0'],
+            ['qr_width', 'form_qr_width', '19.8'],
+            ['footer_bottom', 'form_footer_bottom', '6.2'],
+            ['seal_size', 'form_seal_size', '14.8'],
+        ].map(([param, id, def]) => `${param}=${encodeURIComponent(document.getElementById(id)?.value ?? def)}`).join('&');
         const baseUrl = "{{ route('admin.certificates.preview') }}";
+        const qs = `template=${encodeURIComponent(tmpl)}&subtitle=${encodeURIComponent(sub)}&title_font=${encodeURIComponent(tf)}&recipient_font=${encodeURIComponent(rf)}&course_font=${encodeURIComponent(cf)}&body_font=${encodeURIComponent(bf)}&title_font_size=${encodeURIComponent(tfs)}&recipient_font_size=${encodeURIComponent(rfs)}&course_font_size=${encodeURIComponent(cfs)}&body_font_size=${encodeURIComponent(bfs)}&meta_font_size=${encodeURIComponent(mfs)}&seal_font_size=${encodeURIComponent(sf)}&sidebar_color=${encodeURIComponent(sc)}&accent_color=${encodeURIComponent(ac)}&recipient_color=${encodeURIComponent(rc)}&title_color=${encodeURIComponent(tc)}&body_color=${encodeURIComponent(bc)}&course_color=${encodeURIComponent(cc)}&meta_color=${encodeURIComponent(mc)}&${layoutParams}`;
         printLinks.forEach(link => {
-            link.href = `${baseUrl}?template=${tmpl}`;
+            link.href = `${baseUrl}?${qs}`;
         });
     }
 
@@ -1128,6 +1352,7 @@
             const chosen = sel.value || defaultVal;
             targetEl.style.fontFamily = `'${chosen}', ${fallback}`;
         });
+        updatePreviewLinks();
     }
 
     fontFamilyBindings.forEach(({ selectId }) => {
@@ -1138,12 +1363,74 @@
     });
 
     const resetFontBtn = document.getElementById('reset_font_sizes_btn');
+    ['form_seal_font_size', 'form_meta_font_size', 'form_title_font_size', 'form_recipient_font_size', 'form_course_font_size', 'form_body_font_size', 'form_cert_subtitle', 'form_logo_top', 'form_logo_width', 'form_title_top', 'form_conferment_top', 'form_recipient_top', 'form_body_top', 'form_course_top', 'form_meta_top', 'form_meta_left', 'form_qr_top', 'form_qr_width', 'form_footer_bottom', 'form_seal_size'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updatePreviewLinks);
+    });
+    const resetLayoutBtn = document.getElementById('reset_layout_btn');
+    if (resetLayoutBtn) {
+        resetLayoutBtn.addEventListener('click', function () {
+            const layoutDefaults = {
+                form_logo_top: '1.5',
+                form_logo_width: '34.5',
+                form_title_top: '18.6',
+                form_conferment_top: '29.8',
+                form_recipient_top: '34.8',
+                form_body_top: '45.4',
+                form_course_top: '54.0',
+                form_meta_top: '67.2',
+                form_meta_left: '5.2',
+                form_qr_top: '62.0',
+                form_qr_width: '19.8',
+                form_footer_bottom: '6.2',
+                form_seal_size: '14.8',
+            };
+            Object.entries(layoutDefaults).forEach(([k, v]) => {
+                const el = document.getElementById(k);
+                if (el) el.value = v;
+            });
+            updatePreviewLinks();
+        });
+    }
+    ['form_sidebar_color', 'form_accent_color', 'form_recipient_color', 'form_title_color', 'form_body_color', 'form_course_color', 'form_meta_color'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', function () {
+                if (id === 'form_recipient_color' && prevRecipientName) prevRecipientName.style.color = el.value;
+                if (id === 'form_course_color' && prevCourseTitle) prevCourseTitle.style.color = el.value;
+                updatePreviewLinks();
+            });
+        }
+    });
+    const resetColorsBtn = document.getElementById('reset_design_colors_btn');
+    if (resetColorsBtn) {
+        resetColorsBtn.addEventListener('click', function () {
+            const defaults = {
+                form_cert_subtitle: 'OF PARTICIPATION',
+                form_sidebar_color: '#07398d',
+                form_accent_color: '#AF804F',
+                form_recipient_color: '#410200',
+                form_title_color: '#1c2a4c',
+                form_body_color: '#1c2a4c',
+                form_course_color: '#003878',
+                form_meta_color: '#23bf70',
+            };
+            Object.entries(defaults).forEach(([k, v]) => {
+                const el = document.getElementById(k);
+                if (el) el.value = v;
+            });
+            if (prevRecipientName) prevRecipientName.style.color = '#410200';
+            if (prevCourseTitle) prevCourseTitle.style.color = '#003878';
+            updatePreviewLinks();
+        });
+    }
     if (resetFontBtn) {
         resetFontBtn.addEventListener('click', function() {
             fontBindings.forEach(({ inputId, defaultVal }) => {
                 const input = document.getElementById(inputId);
                 if (input) input.value = defaultVal;
             });
+            if (sealFontSizeInput) sealFontSizeInput.value = 15;
             fontFamilyBindings.forEach(({ selectId, defaultVal }) => {
                 const sel = document.getElementById(selectId);
                 if (sel) sel.value = defaultVal;
@@ -1155,5 +1442,5 @@
     syncPreviewFontSizes();
     syncPreviewFontFamilies();
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;700&family=Alex+Brush&family=Allura&family=Anton&family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:wght@600;700&family=Great+Vibes&family=Libre+Baskerville:wght@700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@500;700;800&family=Oswald:wght@600;700&family=Pinyon+Script&family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Roboto:wght@500;700&family=Sacramento&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;700&family=Alex+Brush&family=Allura&family=Anton&family=Bebas+Neue&family=Cinzel:wght@600;700;800&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:wght@600;700&family=Dancing+Script:wght@600;700&family=EB+Garamond:wght@500;700&family=Great+Vibes&family=Libre+Baskerville:wght@700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@500;700;800&family=Open+Sans:wght@400;600;700&family=Oswald:wght@600;700&family=Parisienne&family=Pinyon+Script&family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Poppins:wght@500;600;700;800&family=Roboto:wght@500;700&family=Sacramento&family=Tangerine:wght@700&display=swap" rel="stylesheet">
 @endsection

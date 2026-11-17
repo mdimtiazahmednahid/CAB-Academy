@@ -46,5 +46,7 @@ class AppServiceProvider extends ServiceProvider
         if ($shouldForceHttps) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
+
+        \App\Support\MailConfigManager::applyRuntimeMailConfig();
     }
 }

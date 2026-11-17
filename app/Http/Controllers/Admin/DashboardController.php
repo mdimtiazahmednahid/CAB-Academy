@@ -108,6 +108,8 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $siteTraffic = \App\Support\SiteTraffic::stats();
+
         return view('admin.dashboard', compact(
             'totalStudents',
             'publishedCourses',
@@ -133,7 +135,8 @@ class DashboardController extends Controller
             'pendingJobApplicationsCount',
             'recentJobApplications',
             'recentStudents',
-            'topCourses'
+            'topCourses',
+            'siteTraffic'
         ));
     }
 }

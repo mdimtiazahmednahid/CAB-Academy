@@ -142,6 +142,20 @@
                 {{ $activeJobsCount ?? 0 }} Jobs &bull; {{ $pendingJobApplicationsCount ?? 0 }} CVs
             </p>
         </a>
+
+        <!-- Site Visitor & View Counter -->
+        <div class="col-span-2 sm:col-span-1 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Site Traffic</span>
+                <span class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+            <p class="text-lg sm:text-xl font-black text-[#063b96] tracking-tight">{{ number_format($siteTraffic['total_views'] ?? 0) }} <span class="text-xs font-bold text-slate-400">Views</span></p>
+            <p class="text-[10px] font-semibold text-slate-500 mt-1 truncate">
+                {{ number_format($siteTraffic['unique_visitors'] ?? 0) }} Visitors &bull; {{ number_format($siteTraffic['today_views'] ?? 0) }} Today
+            </p>
+        </div>
     </div>
 
     <!-- 3. Financial Telemetry Chart (8 cols) & Treasury Snapshot (4 cols) -->

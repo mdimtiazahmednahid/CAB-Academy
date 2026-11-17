@@ -1,5 +1,6 @@
 @php
     $template = request('template') ?: \App\Models\Setting::getVal('certificate_template', 'acs_signature');
+    $isAdminPreview = request()->routeIs('admin.certificates.preview');
 
     // Configurable Institution Branding & Content (defaults to Official ACS Signature Certificate)
     $institutionName = \App\Models\Setting::getVal('certificate_institution_name', 'ACADEMY OF COMMERCIAL & SUPPLY CHAIN-ACS');
@@ -10,7 +11,7 @@
     $completionText = \App\Models\Setting::getVal('certificate_completion_text', 'Successfully participated in the training program, demonstrating active engagement and commitment to professional development.');
     $facultyEndorsement = \App\Models\Setting::getVal('certificate_faculty_endorsement', 'Delivered under the auspices of the ACS Academy Executive Faculty Board.');
     $primarySignatoryName = \App\Models\Setting::getVal('certificate_primary_signatory_name', 'Saidur Rahman');
-    $primarySignatoryTitle = \App\Models\Setting::getVal('certificate_primary_signatory_title', 'ACS EXECUTIVE GOVORNING');
+    $primarySignatoryTitle = \App\Models\Setting::getVal('certificate_primary_signatory_title', 'ACS GOVORNING BODY');
     $primarySignatoryBoard = \App\Models\Setting::getVal('certificate_primary_signatory_board', 'ACS EXECUTIVE GOVORNING');
     $showSecondary = \App\Models\Setting::getVal('certificate_show_secondary_signature', '1') == '1';
     $secondarySignatoryName = \App\Models\Setting::getVal('certificate_secondary_signatory_name', 'Lead Trainer');
@@ -26,7 +27,7 @@
     $showSealText = \App\Models\Setting::getVal('certificate_show_seal_text', '1') == '1';
     $showQrCode = \App\Models\Setting::getVal('certificate_show_qr_code', '1') == '1';
     $showWatermark = \App\Models\Setting::getVal('certificate_show_watermark', '1') == '1';
-    $customLogoUrl = trim((string) \App\Models\Setting::getVal('certificate_logo_url', '/images/certificate-logo-gold.png'));
+    $customLogoUrl = trim((string) \App\Models\Setting::getVal('certificate_logo_url', '/images/logo.png'));
     $customSealLogoUrl = trim((string) \App\Models\Setting::getVal('certificate_seal_logo_url', '/images/certificate-logo-gold.png'));
     $customSealBgUrl = trim((string) \App\Models\Setting::getVal('certificate_seal_bg_url', '/images/certificate-gold-seal.png'));
     $trainerSigUrl = trim((string) \App\Models\Setting::getVal('certificate_trainer_signature_url', '/images/cert-official/sig-trainer.svg'));
@@ -37,14 +38,37 @@
     $dateLabel = \App\Models\Setting::getVal('certificate_date_label', 'DATE:');
     $batchLabel = \App\Models\Setting::getVal('certificate_batch_label', 'BATCH:');
     $instFontSize = (float) \App\Models\Setting::getVal('certificate_institution_font_size', '31') ?: 31;
-    $titleFontSize = (float) \App\Models\Setting::getVal('certificate_title_font_size', '35') ?: 35;
-    $recipientFontSize = (float) \App\Models\Setting::getVal('certificate_recipient_font_size', '32') ?: 32;
-    $courseFontSize = (float) \App\Models\Setting::getVal('certificate_course_font_size', '30') ?: 30;
-    $bodyFontSize = (float) \App\Models\Setting::getVal('certificate_body_font_size', '16.5') ?: 16.5;
-    $titleFont = \App\Models\Setting::getVal('certificate_title_font', 'Cinzel') ?: 'Cinzel';
-    $recipientFont = \App\Models\Setting::getVal('certificate_recipient_font', 'Alex Brush') ?: 'Alex Brush';
-    $courseFont = \App\Models\Setting::getVal('certificate_course_font', 'Anton') ?: 'Anton';
-    $bodyFont = \App\Models\Setting::getVal('certificate_body_font', 'Aleo') ?: 'Aleo';
+    $titleFontSize = (float) (($isAdminPreview ? request('title_font_size') : null) ?: \App\Models\Setting::getVal('certificate_title_font_size', '35')) ?: 35;
+    $recipientFontSize = (float) (($isAdminPreview ? request('recipient_font_size') : null) ?: \App\Models\Setting::getVal('certificate_recipient_font_size', '32')) ?: 32;
+    $courseFontSize = (float) (($isAdminPreview ? request('course_font_size') : null) ?: \App\Models\Setting::getVal('certificate_course_font_size', '30')) ?: 30;
+    $bodyFontSize = (float) (($isAdminPreview ? request('body_font_size') : null) ?: \App\Models\Setting::getVal('certificate_body_font_size', '16.5')) ?: 16.5;
+    $metaFontSize = (float) (($isAdminPreview ? request('meta_font_size') : null) ?: \App\Models\Setting::getVal('certificate_meta_font_size', '11')) ?: 11;
+    $sealFontSize = (float) (($isAdminPreview ? request('seal_font_size') : null) ?: \App\Models\Setting::getVal('certificate_seal_font_size', '15')) ?: 15;
+    $certSubtitle = ($isAdminPreview ? request('subtitle') : null) ?: (\App\Models\Setting::getVal('certificate_subtitle', 'OF PARTICIPATION') ?: 'OF PARTICIPATION');
+    $sidebarColor = ($isAdminPreview ? request('sidebar_color') : null) ?: (\App\Models\Setting::getVal('certificate_sidebar_color', '#07398d') ?: '#07398d');
+    $accentColor = ($isAdminPreview ? request('accent_color') : null) ?: (\App\Models\Setting::getVal('certificate_accent_color', '#AF804F') ?: '#AF804F');
+    $recipientColor = ($isAdminPreview ? request('recipient_color') : null) ?: (\App\Models\Setting::getVal('certificate_recipient_color', '#410200') ?: '#410200');
+    $titleColorHex = ($isAdminPreview ? request('title_color') : null) ?: (\App\Models\Setting::getVal('certificate_title_color', '#1c2a4c') ?: '#1c2a4c');
+    $bodyColorHex = ($isAdminPreview ? request('body_color') : null) ?: (\App\Models\Setting::getVal('certificate_body_color', '#1c2a4c') ?: '#1c2a4c');
+    $courseColorHex = ($isAdminPreview ? request('course_color') : null) ?: (\App\Models\Setting::getVal('certificate_course_color', '#003878') ?: '#003878');
+    $metaColorHex = ($isAdminPreview ? request('meta_color') : null) ?: (\App\Models\Setting::getVal('certificate_meta_color', '#23bf70') ?: '#23bf70');
+    $titleFont = ($isAdminPreview ? request('title_font') : null) ?: (\App\Models\Setting::getVal('certificate_title_font', 'Cinzel') ?: 'Cinzel');
+    $recipientFont = ($isAdminPreview ? request('recipient_font') : null) ?: (\App\Models\Setting::getVal('certificate_recipient_font', 'Alex Brush') ?: 'Alex Brush');
+    $courseFont = ($isAdminPreview ? request('course_font') : null) ?: (\App\Models\Setting::getVal('certificate_course_font', 'Anton') ?: 'Anton');
+    $bodyFont = ($isAdminPreview ? request('body_font') : null) ?: (\App\Models\Setting::getVal('certificate_body_font', 'Aleo') ?: 'Aleo');
+    $logoTopPct = (float) (($isAdminPreview && request()->filled('logo_top') ? request('logo_top') : null) ?? \App\Models\Setting::getVal('certificate_logo_top', '1.5'));
+    $logoWidthPct = (float) (($isAdminPreview && request()->filled('logo_width') ? request('logo_width') : null) ?? \App\Models\Setting::getVal('certificate_logo_width', '34.5')) ?: 34.5;
+    $titleTopPct = (float) (($isAdminPreview && request()->filled('title_top') ? request('title_top') : null) ?? \App\Models\Setting::getVal('certificate_title_top', '18.6'));
+    $confermentTopPct = (float) (($isAdminPreview && request()->filled('conferment_top') ? request('conferment_top') : null) ?? \App\Models\Setting::getVal('certificate_conferment_top', '29.8'));
+    $recipientTopPct = (float) (($isAdminPreview && request()->filled('recipient_top') ? request('recipient_top') : null) ?? \App\Models\Setting::getVal('certificate_recipient_top', '34.8'));
+    $bodyTopPct = (float) (($isAdminPreview && request()->filled('body_top') ? request('body_top') : null) ?? \App\Models\Setting::getVal('certificate_body_top', '45.4'));
+    $courseTopPct = (float) (($isAdminPreview && request()->filled('course_top') ? request('course_top') : null) ?? \App\Models\Setting::getVal('certificate_course_top', '54.0'));
+    $metaTopPct = (float) (($isAdminPreview && request()->filled('meta_top') ? request('meta_top') : null) ?? \App\Models\Setting::getVal('certificate_meta_top', '67.2'));
+    $metaLeftPct = (float) (($isAdminPreview && request()->filled('meta_left') ? request('meta_left') : null) ?? \App\Models\Setting::getVal('certificate_meta_left', '5.2'));
+    $qrTopPct = (float) (($isAdminPreview && request()->filled('qr_top') ? request('qr_top') : null) ?? \App\Models\Setting::getVal('certificate_qr_top', '62.0'));
+    $qrWidthPct = (float) (($isAdminPreview && request()->filled('qr_width') ? request('qr_width') : null) ?? \App\Models\Setting::getVal('certificate_qr_width', '19.8')) ?: 19.8;
+    $footerBottomPct = (float) (($isAdminPreview && request()->filled('footer_bottom') ? request('footer_bottom') : null) ?? \App\Models\Setting::getVal('certificate_footer_bottom', '6.2'));
+    $sealSizeCqw = (float) (($isAdminPreview && request()->filled('seal_size') ? request('seal_size') : null) ?? \App\Models\Setting::getVal('certificate_seal_size', '14.8')) ?: 14.8;
     $titleFontCss = "'{$titleFont}', 'Cinzel', serif";
     $recipientFontCss = "'{$recipientFont}', 'Alex Brush', cursive";
     $courseFontCss = "'{$courseFont}', 'Anton', sans-serif";
@@ -169,9 +193,9 @@
     ];
 
     $theme = $themes[$template] ?? $themes['acs_signature'];
-    $defaultGoldLogo = file_exists(public_path('images/certificate-logo-gold.png'))
-        ? asset('images/certificate-logo-gold.png')
-        : (\App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png'));
+    $defaultGoldLogo = file_exists(public_path('images/logo.png'))
+        ? asset('images/logo.png')
+        : (\App\Models\Setting::getVal('site_logo') ?: asset('images/certificate-logo-gold.png'));
     $certGoldLogo = !empty($customLogoUrl)
         ? (str_starts_with($customLogoUrl, 'http') ? $customLogoUrl : asset(ltrim($customLogoUrl, '/')))
         : $defaultGoldLogo;
@@ -195,7 +219,7 @@
     <link rel="icon" href="{{ \App\Models\Setting::getVal('site_logo') ?: asset('images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;700&family=Alex+Brush&family=Allura&family=Anton&family=Archivo+Black&family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&family=Libre+Baskerville:wght@700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700;800;900&family=Oswald:wght@600;700&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@700;800&family=Roboto:wght@700&family=Sacramento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;700&family=Alex+Brush&family=Allura&family=Anton&family=Archivo+Black&family=Bebas+Neue&family=Cinzel:wght@500;600;700;800;900&family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:wght@500;600;700&family=Dancing+Script:wght@600;700&family=EB+Garamond:wght@500;600;700&family=Great+Vibes&family=Libre+Baskerville:wght@700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;600;700&family=Oswald:wght@600;700&family=Parisienne&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@700;800&family=Poppins:wght@500;600;700;800&family=Roboto:wght@700&family=Sacramento&family=Tangerine:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {!! acs_inline_compiled_css() !!}
@@ -225,10 +249,9 @@
         @media print {
             html, body {
                 display: block !important;
-                width: {{ $template === 'acs_signature' ? '210mm' : '297mm' }} !important;
-                height: {{ $template === 'acs_signature' ? '297mm' : '210mm' }} !important;
+                width: 100% !important;
+                height: 100% !important;
                 min-height: 0 !important;
-                max-height: {{ $template === 'acs_signature' ? '297mm' : '210mm' }} !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 background: #ffffff !important;
@@ -242,14 +265,18 @@
             @if($template === 'acs_signature')
             .acs-portrait-cert {
                 position: fixed !important;
+                inset: 0 !important;
                 top: 0 !important;
                 left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
-                width: 210mm !important;
-                height: 297mm !important;
-                max-width: 210mm !important;
-                max-height: 297mm !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                max-width: none !important;
+                max-height: none !important;
+                aspect-ratio: auto !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 page-break-inside: avoid !important;
@@ -403,13 +430,13 @@
 
         <!-- Quick Template Switcher & Actions -->
         <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-            <!-- Template Pills -->
-            <div class="hidden lg:flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-700 text-[10px]">
-                <span class="text-slate-400 px-1 font-bold">Theme:</span>
+            <!-- Template Pills (Responsive on Mobile & Desktop) -->
+            <div class="flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-700 text-[10px] overflow-x-auto max-w-full">
+                <span class="hidden sm:inline text-slate-400 px-1 font-bold">Theme:</span>
                 @foreach($themes as $themeKey => $tConfig)
                     <a 
                         href="?template={{ $themeKey }}{{ request('as_user') ? '&as_user=' . request('as_user') : '' }}" 
-                        class="px-2 py-1 rounded-lg font-bold transition-all {{ $template === $themeKey ? 'bg-primary text-white shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}"
+                        class="shrink-0 px-2 py-1 rounded-lg font-bold transition-all {{ $template === $themeKey ? 'bg-primary text-white shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800' }}"
                         title="{{ $tConfig['name'] }}"
                     >
                         {{ $themeKey === 'acs_signature' ? 'ACS Official' : explode(' ', $tConfig['name'])[0] }}
@@ -443,20 +470,20 @@
             <!-- Hidden SEO & Test Compatibility Anchor -->
             <span class="sr-only">ACS Academy • Learn, Grow, Lead. {{ $institutionName }} {{ $facultyEndorsement }}</span>
 
-            <!-- Left Vertical Royal Blue Gradient Sidebar (13.6% width) -->
+            <!-- Left Vertical Sidebar (Admin-Configurable Primary Color) -->
             <div class="absolute inset-y-0 left-0 z-0"
-                 style="width: 13.6%; background: linear-gradient(180deg, #0b4db4 0%, #07398d 28%, #042868 55%, #0945a4 82%, #04296b 100%);">
+                 style="width: 13.6%; background: linear-gradient(180deg, {{ $sidebarColor }} 0%, #042868 55%, {{ $sidebarColor }} 100%);">
             </div>
 
-            <!-- Metallic Gold Outer Frame (Top, Right, Bottom + Left Vertical Divider) -->
+            <!-- Metallic Gold / Accent Outer Frame -->
             <div class="absolute top-0 right-0 z-10 pointer-events-none"
-                 style="left: 13.6%; height: 1.65%; background: linear-gradient(90deg, #e7bb4b 0%, #f5d87e 45%, #d69c39 100%);"></div>
+                 style="left: 13.6%; height: 1.65%; background-color: {{ $accentColor }};"></div>
             <div class="absolute bottom-0 right-0 z-10 pointer-events-none"
-                 style="left: 13.6%; height: 1.65%; background: linear-gradient(90deg, #d69c39 0%, #f5d87e 55%, #e7bb4b 100%);"></div>
+                 style="left: 13.6%; height: 1.65%; background-color: {{ $accentColor }};"></div>
             <div class="absolute top-0 bottom-0 right-0 z-10 pointer-events-none"
-                 style="width: 2.35%; background: linear-gradient(180deg, #f3cd6e 0%, #dca43f 35%, #f7d983 68%, #cf9533 100%);"></div>
+                 style="width: 2.35%; background-color: {{ $accentColor }};"></div>
             <div class="absolute top-0 bottom-0 z-10 pointer-events-none"
-                 style="left: 13.6%; width: 2.35%; background: linear-gradient(180deg, #f3cd6e 0%, #dca43f 35%, #f7d983 68%, #cf9533 100%);"></div>
+                 style="left: 13.6%; width: 2.35%; background-color: {{ $accentColor }};"></div>
 
             <!-- Inner Content Area (Right of Blue+Gold Sidebar) -->
             <div class="absolute overflow-hidden flex flex-col"
@@ -481,126 +508,163 @@
                 <!-- Foreground Certificate Content (Exact PDF Percentage Coordinates) -->
                 <div class="relative z-10 w-full h-full">
 
-                    <!-- 1. Top ACS Circular Crest Logo with Ribbon (Transparent PNG, Exact PDF Position) -->
-                    <div class="absolute left-0 right-0 flex justify-center" style="top: 1.5%;">
-                        <img src="{{ asset('images/cert-official/acs-logo-top.png') }}"
+                    <!-- 1. Top ACS Circular Crest Logo (Respects Custom Uploaded Logo) -->
+                    @php
+                        $topCrestLogo = $certGoldLogo;
+                        $sigTitleCqw = round(7.5 * ($titleFontSize / 35), 2);
+                        $sigBodyCqw = round(2.32 * ($bodyFontSize / 16.5), 2);
+                        $sigMetaCqw = round(1.65 * ($metaFontSize / 11), 2);
+                        $sigCourseBaseCqw = $courseTitleLen > 48 ? 3.35 : 4.35;
+                        $sigCourseCqw = round($sigCourseBaseCqw * ($courseFontSize / 30), 2);
+                        $recScale = $recipientFontSize / 32;
+                    @endphp
+                    <div class="absolute left-0 right-0 flex justify-center" style="top: {{ $logoTopPct }}%;">
+                        <img src="{{ $topCrestLogo }}"
                              alt="{{ $institutionName }}"
-                             class="object-contain"
-                             style="width: 34.5%; height: auto;">
+                             class="object-contain border-0 bg-transparent"
+                             style="width: {{ $logoWidthPct }}%; max-height: 18cqw; height: auto;">
                     </div>
 
-                    <!-- 2. CERTIFICATE / OF PARTICIPATION -->
-                    <div class="absolute left-0 right-0 text-center" style="top: 18.6%;">
+                    <!-- 2. CERTIFICATE / SUBTITLE -->
+                    <div class="absolute left-0 right-0 text-center px-[4%]" style="top: {{ $titleTopPct }}%;">
                         <h1 class="font-bold uppercase m-0"
-                            style="font-family: {!! $titleFontCss !!}; color: #1c2a4c; font-size: 7.5cqw; line-height: 1.02; letter-spacing: 0.02em;">
-                            CERTIFICATE
+                            style="font-family: {!! $titleFontCss !!}; color: {{ $titleColorHex }}; font-size: {{ $sigTitleCqw }}cqw; line-height: 1.02; letter-spacing: 0.02em;">
+                            {{ $certTitle }}
                         </h1>
-                        <p class="font-canva-sans font-bold uppercase m-0"
-                           style="color: #1c2a4c; font-size: 3.02cqw; line-height: 1.2; letter-spacing: 0.04em; margin-top: 0.6%;">
-                            OF PARTICIPATION
-                        </p>
+                        @if(!empty($certSubtitle))
+                            <p class="font-canva-sans font-bold uppercase m-0"
+                               style="color: {{ $titleColorHex }}; font-size: 2.8cqw; line-height: 1.2; letter-spacing: 0.04em; margin-top: 0.6%;">
+                                {{ $certSubtitle }}
+                            </p>
+                        @endif
                     </div>
 
                     <!-- 3. Conferment Text -->
-                    <div class="absolute left-0 right-0 text-center" style="top: 29.8%;">
+                    <div class="absolute left-0 right-0 text-center px-[4%]" style="top: {{ $confermentTopPct }}%;">
                         <p class="font-bold m-0"
-                           style="font-family: {!! $bodyFontCss !!}; color: #1c2a4c; font-size: 3.19cqw; line-height: 1.2;">
-                            This certificate is presented to
+                           style="font-family: {!! $bodyFontCss !!}; color: {{ $bodyColorHex }}; font-size: 3.1cqw; line-height: 1.2;">
+                            {{ $confermentText }}
                         </p>
                     </div>
 
-                    <!-- 4. Recipient Name (Admin-Configurable Font in Gold #ac8444) + Gold Rule -->
+                    <!-- 4. Recipient Name (Admin-Configurable Font, Size & Accent Color + Auto-Fit) -->
                     @php
                         $recipientNameStr = trim((string) $user->name);
                         $recipientLen = mb_strlen($recipientNameStr);
-                        $recipientCqw = match (true) {
-                            $recipientLen > 30 => '3.7cqw',
-                            $recipientLen > 24 => '4.5cqw',
-                            $recipientLen > 18 => '5.4cqw',
-                            default => '6.8cqw',
+                        $baseRecCqw = match (true) {
+                            $recipientLen > 30 => 3.7,
+                            $recipientLen > 24 => 4.5,
+                            $recipientLen > 18 => 5.4,
+                            default => 6.8,
                         };
+                        $recipientCqw = round($baseRecCqw * $recScale, 2) . 'cqw';
                     @endphp
-                    <div class="absolute left-0 right-0 flex flex-col items-center text-center px-[6%]" style="top: 34.8%;">
+                    <div class="absolute left-0 right-0 flex flex-col items-center text-center px-[6%]" style="top: {{ $recipientTopPct }}%;">
                         <div class="acs-cert-recipient-name whitespace-nowrap inline-block max-w-full"
                              data-base-cqw="{{ $recipientCqw }}"
-                             style="font-family: {!! $recipientFontCss !!}; color: #ac8444; font-size: {{ $recipientCqw }}; line-height: 1.12;">
+                             style="font-family: {!! $recipientFontCss !!}; color: {{ $recipientColor }}; font-size: {{ $recipientCqw }}; line-height: 1.12;">
                             {{ $user->name }}
                         </div>
-                        <div style="width: 86%; height: 0.22cqw; background-color: #e7bb4b; margin-top: 0.9%;"></div>
+                        <div style="width: 86%; height: 0.22cqw; background-color: {{ $accentColor }}; margin-top: 0.9%;"></div>
                     </div>
 
                     <!-- 5. Participation Body Text -->
-                    <div class="absolute left-0 right-0 flex justify-center text-center" style="top: 45.4%;">
+                    <div class="absolute left-0 right-0 flex justify-center text-center" style="top: {{ $bodyTopPct }}%;">
                         <p class="font-normal m-0"
-                           style="font-family: {!! $bodyFontCss !!}; color: #1c2a4c; font-size: 2.32cqw; line-height: 1.42; max-width: 86%;">
-                            Successfully participated in the training program, demonstrating active engagement and commitment to professional development.
+                           style="font-family: {!! $bodyFontCss !!}; color: {{ $bodyColorHex }}; font-size: {{ $sigBodyCqw }}cqw; line-height: 1.42; max-width: 86%;">
+                            {{ $completionText }}
                         </p>
                     </div>
 
-                    <!-- 6. Course Title (Admin-Configurable Font in #003878) -->
-                    <div class="absolute left-0 right-0 text-center" style="top: 54.0%; padding: 0 3.5%;">
+                    <!-- 6. Course Title (Admin-Configurable Font, Size & Color) -->
+                    <div class="absolute left-0 right-0 text-center" style="top: {{ $courseTopPct }}%; padding: 0 3.5%;">
                         <h2 class="font-normal uppercase m-0"
-                            style="font-family: {!! $courseFontCss !!}; color: #003878; font-size: {{ $courseTitleLen > 48 ? '3.35cqw' : '4.35cqw' }}; line-height: 1.16; letter-spacing: 0.015em;">
+                            style="font-family: {!! $courseFontCss !!}; color: {{ $courseColorHex }}; font-size: {{ $sigCourseCqw }}cqw; line-height: 1.16; letter-spacing: 0.015em;">
                             &ldquo;{{ mb_strtoupper($course->title) }}&rdquo;
                         </h2>
                     </div>
 
-                    <!-- 7. Certificate ID & Date (Emerald Green #23bf70, Roboto Bold, Left-Aligned) -->
+                    <!-- 7. Certificate ID & Date (Admin-Configurable Meta Color & Labels) -->
                     <div class="absolute text-left font-roboto-bold"
-                         style="top: 66.8%; left: 10.5%; right: 4%; color: #23bf70; font-size: 2.47cqw; line-height: 1.42;">
+                         style="top: {{ $metaTopPct }}%; left: {{ $metaLeftPct }}%; right: 4%; color: {{ $metaColorHex }}; font-size: {{ $sigMetaCqw }}cqw; line-height: 1.38;">
                         @if(!empty($course->batch) && $course->show_batch)
                             <div class="uppercase">{{ $batchLabel }} {{ $course->batch }}</div>
                         @endif
-                        <div class="uppercase">CERTIFICATE ID: {{ $certificate->certificate_number }}</div>
-                        <div class="uppercase">DATE: {{ $certificate->issue_date ? \Carbon\Carbon::parse($certificate->issue_date)->format('d M Y') : '' }}</div>
+                        <div class="uppercase">{{ $idLabel }} {{ $certificate->certificate_number }}</div>
+                        <div class="uppercase">{{ $dateLabel }} {{ $certificate->issue_date ? \Carbon\Carbon::parse($certificate->issue_date)->format('d M Y') : '' }}</div>
                     </div>
 
-                    <!-- 8. Bottom 3-Column Footer: Lead Trainer | Gold Seal | ACS Governing Body -->
+                    <!-- 8. Bottom 3-Column Footer: Secondary Signatory | Gold Seal | Primary Signatory -->
                     <div class="absolute left-0 right-0"
-                         style="bottom: 6.2%; padding: 0 3.2%; display: grid; grid-template-columns: 38% 20% 42%; align-items: end;">
+                         style="bottom: {{ $footerBottomPct }}%; padding: 0 3.2%; display: grid; grid-template-columns: {{ $showSecondary ? '38% 20% 42%' : '35% 65%' }}; align-items: end;">
 
-                        <!-- Left Column: Lead Trainer -->
+                        @if($showSecondary)
+                        <!-- Left Column: Secondary Signatory -->
                         <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding-bottom: 1.5cqw;">
                             <div style="height: 10.5cqw; width: 100%; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 0.8cqw;">
                                 <img src="{{ $trainerSigSrc }}"
-                                     alt="Lead Trainer Signature"
+                                     alt="{{ $secondarySignatoryTitle }}"
                                      style="max-width: 78%; max-height: 10.2cqw; width: auto; height: auto; object-fit: contain;">
                             </div>
-                            <div style="width: 84%; height: 0.22cqw; background-color: #e7bb4b;"></div>
-                            <span class="font-aleo font-normal uppercase"
-                                  style="color: #ac8444; font-size: 2.02cqw; letter-spacing: 0.02em; margin-top: 0.9cqw; line-height: 1.2;">
-                                LEAD TRAINER
+                            <div style="width: 84%; height: 0.22cqw; background-color: {{ $accentColor }};"></div>
+                            <span class="font-normal uppercase"
+                                  style="font-family: {!! $bodyFontCss !!}; color: {{ $accentColor }}; font-size: 2.02cqw; letter-spacing: 0.02em; margin-top: 0.9cqw; line-height: 1.2;">
+                                {{ $secondarySignatoryTitle }}
                             </span>
-                            <span class="font-aleo font-bold whitespace-nowrap"
-                                  style="color: #1c2a4c; font-size: 1.50cqw; line-height: 1.2; margin-top: 0.35cqw;">
-                                Academy of Commercial &amp; Supply Chain
+                            <span class="font-bold whitespace-nowrap truncate max-w-full"
+                                  style="font-family: {!! $bodyFontCss !!}; color: #1c2a4c; font-size: 1.45cqw; line-height: 1.2; margin-top: 0.35cqw;">
+                                {{ $institutionName }}
                             </span>
                         </div>
+                        @endif
 
-                        <!-- Center Column: Exact Gold Seal with Red Ribbon -->
+                        <!-- Center Column: Exact Gold Seal with Red Ribbon + Seal Logo & Curved Text -->
                         <div style="display: flex; align-items: flex-end; justify-content: center;">
                             @if($showSeal)
-                                <img src="{{ asset('images/cert-official/gold-seal.png') }}"
-                                     alt="Official ACS Seal"
-                                     style="width: 14.8cqw; height: auto; object-fit: contain; display: block; margin: 0 auto;">
+                                <div style="position: relative; width: {{ $sealSizeCqw }}cqw; margin: 0 auto;">
+                                    <img src="{{ asset('images/cert-official/gold-seal.png') }}"
+                                         alt="Official ACS Seal"
+                                         style="width: 100%; height: auto; object-fit: contain; display: block;">
+                                    @if($showSealText)
+                                        <svg viewBox="0 0 200 200"
+                                             style="position: absolute; left: 50%; top: 37.5%; transform: translate(-50%, -50%); width: 82%; height: auto; pointer-events: none;">
+                                            <defs>
+                                                <path id="acsSigSealTop" d="M 38,100 A 62,62 0 1,1 162,100" />
+                                                <path id="acsSigSealBot" d="M 30,100 A 70,70 0 0,0 170,100" />
+                                            </defs>
+                                            <text fill="#5c3d0e" font-size="{{ $sealFontSize }}" font-weight="800" letter-spacing="1.6" font-family="Cinzel, serif">
+                                                <textPath href="#acsSigSealTop" startOffset="50%" text-anchor="middle">{{ strtoupper($sealLine1) }}</textPath>
+                                            </text>
+                                            <text fill="#5c3d0e" font-size="{{ max(7, round($sealFontSize * 0.88, 1)) }}" font-weight="800" letter-spacing="1.8" font-family="Cinzel, serif">
+                                                <textPath href="#acsSigSealBot" startOffset="50%" text-anchor="middle">{{ strtoupper($sealLine2) }}</textPath>
+                                            </text>
+                                        </svg>
+                                    @endif
+                                    @if($showSealLogo)
+                                        <img src="{{ $certSealLogo }}"
+                                             alt="Seal Logo"
+                                             onerror="this.onerror=null;this.src='{{ $defaultGoldLogo }}';"
+                                             style="position: absolute; left: 50%; top: 37.5%; transform: translate(-50%, -50%); width: 42%; height: 42%; max-height: 6.2cqw; object-fit: contain; border-radius: 9999px; pointer-events: none;">
+                                    @endif
+                                </div>
                             @endif
                         </div>
 
-                        <!-- Right Column: ACS Governing Body -->
+                        <!-- Right Column: Primary Governing Signatory -->
                         <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding-bottom: 1.5cqw;">
                             <div style="height: 10.5cqw; width: 100%; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 0.8cqw;">
                                 <img src="{{ $governingSigSrc }}"
-                                     alt="ACS Governing Body Signature"
+                                     alt="{{ $primarySignatoryTitle }}"
                                      style="max-width: 78%; max-height: 10.5cqw; width: auto; height: auto; object-fit: contain;">
                             </div>
-                            <div style="width: 88%; height: 0.22cqw; background-color: #e7bb4b;"></div>
-                            <span class="font-aleo font-normal uppercase"
-                                  style="color: #ac8444; font-size: 2.00cqw; letter-spacing: 0.02em; margin-top: 0.9cqw; line-height: 1.2;">
-                                ACS GOVORNING BODY
+                            <div style="width: 88%; height: 0.22cqw; background-color: {{ $accentColor }};"></div>
+                            <span class="font-normal uppercase"
+                                  style="font-family: {!! $bodyFontCss !!}; color: {{ $accentColor }}; font-size: 2.00cqw; letter-spacing: 0.02em; margin-top: 0.9cqw; line-height: 1.2;">
+                                {{ $primarySignatoryTitle }}
                             </span>
-                            <span class="font-aleo font-bold whitespace-nowrap"
-                                  style="color: #1c2a4c; font-size: 1.50cqw; line-height: 1.2; margin-top: 0.35cqw;">
-                                Academy of Commercial &amp; Supply Chain
+                            <span class="font-bold whitespace-nowrap truncate max-w-full"
+                                  style="font-family: {!! $bodyFontCss !!}; color: #1c2a4c; font-size: 1.45cqw; line-height: 1.2; margin-top: 0.35cqw;">
+                                {{ $institutionName }}
                             </span>
                         </div>
 
@@ -612,7 +676,7 @@
             @if($showQrCode)
                 <a href="{{ $verifyUrl }}" target="_blank" title="Verify Certificate Authenticity"
                    class="absolute left-0 bg-white z-20 flex items-center justify-center"
-                   style="top: 62%; width: 19.8%; aspect-ratio: 118 / 115; padding: 2.2% 2.2% 2.2% 3.2%;">
+                   style="top: {{ $qrTopPct }}%; width: {{ $qrWidthPct }}%; aspect-ratio: 118 / 115; padding: 2.2% 2.2% 2.2% 3.2%;">
                     {!! \App\Support\QrCodeGenerator::svg($verifyUrl, '#000000', '#ffffff', 1) !!}
                 </a>
             @endif
@@ -621,7 +685,8 @@
         <!-- ========================================================================= -->
         <!-- PREVIOUS 4 TEMPLATES PRESERVED (classic_navy, modern_emerald, etc.)       -->
         <!-- ========================================================================= -->
-        <div class="certificate-wrapper w-full max-w-5xl bg-[#fffdf9] rounded-3xl p-3 sm:p-8 shadow-2xl border-[10px] sm:border-[12px] {{ $theme['outer_border'] }} relative overflow-hidden">
+        <div class="certificate-wrapper w-full max-w-5xl bg-[#fffdf9] rounded-3xl p-3 sm:p-8 shadow-2xl border-[10px] sm:border-[12px] {{ $theme['outer_border'] }} relative overflow-hidden"
+             style="border-color: {{ $accentColor }};">
             
             <!-- Ornate Inner Guilloche Border -->
             <div class="certificate-inner border-2 {{ $theme['inner_border'] }} p-4 sm:p-8 rounded-xl relative bg-gradient-to-b {{ $theme['bg_gradient'] }}">
@@ -660,7 +725,7 @@
                     <!-- Recipient Name -->
                     <div class="my-2 sm:my-3 py-1 sm:py-1.5 border-b-2 border-dotted {{ $theme['recipient_border'] }} inline-block w-full max-w-[92%] sm:max-w-[82%] px-2">
                         <h2 class="acs-cert-recipient-name text-2xl sm:text-4xl lg:text-5xl font-black {{ $theme['recipient_color'] }} tracking-tight whitespace-nowrap inline-block"
-                            style="font-family: {!! $recipientFontCss !!};">
+                            style="font-family: {!! $recipientFontCss !!}; color: {{ $recipientColor }};">
                             {{ $user->name }}
                         </h2>
                     </div>
