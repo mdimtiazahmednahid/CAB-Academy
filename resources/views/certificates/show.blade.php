@@ -676,8 +676,8 @@
             @if($showQrCode)
                 <a href="{{ $verifyUrl }}" target="_blank" title="Verify Certificate Authenticity"
                    class="absolute left-0 bg-white z-20 flex items-center justify-center"
-                   style="top: {{ $qrTopPct }}%; width: {{ $qrWidthPct }}%; aspect-ratio: 118 / 115; padding: 2.2% 2.2% 2.2% 3.2%;">
-                    {!! \App\Support\QrCodeGenerator::svg($verifyUrl, '#000000', '#ffffff', 1) !!}
+                   style="top: {{ $qrTopPct }}%; width: {{ $qrWidthPct }}%; aspect-ratio: 1 / 1; padding: 0.45%;">
+                    {!! \App\Support\QrCodeGenerator::svg($verifyUrl, '#000000', '#ffffff', 0) !!}
                 </a>
             @endif
         </div>
